@@ -161,7 +161,7 @@ var Entity = Class.create({
     for (var j = 0; j < nearMatrix.length; j++) {
       var c2 = {x: this.x, y: this.y + this.force.y, width: this.width, height: this.height};
       if (nearMatrix[j].solid && Game.Math.overlap(c2, nearMatrix[j])) {
-        if (this.force.y < 0) this.force.y = nearMatrix[j].y + nearMatrix[i].height - this.y;
+        if (this.force.y < 0) this.force.y = nearMatrix[j].y + nearMatrix[j].height - this.y;
         else if (this.force.y > 0) this.force.y = nearMatrix[j].y - this.y - this.height;
       }
     }
