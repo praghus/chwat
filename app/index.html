@@ -11,8 +11,6 @@
 
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="/bower_components/dat-gui/src/dat/gui/GUI.css">
-    <link rel="stylesheet" href="/bower_components/dat-gui/src/dat/gui/style.css">
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -22,9 +20,12 @@
     <!-- inject:css -->
     <!-- endinject -->
 
-
     <!-- build:js scripts/vendor/modernizr.js -->
     <script src="/bower_components/modernizr/modernizr.js"></script>
+    <script src="/bower_components/dat-gui/build/dat.gui.min.js"></script>
+    <script src="/nonbower_components/fpsmeter/fpsmeter.min.js"></script>
+    <script src="/nonbower_components/illuminated/illuminated.js"></script>
+    <script src="/nonbower_components/sat/SAT.min.js"></script>
     <!-- endbuild -->
   </head>
   <body>
@@ -33,7 +34,7 @@
     <![endif]-->
 
     <body onkeypress="return (event.keyCode >= 37 && event.keyCode <= 40) ? false : true;">
-    <div id="preloader"><img src="assets/preload.gif"></div>
+    <div id="preloader"><img src="assets/images/preload.gif"></div>
     <div id="game">
       <div id="controls">
         <div id="ctrl_left" class="btn"></div>
@@ -57,18 +58,21 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="/bower_components/dat-gui/build/dat.gui.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
 
     <!-- inject:js -->
-    <script src="/nonbower_components/fpsmeter/fpsmeter.min.js"></script>
-    <script src="/nonbower_components/illuminated/illuminated.js"></script>
-    <script src="/nonbower_components/sat/SAT.min.js"></script>
     <!-- endinject -->
-
     <script src="scripts/lib/game.js"></script>
+    <script src="scripts/lib/entity.js"></script>
+    <script src="scripts/lib/elements.js"></script>
+    <script src="scripts/lib/camera.js"></script>
+    <script src="scripts/lib/canvas.js"></script>
+    <script src="scripts/lib/map.js"></script>
+    <script src="scripts/lib/renderer.js"></script>
+    <script src="scripts/lib/entities/player.js"></script>
+
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
   </body>

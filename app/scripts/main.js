@@ -27,6 +27,10 @@ var map, elements, camera, player, renderer,
       samples:  1,
       radius:   8
     }),
+//-------------------------------------------------------------------------
+// SAT
+//-------------------------------------------------------------------------
+    V = SAT.Vector, P = SAT.Polygon,
 //--------------------------------------------------------------------------
 // Images
 //--------------------------------------------------------------------------
@@ -39,36 +43,9 @@ var map, elements, camera, player, renderer,
       'enemy_bullet', 'coin',	        'player_bullet','stone',
       'water',        'lava',         'crush',        'crusher',
       'torch',        'item',         'paddle',       'phantom',
-      'lava_glow',    'light',		    'rock',			'spear',
+      'lava_glow',    'light',		    'rock',			    'spear',
       'saw',			    'player_light'
     ];
-//--------------------------------------------------------------------------
-(function(){
-  Game.Load.images(IMAGES, function(images) {
-    Game.Load.json("assets/main", function(level) {
-      setup(images, level);
-      Game.run({
-        fps:    FPS,
-        update: update,
-        render: render
-      });
-      Dom.on(document, 'keydown',    function(ev) { return onkey(ev, ev.keyCode, true);  }, false);
-      Dom.on(document, 'keyup',      function(ev) { return onkey(ev, ev.keyCode, false); }, false);
-      Dom.on('canvas', 'touchstart', function(ev) { return ontouch(ev, true); }, false);
-      Dom.on('canvas', 'touchmove',  function(ev) { return ontouch(ev, true); }, true);
-      Dom.on('canvas', 'touchend',   function(ev) { return ontouch(ev, false); }, false);
-      Dom.on('ctrl_left',  'touchstart', function(ev) { return onkey(ev, KEY.LEFT, true); }, false);
-      Dom.on('ctrl_left',  'touchend',   function(ev) { return onkey(ev, KEY.LEFT, false); }, false);
-      Dom.on('ctrl_right', 'touchstart', function(ev) { return onkey(ev, KEY.RIGHT, true); }, false);
-      Dom.on('ctrl_right', 'touchend',   function(ev) { return onkey(ev, KEY.RIGHT, false); }, false);
-      window.addEventListener('resize', resizeGame, false);
-      window.addEventListener('orientationchange', resizeGame, false);
-      document.getElementById("preloader").style.display = "none";
-      resizeGame();
-      camera.center();
-    });
-  });
-
 //--------------------------------------------------------------------------
   function setup(images, level) {
     map      = new Map(level);
@@ -82,17 +59,18 @@ var map, elements, camera, player, renderer,
     var f1, f2, f3, gui = new dat.GUI();
     dat.GUI.prototype.removeFolder = function(name) {
       var folder = this.__folders[name];
-      if (!folder)
+      if (!folder) {
         return;
+      }
       folder.close();
       this.__ul.removeChild(folder.domElement.parentNode);
       delete this.__folders[name];
       this.onResize();
     };
     dat.GUI.prototype.gameData = function(){
-      if (f1) gui.removeFolder('Player');
-      if (f2) gui.removeFolder('Forces');
-      if (f3) gui.removeFolder('World');
+      if (f1) { gui.removeFolder('Player'); }
+      if (f2) { gui.removeFolder('Forces'); }
+      if (f3) { gui.removeFolder('World'); }
       f1 = gui.addFolder('Player');
       f2 = gui.addFolder('Forces');
       f3 = gui.addFolder('World');
@@ -144,7 +122,7 @@ var map, elements, camera, player, renderer,
         player.input.action          = pressed && player.input.actionAvailable;
         player.input.actionAvailable = !pressed;
         break;
-      case KEY.SPACE:  if (!pressed) PAUSE = !PAUSE; ev.preventDefault(); break;
+      case KEY.SPACE:  if (!pressed) { PAUSE = !PAUSE; ev.preventDefault(); } break;
     }
   }
   //--------------------------------------------------------------------------
@@ -171,5 +149,30 @@ var map, elements, camera, player, renderer,
     canvas.width    = renderer.scaleX * ResolutionX;
     canvas.height   = renderer.scaleY * ResolutionY;
   }
+//--------------------------------------------------------------------------
+(function(){
+  Game.Load.images(IMAGES, function(images) {
+    Game.Load.json("assets/levels/main", function(level) {
+      setup(images, level);
+      Game.run({
+        update: update,
+        render: render
+      });
+      Dom.on(document,      'keydown',    function(ev) { return onkey(ev, ev.keyCode, true);  }, false);
+      Dom.on(document,      'keyup',      function(ev) { return onkey(ev, ev.keyCode, false); }, false);
+      Dom.on('canvas',      'touchstart', function(ev) { return ontouch(ev, true); }, false);
+      Dom.on('canvas',      'touchmove',  function(ev) { return ontouch(ev, true); }, true);
+      Dom.on('canvas',      'touchend',   function(ev) { return ontouch(ev, false); }, false);
+      Dom.on('ctrl_left',   'touchstart', function(ev) { return onkey(ev, KEY.LEFT, true); }, false);
+      Dom.on('ctrl_left',   'touchend',   function(ev) { return onkey(ev, KEY.LEFT, false); }, false);
+      Dom.on('ctrl_right',  'touchstart', function(ev) { return onkey(ev, KEY.RIGHT, true); }, false);
+      Dom.on('ctrl_right',  'touchend',   function(ev) { return onkey(ev, KEY.RIGHT, false); }, false);
+      window.addEventListener('resize', resizeGame, false);
+      window.addEventListener('orientationchange', resizeGame, false);
+      document.getElementById("preloader").style.display = "none";
+      resizeGame();
+      camera.center();
+    });
+  });
 }());
 
