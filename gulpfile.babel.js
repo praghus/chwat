@@ -4,10 +4,18 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import browserSync from 'browser-sync';
 import del from 'del';
 import jshint from 'gulp-jshint';
+import inject from 'gulp-inject';
 import {stream as wiredep} from 'wiredep';
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
+
+gulp.task('index', function () {
+  var target = gulp.src('./app/index.html');
+  var sources = gulp.src(['./app/scripts/**/*.js'], {read: false});
+  return target.pipe(inject(sources))
+    .pipe(gulp.dest('./app'));
+});
 
 gulp.task('styles', () => {
   return gulp.src('app/styles/*.scss')
