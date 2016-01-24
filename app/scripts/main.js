@@ -31,6 +31,13 @@ var map, elements, camera, player, renderer,
 // SAT
 //-------------------------------------------------------------------------
     V = SAT.Vector, P = SAT.Polygon,
+//-------------------------------------------------------------------------
+// FPSMeter
+//-------------------------------------------------------------------------
+  fpsmeter = new FPSMeter({
+    decimals: 0, graph: true, theme: 'dark', position: 'absolute',
+    top: 'auto', left: 'auto', bottom: '5px', right: '5px'
+  }),
 //--------------------------------------------------------------------------
 // Images
 //--------------------------------------------------------------------------
@@ -152,7 +159,7 @@ var map, elements, camera, player, renderer,
 //--------------------------------------------------------------------------
 (function(){
   Game.Load.images(IMAGES, function(images) {
-    Game.Load.json("assets/levels/main", function(level) {
+    Game.Load.json("assets/levels/main.json", function(level) {
       setup(images, level);
       Game.run({
         update: update,

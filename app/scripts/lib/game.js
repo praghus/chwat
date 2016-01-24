@@ -1,8 +1,4 @@
-//=========================================================================
-// VRIL
-//-------------------------------------------------------------------------
 'use strict';
-
 //-------------------------------------------------------------------------
 // POLYFILLS
 // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -27,7 +23,7 @@ var Class = {
     ctor.prototype = prototype || {}; // instance methods
     return ctor;
   }
-}
+};
 //-------------------------------------------------------------------------
 // SIMPLE DOM UTILITIES
 //-------------------------------------------------------------------------
@@ -48,7 +44,6 @@ var Dom = {
     Dom.get(ele).style.display = (type || 'block');
   }
 };
-
 //-------------------------------------------------------------------------
 // GAME LOOP
 //-------------------------------------------------------------------------
@@ -59,8 +54,7 @@ var Game = {
         last = Game.Math.timestamp(),
         step = 1 / FPS,
         update = options.update,
-        render = options.render,
-        fpsmeter = new FPSMeter({decimals: 0, graph: true, theme: 'dark', position: 'absolute', top :'auto', left: 'auto', bottom: '5px', right: '5px'});
+        render = options.render;
 
     function frame() {
       fpsmeter.tickStart();
@@ -93,7 +87,6 @@ var Game = {
     }
   }
 };
-
 //-------------------------------------------------------------------------
 // ASSET LOADING UTILITIES
 //-------------------------------------------------------------------------
@@ -118,7 +111,7 @@ Game.Load = {
       if ((request.readyState == 4) && (request.status == 200))
         onsuccess(JSON.parse(request.responseText));
     };
-    request.open("GET", url + ".json", true);
+    request.open("GET", url, true);
     request.send();
   }
 };
@@ -184,6 +177,3 @@ Game.Math = {
     return choices[this.randomInt(0, choices.length - 1)];
   }
 };
-
-//==========================================================================
-
