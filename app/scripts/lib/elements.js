@@ -17,10 +17,10 @@ var Elements = Class.create({
         elements.all.length--;
       } else Obj.update();
     });
-    for (var i = 0; i < all.length; i++) {
-      all[i].overlapTest(player);
-      for (var j = i + 1; j < all.length; j++) {
-        all[i].overlapTest(all[j]);
+    for (var j = 0; j < all.length; j++) {
+      all[j].overlapTest(player);
+      for (var k = j + 1; k < all.length; k++) {
+        all[j].overlapTest(all[k]);
       }
     }
   },
@@ -46,10 +46,10 @@ var Elements = Class.create({
           this.all.push(new EnemyTank(obj));
           break;
         case 'phantom':
-          this.all.push(new Phantom(obj));
+          this.all.push(new EnemyPhantom(obj));
           break;
         case 'gloom':
-          this.all.push(new Gloom(obj));
+          this.all.push(new EnemyGloom(obj));
           break;
         case 'ladder':
           this.all.push(new Ladder(obj));

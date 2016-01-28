@@ -10,7 +10,7 @@ var Entity = Class.create({
     this.height = obj.height;
     this.type = obj.type;
     this.properties = obj.properties;
-    this.family = "elements";
+    this.family = 'elements';
     this.force = {x: 0, y: 0};
     this.direction = 0;
     this.speed = 0;
@@ -42,15 +42,15 @@ var Entity = Class.create({
   //----------------------------------------------------------------------
   draw: function (ctx, image) {
     // energy indicator
-    if (this.energy > 0) {
+    /*if (this.energy > 0) {
       var p = (this.energy / this.maxEnergy);
       ctx.globalAlpha = .6;
       ctx.fillStyle = 'black';
       ctx.fillRect(-1 + this.x + camera.x, -11 + this.y + camera.y, this.width + 2, 3);
-      ctx.fillStyle = p > .5 ? "rgb(165, 213, 255)" : "rgb(255,0,0)";
+      ctx.fillStyle = p > .5 ? 'rgb(165, 213, 255)' : 'rgb(255,0,0)';
       ctx.fillRect(this.x + camera.x, -10 + this.y + camera.y, this.width * p, 1);
       ctx.globalAlpha = 1;
-    }
+    }*/
     //renderer.fontPrint(''+this.PlayerM.toFixed(2), this.x+camera.x, -20+this.y+camera.y);
     if (this.shadowCaster && renderer.dynamicLights) {
       renderer.lightmask.push(new RectangleObject({

@@ -23,24 +23,19 @@
     <!-- build:js scripts/vendor/modernizr.js -->
     <script src="/bower_components/modernizr/modernizr.js"></script>
     <script src="/bower_components/dat-gui/build/dat.gui.min.js"></script>
-    <script src="/nonbower_components/fpsmeter/fpsmeter.min.js"></script>
-    <script src="/nonbower_components/illuminated/illuminated.js"></script>
-    <script src="/nonbower_components/sat/SAT.min.js"></script>
     <!-- endbuild -->
   </head>
   <body>
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-
-    <body onkeypress="return (event.keyCode >= 37 && event.keyCode <= 40) ? false : true;">
     <div id="preloader"><img src="assets/images/preload.gif"></div>
     <div id="game">
       <div id="controls">
         <div id="ctrl_left" class="btn"></div>
         <div id="ctrl_right" class="btn"></div>
       </div>
-      <canvas id="canvas" width="640" height="360">
+      <canvas id="canvas">
         Sorry, but your web browser cannot run this game. Try updating to a more recent browser release.
       </canvas>
     </div>
@@ -57,13 +52,13 @@
     </script>
 
     <!-- build:js scripts/vendor.js -->
+    <script src="/nonbower_components/fpsmeter/fpsmeter.min.js"></script>
+    <script src="/nonbower_components/illuminated/illuminated.js"></script>
+    <script src="/nonbower_components/sat/SAT.min.js"></script>
     <!-- bower:js -->
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
-
-    <!-- inject:js -->
-    <!-- endinject -->
     <script src="scripts/lib/game.js"></script>
     <script src="scripts/lib/entity.js"></script>
     <script src="scripts/lib/elements.js"></script>
@@ -71,8 +66,39 @@
     <script src="scripts/lib/canvas.js"></script>
     <script src="scripts/lib/map.js"></script>
     <script src="scripts/lib/renderer.js"></script>
+    <!-- inject:js -->
+    <script src="scripts/lib/entities/big-explosion.js"></script>
+    <script src="scripts/lib/entities/coin.js"></script>
+    <script src="scripts/lib/entities/crush.js"></script>
+    <script src="scripts/lib/entities/crusher.js"></script>
+    <script src="scripts/lib/entities/dark-mask.js"></script>
+    <script src="scripts/lib/entities/enemy-blob.js"></script>
+    <script src="scripts/lib/entities/enemy-bullet.js"></script>
+    <script src="scripts/lib/entities/enemy-gloom.js"></script>
+    <script src="scripts/lib/entities/enemy-phantom.js"></script>
+    <script src="scripts/lib/entities/enemy-tank.js"></script>
+    <script src="scripts/lib/entities/explosion.js"></script>
+    <script src="scripts/lib/entities/grenade-trap.js"></script>
+    <script src="scripts/lib/entities/grenade.js"></script>
+    <script src="scripts/lib/entities/item.js"></script>
+    <script src="scripts/lib/entities/jump-through.js"></script>
+    <script src="scripts/lib/entities/ladder.js"></script>
+    <script src="scripts/lib/entities/lava-stone.js"></script>
+    <script src="scripts/lib/entities/lava.js"></script>
+    <script src="scripts/lib/entities/paddle.js"></script>
+    <script src="scripts/lib/entities/particles.js"></script>
+    <script src="scripts/lib/entities/player-bullet.js"></script>
+    <script src="scripts/lib/entities/player-stone.js"></script>
     <script src="scripts/lib/entities/player.js"></script>
-
+    <script src="scripts/lib/entities/rock.js"></script>
+    <script src="scripts/lib/entities/saw.js"></script>
+    <script src="scripts/lib/entities/slope-left.js"></script>
+    <script src="scripts/lib/entities/slope-right.js"></script>
+    <script src="scripts/lib/entities/spear.js"></script>
+    <script src="scripts/lib/entities/torch.js"></script>
+    <script src="scripts/lib/entities/trigger.js"></script>
+    <script src="scripts/lib/entities/water.js"></script>
+    <!-- endinject -->
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
   </body>

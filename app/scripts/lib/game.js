@@ -1,7 +1,6 @@
 'use strict';
 //-------------------------------------------------------------------------
 // POLYFILLS
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 //-------------------------------------------------------------------------
 if (!window.requestAnimationFrame) {
     window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
