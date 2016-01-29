@@ -1,7 +1,7 @@
 //==========================================================================
 // PLAYER
 //--------------------------------------------------------------------------
-Game.Entities['player'] = function () {
+Game.Entities.player = function () {
   Entity.apply(this, arguments);
   this.godMode = true;
   this.canShoot = true;
@@ -51,7 +51,9 @@ Game.Entities['player'] = function () {
       );
       ctx.globalCompositeOperation = "source-over";
     }
-    if (!this.canHurt && !this.dead) ctx.globalAlpha = 0.2;
+    if (!this.canHurt && !this.dead) {
+      ctx.globalAlpha = 0.2;
+    }
     ctx.drawImage(image,
       this.animation.x + (this.animFrame * this.animation.w), player.animation.y + this.animOffset,
       this.animation.w, this.animation.h,
@@ -90,9 +92,7 @@ Game.Entities['player'] = function () {
         }
         if (this.input.down && !this.fall && this.force.y == 0) {
           this.fall = true;
-          this.fallTimeout = setTimeout(function (thisObj) {
-            thisObj.fall = false;
-          }, 400, this);
+          this.fallTimeout = setTimeout(function () {this.fall = false;}.bind(this), 400);
         }
         if (this.input.shoot && this.canShoot) {
           this.shoot();
@@ -142,10 +142,7 @@ Game.Entities['player'] = function () {
     this.force.y -= 3;
     player.canHurt = false;
     if (this.energy <= 0 && !this.dead) this.kill = true;
-    this.hurtTimeout = setTimeout(function () {
-      player.canHurt = true;
-    }, 1000);
-
+    this.hurtTimeout = setTimeout(function () {this.canHurt = true;}.bind(this), 1000);
   };
   //----------------------------------------------------------------------
   this.canUse = function (id) {
@@ -175,8 +172,8 @@ Game.Entities['player'] = function () {
   //----------------------------------------------------------------------
   this.collide = function (element) {
     if (element.damage > 0 && (
-        element.family == 'enemies' ||
-        element.family == 'traps'
+        element.family === 'enemies' ||
+        element.family === 'traps'
       )) this.hit(element.damage);
   };
   //----------------------------------------------------------------------
@@ -190,9 +187,9 @@ Game.Entities['player'] = function () {
       direction: player.direction
     });
     this.shootTimeout = setTimeout(function () {
-      player.canShoot = true;
-      player.animOffset = 0;
-    }, this.shootDelay);
+      this.canShoot = true;
+      this.animOffset = 0;
+    }.bind(this), this.shootDelay);
     //Sound.shoot.play();
   };
   //----------------------------------------------------------------------
@@ -206,13 +203,13 @@ Game.Entities['player'] = function () {
     });
     this.throwSpeed = 0;
     this.shootTimeout = setTimeout(function () {
-      player.canShoot = true;
-      player.animOffset = 0;
-    }, this.throwDelay);
+      this.canShoot = true;
+      this.animOffset = 0;
+    }.bind(this), this.throwDelay);
   };
   //----------------------------------------------------------------------
   this.exterminate = function () {
     this.kill = true;
   }
 };
-Class.extend(Game.Entities['player'], Entity);
+Class.extend(Game.Entities.player, Entity);

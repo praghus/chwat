@@ -15,7 +15,9 @@ var Elements = Class.create({
       if (Obj.dead) {
         elements.all[i] = elements.all[elements.all.length - 1];
         elements.all.length--;
-      } else Obj.update();
+      } else {
+        Obj.update();
+      }
     });
     for (var j = 0; j < all.length; j++) {
       all[j].overlapTest(player);

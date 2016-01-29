@@ -164,6 +164,35 @@ var map, elements, camera, player, renderer,
       });
       Dom.on(document, 'keydown', function(ev) { return onkey(ev, ev.keyCode, true);  }, false);
       Dom.on(document, 'keyup',   function(ev) { return onkey(ev, ev.keyCode, false); }, false);
+      var mc = new Hammer(document.getElementById('canvas'), {});
+      mc.on("panleft", function(ev) {
+        player.input.right = false;
+        player.input.down = false;
+        player.input.left = true;
+      });
+      mc.on("panright", function(ev) {
+        player.input.left = false;
+        player.input.down = false;
+        player.input.right = true;
+      });
+      mc.on("pandown", function(ev) {
+        player.input.left = false;
+        player.input.right = false;
+        player.input.down = true;
+      });
+      mc.on("panend", function(ev) {
+        //console.log(ev);
+        player.input.left = false;
+        player.input.right = false;
+        player.input.up = false;
+        player.input.down = false;
+      });
+      mc.on("tap", function(ev) {
+        console.log(ev);
+        player.input.up = true;
+        setTimeout(function(){player.input.up=false;},200)
+      });
+
       window.addEventListener('resize', resizeGame, false);
       window.addEventListener('orientationchange', resizeGame, false);
       resizeGame();

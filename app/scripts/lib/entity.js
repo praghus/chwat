@@ -41,17 +41,6 @@ var Entity = Class.create({
   },
   //----------------------------------------------------------------------
   draw: function (ctx, image) {
-    // energy indicator
-    /*if (this.energy > 0) {
-      var p = (this.energy / this.maxEnergy);
-      ctx.globalAlpha = .6;
-      ctx.fillStyle = 'black';
-      ctx.fillRect(-1 + this.x + camera.x, -11 + this.y + camera.y, this.width + 2, 3);
-      ctx.fillStyle = p > .5 ? 'rgb(165, 213, 255)' : 'rgb(255,0,0)';
-      ctx.fillRect(this.x + camera.x, -10 + this.y + camera.y, this.width * p, 1);
-      ctx.globalAlpha = 1;
-    }*/
-    //renderer.fontPrint(''+this.PlayerM.toFixed(2), this.x+camera.x, -20+this.y+camera.y);
     if (this.shadowCaster && renderer.dynamicLights) {
       renderer.lightmask.push(new RectangleObject({
         topleft: new Vec2(this.x + camera.x, this.y + camera.y),

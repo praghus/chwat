@@ -40,10 +40,12 @@ Game.Entities['paddle'] = function () {
     if (this.awake && !this.dead) {
       this.force.x += this.direction > 0 ? this.speed : -this.speed;
       var m = this.move();
-      if (!m.x && this.turnTimeout === null) this.turnTimeout = setTimeout(function (thisObj) {
-        thisObj.direction = !thisObj.direction;
-        thisObj.turnTimeout = null
-      }, 300, this);
+      if (!m.x && this.turnTimeout === null) {
+        this.turnTimeout = setTimeout(function () {
+          this.direction = !this.direction;
+          this.turnTimeout = null
+        }.bind(this), 300);
+      }
     }
   }
 };
