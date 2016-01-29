@@ -41,16 +41,16 @@ var Renderer = Class.create({
     this.renderPlayer(this.ctx);
     this.renderElements(this.ctx);
     this.renderForeGround(this.ctx);
-    if (camera.underground || player.inDark > 0)
+    if (camera.underground || player.inDark > 0) {
       this.renderLightingEffect(this.ctx);
-
+    }
     this.renderForeGround2(this.ctx);
     if (BlackOverlay > 0) {
       this.ctx.globalAlpha = BlackOverlay;
       this.ctx.fillStyle = 'black';
       this.ctx.fillRect(-1, -1, ResolutionX + 1, ResolutionY + 1);
-      BlackOverlay -= 0.01;
       this.ctx.globalAlpha = 1;
+      BlackOverlay -= 0.01;
     }
     if (this.message.dispCount < this.message.dispIter) {
       this.fontPrint(this.message.txt, -1, -1);
@@ -192,7 +192,6 @@ var Renderer = Class.create({
     ctx.drawImage(this.images.live, 0, 10, Math.round(player.maxEnergy / 10) * 11, 10, 5, 5, Math.round(player.maxEnergy / 10) * 11, 10);
     ctx.drawImage(this.images.live, 0, 0, (player.energy / 10) * 11, 10, 5, 5, (player.energy / 10) * 11, 10);
     ctx.drawImage(this.images.coin, 0, 0, 8, 8, ResolutionX - 16, 7, 8, 8);
-    ctx.drawImage(this.images.containers, 0, 0, 40, 20, ResolutionX - 45, ResolutionY - 25, 40, 20);
     var cc = '' + parseInt(player.coinCollect);
     this.fontPrint(cc, ResolutionX - (16 + (cc.length * 8)), 8);
     for (var i = 0; i < 2; i++) {

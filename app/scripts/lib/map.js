@@ -67,7 +67,6 @@ var Map = Class.create({
   },
   //----------------------------------------------------------------------
   addMask: function (obj) {
-    console.log(obj);
     var x = Math.round(obj.x / map.spriteSize) - 1,
       y = Math.round(obj.y / map.spriteSize) - 1,
       w = Math.round(obj.width / map.spriteSize) + 2,

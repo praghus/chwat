@@ -70,6 +70,7 @@ var Game = {
       render(dt);
       last = now;
       fpsmeter.tick();
+      FPS = fpsmeter.fps;
       requestAnimationFrame(frame, options.canvas);
     }
     frame();
@@ -95,13 +96,26 @@ Game.Entities = {};
 // ASSET LOADING UTILITIES
 //-------------------------------------------------------------------------
 Game.Load = {
+  progress: function(ctx, perc){
+    ctx.imageSmoothingEnabled = false;
+    ctx.save();
+    ctx.fillStyle = 'black';
+    ctx.clearRect(0, 0, ResolutionX, ResolutionY);
+    ctx.fillRect(0, (ResolutionY / 2) - 10, ResolutionX*(perc/100), 5);
+    ctx.restore();
+  },
   images: function (names, callback) {
-    var n, name,
-      result = {},
-      count = names.length,
-      onload = function () {
-        if (--count == 0) callback(result);
-      };
+    var n,
+        name,
+        result = {},
+        count = names.length,
+        loaded = 0,
+        canvas = document.getElementById('canvas'),
+        ctx = canvas.getContext('2d'),
+        onload = function () {
+          Game.Load.progress(ctx, ++loaded * (100 / names.length));
+          if (--count === 0) callback(result);
+        };
     for (n = 0; n < names.length; n++) {
       name = names[n];
       result[name] = document.createElement('img');
@@ -123,7 +137,6 @@ Game.Load = {
 // MATH UTILITIES
 //-------------------------------------------------------------------------
 Game.Math = {
-
   indexOf: function (array, searchElement) {
     for (var i = 0,l=array.length; i < l; i++) {
       if (searchElement === array[i]) { return i; }
