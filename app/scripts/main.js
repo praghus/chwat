@@ -1,9 +1,10 @@
 var map, elements, camera, player, renderer,
-    FPS              = 60,
-    ResolutionX      = 320,
-    ResolutionY      = 180,
-    Ratio            = 16 / 9,
-    PAUSE            = false,
+    FPS               = 60,
+    ResolutionX       = 320,
+    ResolutionY       = 180,
+    Ratio             = 16 / 9,
+    PixelScale        = 4,
+    PAUSE             = false,
 //--------------------------------------------------------------------------
     KEY = {
       LEFT:  37,      UP:    38,      RIGHT: 39,      DOWN:   40,
@@ -12,14 +13,14 @@ var map, elements, camera, player, renderer,
 //--------------------------------------------------------------------------
 // Dynamic lights
 //--------------------------------------------------------------------------
-    UseDynamicLights = true,
-    BlackOverlay     = 1,
-    DarkAlpha        = 1,
-    Lamp             = illuminated.Lamp,
-    RectangleObject  = illuminated.RectangleObject,
-    Vec2             = illuminated.Vec2,
-    Lighting         = illuminated.Lighting,
-    DarkMask         = illuminated.DarkMask,
+    UseDynamicLights  = true,
+    BlackOverlay      = 1,
+    DarkAlpha         = 1,
+    Lamp              = illuminated.Lamp,
+    RectangleObject   = illuminated.RectangleObject,
+    Vec2              = illuminated.Vec2,
+    Lighting          = illuminated.Lighting,
+    DarkMask          = illuminated.DarkMask,
     PlayerLight = new Lamp({
       position: new Vec2(0,0),
       color:    'rgba(255,255,255,0.08)',
@@ -140,6 +141,10 @@ var map, elements, camera, player, renderer,
       newHeight = window.innerHeight,// < MaxHeight ? window.innerHeight : MaxHeight,
       newRatio  = newWidth / newHeight;
 
+    Ratio = window.innerWidth / window.innerHeight;
+    ResolutionX = Math.round(window.innerWidth / PixelScale);
+    ResolutionY = Math.round(window.innerHeight / PixelScale);
+
     if (newRatio > Ratio) {
       newWidth = newHeight * Ratio;
       gameArea.style.height = newHeight + 'px';
@@ -155,6 +160,7 @@ var map, elements, camera, player, renderer,
     renderer.scaleY = Math.round(newHeight / ResolutionY);
     canvas.width    = renderer.scaleX * ResolutionX;
     canvas.height   = renderer.scaleY * ResolutionY;
+    camera.center();
   }
 //--------------------------------------------------------------------------
 (function(){

@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Dark Mask
 //--------------------------------------------------------------------------
-Game.Entities['dark'] = function (obj) {
+Game.Entities['dark_mask'] = function (obj) {
   map.addMask(obj);
   Entity.apply(this, arguments);
   this.active = false;
@@ -57,5 +57,5 @@ Game.Entities['dark'] = function (obj) {
     }
   };
 };
-Class.extend(Game.Entities['dark'], Entity);
+Class.extend(Game.Entities['dark_mask'], Entity);
 

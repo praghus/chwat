@@ -41,7 +41,7 @@ Game.Entities['particles'] = function () {
     }
     if (this.life < 0) this.dead = true;
   };
-  this.draw = function (ctx, image) {
+  this.draw = function (ctx) {
     ctx.fillStyle = this.properties.color;
     ctx.beginPath();
     ctx.rect(this.x + camera.x, this.y + camera.y, this.width, this.height);
@@ -77,7 +77,7 @@ function GrenadeExplosion(x, y) {
       width: r,
       height: r,
       type: 'shoot_particle',
-      properties: {color: "rgb(100,100,100)"}
+      properties: {color: 'rgb(100,100,100)'}
     });
   }
 }
@@ -90,7 +90,7 @@ function Explosion1(x, y) {
       y: y,
       width: r,
       height: r,
-      properties: {color: "rgb(255,100,100)"}
+      properties: {color: 'rgb(255,100,100)'}
     });
   }
 }
