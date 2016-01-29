@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Lava
 //--------------------------------------------------------------------------
-var Lava = function () {
+Game.Entities['lava'] = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.damage = 1000;
@@ -41,5 +41,4 @@ var Lava = function () {
     }
   };
 };
-Lava.prototype = Entity.prototype;
-Lava.prototype.constructor = Lava;
+Class.extend(Game.Entities['lava'], Entity);

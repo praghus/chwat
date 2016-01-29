@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Paddle
 //--------------------------------------------------------------------------
-var Paddle = function () {
+Game.Entities['paddle'] = function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.speed = 1;
@@ -47,5 +47,4 @@ var Paddle = function () {
     }
   }
 };
-Paddle.prototype = Entity.prototype;
-Paddle.prototype.constructor = Paddle;
+Class.extend(Game.Entities['paddle'], Entity);

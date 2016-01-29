@@ -16,7 +16,7 @@ var EnemyGloom = function () {
     LEFT: {x: 64, y: 0, w: 32, h: 32, frames: 2, fps: 8, loop: true}
   };
   this.collide = function (element) {
-    if (element.damage > 0 && element.family != 'senemies')
+    if (element.damage > 0 && element.family != 'enemies')
       this.hit(element.damage);
   };
   this.update = function () {

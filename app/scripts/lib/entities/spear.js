@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Spear
 //--------------------------------------------------------------------------
-var Spear = function () {
+Game.Entities['spear'] = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.damage = 20;
@@ -31,5 +31,4 @@ var Spear = function () {
     }
   };
 };
-Spear.prototype = Entity.prototype;
-Spear.prototype.constructor = Spear;
+Class.extend(Game.Entities['spear'], Entity);

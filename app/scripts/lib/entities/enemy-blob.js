@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Blob
 //--------------------------------------------------------------------------
-var EnemyBlob = function () {
+Game.Entities['enemy_blob'] = function () {
   Entity.apply(this, arguments);
   this.family = 'enemies';
   this.maxSpeed = 1;
@@ -46,5 +46,4 @@ var EnemyBlob = function () {
     }
   }
 };
-EnemyBlob.prototype = Entity.prototype;
-EnemyBlob.prototype.constructor = EnemyBlob;
+Class.extend(Game.Entities['enemy_blob'], Entity);

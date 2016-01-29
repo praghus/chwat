@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Item
 //--------------------------------------------------------------------------
-var Item = function () {
+Game.Entities['item'] = function () {
   Entity.apply(this, arguments);
   this.animFrame = parseInt(this.properties.frame);
   this.collide = function (element) {
@@ -22,5 +22,4 @@ var Item = function () {
     }
   }
 };
-Item.prototype = Entity.prototype;
-Item.prototype.constructor = Item;
+Class.extend(Game.Entities['item'], Entity);

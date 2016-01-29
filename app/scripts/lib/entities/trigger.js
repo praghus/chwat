@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Trigger
 //--------------------------------------------------------------------------
-var Trigger = function () {
+Game.Entities['trigger'] = function () {
   Entity.apply(this, arguments);
   this.visible = false;
   this.update = function () {
@@ -15,5 +15,4 @@ var Trigger = function () {
     }
   }
 };
-Trigger.prototype = Entity.prototype;
-Trigger.prototype.constructor = Trigger;
+Class.extend(Game.Entities['trigger'], Entity);

@@ -1,7 +1,8 @@
 //--------------------------------------------------------------------------
 // Dark Mask
 //--------------------------------------------------------------------------
-var Dark = function () {
+Game.Entities['dark'] = function (obj) {
+  map.addMask(obj);
   Entity.apply(this, arguments);
   this.active = false;
   this.activated = false;
@@ -56,5 +57,5 @@ var Dark = function () {
     }
   };
 };
-Dark.prototype = Entity.prototype;
-Dark.prototype.constructor = Dark;
+Class.extend(Game.Entities['dark'], Entity);
+

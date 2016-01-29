@@ -21,6 +21,10 @@ var Class = {
     };
     ctor.prototype = prototype || {}; // instance methods
     return ctor;
+  },
+  extend: function (obj1, obj2){
+    obj1.prototype = obj2.prototype;
+    obj1.prototype.constructor = obj1;
   }
 };
 //-------------------------------------------------------------------------
@@ -86,6 +90,7 @@ var Game = {
     }
   }
 };
+Game.Entities = {};
 //-------------------------------------------------------------------------
 // ASSET LOADING UTILITIES
 //-------------------------------------------------------------------------
@@ -118,6 +123,13 @@ Game.Load = {
 // MATH UTILITIES
 //-------------------------------------------------------------------------
 Game.Math = {
+
+  indexOf: function (array, searchElement) {
+    for (var i = 0,l=array.length; i < l; i++) {
+      if (searchElement === array[i]) { return i; }
+    }
+    return -1;
+  },
   lerp: function (n, dn, dt) {
     return n + (dn * dt);
   },

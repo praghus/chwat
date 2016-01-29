@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // GrenadesTrap
 //--------------------------------------------------------------------------
-var GrenadesTrap = function () {
+Game.Entities['grenades_trap'] = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.visible = false;
@@ -23,5 +23,4 @@ var GrenadesTrap = function () {
     }
   };
 };
-GrenadesTrap.prototype = Entity.prototype;
-GrenadesTrap.prototype.constructor = GrenadesTrap;
+Class.extend(Game.Entities['grenades_trap'], Entity);

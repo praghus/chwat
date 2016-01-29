@@ -1,7 +1,7 @@
 //==========================================================================
 // PLAYER
 //--------------------------------------------------------------------------
-var Player = function () {
+Game.Entities['player'] = function () {
   Entity.apply(this, arguments);
   this.godMode = true;
   this.canShoot = true;
@@ -40,6 +40,7 @@ var Player = function () {
     jump: false, shoot: false, action: false, throw: false,
     actionAvailable: true
   };
+  player = this;
   //----------------------------------------------------------------------
   this.draw = function (ctx, image) {
     if ((camera.underground || player.inDark > 0) && !renderer.dynamicLights) {
@@ -174,8 +175,8 @@ var Player = function () {
   //----------------------------------------------------------------------
   this.collide = function (element) {
     if (element.damage > 0 && (
-        element.family == "enemies" ||
-        element.family == "traps"
+        element.family == 'enemies' ||
+        element.family == 'traps'
       )) this.hit(element.damage);
   };
   //----------------------------------------------------------------------
@@ -183,10 +184,11 @@ var Player = function () {
     this.canShoot = false;
     this.force.x = 0;
     this.animOffset = 64;
-    elements.add(new PlayerBullet({
+    elements.add('player_bullet',{
       x: player.direction == 1 ? this.x + player.width : this.x - 12,
-      y: this.y + 21
-    }, player.direction));
+      y: this.y + 21,
+      direction: player.direction
+    });
     this.shootTimeout = setTimeout(function () {
       player.canShoot = true;
       player.animOffset = 0;
@@ -197,10 +199,11 @@ var Player = function () {
   this.throw = function () {
     this.canShoot = false;
     this.animOffset = 64;
-    elements.add(new PlayerStone({
+    elements.add('player_stone', {
       x: player.direction == 1 ? this.x + player.width : this.x,
-      y: this.y + 18
-    }, player.direction));
+      y: this.y + 18,
+      direction: player.direction
+    });
     this.throwSpeed = 0;
     this.shootTimeout = setTimeout(function () {
       player.canShoot = true;
@@ -212,5 +215,4 @@ var Player = function () {
     this.kill = true;
   }
 };
-Player.prototype = Entity.prototype;
-Player.prototype.constructor = Player;
+Class.extend(Game.Entities['player'], Entity);

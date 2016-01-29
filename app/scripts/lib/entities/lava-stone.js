@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Lava stone
 //--------------------------------------------------------------------------
-var LavaStone = function (obj, dir) {
+Game.Entities['lava_stone'] = function (obj, dir) {
   Entity.apply(this, arguments);
   this.type = 'lava_bullet';
   this.family = 'traps';
@@ -29,5 +29,4 @@ var LavaStone = function (obj, dir) {
     }
   }
 };
-LavaStone.prototype = Entity.prototype;
-LavaStone.prototype.constructor = LavaStone;
+Class.extend(Game.Entities['lava_stone'], Entity);

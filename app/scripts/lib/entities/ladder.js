@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Ladder
 //--------------------------------------------------------------------------
-var Ladder = function () {
+Game.Entities['ladder'] = function () {
   Entity.apply(this, arguments);
   this.visible = false;
   this.collide = function (element) {
@@ -16,5 +16,4 @@ var Ladder = function () {
     }
   };
 };
-Ladder.prototype = Entity.prototype;
-Ladder.prototype.constructor = Ladder;
+Class.extend(Game.Entities['ladder'], Entity);

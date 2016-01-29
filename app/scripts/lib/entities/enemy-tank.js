@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Shooting tank
 //--------------------------------------------------------------------------
-var EnemyTank = function () {
+Game.Entities['enemy_tank'] = function () {
   Entity.apply(this, arguments);
   this.family = 'enemies';
   this.solid = true;
@@ -54,5 +54,4 @@ var EnemyTank = function () {
     }
   }
 };
-EnemyTank.prototype = Entity.prototype;
-EnemyTank.prototype.constructor = EnemyTank;
+Class.extend(Game.Entities['enemy_tank'], Entity);

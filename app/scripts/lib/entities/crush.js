@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Crush
 //--------------------------------------------------------------------------
-var Crush = function () {
+Game.Entities['crush'] = function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.animation = {x: 0, y: 0, w: 16, h: 16, frames: 10, fps: 5, loop: true};
@@ -27,5 +27,5 @@ var Crush = function () {
     }
   }
 };
-Crush.prototype = Entity.prototype;
-Crush.prototype.constructor = Crush;
+Class.extend(Game.Entities['crush'], Entity);
+

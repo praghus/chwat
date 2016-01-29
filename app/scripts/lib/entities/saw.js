@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Saw
 //--------------------------------------------------------------------------
-var Saw = function () {
+Game.Entities['saw'] = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.maxSpeed = 1;
@@ -30,5 +30,4 @@ var Saw = function () {
     }
   }
 };
-Saw.prototype = Entity.prototype;
-Saw.prototype.constructor = Saw;
+Class.extend(Game.Entities['saw'], Entity);

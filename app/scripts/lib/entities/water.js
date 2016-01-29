@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Water
 //--------------------------------------------------------------------------
-var Water = function () {
+Game.Entities['water'] = function () {
   Entity.apply(this, arguments);
   this.animation = {x: 0, y: 0, w: map.spriteSize, h: map.spriteSize, frames: 7, fps: 20, loop: true};
   this.fall = false;
@@ -46,5 +46,4 @@ var Water = function () {
     }
   };
 };
-Water.prototype = Entity.prototype;
-Water.prototype.constructor = Water;
+Class.extend(Game.Entities['water'], Entity);

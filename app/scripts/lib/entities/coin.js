@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Coin
 //--------------------------------------------------------------------------
-var Coin = function () {
+Game.Entities['coin'] = function () {
   Entity.apply(this, arguments);
   this.family = 'items';
   this.type = 'coin';
@@ -14,7 +14,7 @@ var Coin = function () {
       this.dead = true;
       player.coinCollect += 1;
     }
-  }
+  };
   this.update = function () {
     if (this.onScreen()) {
       this.animate();
@@ -23,5 +23,5 @@ var Coin = function () {
     }
   }
 };
-Coin.prototype = Entity.prototype;
-Coin.prototype.constructor = Coin;
+Class.extend(Game.Entities['coin'], Entity);
+

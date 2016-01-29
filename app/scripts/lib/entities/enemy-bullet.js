@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Enemy bullet
 //--------------------------------------------------------------------------
-var EnemyBullet = function (obj, dir) {
+Game.Entities['enemy_bullet'] = function (obj, dir) {
   Entity.apply(this, arguments);
   this.family = 'bullets';
   this.type = 'enemy_bullet';
@@ -42,5 +42,4 @@ var EnemyBullet = function (obj, dir) {
     }
   }
 };
-EnemyBullet.prototype = Entity.prototype;
-EnemyBullet.prototype.constructor = EnemyBullet;
+Class.extend(Game.Entities['enemy_bullet'], Entity);

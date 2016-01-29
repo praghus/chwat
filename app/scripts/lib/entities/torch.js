@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Torch
 //--------------------------------------------------------------------------
-var Torch = function () {
+Game.Entities['torch'] = function () {
   Entity.apply(this, arguments);
   this.draw = function (ctx, image) {
     ctx.globalCompositeOperation = 'lighter';
@@ -11,5 +11,4 @@ var Torch = function () {
     ctx.globalCompositeOperation = 'source-over';
   }
 };
-Torch.prototype = Entity.prototype;
-Torch.prototype.constructor = Torch;
+Class.extend(Game.Entities['torch'], Entity);

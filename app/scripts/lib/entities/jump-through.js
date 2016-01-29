@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Jump through
 //--------------------------------------------------------------------------
-var JumpThrough = function () {
+Game.Entities['jump_through'] = function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.visible = false;
@@ -19,5 +19,4 @@ var JumpThrough = function () {
     }
   }
 };
-JumpThrough.prototype = Entity.prototype;
-JumpThrough.prototype.constructor = JumpThrough;
+Class.extend(Game.Entities['jump_through'], Entity);

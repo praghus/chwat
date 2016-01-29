@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Player stone
 //--------------------------------------------------------------------------
-var PlayerStone = function (obj, dir) {
+Game.Entities['player_stone'] = function (obj) {
   Entity.apply(this, arguments);
   this.family = 'bullets';
   this.type = 'grenade';
@@ -11,7 +11,6 @@ var PlayerStone = function (obj, dir) {
   this.speed = player.throwSpeed + Math.abs(player.force.x);
   this.maxSpeed = 10;
   this.force = {x: 0, y: -3};
-  this.direction = dir;
   this.collide = function (element) {
     if (element.solid) {
       this.dead = true;
@@ -36,5 +35,5 @@ var PlayerStone = function (obj, dir) {
     }
   }
 };
-PlayerStone.prototype = Entity.prototype;
-PlayerStone.prototype.constructor = PlayerStone;
+Class.extend(Game.Entities['player_stone'], Entity);
+

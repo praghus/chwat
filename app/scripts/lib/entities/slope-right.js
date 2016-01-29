@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Slope right
 //--------------------------------------------------------------------------
-var SlopeRight = function () {
+Game.Entities['slope_right'] = function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.visible = false;
@@ -22,5 +22,4 @@ var SlopeRight = function () {
     }
   }
 };
-SlopeRight.prototype = Entity.prototype;
-SlopeRight.prototype.constructor = SlopeRight;
+Class.extend(Game.Entities['slope_right'], Entity);

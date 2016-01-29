@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Crusher
 //--------------------------------------------------------------------------
-var Crusher = function () {
+Game.Entities['crusher'] = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.damage = 1000;
@@ -40,5 +40,4 @@ var Crusher = function () {
     }
   }
 };
-Crusher.prototype = Entity.prototype;
-Crusher.prototype.constructor = Crusher;
+Class.extend(Game.Entities['crusher'], Entity);

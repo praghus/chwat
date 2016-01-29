@@ -12,7 +12,7 @@ var Entity = Class.create({
     this.properties = obj.properties;
     this.family = 'elements';
     this.force = {x: 0, y: 0};
-    this.direction = 0;
+    this.direction = obj.direction || 0;
     this.speed = 0;
     this.maxSpeed = 0;
     this.energy = 0;
@@ -109,7 +109,7 @@ var Entity = Class.create({
         //Sound.dead1.play();
         Explosion1(this.x, this.y);
         this.dead = true;
-        elements.add(new Coin({x: this.x + 8, y: this.y}));
+        elements.add('coin', {x: this.x + 8, y: this.y});
       }
     }
   },

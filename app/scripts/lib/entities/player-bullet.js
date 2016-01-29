@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Player bullet
 //--------------------------------------------------------------------------
-var PlayerBullet = function (obj, dir) {
+Game.Entities['player_bullet'] = function (obj) {
   Entity.apply(this, arguments);
   this.family = 'bullets';
   this.type = 'player_bullet';
@@ -9,7 +9,7 @@ var PlayerBullet = function (obj, dir) {
   this.height = 8;
   this.speed = 10;
   this.damage = 20;
-  this.direction = dir;
+  //this.direction = ;
   this.color = '#666666';
   this.collide = function (element) {
     if (element.solid) {
@@ -40,5 +40,4 @@ var PlayerBullet = function (obj, dir) {
     }
   }
 };
-PlayerBullet.prototype = Entity.prototype;
-PlayerBullet.prototype.constructor = PlayerBullet;
+Class.extend(Game.Entities['player_bullet'], Entity);

@@ -25,84 +25,24 @@ var Elements = Class.create({
     }
   },
   //------------------------------------------------------------------------
-  add: function (obj) {
-    this.all.push(obj);
+  add: function (type, params) {
+    if (Game.Entities[type]) {
+      this.all.push(new Game.Entities[type](params));
+    }
   },
   //------------------------------------------------------------------------
   createElements: function (source) {
     for (var i = 0; i < source.length; i++) {
       var obj = source[i];
-      switch (obj.type) {
-        case 'player':
-          player = new Player(obj);
-          break;
-        case 'coin':
-          this.all.push(new Coin(obj));
-          break;
-        case 'enemy_blob':
-          this.all.push(new EnemyBlob(obj));
-          break;
-        case 'enemy_tank':
-          this.all.push(new EnemyTank(obj));
-          break;
-        case 'phantom':
-          this.all.push(new EnemyPhantom(obj));
-          break;
-        case 'gloom':
-          this.all.push(new EnemyGloom(obj));
-          break;
-        case 'ladder':
-          this.all.push(new Ladder(obj));
-          break;
-        case 'item':
-          this.all.push(new Item(obj));
-          break;
-        case 'slope_left':
-          this.all.push(new SlopeLeft(obj));
-          break;
-        case 'slope_right':
-          this.all.push(new SlopeRight(obj));
-          break;
-        case 'jump_through':
-          this.all.push(new JumpThrough(obj));
-          break;
-        case 'paddle':
-          this.all.push(new Paddle(obj));
-          break;
-        case 'rock':
-          this.all.push(new Rock(obj));
-          break;
-        case 'crush':
-          this.all.push(new Crush(obj));
-          break;
-        case 'crusher':
-          this.all.push(new Crusher(obj));
-          break;
-        case 'trigger':
-          this.all.push(new Trigger(obj));
-          break;
-        case 'grenades':
-          this.all.push(new GrenadesTrap(obj));
-          break;
-        case 'spear':
-          this.all.push(new Spear(obj));
-          break;
-        case 'saw':
-          this.all.push(new Saw(obj));
-          break;
-        case 'dark_mask':
-          this.all.push(new Dark(obj));
-          map.addMask(obj);
-          break;
-        case 'water':
-          this.all.push(new Water(obj));
-          break;
-        case 'lava':
-          this.all.push(new Lava(obj));
-          break;
-        case 'torch':
-          this.lights.push(new Torch(obj));
-          break;
+      if (Game.Entities[obj.type]) {
+        switch (obj.type) {
+          case 'player':
+            player = new Game.Entities[obj.type](obj);
+            break;
+          default:
+            this.add(obj.type, obj);
+            break;
+        }
       }
     }
   }

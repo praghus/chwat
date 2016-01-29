@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Grenade
 //--------------------------------------------------------------------------
-var Grenade = function (obj) {
+Game.Entities['grenade'] = function (obj) {
   Entity.apply(this, arguments);
   this.family = 'bullets';
   this.type = 'stone';
@@ -17,7 +17,7 @@ var Grenade = function (obj) {
       this.dead = true;
       GrenadeExplosion(this.x, this.y);
     }
-  }
+  };
   this.update = function () {
     if (!this.dead) {
       this.force.y += map.gravity;
@@ -36,5 +36,4 @@ var Grenade = function (obj) {
     }
   }
 };
-Grenade.prototype = Entity.prototype;
-Grenade.prototype.constructor = Grenade;
+Class.extend(Game.Entities['grenade'], Entity);

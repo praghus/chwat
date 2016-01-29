@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Rock
 //--------------------------------------------------------------------------
-var Rock = function () {
+Game.Entities['rock'] = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.speed = 0.2;
@@ -38,5 +38,4 @@ var Rock = function () {
     }
   }
 };
-Rock.prototype = Entity.prototype;
-Rock.prototype.constructor = Rock;
+Class.extend(Game.Entities['rock'], Entity);

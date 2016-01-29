@@ -1,4 +1,4 @@
-var BigExplosion = function () {
+Game.Entities['explosion2'] = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.type = 'explosion2';
@@ -19,5 +19,4 @@ var BigExplosion = function () {
     if (this.animFrame === this.animation.frames - 1) this.dead = true;
   }
 };
-BigExplosion.prototype = Entity.prototype;
-BigExplosion.prototype.constructor = BigExplosion;
+Class.extend(Game.Entities['explosion2'], Entity);
