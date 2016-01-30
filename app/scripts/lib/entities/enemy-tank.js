@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Shooting tank
 //--------------------------------------------------------------------------
-Game.Entities['enemy_tank'] = function () {
+Game.addEntity('enemy_tank', function () {
   Entity.apply(this, arguments);
   this.family = 'enemies';
   this.solid = true;
@@ -16,11 +16,9 @@ Game.Entities['enemy_tank'] = function () {
   this.animation = {x: 0, y: 0, w: 32, h: 32, frames: 2, fps: 4, loop: true};
   this.damage = 30;
   this.shoot = function () {
-    elements.add(new EnemyBullet({x: this.x - 17, y: this.y + 3}, 0));
-    elements.add(new EnemyBullet({x: this.x + this.width + 1, y: this.y + 3}, 1));
-    this.shootTimeout = setTimeout(function (thisObj) {
-      thisObj.canShoot = true;
-    }, this.shootDelay, this);
+    elements.add('enemy_bullet', {x: this.x - 17, y: this.y + 3, direction: 0});
+    elements.add('enemy_bullet', {x: this.x + this.width + 1, y: this.y + 3, direction: 1});
+    this.shootTimeout = setTimeout(function () {this.canShoot = true;}.bind(this), this.shootDelay);
   };
   this.collide = function (element) {
     if (element.damage > 0 && element.family !== 'enemies')
@@ -53,5 +51,4 @@ Game.Entities['enemy_tank'] = function () {
       this.animate();
     }
   }
-};
-Class.extend(Game.Entities['enemy_tank'], Entity);
+});

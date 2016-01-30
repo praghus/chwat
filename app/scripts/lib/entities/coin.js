@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Coin
 //--------------------------------------------------------------------------
-Game.Entities['coin'] = function () {
+Game.Entities.coin = function () {
   Entity.apply(this, arguments);
   this.family = 'items';
   this.type = 'coin';
@@ -23,5 +23,5 @@ Game.Entities['coin'] = function () {
     }
   }
 };
-Class.extend(Game.Entities['coin'], Entity);
+Class.extend(Game.Entities.coin, Entity);
 

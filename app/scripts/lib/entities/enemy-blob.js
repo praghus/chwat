@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Blob
 //--------------------------------------------------------------------------
-Game.Entities['enemy_blob'] = function () {
+Game.addEntity('enemy_blob', function () {
   Entity.apply(this, arguments);
   this.family = 'enemies';
   this.maxSpeed = 1;
@@ -16,8 +16,9 @@ Game.Entities['enemy_blob'] = function () {
     LEFT: {x: 0, y: 20, w: 20, h: 20, frames: 6, fps: 10, loop: true}
   };
   this.collide = function (element) {
-    if (element.damage > 0 && element.family !== 'enemies')
+    if (element.damage > 0 && element.family !== 'enemies') {
       this.hit(element.damage);
+    }
   };
   this.update = function () {
     if (this.onScreen())
@@ -41,9 +42,7 @@ Game.Entities['enemy_blob'] = function () {
         else
           this.direction = !this.direction;
       }
-      Game.animate(FPS, this, this.direction == 1 ? this.animations.RIGHT : this.animations.LEFT);
-      this.animate();
+      this.animate(this.direction == 1 ? this.animations.RIGHT : this.animations.LEFT);
     }
   }
-};
-Class.extend(Game.Entities['enemy_blob'], Entity);
+});

@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Slope left
 //--------------------------------------------------------------------------
-Game.Entities['slope_left'] = function () {
+Game.Entities.slope_left = function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.visible = false;
@@ -16,10 +16,10 @@ Game.Entities['slope_left'] = function () {
       element.force.y = 0;
       element.y = expectedY;
       element.doJump = false;
-      if (element.type === 'player' && player.input.up) element.force.y = -6;
+      if (element.type === 'player' && Game.input.up) element.force.y = -6;
     } else if (element.force.y === 0) {
       element.force.y += 1;
     }
   }
 };
-Class.extend(Game.Entities['slope_left'], Entity);
+Class.extend(Game.Entities.slope_left, Entity);

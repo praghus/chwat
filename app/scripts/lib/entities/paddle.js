@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Paddle
 //--------------------------------------------------------------------------
-Game.Entities['paddle'] = function () {
+Game.Entities.paddle = function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.speed = 1;
@@ -18,7 +18,7 @@ Game.Entities['paddle'] = function () {
   };
   this.collide = function (element) {
     if (element.force.y > 0 && element.y + element.height < this.y + this.height) {
-      if (!player.input.up && !player.input.down && !element.fall) {
+      if (!Game.input.up && !Game.input.down && !element.fall) {
         element.y = (this.y ) - element.height;
         element.force.y = this.y - element.y - element.height;
       }
@@ -27,7 +27,7 @@ Game.Entities['paddle'] = function () {
       if (element.doJump) element.doJump = false;
       if (element.type === 'player') {
         camera.x = -(player.x - (ResolutionX / 2));
-        if (player.input.up) {
+        if (Game.input.up) {
           player.force.y = -6;
           player.doJump = true;
         }
@@ -49,4 +49,4 @@ Game.Entities['paddle'] = function () {
     }
   }
 };
-Class.extend(Game.Entities['paddle'], Entity);
+Class.extend(Game.Entities.paddle, Entity);

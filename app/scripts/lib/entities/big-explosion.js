@@ -1,4 +1,4 @@
-Game.Entities['explosion2'] = function () {
+Game.Entities.explosion2 = function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.type = 'explosion2';
@@ -19,4 +19,4 @@ Game.Entities['explosion2'] = function () {
     if (this.animFrame === this.animation.frames - 1) this.dead = true;
   }
 };
-Class.extend(Game.Entities['explosion2'], Entity);
+Class.extend(Game.Entities.explosion2, Entity);

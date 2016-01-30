@@ -1,12 +1,12 @@
 //--------------------------------------------------------------------------
 // Trigger
 //--------------------------------------------------------------------------
-Game.Entities['trigger'] = function () {
+Game.Entities.trigger = function () {
   Entity.apply(this, arguments);
   this.visible = false;
   this.update = function () {
     if (this.onScreen()) {
-      if (Game.Math.overlap(player, this) && !this.dead && player.input.action) {
+      if (Game.Math.overlap(player, this) && !this.dead && Game.input.action) {
         if (this.properties.activator === 'player' || player.canUse(this.properties.activator))
           eval(this.properties.action);
         else
@@ -15,4 +15,4 @@ Game.Entities['trigger'] = function () {
     }
   }
 };
-Class.extend(Game.Entities['trigger'], Entity);
+Class.extend(Game.Entities.trigger, Entity);

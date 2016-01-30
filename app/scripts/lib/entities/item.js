@@ -5,9 +5,9 @@ Game.Entities['item'] = function () {
   Entity.apply(this, arguments);
   this.animFrame = parseInt(this.properties.frame);
   this.collide = function (element) {
-    if (element.type === 'player' && !this.dead && player.input.action) {
+    if (element.type === 'player' && !this.dead && Game.input.action) {
       player.get(this);
-      player.input.action = false;
+      Game.input.action = false;
       this.dead = true;
     }
     if (element.family === 'bullets' && this.properties.id === 'tnt') {

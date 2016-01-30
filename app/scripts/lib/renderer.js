@@ -28,13 +28,13 @@ var Renderer = Class.create({
   },
   //------------------------------------------------------------------------
   render: function (dt) {
-    //this.ctx.mozImageSmoothingEnabled = false;
-    //this.ctx.webkitImageSmoothingEnabled = false;
-    //this.ctx.msImageSmoothingEnabled = false;
+    this.ctx.mozImageSmoothingEnabled = false;
+    this.ctx.webkitImageSmoothingEnabled = false;
+    this.ctx.msImageSmoothingEnabled = false;
     this.ctx.imageSmoothingEnabled = false;
     this.lightmask = [];
     this.ctx.save();
-    this.ctx.scale(this.scaleX, this.scaleY);
+    this.ctx.scale(ScaleX, ScaleY);
     this.ctx.clearRect(0, 0, ResolutionX, ResolutionY);
     this.renderBack(this.ctx);
     this.renderGround(this.ctx);

@@ -1,7 +1,7 @@
 //==========================================================================
 // PLAYER
 //--------------------------------------------------------------------------
-Game.Entities.player = function () {
+Game.addEntity('player', function () {
   Entity.apply(this, arguments);
   this.godMode = true;
   this.canShoot = true;
@@ -35,12 +35,7 @@ Game.Entities.player = function () {
     DEAD_LEFT: {x: 480, y: 128, w: 32, h: 64, frames: 1, fps: 15, loop: false}
   };
   this.animation = this.animations.STAND_RIGHT;
-  this.input = {
-    left: false, right: false, up: false, down: false,
-    jump: false, shoot: false, action: false, throw: false,
-    actionAvailable: true
-  };
-  player = this;
+
   //----------------------------------------------------------------------
   this.draw = function (ctx, image) {
     if ((camera.underground || player.inDark > 0) && !renderer.dynamicLights) {
@@ -62,85 +57,79 @@ Game.Entities.player = function () {
   };
   //----------------------------------------------------------------------
   this.update = function () {
-    if (this.godMode) this.kill = false;
-    if (this.kill) {
-      this.dead = true;
-      player.kill = false;
-      this.force.x = 0;
-      setTimeout(function () {
-        player.dead = false;
-        player.x = player.savedPos.x;
-        player.y = player.savedPos.y;
-        player.energy = player.maxEnergy;
-        camera.center();
-      }, 1000);
-    } else {
-      if (!this.dead) {
-        if (this.input.left) {
-          this.force.x -= this.speed;
-          this.direction = 0;
-        }
-        if (this.input.right) {
-          this.force.x += this.speed;
-          this.direction = 1;
-        }
-        if (this.canJump && this.input.up) {
-          this.doJump = true;
-          this.force.y = -7;
-          this.canJump = false;
-          //Sound.jump.play();
-        }
-        if (this.input.down && !this.fall && this.force.y == 0) {
-          this.fall = true;
-          this.fallTimeout = setTimeout(function () {this.fall = false;}.bind(this), 400);
-        }
-        if (this.input.shoot && this.canShoot) {
-          this.shoot();
-        }
-        if (this.input.throw && this.canShoot && this.throwSpeed < this.throwMaxSpeed) {
-          this.throwSpeed += 0.5;
-        }
-        if (this.throwSpeed > 0 && !this.input.throw) {
-          this.throw();
-        }
-        if (this.input.action) {
-          this.get(null);
-          this.input.action = false;
-        }
-        // slow down
-        if (!this.input.left && !this.input.right && this.force.x != 0) {
-          this.force.x += this.direction == 1 ? -this.speed : this.speed;
-          if (this.direction == 0 && this.force.x > 0 ||
-            this.direction == 1 && this.force.x < 0)
-            this.force.x = 0;
-        }
+    //if (this.godMode) this.kill = false;
+
+    if (!this.dead) {
+      if (Game.input.left) {
+        this.force.x -= this.speed;
+        this.direction = 0;
       }
-      this.force.y += map.gravity;
-      this.move();
-      this.animate();
-      // recover energy while standing
-      if (this.force.x == 0 && this.force.y == 0 && this.energy < this.maxEnergy)
-        this.energy += 0.01;
+      if (Game.input.right) {
+        this.force.x += this.speed;
+        this.direction = 1;
+      }
+      if (this.canJump && Game.input.up) {
+        this.doJump = true;
+        this.force.y = -7;
+        this.canJump = false;
+        //Sound.jump.play();
+      }
+      if (Game.input.down && !this.fall && this.force.y == 0) {
+        this.fall = true;
+        this.fallTimeout = setTimeout(function () {this.fall = false;}.bind(this), 400);
+      }
+      if (Game.input.shoot && this.canShoot) {
+        this.shoot();
+      }
+      if (Game.input.throw && this.canShoot && this.throwSpeed < this.throwMaxSpeed) {
+        this.throwSpeed += 0.5;
+      }
+      if (this.throwSpeed > 0 && !Game.input.throw) {
+        this.throw();
+      }
+      if (Game.input.action) {
+        this.get(null);
+        Game.input.action = false;
+      }
+      // slow down
+      if (!Game.input.left && !Game.input.right && this.force.x != 0) {
+        this.force.x += this.direction == 1 ? -this.speed : this.speed;
+        if (this.direction == 0 && this.force.x > 0 ||
+          this.direction == 1 && this.force.x < 0)
+          this.force.x = 0;
+      }
     }
-  };
-  //----------------------------------------------------------------------
-  this.animate = function () {
-    if (this.dead)
-      Game.animate(FPS, this, this.direction == 1 ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
+    this.force.y += map.gravity;
+
+
+    this.move();
+    if (this.dead) {
+      this.animate(this.direction == 1 ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
+    }
     else if (this.doJump || this.fall) {
-      if (this.force.y < 0) Game.animate(FPS, this, this.direction == 1 ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
-      else Game.animate(FPS, this, this.direction == 1 ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
-    } else if (this.force.x != 0)
-      Game.animate(FPS, this, this.direction == 1 ? this.animations.RIGHT : this.animations.LEFT);
-    else
-      Game.animate(FPS, this, this.direction == 1 ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
+      if (this.force.y < 0) {
+        this.animate(this.direction == 1 ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
+      }
+      else {
+        this.animate(this.direction == 1 ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
+      }
+    } else if (this.force.x != 0) {
+      this.animate(this.direction == 1 ? this.animations.RIGHT : this.animations.LEFT);
+    }
+    else {
+      this.animate(this.direction == 1 ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
+    }
+    // recover energy while standing
+    /*if (this.force.x == 0 && this.force.y == 0 && this.energy < this.maxEnergy)
+      this.energy += 0.01;*/
+
   };
   //----------------------------------------------------------------------
   this.hit = function (s) {
     if (this.godMode || !this.canHurt) return;
     this.energy -= s;
     this.force.y -= 3;
-    player.canHurt = false;
+    this.canHurt = false;
     if (this.energy <= 0 && !this.dead) this.kill = true;
     this.hurtTimeout = setTimeout(function () {this.canHurt = true;}.bind(this), 1000);
   };
@@ -182,9 +171,9 @@ Game.Entities.player = function () {
     this.force.x = 0;
     this.animOffset = 64;
     elements.add('player_bullet',{
-      x: player.direction == 1 ? this.x + player.width : this.x - 12,
+      x: this.direction == 1 ? this.x + this.width : this.x - 12,
       y: this.y + 21,
-      direction: player.direction
+      direction: this.direction
     });
     this.shootTimeout = setTimeout(function () {
       this.canShoot = true;
@@ -197,9 +186,9 @@ Game.Entities.player = function () {
     this.canShoot = false;
     this.animOffset = 64;
     elements.add('player_stone', {
-      x: player.direction == 1 ? this.x + player.width : this.x,
+      x: this.direction == 1 ? this.x + this.width : this.x,
       y: this.y + 18,
-      direction: player.direction
+      direction: this.direction
     });
     this.throwSpeed = 0;
     this.shootTimeout = setTimeout(function () {
@@ -211,5 +200,4 @@ Game.Entities.player = function () {
   this.exterminate = function () {
     this.kill = true;
   }
-};
-Class.extend(Game.Entities.player, Entity);
+});

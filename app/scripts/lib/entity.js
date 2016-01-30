@@ -118,8 +118,22 @@ var Entity = Class.create({
     return false;
   },
   //----------------------------------------------------------------------
-  animate: function () {
-    Game.animate(FPS, this, this.animation);
+  animate: function (animation) {
+    var entity = this;
+    animation = animation || entity.animation;
+    entity.animFrame = entity.animFrame || 0;
+    entity.animCount = entity.animCount || 0;
+    if (entity.animation != animation) {
+      entity.animation = animation;
+      entity.animFrame = 0;
+      entity.animCount = 0;
+    }
+    else if (++(entity.animCount) == Math.round(FPS / animation.fps)) {
+      if (entity.animFrame <= entity.animation.frames && animation.loop) {
+        entity.animFrame = Game.Math.normalize(entity.animFrame + 1, 0, entity.animation.frames);
+      }
+      entity.animCount = 0;
+    }
   },
   //----------------------------------------------------------------------
   move: function () {

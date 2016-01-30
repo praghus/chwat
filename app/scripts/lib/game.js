@@ -51,6 +51,10 @@ var Dom = {
 // GAME LOOP
 //-------------------------------------------------------------------------
 var Game = {
+  input: {
+    left: false, right: false, up: false, down: false,
+    jump: false, shoot: false, action: false, throw: false
+  },
   run: function (options) {
     var now,
         dt = 0,
@@ -75,19 +79,19 @@ var Game = {
     }
     frame();
   },
-  animate: function (fps, entity, animation) {
-    animation = animation || entity.animation;
-    entity.animFrame = entity.animFrame || 0;
-    entity.animCount = entity.animCount || 0;
-    if (entity.animation != animation) {
-      entity.animation = animation;
-      entity.animFrame = 0;
-      entity.animCount = 0;
-    }
-    else if (++(entity.animCount) == Math.round(fps / animation.fps)) {
-      if (entity.animFrame <= entity.animation.frames && animation.loop)
-        entity.animFrame = Game.Math.normalize(entity.animFrame + 1, 0, entity.animation.frames);
-      entity.animCount = 0;
+  addEntity: function(id, obj){
+    Game.Entities[id] = obj;
+    Class.extend(Game.Entities[id], Entity);
+  },
+  onkey: function (ev, key, pressed) {
+    switch(key) {
+      case KEY.LEFT:   this.input.left   = pressed; ev.preventDefault(); return false;
+      case KEY.RIGHT:  this.input.right  = pressed; ev.preventDefault(); return false;
+      case KEY.THROW:  this.input.throw  = pressed; ev.preventDefault(); return false;
+      case KEY.SHOOT:  this.input.shoot  = pressed; ev.preventDefault(); return false;
+      case KEY.SPACE:
+      case KEY.UP:     this.input.up     = pressed; ev.preventDefault(); return false;
+      case KEY.DOWN:   this.input.down   = pressed; ev.preventDefault(); return false;
     }
   }
 };
@@ -97,11 +101,15 @@ Game.Entities = {};
 //-------------------------------------------------------------------------
 Game.Load = {
   progress: function(ctx, perc){
-    ctx.imageSmoothingEnabled = false;
     ctx.save();
-    ctx.fillStyle = 'black';
+    ctx.scale(ScaleX, ScaleY);
     ctx.clearRect(0, 0, ResolutionX, ResolutionY);
-    ctx.fillRect(0, (ResolutionY / 2) - 10, ResolutionX*(perc/100), 5);
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(((ResolutionX - 100)/2)-2, (ResolutionY / 2) - 7, 104, 9);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect((ResolutionX - 100)/2, (ResolutionY / 2) - 5, 100, 5);
+    ctx.fillStyle = '#000000';
+    ctx.fillRect((ResolutionX - 100)/2, (ResolutionY / 2) - 5, 100*(perc/100), 5);
     ctx.restore();
   },
   images: function (names, callback) {

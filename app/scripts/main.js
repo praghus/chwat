@@ -1,9 +1,10 @@
 var map, elements, camera, player, renderer,
     FPS               = 60,
-    ResolutionX       = 0,
-    ResolutionY       = 0,
+    ResolutionX       = 320,
+    ResolutionY       = 180,
     Ratio             = 16 / 9,
     PixelScale        = 3,
+    ScaleX, ScaleY,
 //--------------------------------------------------------------------------
     KEY = {
       LEFT:  37,      UP:    38,      RIGHT: 39,      DOWN:   40,
@@ -35,7 +36,7 @@ var map, elements, camera, player, renderer,
 // FPSMeter
 //-------------------------------------------------------------------------
   fpsmeter = new FPSMeter({
-    decimals: 0, graph: true, theme: 'dark', position: 'absolute',
+    decimals: 0, graph: true, theme: 'dark', position: 'fixed',
     top: 'auto', left: 'auto', bottom: '5px', right: '5px'
   }),
 //--------------------------------------------------------------------------
@@ -112,19 +113,7 @@ var map, elements, camera, player, renderer,
     renderer.render(dt);
   }
   //--------------------------------------------------------------------------
-  function onkey(ev, key, pressed) {
-    switch(key) {
-      case KEY.LEFT:   player.input.left   = pressed; ev.preventDefault(); return false;
-      case KEY.RIGHT:  player.input.right  = pressed; ev.preventDefault(); return false;
-      case KEY.THROW:  player.input.throw  = pressed; ev.preventDefault(); return false;
-      case KEY.SHOOT:  player.input.shoot  = pressed; ev.preventDefault(); return false;
-      case KEY.SPACE:
-      case KEY.UP:     player.input.up     = pressed; ev.preventDefault(); return false;
-      case KEY.DOWN:   player.input.down   = pressed; ev.preventDefault(); return false;
-    }
-  }
-  //--------------------------------------------------------------------------
-  function resizeGame() {
+  function resizeViewport() {
     var gameArea  = document.getElementById('game'),
         canvas    = document.getElementById('canvas'),
         newWidth  = window.innerWidth,//  < MaxWidth  ? window.innerWidth  : MaxWidth,
@@ -138,23 +127,25 @@ var map, elements, camera, player, renderer,
     gameArea.style.transform = 'none';
     if (newRatio > Ratio) {
       newWidth = newHeight * Ratio;
-      gameArea.style.height = newHeight + 'px';
-      gameArea.style.width  = newWidth + 'px';
     } else {
       newHeight = newWidth / Ratio;
-      gameArea.style.width  = newWidth + 'px';
-      gameArea.style.height = newHeight + 'px';
     }
-    gameArea.style.marginTop  = (-newHeight / 2) + 'px';
+    gameArea.style.width = newWidth + 'px';
+    gameArea.style.height = newHeight + 'px';
+    gameArea.style.marginTop = (-newHeight / 2) + 'px';
     gameArea.style.marginLeft = (-newWidth / 2) + 'px';
-    renderer.scaleX = Math.round(newWidth  / ResolutionX);
-    renderer.scaleY = Math.round(newHeight / ResolutionY);
-    canvas.width    = renderer.scaleX * ResolutionX;
-    canvas.height   = renderer.scaleY * ResolutionY;
+    ScaleX = Math.round(newWidth  / ResolutionX);
+    ScaleY = Math.round(newHeight / ResolutionY);
+    canvas.width = ScaleX * ResolutionX;
+    canvas.height = ScaleY * ResolutionY;
+  }
+  function resizeGame(){
+    resizeViewport();
     camera.center();
   }
 //--------------------------------------------------------------------------
 (function(){
+  resizeViewport();
   Game.Load.images(IMAGES, function(images) {
     Game.Load.json("assets/levels/main.json", function(level) {
       setup(images, level);
@@ -162,39 +153,51 @@ var map, elements, camera, player, renderer,
         update: update,
         render: render
       });
-      Dom.on(document, 'keydown', function(ev) { return onkey(ev, ev.keyCode, true);  }, false);
-      Dom.on(document, 'keyup',   function(ev) { return onkey(ev, ev.keyCode, false); }, false);
-      var mc = new Hammer(document.getElementById('canvas'), {});
-      mc.on("panleft", function(ev) {
-        player.input.right = false;
-        player.input.down = false;
-        player.input.left = true;
+      Dom.on(document, 'keydown', function(ev) { return Game.onkey(ev, ev.keyCode, true);  }, false);
+      Dom.on(document, 'keyup',   function(ev) { return Game.onkey(ev, ev.keyCode, false); }, false);
+
+      var leftPad = new Hammer(document.getElementById('trackpad-left'), {})
+        , rightPad = new Hammer(document.getElementById('trackpad-right'), {});
+
+      leftPad.get('pan').set({threshold: 3});
+      rightPad.get('tap').set({pointers: 1,threshold: 5, time: 150});
+      //rightPad.get('press').set({event: 'press',pointers: 1,threshold: 5,time: 150});
+
+      leftPad.on('pan', function(ev){
+        console.log('l', ev);
+        switch(ev.direction){
+          case 2: Game.input.left = !Game.input.right; break;
+          case 4: Game.input.right = !Game.input.left; break;
+          case 8:
+            if(ev.distance > 100) {
+              Game.input.up = true;
+              setTimeout(function(){Game.input.up=false;}, 200);
+            }
+            break;
+          case 16:
+              if(ev.distance > 100) {
+                setTimeout(function(){Game.input.down=false;}, 200);
+                Game.input.down = true;
+              }
+            break;
+        }
       });
-      mc.on("panright", function(ev) {
-        player.input.left = false;
-        player.input.down = false;
-        player.input.right = true;
+      leftPad.on('panend', function(ev){
+        Game.input.left = false;
+        Game.input.right = false;
+        Game.input.up = false;
+        Game.input.down = false;
       });
-      mc.on("pandown", function(ev) {
-        player.input.left = false;
-        player.input.right = false;
-        player.input.down = true;
-      });
-      mc.on("panend", function(ev) {
-        //console.log(ev);
-        player.input.left = false;
-        player.input.right = false;
-        player.input.up = false;
-        player.input.down = false;
-      });
-      mc.on("tap", function(ev) {
-        console.log(ev);
-        player.input.up = true;
-        setTimeout(function(){player.input.up=false;},200)
+
+      rightPad.on('tap', function(ev){
+        console.log('r', ev.type);
+        Game.input.shoot = true;
+        setTimeout(function(){Game.input.shoot=false;}, 200);
       });
 
       window.addEventListener('resize', resizeGame, false);
       window.addEventListener('orientationchange', resizeGame, false);
+      document.ontouchmove = function(event){event.preventDefault();};
       resizeGame();
     });
   });

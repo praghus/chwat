@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Enemy bullet
 //--------------------------------------------------------------------------
-Game.Entities['enemy_bullet'] = function (obj, dir) {
+Game.addEntity('enemy_bullet', function (obj) {
   Entity.apply(this, arguments);
   this.family = 'bullets';
   this.type = 'enemy_bullet';
@@ -9,7 +9,6 @@ Game.Entities['enemy_bullet'] = function (obj, dir) {
   this.height = 8;
   this.damage = 50;
   this.speed = 5;
-  this.direction = dir;
   this.collide = function (element) {
     if (element.solid) {
       this.dead = true;
@@ -41,5 +40,5 @@ Game.Entities['enemy_bullet'] = function (obj, dir) {
         ShootExplosion(this.x, this.y, '#EEEEFF');
     }
   }
-};
-Class.extend(Game.Entities['enemy_bullet'], Entity);
+});
+

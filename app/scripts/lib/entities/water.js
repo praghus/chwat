@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Water
 //--------------------------------------------------------------------------
-Game.Entities['water'] = function () {
+Game.Entities.water = function () {
   Entity.apply(this, arguments);
   this.animation = {x: 0, y: 0, w: map.spriteSize, h: map.spriteSize, frames: 7, fps: 20, loop: true};
   this.fall = false;
@@ -39,11 +39,11 @@ Game.Entities['water'] = function () {
         this.wave += this.direction == 1 ? 0.5 : -0.5;
       if (this.wave > 2 || this.wave < -2) this.direction = !this.direction;
       if (Game.Math.overlap(player, this)) {
-        if (!player.input.up) player.force.y = +0.5;
+        if (!Game.input.up) player.force.y = +0.5;
         else if (player.force.y > 0 && player.y >= this.y - 16) player.force.y = -1.5;
         //if(player.y > this.y) player.kill = true;
       }
     }
   };
 };
-Class.extend(Game.Entities['water'], Entity);
+Class.extend(Game.Entities.water, Entity);
