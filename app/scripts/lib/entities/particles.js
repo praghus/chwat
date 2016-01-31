@@ -32,8 +32,8 @@ Game.addEntity('particles', function () {
   this.update = function () {
     if (!this.dead) {
       this.force.y += map.gravity;
-      var m = this.move();
-      if (!m.y || !m.x) {
+      this.move();
+      if (this.y !== this.expectedY || this.x !== this.expectedX) {
         this.force.y *= -0.8;
         this.force.x *= 0.9;
       }

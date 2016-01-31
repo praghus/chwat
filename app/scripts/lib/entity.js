@@ -10,11 +10,11 @@ var Entity = Class.create({
     this.height = obj.height;
     this.type = obj.type;
     this.properties = obj.properties;
+    this.direction = obj.direction;
     this.family = 'elements';
     this.force = {x: 0, y: 0};
-    this.direction = obj.direction || 0;
     this.speed = 0;
-    this.maxSpeed = 0;
+    this.maxSpeed = 1;
     this.energy = 0;
     this.maxEnergy = 0;
     this.doJump = false;
@@ -37,6 +37,8 @@ var Entity = Class.create({
       new V(this.width, this.height),
       new V(0, this.height)
     ];
+
+    //Dom.on(this, 'click', function(ev) { console.log(this);  }, false);
   },
   //----------------------------------------------------------------------
   draw: function (ctx, image) {
@@ -151,13 +153,15 @@ var Entity = Class.create({
     if (this.force.x < -this.maxSpeed) {
       this.force.x = -this.maxSpeed;
     }
-    var expectedX = this.x + this.force.x,
-        expectedY = this.y + this.force.y,
-        PX = Math.floor(expectedX / map.spriteSize),
-        PY = Math.floor(expectedY / map.spriteSize),
-        PW = Math.floor((expectedX + this.width) / map.spriteSize),
-        PH = Math.floor((expectedY + this.height) / map.spriteSize),
-        nearMatrix = [], hole = false;
+
+    this.expectedX = this.x + this.force.x;
+    this.expectedY = this.y + this.force.y;
+
+    var PX = Math.floor(this.expectedX / map.spriteSize),
+        PY = Math.floor(this.expectedY / map.spriteSize),
+        PW = Math.floor((this.expectedX + this.width) / map.spriteSize),
+        PH = Math.floor((this.expectedY + this.height) / map.spriteSize),
+        nearMatrix = [];
 
     for (var x = PX; x <= PW; x++){
       for (var y = PY; y <= PH; y++){
@@ -191,19 +195,10 @@ var Entity = Class.create({
       }
     }
     this.y += this.force.y;
-    this.onFloor = expectedY > this.y;
-    if (this.onFloor) {
-      this.force.y *= -0.8;
-      this.doJump = false;
-      this.fall = false;
-      this.canJump = true;
-    }
-    if (expectedY < this.y) {
-      this.doJump = false;
-    }
-    if ((this.direction === 0 && !map.isSolid(PX, PH)) || (this.direction === 1 && !map.isSolid(PW, PH))) {
-      hole = true;
-    }
-    return {x: expectedX === this.x, y: expectedY === this.y, hole: hole};
+    this.onFloor = this.expectedY > this.y;
+    this.onLeftEdge = !map.isSolid(PX, PH);
+    this.onRightEdge = !map.isSolid(PW, PH);
+
+    //return {x: expectedX === this.x, y: expectedY === this.y};
   }
 });

@@ -25,27 +25,38 @@ Game.addEntity('enemy_blob', function () {
     }
     if (this.awake && !this.dead) {
       this.force.y += map.gravity;
-      this.force.x += this.direction > 0 ? this.speed : -this.speed;
+      this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
       if (this.seesPlayer()) {
-        this.direction = player.x > this.x;
+        this.direction = player.x > this.x ? DIR.RIGHT : DIR.LEFT;
       }
-      var m = this.move();
+      this.move();
       if ((this.PlayerM > 1.4 && this.PlayerM < 1.5) || (this.PlayerM < -1.4 && this.PlayerM > -1.5)) {
         this.force.y -= 2;
       }
-      if (m.hole && this.onFloor) {
-        this.direction = !this.direction;
-        this.force.x = 0;
-      }
-      if (!m.x && this.onFloor) {
+      if (this.expectedX !== this.x && this.onFloor) {
         if (this.PlayerM > 0.2 || this.PlayerM < -0.2) {
           this.force.y -= 5;
         }
         else {
-          this.direction = !this.direction;
+          if (this.expectedX < this.x) {
+            this.direction = DIR.RIGHT;
+            this.force.x *= -0.6;
+          }
+          if (this.expectedX > this.x) {
+            this.direction = DIR.LEFT;
+            this.force.x *= -0.6;
+          }
         }
       }
-      this.animate(this.direction === 1 ? this.animations.RIGHT : this.animations.LEFT);
+      if (this.onLeftEdge) {
+        this.direction = DIR.RIGHT;
+        this.force.x *= -0.6;
+      }
+      if (this.onRightEdge) {
+        this.direction = DIR.LEFT;
+        this.force.x *= -0.6;
+      }
+      this.animate(this.direction === DIR.RIGHT ? this.animations.RIGHT : this.animations.LEFT);
     }
   };
 });

@@ -61,11 +61,11 @@ Game.addEntity('player', function () {
     if (!this.dead) {
       if (Game.input.left) {
         this.force.x -= this.speed;
-        this.direction = 0;
+        this.direction = DIR.LEFT;
       }
       if (Game.input.right) {
         this.force.x += this.speed;
-        this.direction = 1;
+        this.direction = DIR.RIGHT;
       }
       if (this.canJump && Game.input.up) {
         this.doJump = true;
@@ -92,31 +92,42 @@ Game.addEntity('player', function () {
       }
       // slow down
       if (!Game.input.left && !Game.input.right && this.force.x !== 0) {
-        this.force.x += this.direction === 1 ? -this.speed : this.speed;
-        if (this.direction === 0 && this.force.x > 0 || this.direction === 1 && this.force.x < 0) {
+        this.force.x += this.direction === DIR.RIGHT ? -this.speed : this.speed;
+        if (this.direction === DIR.LEFT && this.force.x > 0 || this.direction === DIR.RIGHT && this.force.x < 0) {
           this.force.x = 0;
         }
       }
     }
     this.force.y += map.gravity;
 
-
     this.move();
+
+
+    if (this.onFloor) {
+      this.force.y *= -0.8;
+      this.doJump = false;
+      this.fall = false;
+      this.canJump = true;
+    }
+    if (this.expectedY < this.y) {
+      this.doJump = false;
+    }
+
     if (this.dead) {
-      this.animate(this.direction === 1 ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
+      this.animate(this.direction === DIR.RIGHT ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
     }
     else if (this.doJump || this.fall) {
       if (this.force.y < 0) {
-        this.animate(this.direction === 1 ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
+        this.animate(this.direction === DIR.RIGHT ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
       }
       else {
-        this.animate(this.direction === 1 ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
+        this.animate(this.direction === DIR.RIGHT ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
       }
     } else if (this.force.x !== 0) {
-      this.animate(this.direction === 1 ? this.animations.RIGHT : this.animations.LEFT);
+      this.animate(this.direction === DIR.RIGHT ? this.animations.RIGHT : this.animations.LEFT);
     }
     else {
-      this.animate(this.direction === 1 ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
+      this.animate(this.direction === DIR.RIGHT ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
     }
     // recover energy while standing
     /*if (this.force.x == 0 && this.force.y == 0 && this.energy < this.maxEnergy)
@@ -173,7 +184,7 @@ Game.addEntity('player', function () {
     this.force.x = 0;
     this.animOffset = 64;
     elements.add('player_bullet',{
-      x: this.direction === 1 ? this.x + this.width : this.x - 12,
+      x: this.direction === DIR.RIGHT ? this.x + this.width : this.x - 12,
       y: this.y + 21,
       direction: this.direction
     });
@@ -188,7 +199,7 @@ Game.addEntity('player', function () {
     this.canShoot = false;
     this.animOffset = 64;
     elements.add('player_stone', {
-      x: this.direction === 1 ? this.x + this.width : this.x,
+      x: this.direction === DIR.RIGHT ? this.x + this.width : this.x,
       y: this.y + 18,
       direction: this.direction
     });
@@ -200,6 +211,6 @@ Game.addEntity('player', function () {
   };
   //----------------------------------------------------------------------
   this.exterminate = function () {
-    this.kill = true;
+    //this.kill = true;
   };
 });
