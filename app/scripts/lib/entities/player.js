@@ -198,7 +198,7 @@ Game.addEntity('player', function () {
   this.throw = function () {
     this.canShoot = false;
     this.animOffset = 64;
-    elements.add('player_stone', {
+    elements.add('grenade', {
       x: this.direction === DIR.RIGHT ? this.x + this.width : this.x,
       y: this.y + 18,
       direction: this.direction

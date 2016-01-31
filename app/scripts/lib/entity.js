@@ -55,6 +55,7 @@ var Entity = Class.create({
         Math.floor(this.x + camera.x), Math.floor(this.y + camera.y), this.animation.w, this.animation.h);
     }
     else {
+      console.log(image);
       ctx.drawImage(image,
         this.animFrame * this.width, 0, this.width, this.height,
         Math.floor(this.x + camera.x), Math.floor(this.y + camera.y), this.width, this.height);

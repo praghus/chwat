@@ -42,13 +42,11 @@ var FPS               = 60,
 //--------------------------------------------------------------------------
     IMAGES = [
       'player',       'tiles',        'foretiles',	  'font',
-      'shadows',      'containers',   'live',         'bg2',
-      'bg3',          'bg4',          'gloom',        'torch_light',
-      'enemy_blob',   'enemy_tank',   'skeleton',     'enemy_spider',
-      'haunebu',      'explosion1',   'explosion2',   'dark_mask',
+      'shadows',      'live',         'bg2',          'bg3',
+      'bg4',          'enemy_blob',   'enemy_tank',   'explosion1',
+      'explosion2',   'dark_mask',    'item',         'paddle',
       'enemy_bullet', 'coin',	        'player_bullet','grenade',
       'water',        'lava',         'crush',        'crusher',
-      'torch',        'item',         'paddle',       'phantom',
       'lava_glow',    'light',		    'rock',			    'spear',
       'saw',			    'player_light'
     ];
