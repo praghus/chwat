@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Saw
 //--------------------------------------------------------------------------
-Game.Entities['saw'] = function () {
+Game.addEntity('saw', function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.maxSpeed = 1;
@@ -10,12 +10,14 @@ Game.Entities['saw'] = function () {
   this.solid = true;
   this.animation = {x: 0, y: 0, w: 48, h: 48, frames: 5, fps: 10, loop: true};
   this.collide = function (element) {
-    if (element.damage > 0 && element.family !== 'enemies')
+    if (element.damage > 0 && element.family !== 'enemies') {
       this.hit(element.damage);
+    }
   };
   this.update = function () {
-    if (this.onScreen())
+    if (this.onScreen()) {
       this.awake = true;
+    }
     if (this.awake && !this.dead) {
       this.force.x += this.direction > 0 ? this.speed : -this.speed;
       var m = this.move();
@@ -28,6 +30,5 @@ Game.Entities['saw'] = function () {
       }
       this.animate();
     }
-  }
-};
-Class.extend(Game.Entities['saw'], Entity);
+  };
+});

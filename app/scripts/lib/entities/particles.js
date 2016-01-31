@@ -1,12 +1,12 @@
 //==========================================================================
 // Particles
 //--------------------------------------------------------------------------
-Game.Entities['particles'] = function () {
+Game.addEntity('particles', function () {
   Entity.apply(this, arguments);
   this.family = 'particles';
   this.life = Math.random() * 30 + 30;
   //this.speed = Math.random() * 2;
-  this.maxSpeed = 0.5 + Math.random() * 1;
+  this.maxSpeed = 0.5 + Math.random();
   this.dead = false;
   switch (this.type) {
     case 'shoot_particles':
@@ -39,7 +39,9 @@ Game.Entities['particles'] = function () {
       }
       this.life--;
     }
-    if (this.life < 0) this.dead = true;
+    if (this.life < 0) {
+      this.dead = true;
+    }
   };
   this.draw = function (ctx) {
     ctx.fillStyle = this.properties.color;
@@ -48,13 +50,12 @@ Game.Entities['particles'] = function () {
     ctx.fill();
     ctx.closePath();
   };
-};
-Class.extend(Game.Entities['particles'], Entity);
+});
 //--------------------------------------------------------------------------
 function ShootExplosion(x, y, color) {
   var particle_count = 5 + parseInt(Math.random() * 5);
   for (var i = 0; i < particle_count; i++) {
-    var r = (1 + Math.random() * 1);
+    var r = (1 + Math.random());
     elements.add('particles', {
       x: x,
       y: y,
@@ -70,7 +71,7 @@ function GrenadeExplosion(x, y) {
   elements.add('explosion',{x: x - 16, y: y - 58});
   camera.shake();
   for (var i = 0; i < particle_count; i++) {
-    var r = (1 + Math.random() * 1);
+    var r = (1 + Math.random());
     elements.add('particles', {
       x: x,
       y: y,

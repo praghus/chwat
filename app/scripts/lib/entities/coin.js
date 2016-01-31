@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Coin
 //--------------------------------------------------------------------------
-Game.Entities.coin = function () {
+Game.addEntity('coin', function () {
   Entity.apply(this, arguments);
   this.family = 'items';
   this.type = 'coin';
@@ -10,7 +10,7 @@ Game.Entities.coin = function () {
   this.animation = {x: 0, y: 0, w: 8, h: 8, frames: 10, fps: 30, loop: true};
   this.force = {x: 0, y: -5};
   this.collide = function (element) {
-    if (element.type == 'player') {
+    if (element.type === 'player') {
       this.dead = true;
       player.coinCollect += 1;
     }
@@ -21,7 +21,6 @@ Game.Entities.coin = function () {
       this.force.y += map.gravity;
       this.move();
     }
-  }
-};
-Class.extend(Game.Entities.coin, Entity);
+  };
+});
 

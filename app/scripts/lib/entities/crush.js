@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Crush
 //--------------------------------------------------------------------------
-Game.Entities['crush'] = function () {
+Game.addEntity('crush', function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.animation = {x: 0, y: 0, w: 16, h: 16, frames: 10, fps: 5, loop: true};
@@ -13,7 +13,7 @@ Game.Entities['crush'] = function () {
           width: this.width - (player.width * 2),
           height: this.height
         })) {
-        if (this.animFrame == 9) {
+        if (this.animFrame === 9) {
           for (var x = 0; x < Math.round(this.width / map.spriteSize); x++) {
             var PX = Math.round((this.x + (x * map.spriteSize)) / map.spriteSize),
               PY = Math.round(this.y / map.spriteSize);
@@ -25,7 +25,6 @@ Game.Entities['crush'] = function () {
         this.animate();
       }
     }
-  }
-};
-Class.extend(Game.Entities['crush'], Entity);
+  };
+});
 

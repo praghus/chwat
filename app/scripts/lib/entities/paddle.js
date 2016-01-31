@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Paddle
 //--------------------------------------------------------------------------
-Game.Entities.paddle = function () {
+Game.addEntity('paddle', function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.speed = 1;
@@ -24,7 +24,9 @@ Game.Entities.paddle = function () {
       }
       element.doJump = false;
       element.x += this.force.x;
-      if (element.doJump) element.doJump = false;
+      if (element.doJump) {
+        element.doJump = false;
+      }
       if (element.type === 'player') {
         camera.x = -(player.x - (ResolutionX / 2));
         if (Game.input.up) {
@@ -35,18 +37,18 @@ Game.Entities.paddle = function () {
     }
   };
   this.update = function () {
-    if (this.onScreen())
+    if (this.onScreen()) {
       this.awake = true;
+    }
     if (this.awake && !this.dead) {
       this.force.x += this.direction > 0 ? this.speed : -this.speed;
       var m = this.move();
       if (!m.x && this.turnTimeout === null) {
         this.turnTimeout = setTimeout(function () {
           this.direction = !this.direction;
-          this.turnTimeout = null
+          this.turnTimeout = null;
         }.bind(this), 300);
       }
     }
-  }
-};
-Class.extend(Game.Entities.paddle, Entity);
+  };
+});

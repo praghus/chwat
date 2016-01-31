@@ -1,4 +1,4 @@
-Game.Entities.explosion2 = function () {
+Game.addEntity('explosion2', function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.type = 'explosion2';
@@ -13,10 +13,17 @@ Game.Entities.explosion2 = function () {
     new V(0, this.height)
   ];
   this.update = function () {
-    if (this.onScreen()) this.awake = true;
-    if (this.awake && !this.dead) this.animate();
-    if (this.animFrame > 5) this.damage = 0;
-    if (this.animFrame === this.animation.frames - 1) this.dead = true;
-  }
-};
-Class.extend(Game.Entities.explosion2, Entity);
+    if (this.onScreen()) {
+      this.awake = true;
+    }
+    if (this.awake && !this.dead) {
+      this.animate();
+    }
+    if (this.animFrame > 5) {
+      this.damage = 0;
+    }
+    if (this.animFrame === this.animation.frames - 1) {
+      this.dead = true;
+    }
+  };
+});

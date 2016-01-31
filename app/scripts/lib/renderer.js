@@ -5,7 +5,6 @@ var Renderer = Class.create({
 
   initialize: function (images) {
     this.dynamicLights = UseDynamicLights;
-    this.lightSpots = [];
     this.images = images;
     this.message = {dispCount: 0, dispIter: 0, txt: ''};
     this.lightmask = [];
@@ -19,15 +18,19 @@ var Renderer = Class.create({
   //------------------------------------------------------------------------
   fontPrint: function (FontText, FontX, FontY) {
     FontText = FontText.toUpperCase();
-    if (FontX == -1) FontX = (ResolutionX - FontText.length * 8) / 2;
-    if (FontY == -1) FontY = (ResolutionY - 8) / 2;
+    if (FontX === -1) {
+      FontX = (ResolutionX - FontText.length * 8) / 2;
+    }
+    if (FontY === -1) {
+      FontY = (ResolutionY - 8) / 2;
+    }
     for (var i = 0; i < FontText.length; i++) {
       var chr = FontText.charCodeAt(i);
       this.ctx.drawImage(this.images.font, ((chr) % 16) * 16, Math.ceil(((chr + 1) / 16) - 1) * 16, 16, 16, FontX + (i * 8), FontY, 8, 8);
     }
   },
   //------------------------------------------------------------------------
-  render: function (dt) {
+  render: function () {
     this.ctx.mozImageSmoothingEnabled = false;
     this.ctx.webkitImageSmoothingEnabled = false;
     this.ctx.msImageSmoothingEnabled = false;
@@ -62,7 +65,7 @@ var Renderer = Class.create({
   //------------------------------------------------------------------------
   renderLightingEffect: function (ctx) {
     var all = elements.lights;
-    all.forEach(function (Obj, i, all) {
+    all.forEach(function (Obj) {
       Obj.render(ctx, renderer.images[Obj.type]);
     });
     if (this.dynamicLights) {
@@ -105,32 +108,42 @@ var Renderer = Class.create({
         var tile = map.data.ground[_x][_y], back = map.data.back[_x][_y];
         if (tile > 1 || back > 1) {
           // dynamic lights
-          if (tile > 256 && this.dynamicLights)
+          if (tile > 256 && this.dynamicLights) {
             this.lightmask.push(new RectangleObject({
               topleft: new Vec2(x, y),
               bottomright: new Vec2(x + map.spriteSize, y + map.spriteSize)
             }));
-          if (back > 1)
+          }
+          if (back > 1) {
             ctx.drawImage(this.images.tiles, (((back - 1) % map.spriteCols )) * map.spriteSize, (Math.ceil(back / map.spriteCols) - 1) * map.spriteSize, map.spriteSize, map.spriteSize, x, y, map.spriteSize, map.spriteSize);
-          if (tile > 1)
+          }
+          if (tile > 1) {
             ctx.drawImage(this.images.tiles, (((tile - 1) % map.spriteCols )) * map.spriteSize, (Math.ceil(tile / map.spriteCols) - 1) * map.spriteSize, map.spriteSize, map.spriteSize, x, y, map.spriteSize, map.spriteSize);
+          }
           // calculate shadow
-          if (back > 1 && tile == 0) {
+          if (back > 1 && tile === 0) {
             var shadow = 0;
-            if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y) && map.isShadowCaster(_x - 1, _y - 1) && map.isShadowCaster(_x, _y - 1))
+            if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y) && map.isShadowCaster(_x - 1, _y - 1) && map.isShadowCaster(_x, _y - 1)) {
               shadow = 6;
-            else if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y - 1) && map.isShadowCaster(_x, _y - 1))
+            }
+            else if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y - 1) && map.isShadowCaster(_x, _y - 1)) {
               shadow = 5;
-            else if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y) && map.isShadowCaster(_x - 1, _y - 1))
+            }
+            else if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y) && map.isShadowCaster(_x - 1, _y - 1)) {
               shadow = 4;
-            else if (_x > 0 && map.isShadowCaster(_x - 1, _y))
+            }
+            else if (_x > 0 && map.isShadowCaster(_x - 1, _y)) {
               shadow = 1;
-            else if (_y > 0 && map.isShadowCaster(_x, _y - 1))
+            }
+            else if (_y > 0 && map.isShadowCaster(_x, _y - 1)) {
               shadow = 2;
-            else if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y - 1))
+            }
+            else if (_x > 0 && _y > 0 && map.isShadowCaster(_x - 1, _y - 1)) {
               shadow = 3;
-            if (shadow > 0)
+            }
+            if (shadow > 0) {
               ctx.drawImage(this.images.shadows, (shadow - 1) * map.spriteSize, 0, map.spriteSize, map.spriteSize, x, y, map.spriteSize, map.spriteSize);
+            }
           }
         }
         x += map.spriteSize;
@@ -147,9 +160,10 @@ var Renderer = Class.create({
       var x = Math.floor(camera.x % map.spriteSize), _x = Math.floor(-camera.x / map.spriteSize);
       while (x < ResolutionX) {
         var tile = map.data.fore[_x][_y], dark = map.data.mask[_x][_y];
-        if (tile > 0)
+        if (tile > 0) {
           ctx.drawImage(this.images.tiles, (((tile - 1) % map.spriteCols )) * map.spriteSize, (Math.ceil(tile / map.spriteCols) - 1) * map.spriteSize, map.spriteSize, map.spriteSize, x, y, map.spriteSize, map.spriteSize);
-        if (dark == 0 && player.inDark > 0 && !camera.underground) {
+        }
+        if (dark === 0 && player.inDark > 0 && !camera.underground) {
           ctx.fillStyle = "black";
           ctx.fillRect(x, y, map.spriteSize, map.spriteSize);
         }
@@ -167,8 +181,9 @@ var Renderer = Class.create({
       var x = Math.floor(camera.x % map.spriteSize), _x = Math.floor(-camera.x / map.spriteSize);
       while (x < ResolutionX) {
         var tile = map.data.fore2[_x][_y];
-        if (tile > 0)
+        if (tile > 0) {
           ctx.drawImage(this.images.tiles, (((tile - 1) % map.spriteCols )) * map.spriteSize, (Math.ceil(tile / map.spriteCols) - 1) * map.spriteSize, map.spriteSize, map.spriteSize, x, y, map.spriteSize, map.spriteSize);
+        }
         x += map.spriteSize;
         _x++;
       }
@@ -183,7 +198,7 @@ var Renderer = Class.create({
   //------------------------------------------------------------------------
   renderElements: function (ctx) {
     var all = elements.all;
-    all.forEach(function (Obj, i, all) {
+    all.forEach(function (Obj) {
       Obj.render(ctx, renderer.images[Obj.type]);
     });
   },
@@ -196,7 +211,7 @@ var Renderer = Class.create({
     this.fontPrint(cc, ResolutionX - (16 + (cc.length * 8)), 8);
     for (var i = 0; i < 2; i++) {
       var item = player.items[i];
-      if (item && item.type == "item") {
+      if (item && item.type === "item") {
         ctx.drawImage(this.images.item, parseInt(item.properties.frame) * item.width, 0, item.width, item.height, (ResolutionX - 43) + (i * 20), ResolutionY - 23, item.width, item.height);
       }
     }

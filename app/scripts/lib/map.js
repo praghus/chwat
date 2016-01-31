@@ -1,7 +1,7 @@
 //==========================================================================
 // Map
 //--------------------------------------------------------------------------
-var Map = Class.create({
+var Mapa = Class.create({
   initialize: function (level) {
     this.width = parseInt(level.width);
     this.height = parseInt(level.height);
@@ -10,7 +10,7 @@ var Map = Class.create({
     this.name = level.properties.Title;
     this.spriteSize = 16;
     this.spriteCols = 32;
-    this.data = {back: [], ground: [], mask: [], fore: [], fore2: []}
+    this.data = {back: [], ground: [], mask: [], fore: [], fore2: []};
     for (var i = 0; i < this.width; i++) {
       this.data.back[i] = new Array(this.height);
       this.data.ground[i] = new Array(this.height);
@@ -69,7 +69,7 @@ var Map = Class.create({
   //----------------------------------------------------------------------
   isShadowCaster: function (_x, _y) {
     if (_x >= 0 && _x < this.data.ground.length && _y >= 0 && _y < this.data.ground[_x].length) {
-      return this.data.ground[_x][_y] > 32 * 8 || this.data.ground[_x][_y] == 1;
+      return this.data.ground[_x][_y] > 32 * 8 || this.data.ground[_x][_y] === 1;
     }
     else {
       return false;

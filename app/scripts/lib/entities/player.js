@@ -17,11 +17,7 @@ Game.addEntity('player', function () {
   this.throwSpeed = 0;
   this.throwMaxSpeed = 5;
   this.shootTimeout = null;
-  this.fallTimeout = null;
-  this.hurtTimeout = null;
-  this.shoots = [];
   this.items = new Array(2);
-  this.savedPos = {x: this.x, y: this.y};
   this.animations = {
     RIGHT: {x: 0, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
     JUMP_RIGHT: {x: 256, y: 16, w: 32, h: 48, frames: 5, fps: 15, loop: false},
@@ -52,8 +48,11 @@ Game.addEntity('player', function () {
     ctx.drawImage(image,
       this.animation.x + (this.animFrame * this.animation.w), player.animation.y + this.animOffset,
       this.animation.w, this.animation.h,
-      Math.floor(this.x + camera.x) - 8, Math.floor(this.y + camera.y) - 5, this.animation.w, this.animation.h);
-    if (!this.canHurt && !this.dead) ctx.globalAlpha = 1;
+      Math.floor(this.x + camera.x) - 8, Math.floor(this.y + camera.y) - 5, this.animation.w, this.animation.h
+    );
+    if (!this.canHurt && !this.dead) {
+      ctx.globalAlpha = 1;
+    }
   };
   //----------------------------------------------------------------------
   this.update = function () {
@@ -74,7 +73,7 @@ Game.addEntity('player', function () {
         this.canJump = false;
         //Sound.jump.play();
       }
-      if (Game.input.down && !this.fall && this.force.y == 0) {
+      if (Game.input.down && !this.fall && this.force.y === 0) {
         this.fall = true;
         this.fallTimeout = setTimeout(function () {this.fall = false;}.bind(this), 400);
       }
@@ -92,11 +91,11 @@ Game.addEntity('player', function () {
         Game.input.action = false;
       }
       // slow down
-      if (!Game.input.left && !Game.input.right && this.force.x != 0) {
-        this.force.x += this.direction == 1 ? -this.speed : this.speed;
-        if (this.direction == 0 && this.force.x > 0 ||
-          this.direction == 1 && this.force.x < 0)
+      if (!Game.input.left && !Game.input.right && this.force.x !== 0) {
+        this.force.x += this.direction === 1 ? -this.speed : this.speed;
+        if (this.direction === 0 && this.force.x > 0 || this.direction === 1 && this.force.x < 0) {
           this.force.x = 0;
+        }
       }
     }
     this.force.y += map.gravity;
@@ -104,20 +103,20 @@ Game.addEntity('player', function () {
 
     this.move();
     if (this.dead) {
-      this.animate(this.direction == 1 ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
+      this.animate(this.direction === 1 ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
     }
     else if (this.doJump || this.fall) {
       if (this.force.y < 0) {
-        this.animate(this.direction == 1 ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
+        this.animate(this.direction === 1 ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
       }
       else {
-        this.animate(this.direction == 1 ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
+        this.animate(this.direction === 1 ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
       }
-    } else if (this.force.x != 0) {
-      this.animate(this.direction == 1 ? this.animations.RIGHT : this.animations.LEFT);
+    } else if (this.force.x !== 0) {
+      this.animate(this.direction === 1 ? this.animations.RIGHT : this.animations.LEFT);
     }
     else {
-      this.animate(this.direction == 1 ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
+      this.animate(this.direction === 1 ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
     }
     // recover energy while standing
     /*if (this.force.x == 0 && this.force.y == 0 && this.energy < this.maxEnergy)
@@ -126,21 +125,25 @@ Game.addEntity('player', function () {
   };
   //----------------------------------------------------------------------
   this.hit = function (s) {
-    if (this.godMode || !this.canHurt) return;
+    if (this.godMode || !this.canHurt) {
+      return;
+    }
     this.energy -= s;
     this.force.y -= 3;
     this.canHurt = false;
-    if (this.energy <= 0 && !this.dead) this.kill = true;
-    this.hurtTimeout = setTimeout(function () {this.canHurt = true;}.bind(this), 1000);
+    if (this.energy <= 0 && !this.dead){
+      //this.kill = true;
+    }
+    setTimeout(function () {this.canHurt = true;}.bind(this), 1000);
   };
   //----------------------------------------------------------------------
   this.canUse = function (id) {
-    if (this.items[0] && this.items[0].properties.id == id) {
+    if (this.items[0] && this.items[0].properties.id === id) {
       this.items[0] = this.items[1];
       this.items[1] = null;
       return true;
     }
-    if (this.items[1] && this.items[1].properties.id == id) {
+    if (this.items[1] && this.items[1].properties.id === id) {
       this.items[1] = null;
       return true;
     }
@@ -148,7 +151,7 @@ Game.addEntity('player', function () {
   };
   //----------------------------------------------------------------------
   this.get = function (item) {
-    if (this.items[1] && this.items[1].type == 'item') {
+    if (this.items[1] && this.items[1].type === 'item') {
       var obj = this.items[1];
       obj.x = this.x;
       obj.y = (this.y + this.height) - obj.height;
@@ -160,10 +163,9 @@ Game.addEntity('player', function () {
   };
   //----------------------------------------------------------------------
   this.collide = function (element) {
-    if (element.damage > 0 && (
-        element.family === 'enemies' ||
-        element.family === 'traps'
-      )) this.hit(element.damage);
+    if (element.damage > 0 && (element.family === 'enemies' || element.family === 'traps')) {
+      this.hit(element.damage);
+    }
   };
   //----------------------------------------------------------------------
   this.shoot = function () {
@@ -171,7 +173,7 @@ Game.addEntity('player', function () {
     this.force.x = 0;
     this.animOffset = 64;
     elements.add('player_bullet',{
-      x: this.direction == 1 ? this.x + this.width : this.x - 12,
+      x: this.direction === 1 ? this.x + this.width : this.x - 12,
       y: this.y + 21,
       direction: this.direction
     });
@@ -186,7 +188,7 @@ Game.addEntity('player', function () {
     this.canShoot = false;
     this.animOffset = 64;
     elements.add('player_stone', {
-      x: this.direction == 1 ? this.x + this.width : this.x,
+      x: this.direction === 1 ? this.x + this.width : this.x,
       y: this.y + 18,
       direction: this.direction
     });
@@ -199,5 +201,5 @@ Game.addEntity('player', function () {
   //----------------------------------------------------------------------
   this.exterminate = function () {
     this.kill = true;
-  }
+  };
 });

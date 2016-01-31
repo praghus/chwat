@@ -21,12 +21,14 @@ Game.addEntity('enemy_tank', function () {
     this.shootTimeout = setTimeout(function () {this.canShoot = true;}.bind(this), this.shootDelay);
   };
   this.collide = function (element) {
-    if (element.damage > 0 && element.family !== 'enemies')
+    if (element.damage > 0 && element.family !== 'enemies') {
       this.hit(element.damage);
+    }
   };
   this.update = function () {
-    if (this.onScreen())
+    if (this.onScreen()) {
       this.awake = true;
+    }
     if (this.awake && !this.dead) {
       if (this.seesPlayer() && this.canShoot) {
         this.countToShoot = 40;
@@ -36,11 +38,16 @@ Game.addEntity('enemy_tank', function () {
       if (this.countToShoot > 0) {
         this.countToShoot -= 1;
         this.force.x *= 0.8;
-        if (this.countToShoot == 20) this.shoot();
-      } else
+        if (this.countToShoot === 20) {
+          this.shoot();
+        }
+      }
+      else {
         this.force.x += this.direction > 0 ? this.speed : -this.speed;
+      }
       var m = this.move();
       if (m.hole) {
+        console.log('hole');
         this.direction = !this.direction;
         this.force.x = 0;
       }
@@ -50,5 +57,5 @@ Game.addEntity('enemy_tank', function () {
       }
       this.animate();
     }
-  }
+  };
 });

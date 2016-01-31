@@ -1,4 +1,3 @@
-'use strict';
 //-------------------------------------------------------------------------
 // POLYFILLS
 //-------------------------------------------------------------------------
@@ -7,19 +6,28 @@ if (!window.requestAnimationFrame) {
     window.mozRequestAnimationFrame ||
     window.oRequestAnimationFrame ||
     window.msRequestAnimationFrame ||
-    function (callback, element) {
+    function (callback) {
       window.setTimeout(callback, 1000 / 60);
-    }
+    };
 }
+//-------------------------------------------------------------------------
+// FPSMeter
+//-------------------------------------------------------------------------
+var fpsmeter = new FPSMeter({
+  decimals: 0, graph: true, theme: 'dark', position: 'fixed',
+  top: 'auto', left: 'auto', bottom: '5px', right: '5px'
+});
 //-------------------------------------------------------------------------
 // SIMPLE CLASS CREATION
 //-------------------------------------------------------------------------
 var Class = {
-  create: function (prototype) { // create a simple javascript 'class' (a constructor function with a prototype)
+  // create a simple javascript 'class' (a constructor function with a prototype)
+  create: function (prototype) {
     var ctor = function () {
-      if (this.initialize) return this.initialize.apply(this, arguments);
+      if (this.initialize) { return this.initialize.apply(this, arguments); }
     };
-    ctor.prototype = prototype || {}; // instance methods
+    // instance methods
+    ctor.prototype = prototype || {};
     return ctor;
   },
   extend: function (obj1, obj2){
@@ -74,8 +82,7 @@ var Game = {
       render(dt);
       last = now;
       fpsmeter.tick();
-      FPS = fpsmeter.fps;
-      requestAnimationFrame(frame, options.canvas);
+      requestAnimationFrame(frame);
     }
     frame();
   },
@@ -83,7 +90,7 @@ var Game = {
     Game.Entities[id] = obj;
     Class.extend(Game.Entities[id], Entity);
   },
-  onkey: function (ev, key, pressed) {
+  onKey: function (ev, key, pressed) {
     switch(key) {
       case KEY.LEFT:   this.input.left   = pressed; ev.preventDefault(); return false;
       case KEY.RIGHT:  this.input.right  = pressed; ev.preventDefault(); return false;
@@ -122,7 +129,7 @@ Game.Load = {
         ctx = canvas.getContext('2d'),
         onload = function () {
           Game.Load.progress(ctx, ++loaded * (100 / names.length));
-          if (--count === 0) callback(result);
+          if (--count === 0) { callback(result); }
         };
     for (n = 0; n < names.length; n++) {
       name = names[n];
@@ -134,8 +141,9 @@ Game.Load = {
   json: function (url, onsuccess) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
-      if ((request.readyState == 4) && (request.status == 200))
+      if ((request.readyState === 4) && (request.status === 200)) {
         onsuccess(JSON.parse(request.responseText));
+      }
     };
     request.open("GET", url, true);
     request.send();
@@ -179,16 +187,19 @@ Game.Math = {
     return this.brighten(hex, -percent);
   },
   normalize: function (n, min, max) {
-    while (n < min)
+    while (n < min) {
       n += (max - min);
-    while (n >= max)
+    }
+    while (n >= max) {
       n -= (max - min);
+    }
     return n;
   },
   rgbToHex: function (r, g, b) {
-    if (r > 255 || g > 255 || b > 255)
+    if (r > 255 || g > 255 || b > 255) {
       throw "Invalid color component";
-    return ((r << 16) | (g << 8) | b).toString(16);
+    }
+    return ((r < 16) || (g < 8) || b).toString(16);
   },
   overlap: function (a, b) {
     return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
@@ -209,3 +220,47 @@ Game.Math = {
     return choices[this.randomInt(0, choices.length - 1)];
   }
 };
+//-------------------------------------------------------------------------
+// DAT.GUI
+//-------------------------------------------------------------------------
+Game.DAT = Class.create({
+  initialize: function () {
+    var f1, f2, f3, gui = new dat.GUI();
+
+    dat.GUI.prototype.removeFolder = function(name) {
+      var folder = this.__folders[name];
+      if (!folder) {
+        return;
+      }
+      folder.close();
+      this.__ul.removeChild(folder.domElement.parentNode);
+      delete this.__folders[name];
+      this.onResize();
+    };
+
+    dat.GUI.prototype.gameData = function(){
+      if (f1) { gui.removeFolder('Player'); }
+      if (f2) { gui.removeFolder('Forces'); }
+      if (f3) { gui.removeFolder('World'); }
+      f1 = gui.addFolder('Player');
+      f2 = gui.addFolder('Forces');
+      f3 = gui.addFolder('World');
+      f1.add(renderer,'dynamicLights');
+      f1.add(player, 'godMode');
+      f1.add(player, 'maxSpeed');
+      f1.add(player, 'x').listen();
+      f1.add(player, 'y').listen();
+      f1.add(player, 'exterminate');
+      f2.add(player.force, 'x').listen();
+      f2.add(player.force, 'y').listen();
+      f3.add(map, 'gravity', 0, 2);
+      f3.add(camera, 'x').listen();
+      f3.add(camera, 'y').listen();
+      f3.add(camera, 'center');
+      f3.add(camera, 'shake');
+      //f1.open();
+      //f2.open();
+    };
+    gui.gameData();
+  }
+});

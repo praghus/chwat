@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Item
 //--------------------------------------------------------------------------
-Game.Entities['item'] = function () {
+Game.addEntity('item', function () {
   Entity.apply(this, arguments);
   this.animFrame = parseInt(this.properties.frame);
   this.collide = function (element) {
@@ -20,6 +20,5 @@ Game.Entities['item'] = function () {
       this.force.y += map.gravity;
       this.move();
     }
-  }
-};
-Class.extend(Game.Entities['item'], Entity);
+  };
+});

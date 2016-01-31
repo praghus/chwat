@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Spear
 //--------------------------------------------------------------------------
-Game.Entities['spear'] = function () {
+Game.addEntity('spear', function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.damage = 20;
@@ -17,7 +17,9 @@ Game.Entities['spear'] = function () {
   this.update = function () {
     if (this.onScreen()) {
       this.seesPlayer();
-      if ((this.animFrame == 0 && Math.round(Math.random() * 20) == 0) || this.animFrame > 0) this.animate();
+      if ((this.animFrame === 0 && Math.round(Math.random() * 20) === 0) || this.animFrame > 0) {
+        this.animate();
+      }
       if (this.PlayerM >= 0 && this.PlayerM < 4 && player.x >= this.x - player.width - map.spriteSize && player.x <= this.x + this.width + map.spriteSize) {
         if (this.height < this.maxHeight) {
           this.y -= 2;
@@ -27,8 +29,6 @@ Game.Entities['spear'] = function () {
         this.y += 1;
         this.height -= 1;
       }
-
     }
   };
-};
-Class.extend(Game.Entities['spear'], Entity);
+});

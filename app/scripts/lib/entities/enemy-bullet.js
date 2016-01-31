@@ -17,15 +17,16 @@ Game.addEntity('enemy_bullet', function (obj) {
   };
   this.update = function () {
     if (!this.dead) {
-      this.direction == 0
-        ? this.x -= this.speed
-        : this.x += this.speed;
-
-      if (this.x + camera.x < 0)
+      if(this.direction === 0) {
+        this.x -= this.speed;
+      }
+      else {
+        this.x += this.speed;
+      }
+      if (this.x + camera.x < 0) {
         this.dead = true;
-
-      var EX = this.x, EY = this.y,
-        BX = this.direction == 0 ? EX - this.speed : EX + this.speed;
+      }
+      var EX = this.x, EY = this.y, BX = this.direction === 0 ? EX - this.speed : EX + this.speed;
 
       if (Game.Math.overlap(player, this) && !this.dead) {
         player.hit(this.damage);
@@ -36,9 +37,10 @@ Game.addEntity('enemy_bullet', function (obj) {
           this.dead = true;
         }
       }
-      if (this.dead)
+      if (this.dead) {
         ShootExplosion(this.x, this.y, '#EEEEFF');
+      }
     }
-  }
+  };
 });
 

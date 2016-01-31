@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Dark Mask
 //--------------------------------------------------------------------------
-Game.Entities['dark_mask'] = function (obj) {
+Game.addEntity('dark_mask', function (obj) {
   map.addMask(obj);
   Entity.apply(this, arguments);
   this.active = false;
@@ -13,10 +13,18 @@ Game.Entities['dark_mask'] = function (obj) {
           PY = Math.round(((this.y - map.spriteSize) + (y * map.spriteSize)) / map.spriteSize) + 1;
         if (!map.isSolid(PX, PY)) {
           var frame = 0;
-          if (x == -1 && !map.isSolid(PX - 1, PY)) frame = 1;
-          if (x + 1 == Math.round(this.width / map.spriteSize) + 1 && !map.isSolid(PX + 1, PY)) frame = 2;
-          if (y == -1 && !map.isSolid(PX, PY - 1)) frame = 3;
-          if (y + 1 == Math.round(this.height / map.spriteSize) + 1 && !map.isSolid(PX, PY + 1)) frame = 4;
+          if (x === -1 && !map.isSolid(PX - 1, PY)) {
+            frame = 1;
+          }
+          if (x + 1 === Math.round(this.width / map.spriteSize) + 1 && !map.isSolid(PX + 1, PY)) {
+            frame = 2;
+          }
+          if (y === -1 && !map.isSolid(PX, PY - 1)) {
+            frame = 3;
+          }
+          if (y + 1 === Math.round(this.height / map.spriteSize) + 1 && !map.isSolid(PX, PY + 1)) {
+            frame = 4;
+          }
           ctx.globalAlpha = DarkAlpha;
           ctx.drawImage(image,
             frame * map.spriteSize, 0,
@@ -30,8 +38,9 @@ Game.Entities['dark_mask'] = function (obj) {
     }
   };
   this.render = function (ctx, image) {
-    if (this.onScreen() && !player.inDark && !camera.underground)
+    if (this.onScreen() && !player.inDark && !camera.underground) {
       this.draw(ctx, image);
+    }
   };
   this.update = function () {
     if (this.onScreen()) {
@@ -41,14 +50,19 @@ Game.Entities['dark_mask'] = function (obj) {
           player.inDark += 1;
           this.activated = true;
         }
-        if (DarkAlpha > 0) DarkAlpha = 0;
-      } else {
+        if (DarkAlpha > 0) {
+          DarkAlpha = 0;
+        }
+      }
+      else {
         if (this.active) {
           player.inDark -= 1;
           this.activated = false;
           this.active = false;
         }
-        if (DarkAlpha < 1) DarkAlpha += 0.05;
+        if (DarkAlpha < 1) {
+          DarkAlpha += 0.05;
+        }
       }
     } else if (this.active) {
       player.inDark -= 1;
@@ -56,6 +70,4 @@ Game.Entities['dark_mask'] = function (obj) {
       this.active = false;
     }
   };
-};
-Class.extend(Game.Entities['dark_mask'], Entity);
-
+});

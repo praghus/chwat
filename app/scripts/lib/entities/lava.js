@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Lava
 //--------------------------------------------------------------------------
-Game.Entities['lava'] = function () {
+Game.addEntity('lava', function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.damage = 1000;
@@ -16,7 +16,7 @@ Game.Entities['lava'] = function () {
           PY = Math.round((this.y + (y * map.spriteSize)) / map.spriteSize);
         if (!map.isSolid(PX, PY)) {
           ctx.drawImage(image,
-            this.animFrame * map.spriteSize, y == 0 ? y : map.spriteSize,
+            this.animFrame * map.spriteSize, y === 0 ? y : map.spriteSize,
             map.spriteSize, map.spriteSize,
             Math.floor(this.x + camera.x) + (x * map.spriteSize), Math.floor(this.y + camera.y) + (y * map.spriteSize),
             map.spriteSize, map.spriteSize
@@ -26,7 +26,7 @@ Game.Entities['lava'] = function () {
     }
   };
   this.shoot = function () {
-    elements.add(new LavaStone({x: this.x + Math.random() * this.width, y: this.y}, 0));
+    elements.add('lava_stone', {x: this.x + Math.random() * this.width, y: this.y, direction: 0});
     this.shootTimeout = setTimeout(function () {this.canShoot = true;}.bind(this), this.shootDelay);
     this.canShoot = false;
   };
@@ -38,5 +38,4 @@ Game.Entities['lava'] = function () {
       this.animate();
     }
   };
-};
-Class.extend(Game.Entities['lava'], Entity);
+});

@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Crusher
 //--------------------------------------------------------------------------
-Game.Entities.crusher = function () {
+Game.addEntity('crusher', function () {
   Entity.apply(this, arguments);
   this.family = 'traps';
   this.damage = 1000;
@@ -13,8 +13,12 @@ Game.Entities.crusher = function () {
   this.fallTimeout = setTimeout(function() {this.fall = true;}.bind(this), this.fallDelay);
   this.update = function () {
     if (this.onScreen()) {
-      if (this.rise) this.y -= 1;
-      if (this.fall) this.force.y += map.gravity;
+      if (this.rise) {
+        this.y -= 1;
+      }
+      if (this.fall) {
+        this.force.y += map.gravity;
+      }
       this.y += this.force.y;
 
       var ELeft = Math.floor(this.x / map.spriteSize),
@@ -34,6 +38,5 @@ Game.Entities.crusher = function () {
     } else {
       this.fallTimeout = null;
     }
-  }
-};
-Class.extend(Game.Entities.crusher, Entity);
+  };
+});

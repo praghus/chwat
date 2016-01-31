@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------------
 // Lava stone
 //--------------------------------------------------------------------------
-Game.Entities['lava_stone'] = function (obj, dir) {
+Game.addEntity('lava_stone', function (obj, dir) {
   Entity.apply(this, arguments);
   this.type = 'lava_bullet';
   this.family = 'traps';
@@ -14,7 +14,7 @@ Game.Entities['lava_stone'] = function (obj, dir) {
   this.direction = Math.round(Math.random() * 2);
   this.force = {x: 0, y: -4 - Math.random() * 4};
   this.color = 'rgb(200,100,0)';
-  this.draw = function (ctx, image) {
+  this.draw = function (ctx) {
     ctx.fillStyle = this.color;
     ctx.fillRect(this.x + camera.x, this.y + camera.y, this.width, this.height);
   };
@@ -23,10 +23,12 @@ Game.Entities['lava_stone'] = function (obj, dir) {
       this.force.y += map.gravity;
       this.force.x += this.direction > 0 ? this.speed : -this.speed;
       var m = this.move();
-      if (!m.x || !m.y) this.dead = true;
-      if (this.dead)
+      if (!m.x || !m.y) {
+        this.dead = true;
+      }
+      if (this.dead){
         ShootExplosion(this.x, this.y, this.color);
+      }
     }
-  }
-};
-Class.extend(Game.Entities['lava_stone'], Entity);
+  };
+});
