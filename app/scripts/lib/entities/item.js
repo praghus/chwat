@@ -12,7 +12,7 @@ Game.addEntity('item', function () {
     }
     if (element.family === 'bullets' && this.properties.id === 'tnt') {
       this.dead = true;
-      elements.add(new Explosion2({x: this.x - 24, y: this.y - 110}));
+      elements.add('explosion2', {x: this.x - 24, y: this.y - 110});
     }
   };
   this.update = function () {

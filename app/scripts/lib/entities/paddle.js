@@ -5,6 +5,7 @@ Game.addEntity('paddle', function () {
   Entity.apply(this, arguments);
   this.solid = true;
   this.speed = 1;
+  this.stop = false;
   this.maxSpeed = 1;
   this.turnTimeout = null;
   this.draw = function (ctx, image) {
@@ -41,13 +42,23 @@ Game.addEntity('paddle', function () {
       this.awake = true;
     }
     if (this.awake && !this.dead) {
-      this.force.x += this.direction > 0 ? this.speed : -this.speed;
-      var m = this.move();
-      if (!m.x && this.turnTimeout === null) {
+
+      if(!this.stop) {
+        this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
+        this.move();
+      }
+
+      if (this.expectedX !== this.x) {
+        this.force.x = 0;
+        this.stop = true;
+        this.direction = this.direction === DIR.RIGHT ? DIR.LEFT : DIR.RIGHT;
+
         this.turnTimeout = setTimeout(function () {
-          this.direction = !this.direction;
+          if(this.stop){
+            this.stop = false;
+          }
           this.turnTimeout = null;
-        }.bind(this), 300);
+        }.bind(this), 1000);
       }
     }
   };

@@ -3,10 +3,10 @@
 //--------------------------------------------------------------------------
 var Elements = Class.create({
 
-  initialize: function (level) {
+  initialize: function (elementsLayer) {
     this.all = [];
     this.lights = [];
-    this.createElements(level.layers[3].objects);
+    this.createElements(elementsLayer);
   },
   //------------------------------------------------------------------------
   update: function (dt) {

@@ -22,8 +22,8 @@ Game.addEntity('lava_stone', function (obj, dir) {
     if (!this.dead) {
       this.force.y += map.gravity;
       this.force.x += this.direction > 0 ? this.speed : -this.speed;
-      var m = this.move();
-      if (!m.x || !m.y) {
+      this.move();
+      if (this.expectedX !== this.x || this.expectedY !== this.y) {
         this.dead = true;
       }
       if (this.dead){

@@ -52,13 +52,16 @@ var Entity = Class.create({
       ctx.drawImage(image,
         this.animation.x + (this.animFrame * this.animation.w), this.animation.y + this.animOffset,
         this.animation.w, this.animation.h,
-        Math.floor(this.x + camera.x), Math.floor(this.y + camera.y), this.animation.w, this.animation.h);
+        Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
+        this.animation.w, this.animation.h
+      );
     }
     else {
-      console.log(image);
       ctx.drawImage(image,
         this.animFrame * this.width, 0, this.width, this.height,
-        Math.floor(this.x + camera.x), Math.floor(this.y + camera.y), this.width, this.height);
+        Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
+        this.width, this.height
+      );
     }
   },
   //----------------------------------------------------------------------

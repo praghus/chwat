@@ -3,6 +3,12 @@
 //--------------------------------------------------------------------------
 var Mapa = Class.create({
   initialize: function (level) {
+    var j = 0,
+        backData  = level.layers[0].data,
+        mainData  = level.layers[1].data,
+        foreData  = level.layers[3].data,
+        fore2Data = level.layers[4].data;
+
     this.width = parseInt(level.width);
     this.height = parseInt(level.height);
     this.gravity = 0.3;//20 * 9.8 * 4;  //parseInt(level.properties.Gravity);
@@ -11,19 +17,14 @@ var Mapa = Class.create({
     this.spriteSize = 16;
     this.spriteCols = 32;
     this.data = {back: [], ground: [], mask: [], fore: [], fore2: []};
-    for (var i = 0; i < this.width; i++) {
-      this.data.back[i] = new Array(this.height);
-      this.data.ground[i] = new Array(this.height);
-      this.data.mask[i] = new Array(this.height);
-      this.data.fore[i] = new Array(this.height);
-      this.data.fore2[i] = new Array(this.height);
-    }
-    var j = 0,
-        backData = level.layers[1].data,
-        mainData = level.layers[2].data,
-        foreData = level.layers[4].data,
-        fore2Data = level.layers[5].data;
 
+    for (var i = 0; i < this.width; i++) {
+      this.data.back[i]   = new Array(this.height);
+      this.data.ground[i] = new Array(this.height);
+      this.data.mask[i]   = new Array(this.height);
+      this.data.fore[i]   = new Array(this.height);
+      this.data.fore2[i]  = new Array(this.height);
+    }
     for (var y = 0; y < this.height; y++) {
       for (var x = 0; x < this.width; x++) {
         this.data.ground[x][y] = mainData[j];

@@ -54,7 +54,7 @@ var FPS               = 60,
   function setup(images, level) {
     map      = new Mapa(level);
     camera   = new Camera();
-    elements = new Elements(level);
+    elements = new Elements(level.layers[2].objects);
     renderer = new Renderer(images);
     renderer.msg(map.name,100);
   }
@@ -101,6 +101,11 @@ var FPS               = 60,
   }
 //--------------------------------------------------------------------------
 (function(){
+  var g1 = 'background-color: #444444;';
+  var g2 = 'background-color: #333333;';
+  var g3 = 'color:#CCCCCC;font-weight:bold; background-color: #222222;';
+  console.log("%c %c %c | -NIHIL- | %c %c ", g1, g2, g3, g2, g1);
+
   resizeViewport();
   Game.Load.images(IMAGES, function(images) {
     Game.Load.json("assets/levels/main.json", function(level) {

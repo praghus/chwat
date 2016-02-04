@@ -6,7 +6,7 @@ Game.addEntity('water', function () {
   this.animation = {x: 0, y: 0, w: map.spriteSize, h: map.spriteSize, frames: 7, fps: 20, loop: true};
   this.fall = false;
   this.wave = 0;
-  this.direction = 1;
+  this.direction = DIR.DOWN;
   this.draw = function (ctx, image) {
     ctx.globalAlpha = 0.4;
     for (var y = 0; y < Math.round(this.height / map.spriteSize); y++) {
@@ -36,10 +36,13 @@ Game.addEntity('water', function () {
     if (this.onScreen()) {
       this.animate();
       if (this.animFrame === 5) {
-        this.wave += this.direction === 1 ? 0.5 : -0.5;
+        this.wave += this.direction === DIR.DOWN ? 0.5 : -0.5;
       }
-      if (this.wave > 2 || this.wave < -2) {
-        this.direction = !this.direction;
+      if (this.wave > 2)
+        this.direction = DIR.UP;
+      }
+      if(this.wave < -2) {
+        this.direction = DIR.DOWN;
       }
       if (Game.Math.overlap(player, this)) {
         if (!Game.input.up) {
@@ -50,5 +53,4 @@ Game.addEntity('water', function () {
         }
       }
     }
-  };
 });
