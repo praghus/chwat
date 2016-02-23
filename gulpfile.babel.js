@@ -1,18 +1,17 @@
-// generated on 2016-01-21 using generator-gulp-webapp 1.1.1
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
 import browserSync from 'browser-sync';
 import del from 'del';
 import jshint from 'gulp-jshint';
 import inject from 'gulp-inject';
-import {stream as wiredep} from 'wiredep';
+import { stream as wiredep } from 'wiredep';
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
 gulp.task('entities', function () {
   var target = gulp.src('./app/index.html');
-  var sources = gulp.src(['./app/scripts/lib/entities/*.js'], {read: false});
+  var sources = gulp.src(['./app/scripts/game/entities/*.js'], {read: false});
   return target.pipe(inject(sources, {ignorePath: 'app', addRootSlash: false }))
     .pipe(gulp.dest('./app'));
 });
@@ -92,8 +91,7 @@ gulp.task('serve', ['styles', 'scripts'], () => {
     server: {
       baseDir: ['.tmp', 'app'],
       routes: {
-        '/bower_components': 'bower_components',
-        '/nonbower_components': 'nonbower_components'
+        '/bower_components': 'bower_components'
       }
     }
   });

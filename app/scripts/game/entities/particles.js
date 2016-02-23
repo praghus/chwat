@@ -31,7 +31,7 @@ Game.addEntity('particles', function () {
   };
   this.update = function () {
     if (!this.dead) {
-      this.force.y += map.gravity;
+      this.force.y += Game.map.gravity;
       this.move();
       if (this.y !== this.expectedY || this.x !== this.expectedX) {
         this.force.y *= -0.8;
@@ -46,7 +46,7 @@ Game.addEntity('particles', function () {
   this.draw = function (ctx) {
     ctx.fillStyle = this.properties.color;
     ctx.beginPath();
-    ctx.rect(this.x + camera.x, this.y + camera.y, this.width, this.height);
+    ctx.rect(this.x + Game.camera.x, this.y + Game.camera.y, this.width, this.height);
     ctx.fill();
     ctx.closePath();
   };
@@ -56,7 +56,7 @@ function ShootExplosion(x, y, color) {
   var particle_count = 5 + parseInt(Math.random() * 5);
   for (var i = 0; i < particle_count; i++) {
     var r = (1 + Math.random());
-    elements.add('particles', {
+    Game.elements.add('particles', {
       x: x,
       y: y,
       width: r,
@@ -68,11 +68,11 @@ function ShootExplosion(x, y, color) {
 }
 function GrenadeExplosion(x, y) {
   var particle_count = 10 + parseInt(Math.random() * 5);
-  elements.add('explosion',{x: x - 16, y: y - 58});
-  camera.shake();
+  Game.elements.add('explosion',{x: x - 16, y: y - 58});
+  Game.camera.shake();
   for (var i = 0; i < particle_count; i++) {
     var r = (1 + Math.random());
-    elements.add('particles', {
+    Game.elements.add('particles', {
       x: x,
       y: y,
       width: r,
@@ -86,7 +86,7 @@ function Explosion1(x, y) {
   var particle_count = 5 + parseInt(Math.random() * 10);
   for (var i = 0; i < particle_count; i++) {
     var r = (1 + Math.random() * 2);
-    elements.add('particles', {
+    Game.elements.add('particles', {
       x: x + 8,
       y: y,
       width: r,

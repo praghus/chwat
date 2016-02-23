@@ -15,8 +15,8 @@ Game.addEntity('jump_through', function () {
         element.doJump = false;
       }
       if (element.type === 'player' && Game.input.up) {
-        player.force.y = -6;
-        player.doJump = true;
+        Game.player.force.y = -6;
+        Game.player.doJump = true;
       }
     }
   };

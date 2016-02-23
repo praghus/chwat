@@ -21,7 +21,7 @@ Game.addEntity('enemy_bullet', function (obj) {
       this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
       this.move();
       if (Game.Math.overlap(player, this) && !this.dead) {
-        player.hit(this.damage);
+        Game.player.hit(this.damage);
         this.dead = true;
         ShootExplosion(this.x, this.y, '#EE0000');
       }

@@ -12,13 +12,13 @@ Game.addEntity('coin', function () {
   this.collide = function (element) {
     if (element.type === 'player') {
       this.dead = true;
-      player.coinCollect += 1;
+      Game.player.coinCollect += 1;
     }
   };
   this.update = function () {
     if (this.onScreen()) {
       this.animate();
-      this.force.y += map.gravity;
+      this.force.y += Game.map.gravity;
       this.move();
     }
   };

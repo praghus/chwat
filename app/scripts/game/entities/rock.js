@@ -13,7 +13,7 @@ Game.addEntity('rock', function () {
   this.draw = function (ctx, image) {
     var r = Math.PI / 16;
     ctx.save();
-    ctx.translate(Math.floor(this.x + camera.x), Math.floor(this.y + camera.y));
+    ctx.translate(Math.floor(this.x + Game.camera.x), Math.floor(this.y + Game.camera.y));
     ctx.translate(16, 16);
     if (this.force.x !== 0) {
       this.rotation += this.speed / 5;
@@ -32,7 +32,7 @@ Game.addEntity('rock', function () {
       this.awake = true;
     }
     if (this.awake && !this.dead) {
-      this.force.y += map.gravity;
+      this.force.y += Game.map.gravity;
       if (this.onFloor && this.speed < this.maxSpeed) {
         this.speed += 0.01;
       }

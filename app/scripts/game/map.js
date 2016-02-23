@@ -78,10 +78,10 @@ class Map {
   }
   //----------------------------------------------------------------------
   addMask(obj) {
-    var x = Math.round(obj.x / map.spriteSize) - 1,
-        y = Math.round(obj.y / map.spriteSize) - 1,
-        w = Math.round(obj.width / map.spriteSize) + 2,
-        h = Math.round(obj.height / map.spriteSize) + 2;
+    var x = Math.round(obj.x / Game.map.spriteSize) - 1,
+        y = Math.round(obj.y / Game.map.spriteSize) - 1,
+        w = Math.round(obj.width / Game.map.spriteSize) + 2,
+        h = Math.round(obj.height / Game.map.spriteSize) + 2;
     for (var _y = y; _y < y + h; _y++) {
       for (var _x = x; _x < x + w; _x++) {
         this.data.mask[_x][_y] = 1;

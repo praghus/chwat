@@ -33,34 +33,33 @@ class Entity
     this.animFrame = 0;
     this.animCount = 0;
     this.vectorMask = [
-      new V(0, 0),
-      new V(this.width, 0),
-      new V(this.width, this.height),
-      new V(0, this.height)
+      new SAT.Vector(0, 0),
+      new SAT.Vector(this.width, 0),
+      new SAT.Vector(this.width, this.height),
+      new SAT.Vector(0, this.height)
     ];
-
     //Dom.on(this, 'click', function(ev) { console.log(this);  }, false);
   }
   //----------------------------------------------------------------------
   draw(ctx, image) {
-    if (this.shadowCaster && renderer.dynamicLights) {
-      renderer.lightmask.push(new RectangleObject({
-        topleft: new Vec2(this.x + camera.x, this.y + camera.y),
-        bottomright: new Vec2(this.x + this.width + camera.x, this.y + this.height + camera.y)
+    if (this.shadowCaster && Game.renderer.dynamicLights) {
+      Game.renderer.lightmask.push(new illuminated.RectangleObject({
+        topleft: new illuminated.Vec2(this.x + Game.camera.x, this.y + Game.camera.y),
+        bottomright: new illuminated.Vec2(this.x + this.width + Game.camera.x, this.y + this.height + Game.camera.y)
       }));
     }
     if (this.animation) {
       ctx.drawImage(image,
         this.animation.x + (this.animFrame * this.animation.w), this.animation.y + this.animOffset,
         this.animation.w, this.animation.h,
-        Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
+        Math.floor(this.x + Game.camera.x), Math.floor(this.y + Game.camera.y),
         this.animation.w, this.animation.h
       );
     }
     else {
       ctx.drawImage(image,
         this.animFrame * this.width, 0, this.width, this.height,
-        Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
+        Math.floor(this.x + Game.camera.x), Math.floor(this.y + Game.camera.y),
         this.width, this.height
       );
     }
@@ -77,7 +76,7 @@ class Entity
   }
   //----------------------------------------------------------------------
   getMask() {
-    return new P(new V(this.x, this.y), this.vectorMask);
+    return new SAT.Polygon(new SAT.Vector(this.x, this.y), this.vectorMask);
   }
   //----------------------------------------------------------------------
   overlapTest(obj) {
@@ -95,10 +94,10 @@ class Entity
   }
   //----------------------------------------------------------------------
   onScreen() {
-    return this.x + this.width + map.spriteSize > -camera.x &&
-      this.x - map.spriteSize < -camera.x + ResolutionX &&
-      this.y - map.spriteSize < -camera.y + ResolutionY &&
-      this.y + this.height + map.spriteSize > -camera.y;
+    return this.x + this.width + Game.map.spriteSize > -Game.camera.x &&
+      this.x - Game.map.spriteSize < -Game.camera.x + ResolutionX &&
+      this.y - Game.map.spriteSize < -Game.camera.y + ResolutionY &&
+      this.y + this.height + Game.map.spriteSize > -Game.camera.y;
   }
   //----------------------------------------------------------------------
   hit(s) {
@@ -110,21 +109,21 @@ class Entity
         //Sound.dead1.play();
         Explosion1(this.x, this.y);
         this.dead = true;
-        elements.add('coin', {x: this.x + 8, y: this.y});
+        Game.elements.add('coin', {x: this.x + 8, y: this.y});
       }
     }
   }
   //----------------------------------------------------------------------
   seesPlayer() {
-    this.PlayerM = ((player.y + player.height) - (this.y + this.height)) / (player.x - this.x);
-    if (!player.canHurt) {
+    this.PlayerM = ((Game.player.y + Game.player.height) - (this.y + this.height)) / (Game.player.x - this.x);
+    if (!Game.player.canHurt) {
       return false;
     }
     if (this.PlayerM > -0.15 && this.PlayerM < 0.15) {
-      var steps = Math.abs(Math.floor(player.x / map.spriteSize) - Math.floor(this.x / map.spriteSize)),
-        from = player.x < this.x ? Math.floor(player.x / map.spriteSize) : Math.floor(this.x / map.spriteSize);
+      var steps = Math.abs(Math.floor(Game.player.x / Game.map.spriteSize) - Math.floor(this.x / Game.map.spriteSize)),
+        from = Game.player.x < this.x ? Math.floor(Game.player.x / Game.map.spriteSize) : Math.floor(this.x / Game.map.spriteSize);
       for (var X = from; X < from + steps; X++) {
-        if (map.isSolid(X, Math.round(this.y / map.spriteSize))) {
+        if (Game.map.isSolid(X, Math.round(this.y / Game.map.spriteSize))) {
           return false;
         }
       }
@@ -162,15 +161,15 @@ class Entity
     this.expectedX = this.x + this.force.x;
     this.expectedY = this.y + this.force.y;
 
-    var PX = Math.floor(this.expectedX / map.spriteSize),
-        PY = Math.floor(this.expectedY / map.spriteSize),
-        PW = Math.floor((this.expectedX + this.width) / map.spriteSize),
-        PH = Math.floor((this.expectedY + this.height) / map.spriteSize),
+    var PX = Math.floor(this.expectedX / Game.map.spriteSize),
+        PY = Math.floor(this.expectedY / Game.map.spriteSize),
+        PW = Math.floor((this.expectedX + this.width) / Game.map.spriteSize),
+        PH = Math.floor((this.expectedY + this.height) / Game.map.spriteSize),
         nearMatrix = [];
 
     for (var x = PX; x <= PW; x++){
       for (var y = PY; y <= PH; y++){
-        nearMatrix.push(map.tileData(x, y));
+        nearMatrix.push(Game.map.tileData(x, y));
       }
     }
 
@@ -201,8 +200,8 @@ class Entity
     }
     this.y += this.force.y;
     this.onFloor = this.expectedY > this.y;
-    this.onLeftEdge = !map.isSolid(PX, PH);
-    this.onRightEdge = !map.isSolid(PW, PH);
+    this.onLeftEdge = !Game.map.isSolid(PX, PH);
+    this.onRightEdge = !Game.map.isSolid(PW, PH);
 
     //return {x: expectedX === this.x, y: expectedY === this.y};
   }

@@ -13,8 +13,8 @@ class Elements
     var all = this.all;
     all.forEach(function (Obj, i, all) {
       if (Obj.dead) {
-        elements.all[i] = elements.all[elements.all.length - 1];
-        elements.all.length--;
+        Game.elements.all[i] = Game.elements.all[Game.elements.all.length - 1];
+        Game.elements.all.length--;
       } else {
         Obj.update();
       }
@@ -39,7 +39,7 @@ class Elements
       if (Game.entities[obj.type]) {
         switch (obj.type) {
           case 'player':
-            player = new Game.entities[obj.type](obj);
+            Game.player = new Game.entities[obj.type](obj);
             break;
           default:
             this.add(obj.type, obj);
@@ -48,4 +48,4 @@ class Elements
       }
     }
   }
-};
+}

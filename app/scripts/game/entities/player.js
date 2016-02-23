@@ -1,44 +1,45 @@
 //==========================================================================
 // PLAYER
 //--------------------------------------------------------------------------
-Game.addEntity('player', function () {
-  Entity.apply(this, arguments);
-  this.godMode = true;
-  this.canShoot = true;
-  this.canHurt = true;
-  this.inDark = 0;
-  this.energy = 30;
-  this.maxEnergy = 30;
-  this.maxSpeed = 2;
-  this.speed = 0.2;
-  this.coinCollect = 0;
-  this.throwDelay = 500;
-  this.shootDelay = 500;
-  this.throwSpeed = 0;
-  this.throwMaxSpeed = 5;
-  this.shootTimeout = null;
-  this.items = new Array(2);
-  this.animations = {
-    RIGHT: {x: 0, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
-    JUMP_RIGHT: {x: 256, y: 16, w: 32, h: 48, frames: 5, fps: 15, loop: false},
-    FALL_RIGHT: {x: 320, y: 16, w: 32, h: 48, frames: 2, fps: 15, loop: false},
-    STAND_RIGHT: {x: 448, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-    STAND_LEFT: {x: 480, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-    FALL_LEFT: {x: 512, y: 16, w: 32, h: 48, frames: 2, fps: 15, loop: false},
-    JUMP_LEFT: {x: 576, y: 16, w: 32, h: 48, frames: 4, fps: 15, loop: false},
-    LEFT: {x: 704, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
-    DEAD_RIGHT: {x: 448, y: 128, w: 32, h: 64, frames: 1, fps: 15, loop: false},
-    DEAD_LEFT: {x: 480, y: 128, w: 32, h: 64, frames: 1, fps: 15, loop: false}
-  };
-  this.animation = this.animations.STAND_RIGHT;
-
+Game.addEntity('player', class extends Entity {
+  constructor(obj) {
+    super(obj);
+    this.godMode = true;
+    this.canShoot = true;
+    this.canHurt = true;
+    this.inDark = 0;
+    this.energy = 30;
+    this.maxEnergy = 30;
+    this.maxSpeed = 2;
+    this.speed = 0.2;
+    this.coinCollect = 0;
+    this.throwDelay = 500;
+    this.shootDelay = 500;
+    this.throwSpeed = 0;
+    this.throwMaxSpeed = 5;
+    this.shootTimeout = null;
+    this.items = new Array(2);
+    this.animations = {
+      RIGHT       : {x: 0,    y: 16,  w: 32, h: 48, frames: 8, fps: 15, loop: true},
+      JUMP_RIGHT  : {x: 256,  y: 16,  w: 32, h: 48, frames: 5, fps: 15, loop: false},
+      FALL_RIGHT  : {x: 320,  y: 16,  w: 32, h: 48, frames: 2, fps: 15, loop: false},
+      STAND_RIGHT : {x: 448,  y: 16,  w: 32, h: 48, frames: 1, fps: 15, loop: false},
+      STAND_LEFT  : {x: 480,  y: 16,  w: 32, h: 48, frames: 1, fps: 15, loop: false},
+      FALL_LEFT   : {x: 512,  y: 16,  w: 32, h: 48, frames: 2, fps: 15, loop: false},
+      JUMP_LEFT   : {x: 576,  y: 16,  w: 32, h: 48, frames: 4, fps: 15, loop: false},
+      LEFT        : {x: 704,  y: 16,  w: 32, h: 48, frames: 8, fps: 15, loop: true},
+      DEAD_RIGHT  : {x: 448,  y: 128, w: 32, h: 64, frames: 1, fps: 15, loop: false},
+      DEAD_LEFT   : {x: 480,  y: 128, w: 32, h: 64, frames: 1, fps: 15, loop: false}
+    };
+    this.animation = this.animations.STAND_RIGHT;
+  }
   //----------------------------------------------------------------------
-  this.draw = function (ctx, image) {
-    if ((camera.underground || player.inDark > 0) && !renderer.dynamicLights) {
+  draw(ctx, image) {
+    if ((Game.camera.underground || Game.player.inDark > 0) && !Game.renderer.dynamicLights) {
       ctx.globalCompositeOperation = "lighter";
-      ctx.drawImage(renderer.images.player_light,
-        -128 + Math.floor(player.x + (player.width / 2) + camera.x),
-        -128 + Math.floor(player.y + (player.height / 2) + camera.y)
+      ctx.drawImage(Game.renderer.images.player_light,
+        -128 + Math.floor(Game.player.x + (Game.player.width / 2) + Game.camera.x),
+        -128 + Math.floor(Game.player.y + (Game.player.height / 2) + Game.camera.y)
       );
       ctx.globalCompositeOperation = "source-over";
     }
@@ -46,18 +47,17 @@ Game.addEntity('player', function () {
       ctx.globalAlpha = 0.2;
     }
     ctx.drawImage(image,
-      this.animation.x + (this.animFrame * this.animation.w), player.animation.y + this.animOffset,
+      this.animation.x + (this.animFrame * this.animation.w), Game.player.animation.y + this.animOffset,
       this.animation.w, this.animation.h,
-      Math.floor(this.x + camera.x) - 8, Math.floor(this.y + camera.y) - 5, this.animation.w, this.animation.h
+      Math.floor(this.x + Game.camera.x) - 8, Math.floor(this.y + Game.camera.y) - 5, this.animation.w, this.animation.h
     );
     if (!this.canHurt && !this.dead) {
       ctx.globalAlpha = 1;
     }
-  };
+  }
   //----------------------------------------------------------------------
-  this.update = function () {
+  update() {
     //if (this.godMode) this.kill = false;
-
     if (!this.dead) {
       if (Game.input.left) {
         this.force.x -= this.speed;
@@ -75,7 +75,7 @@ Game.addEntity('player', function () {
       }
       if (Game.input.down && !this.fall && this.force.y === 0) {
         this.fall = true;
-        this.fallTimeout = setTimeout(function () {this.fall = false;}.bind(this), 400);
+        this.fallTimeout = setTimeout(() => this.fall = false, 400);
       }
       if (Game.input.shoot && this.canShoot) {
         this.shoot();
@@ -98,10 +98,8 @@ Game.addEntity('player', function () {
         }
       }
     }
-    this.force.y += map.gravity;
-
+    this.force.y += Game.map.gravity;
     this.move();
-
 
     if (this.onFloor) {
       this.force.y *= -0.8;
@@ -133,9 +131,9 @@ Game.addEntity('player', function () {
     /*if (this.force.x == 0 && this.force.y == 0 && this.energy < this.maxEnergy)
       this.energy += 0.01;*/
 
-  };
+  }
   //----------------------------------------------------------------------
-  this.hit = function (s) {
+  hit(s) {
     if (this.godMode || !this.canHurt) {
       return;
     }
@@ -145,10 +143,10 @@ Game.addEntity('player', function () {
     if (this.energy <= 0 && !this.dead){
       //this.kill = true;
     }
-    setTimeout(function () {this.canHurt = true;}.bind(this), 1000);
-  };
+    setTimeout(() => this.canHurt = true, 1000);
+  }
   //----------------------------------------------------------------------
-  this.canUse = function (id) {
+  canUse(id) {
     if (this.items[0] && this.items[0].properties.id === id) {
       this.items[0] = this.items[1];
       this.items[1] = null;
@@ -159,58 +157,58 @@ Game.addEntity('player', function () {
       return true;
     }
     return this.godMode; //false;
-  };
+  }
   //----------------------------------------------------------------------
-  this.get = function (item) {
+  get(item) {
     if (this.items[1] && this.items[1].type === 'item') {
       var obj = this.items[1];
       obj.x = this.x;
       obj.y = (this.y + this.height) - obj.height;
-      elements.add(new Item(obj));
+      Game.elements.add(new Item(obj));
     }
     this.items[1] = this.items[0];
     this.items[0] = item;
     this.action = false;
-  };
+  }
   //----------------------------------------------------------------------
-  this.collide = function (element) {
+  collide(element) {
     if (element.damage > 0 && (element.family === 'enemies' || element.family === 'traps')) {
       this.hit(element.damage);
     }
-  };
+  }
   //----------------------------------------------------------------------
-  this.shoot = function () {
+  shoot() {
     this.canShoot = false;
     this.force.x = 0;
     this.animOffset = 64;
-    elements.add('player_bullet',{
+    Game.elements.add('player_bullet',{
       x: this.direction === DIR.RIGHT ? this.x + this.width : this.x - 12,
       y: this.y + 21,
       direction: this.direction
     });
-    this.shootTimeout = setTimeout(function () {
+    this.shootTimeout = setTimeout(() => {
       this.canShoot = true;
       this.animOffset = 0;
-    }.bind(this), this.shootDelay);
+    }, this.shootDelay);
     //Sound.shoot.play();
-  };
+  }
   //----------------------------------------------------------------------
-  this.throw = function () {
+  throw() {
     this.canShoot = false;
     this.animOffset = 64;
-    elements.add('grenade', {
+    Game.elements.add('grenade', {
       x: this.direction === DIR.RIGHT ? this.x + this.width : this.x,
       y: this.y + 18,
       direction: this.direction
     });
     this.throwSpeed = 0;
-    this.shootTimeout = setTimeout(function () {
+    this.shootTimeout = setTimeout(() => {
       this.canShoot = true;
       this.animOffset = 0;
-    }.bind(this), this.throwDelay);
-  };
+    }, this.throwDelay);
+  }
   //----------------------------------------------------------------------
-  this.exterminate = function () {
+  exterminate() {
     //this.kill = true;
-  };
+  }
 });

@@ -8,7 +8,7 @@ Game.addEntity('grenade', function (obj) {
   this.width = 4;
   this.height = 4;
   this.damage = 10;
-  this.speed = player.throwSpeed + Math.abs(player.force.x);
+  this.speed = Game.player.throwSpeed + Math.abs(Game.player.force.x);
   this.maxSpeed = 5;
   this.force = {x: 0, y: 0};
   this.collide = function (element) {
@@ -19,8 +19,8 @@ Game.addEntity('grenade', function (obj) {
   };
   this.update = function () {
     if (!this.dead) {
-      this.force.y += map.gravity;
-      this.force.x = this.direction == DIR.RIGHT ? this.speed : -this.speed;
+      this.force.y += Game.map.gravity;
+      this.force.x = this.direction === DIR.RIGHT ? this.speed : -this.speed;
       this.move();
       if (this.expectedX < this.x ) {
         this.direction = DIR.RIGHT;

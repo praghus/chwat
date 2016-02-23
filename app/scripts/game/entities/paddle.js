@@ -9,11 +9,11 @@ Game.addEntity('paddle', function () {
   this.maxSpeed = 1;
   this.turnTimeout = null;
   this.draw = function (ctx, image) {
-    for (var x = 0; x < Math.round(this.width / map.spriteSize); x++) {
+    for (var x = 0; x < Math.round(this.width / Game.map.spriteSize); x++) {
       ctx.drawImage(image,
-        0, 0, map.spriteSize, map.spriteSize,
-        Math.floor(this.x + camera.x) + (x * map.spriteSize), Math.floor(this.y + camera.y),
-        map.spriteSize, map.spriteSize
+        0, 0, Game.map.spriteSize, Game.map.spriteSize,
+        Math.floor(this.x + Game.camera.x) + (x * Game.map.spriteSize), Math.floor(this.y + Game.camera.y),
+        Game.map.spriteSize, Game.map.spriteSize
       );
     }
   };
@@ -29,10 +29,10 @@ Game.addEntity('paddle', function () {
         element.doJump = false;
       }
       if (element.type === 'player') {
-        camera.x = -(player.x - (ResolutionX / 2));
+        Game.camera.x = -(Game.player.x - (ResolutionX / 2));
         if (Game.input.up) {
-          player.force.y = -6;
-          player.doJump = true;
+          Game.player.force.y = -6;
+          Game.player.doJump = true;
         }
       }
     }

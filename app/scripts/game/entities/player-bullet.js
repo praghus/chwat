@@ -29,12 +29,12 @@ Game.addEntity('player_bullet', function (obj) {
 
 /*      var EX = this.x, EY = this.y,
           BX = this.direction === 0 ? EX - this.speed : EX + this.speed,
-          p = renderer.ctx.getImageData(BX + camera.x, EY + camera.y, 1, 1).data;
+          p = Game.renderer.ctx.getImageData(BX + Game.camera.x, EY + Game.camera.y, 1, 1).data;
 
       this.color = Game.Math.brighten('#' + ('000000' + Game.Math.rgbToHex(p[0], p[1], p[2])).slice(-6), 20);
 
-      if (Math.floor(BX / map.spriteSize) >= 0 && Math.floor(EY / map.spriteSize) >= 0) {
-        if (map.isSolid(Math.floor(BX / map.spriteSize), Math.floor(EY / map.spriteSize))) {
+      if (Math.floor(BX / Game.map.spriteSize) >= 0 && Math.floor(EY / Game.map.spriteSize) >= 0) {
+        if (Game.map.isSolid(Math.floor(BX / Game.map.spriteSize), Math.floor(EY / Game.map.spriteSize))) {
           this.dead = true;
         }
       }*/

@@ -16,8 +16,8 @@ Game.addEntity('enemy_tank', function () {
   this.animation = {x: 0, y: 0, w: 32, h: 32, frames: 2, fps: 4, loop: true};
   this.damage = 30;
   this.shoot = function () {
-    elements.add('enemy_bullet', {x: this.x - 17, y: this.y + 6, direction: DIR.LEFT});
-    elements.add('enemy_bullet', {x: this.x + this.width + 1, y: this.y + 6, direction: DIR.RIGHT});
+    Game.elements.add('enemy_bullet', {x: this.x - 17, y: this.y + 6, direction: DIR.LEFT});
+    Game.elements.add('enemy_bullet', {x: this.x + this.width + 1, y: this.y + 6, direction: DIR.RIGHT});
     this.shootTimeout = setTimeout(function () {this.canShoot = true;}.bind(this), this.shootDelay);
   };
   this.collide = function (element) {
@@ -34,7 +34,7 @@ Game.addEntity('enemy_tank', function () {
         this.countToShoot = 40;
         this.canShoot = false;
       }
-      this.force.y += map.gravity;
+      this.force.y += Game.map.gravity;
       if (this.countToShoot > 0) {
         this.countToShoot -= 1;
         this.force.x *= 0.8;

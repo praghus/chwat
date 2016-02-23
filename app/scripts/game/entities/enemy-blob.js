@@ -24,10 +24,10 @@ Game.addEntity('enemy_blob', function () {
       this.awake = true;
     }
     if (this.awake && !this.dead) {
-      this.force.y += map.gravity;
+      this.force.y += Game.map.gravity;
       this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
       if (this.seesPlayer()) {
-        this.direction = player.x > this.x ? DIR.RIGHT : DIR.LEFT;
+        this.direction = Game.player.x > this.x ? DIR.RIGHT : DIR.LEFT;
       }
       this.move();
       if ((this.PlayerM > 1.4 && this.PlayerM < 1.5) || (this.PlayerM < -1.4 && this.PlayerM > -1.5)) {
