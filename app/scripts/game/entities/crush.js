@@ -7,7 +7,7 @@ Game.addEntity('crush', function () {
   this.animation = {x: 0, y: 0, w: 16, h: 16, frames: 10, fps: 5, loop: true};
   this.update = function () {
     if (this.onScreen()) {
-      if (Game.Math.overlap(player, {
+      if (Game.Math.overlap(Game.player, {
           x: this.x + Game.player.width,
           y: this.y - 1,
           width: this.width - (Game.player.width * 2),

@@ -4,7 +4,6 @@
 Game.addEntity('water', class extends Entity {
   constructor(obj) {
     super(obj);
-    Entity.apply(this, arguments);
     this.animation = {x: 0, y: 0, w: Game.map.spriteSize, h: Game.map.spriteSize, frames: 7, fps: 20, loop: true};
     this.fall = false;
     this.wave = 0;
@@ -47,7 +46,7 @@ Game.addEntity('water', class extends Entity {
       if(this.wave < -2) {
         this.direction = DIR.DOWN;
       }
-      if (Game.Math.overlap(player, this)) {
+      if (Game.Math.overlap(Game.player, this)) {
         if (!Game.input.up) {
           Game.player.force.y = +0.5;
         }

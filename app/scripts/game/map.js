@@ -18,7 +18,6 @@ class Map {
     this.spriteCols = 32;
     this.data = { back: [], ground: [], mask: [], fore: [], fore2: []};
 
-
     for (let i = 0; i < this.width; i++) {
       this.data.back[i] = [];
       this.data.ground[i] = [];
@@ -39,8 +38,8 @@ class Map {
     }
   }
   //----------------------------------------------------------------------
-  inRange(y, x) {
-    return x >= 0 || y >= 0 || x < this.width || y < this.height;
+  inRange(x, y) {
+    return x >= 0 && y >= 0 && x < this.width && y < this.height;
   }
   //----------------------------------------------------------------------
   get(l, x, y) {
@@ -51,13 +50,13 @@ class Map {
   }
   //----------------------------------------------------------------------
   tileData(x, y) {
-    if(!this.inRange(x, y)){
-      return false;
-    }
     return {
-      x: x * this.spriteSize, y: y * this.spriteSize,
-      width: this.spriteSize, height: this.spriteSize,
-      type: this.data.ground[x][y], solid: this.isSolid(x, y)
+      x     : this.spriteSize * x,
+      y     : this.spriteSize * y,
+      width : this.spriteSize,
+      height: this.spriteSize,
+      type  : this.get('ground', x, y),
+      solid : this.isSolid(x, y)
     };
   }
   //----------------------------------------------------------------------

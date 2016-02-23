@@ -21,7 +21,7 @@ const Dom = {
 //=========================================================================
 let Game = {
   fps       : 60,
-  debug     : false,
+  debug     : true,
   entities  : {},
   map       : {},
   elements  : {},
@@ -104,26 +104,25 @@ let Game = {
     let newWidth = window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
     let newHeight = window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
     let newRatio = newWidth / newHeight;
-    let { x, y, r, scale } = Game.resolution;
 
-    scale.pixel = window.innerWidth / 240;
-    r = window.innerWidth / window.innerHeight;
-    x = Math.round(window.innerWidth / scale.pixel);
-    y = Math.round(window.innerHeight / scale.pixel);
+    Game.resolution.scale.pixel = window.innerWidth / 240;
+    Game.resolution.r = window.innerWidth / window.innerHeight;
+    Game.resolution.x = Math.round(window.innerWidth / Game.resolution.scale.pixel);
+    Game.resolution.y = Math.round(window.innerHeight / Game.resolution.scale.pixel);
     if (newRatio > Game.resolution.r) {
-      newWidth = newHeight * r;
+      newWidth = newHeight * Game.resolution.r;
     } else {
-      newHeight = newWidth / r;
+      newHeight = newWidth / Game.resolution.r;
     }
     gameArea.style.transform = 'none';
     gameArea.style.width = newWidth + 'px';
     gameArea.style.height = newHeight + 'px';
     gameArea.style.marginTop = (-newHeight / 2) + 'px';
     gameArea.style.marginLeft = (-newWidth / 2) + 'px';
-    scale.x = Math.round(newWidth / x);
-    scale.y = Math.round(newHeight / y);
-    canvas.width = scale.x * x;
-    canvas.height = scale.y * y;
+    Game.resolution.scale.x = Math.round(newWidth / Game.resolution.x);
+    Game.resolution.scale.y = Math.round(newHeight / Game.resolution.y);
+    canvas.width = Game.resolution.scale.x * Game.resolution.x;
+    canvas.height = Game.resolution.scale.y * Game.resolution.y;
   },
   resizeGame: function () {
     Game.resizeViewport();

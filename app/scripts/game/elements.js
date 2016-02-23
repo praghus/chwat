@@ -20,7 +20,7 @@ class Elements
       }
     });
     for (let j = 0; j < all.length; j++) {
-      all[j].overlapTest(player);
+      all[j].overlapTest(Game.player);
       for (let k = j + 1; k < all.length; k++) {
         all[j].overlapTest(all[k]);
       }
