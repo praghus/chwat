@@ -1,25 +1,4 @@
-//-------------------------------------------------------------------------
-// SIMPLE DOM UTILITIES
-//-------------------------------------------------------------------------
-const Dom = {
-  get: function (id) {
-    return ((id instanceof HTMLElement) || (id === document)) ? id : document.getElementById(id);
-  },
-  set: function (id, html) {
-    Dom.get(id).innerHTML = html;
-  },
-  on: function (ele, type, fn, capture) {
-    Dom.get(ele).addEventListener(type, fn, capture);
-  },
-  off: function (ele, type, fn, capture) {
-    Dom.get(ele).removeEventListener(type, fn, capture);
-  },
-  show: function (ele, type) {
-    Dom.get(ele).style.display = (type || 'block');
-  }
-};
-//=========================================================================
-let Game = {
+const Game = {
   fps       : 60,
   debug     : true,
   entities  : {},
@@ -51,6 +30,7 @@ let Game = {
         update = options.update,
         render = options.render;
     if (Game.debug) {
+      new DAT();
       Game.fpsmeter = new FPSMeter({
         decimals: 0,
         graph: true,
@@ -130,22 +110,10 @@ let Game = {
 //-------------------------------------------------------------------------
 // ASSET PRELOADING
 //-------------------------------------------------------------------------
-  Preload: function(params){
+  Init: function(params){
     const d = Promise.defer();
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    progress(0);
-    getJSON(params.data).then(level => {
-      Game.map      = new Map(level);
-      Game.camera   = new Camera();
-      Game.elements = new Elements(level.layers[2].objects);
-      return getImages(params.assets);
-    }).then( images => {
-      Game.renderer = new Renderer(images);
-      d.resolve();
-    }).catch(function(error) {
-      console.log(error);
-    });
 
     function progress(perc) {
       ctx.save();
@@ -162,13 +130,13 @@ let Game = {
 
     function getImages(names) {
       const d = Promise.defer();
-      let n, name, result = {}, count = names.length, loaded = 0;
-      const onload = function () {
-          progress(++loaded * (100 / names.length));
-          if (--count === 0) {
-            d.resolve(result);
-          }
-        };
+      let n, name, count = names.length, loaded = 0, result = {};
+      const onload = () => {
+        progress(++loaded * (100 / names.length));
+        if (--count === 0) {
+          d.resolve(result);
+        }
+      };
 
       for (n = 0; n < names.length; n++) {
         name = names[n];
@@ -195,6 +163,22 @@ let Game = {
       xhr.send();
       return d.promise;
     }
+
+    getJSON(params.data).then(level => {
+      Game.map      = new Map(level);
+      Game.camera   = new Camera();
+      Game.elements = new Elements(level.layers[2].objects);
+      return getImages(params.assets);
+    }).then( images => {
+      Game.renderer = new Renderer(images);
+      d.resolve(Game);
+    }).catch(function(error) {
+      console.log(error);
+    });
+
+    Game.resizeViewport();
+    progress(0);
+
     return d.promise;
   },
 //-------------------------------------------------------------------------

@@ -44,14 +44,14 @@ Game.addEntity('paddle', function () {
     if (this.awake && !this.dead) {
 
       if(!this.stop) {
-        this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
+        this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
         this.move();
       }
 
       if (this.expectedX !== this.x) {
         this.force.x = 0;
         this.stop = true;
-        this.direction = this.direction === DIR.RIGHT ? DIR.LEFT : DIR.RIGHT;
+        this.direction = this.direction === this.DIR.RIGHT ? this.DIR.LEFT : this.DIR.RIGHT;
 
         this.turnTimeout = setTimeout(function () {
           if(this.stop){

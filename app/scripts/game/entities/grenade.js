@@ -20,15 +20,15 @@ Game.addEntity('grenade', function (obj) {
   this.update = function () {
     if (!this.dead) {
       this.force.y += Game.map.gravity;
-      this.force.x = this.direction === DIR.RIGHT ? this.speed : -this.speed;
+      this.force.x = this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       this.move();
       if (this.expectedX < this.x ) {
-        this.direction = DIR.RIGHT;
+        this.direction = this.DIR.RIGHT;
         this.force.x *= -0.6;
         this.speed -= 1;
       }
       if (this.expectedX > this.x ) {
-        this.direction = DIR.LEFT;
+        this.direction = this.DIR.LEFT;
         this.force.x *= -0.6;
         this.speed -= 1;
       }

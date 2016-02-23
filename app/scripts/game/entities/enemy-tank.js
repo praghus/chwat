@@ -16,8 +16,8 @@ Game.addEntity('enemy_tank', function () {
   this.animation = {x: 0, y: 0, w: 32, h: 32, frames: 2, fps: 4, loop: true};
   this.damage = 30;
   this.shoot = function () {
-    Game.elements.add('enemy_bullet', {x: this.x - 17, y: this.y + 6, direction: DIR.LEFT});
-    Game.elements.add('enemy_bullet', {x: this.x + this.width + 1, y: this.y + 6, direction: DIR.RIGHT});
+    Game.elements.add('enemy_bullet', {x: this.x - 17, y: this.y + 6, direction: this.DIR.LEFT});
+    Game.elements.add('enemy_bullet', {x: this.x + this.width + 1, y: this.y + 6, direction: this.DIR.RIGHT});
     this.shootTimeout = setTimeout(function () {this.canShoot = true;}.bind(this), this.shootDelay);
   };
   this.collide = function (element) {
@@ -43,23 +43,23 @@ Game.addEntity('enemy_tank', function () {
         }
       }
       else {
-        this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
+        this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       }
       this.move();
       if (this.onLeftEdge) {
-        this.direction = DIR.RIGHT;
+        this.direction = this.DIR.RIGHT;
         this.force.x *= -0.6;
       }
       if (this.onRightEdge) {
-        this.direction = DIR.LEFT;
+        this.direction = this.DIR.LEFT;
         this.force.x *= -0.6;
       }
       if (this.expectedX < this.x ) {
-        this.direction = DIR.RIGHT;
+        this.direction = this.DIR.RIGHT;
         this.force.x *= -0.6;
       }
       if (this.expectedX > this.x ) {
-        this.direction = DIR.LEFT;
+        this.direction = this.DIR.LEFT;
         this.force.x *= -0.6;
       }
       this.animate();

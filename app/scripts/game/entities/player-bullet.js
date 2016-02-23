@@ -19,7 +19,7 @@ Game.addEntity('player_bullet', function (obj) {
   };
   this.update = function () {
     if (!this.dead) {
-      this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
+      this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       this.move();
 
       if (this.expectedX !== this.x) {

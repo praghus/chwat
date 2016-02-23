@@ -8,7 +8,7 @@ Game.addEntity('water', class extends Entity {
     this.animation = {x: 0, y: 0, w: spriteSize, h: spriteSize, frames: 7, fps: 20, loop: true};
     this.fall = false;
     this.wave = 0;
-    this.direction = DIR.DOWN;
+    this.direction = this.DIR.DOWN;
   }
   draw(ctx, image) {
     const { spriteSize } = Game.map;
@@ -40,13 +40,13 @@ Game.addEntity('water', class extends Entity {
     if (this.onScreen()) {
       this.animate();
       if (this.animFrame === 5) {
-        this.wave += this.direction === DIR.DOWN ? 0.5 : -0.5;
+        this.wave += this.direction === this.DIR.DOWN ? 0.5 : -0.5;
       }
       if (this.wave > 2) {
-        this.direction = DIR.UP;
+        this.direction = this.DIR.UP;
       }
       if(this.wave < -2) {
-        this.direction = DIR.DOWN;
+        this.direction = this.DIR.DOWN;
       }
       if (Game.Math.overlap(Game.player, this)) {
         if (!Game.input.up) {

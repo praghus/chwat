@@ -18,7 +18,7 @@ Game.addEntity('enemy_bullet', function (obj) {
   };
   this.update = function () {
     if (!this.dead) {
-      this.force.x += this.direction === DIR.RIGHT ? this.speed : -this.speed;
+      this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       this.move();
       if (Game.Math.overlap(Game.player, this) && !this.dead) {
         Game.player.hit(this.damage);

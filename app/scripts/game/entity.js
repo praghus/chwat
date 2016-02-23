@@ -32,6 +32,7 @@ class Entity
     this.animOffset = 0;
     this.animFrame = 0;
     this.animCount = 0;
+    this.DIR = { UP: 0, RIGHT: 1, BOTTOM: 2, LEFT: 3},
     this.vectorMask = [
       new SAT.Vector(0, 0),
       new SAT.Vector(this.width, 0),

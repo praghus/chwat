@@ -61,11 +61,11 @@ Game.addEntity('player', class extends Entity {
     if (!this.dead) {
       if (Game.input.left) {
         this.force.x -= this.speed;
-        this.direction = DIR.LEFT;
+        this.direction = this.DIR.LEFT;
       }
       if (Game.input.right) {
         this.force.x += this.speed;
-        this.direction = DIR.RIGHT;
+        this.direction = this.DIR.RIGHT;
       }
       if (this.canJump && Game.input.up) {
         this.doJump = true;
@@ -92,8 +92,8 @@ Game.addEntity('player', class extends Entity {
       }
       // slow down
       if (!Game.input.left && !Game.input.right && this.force.x !== 0) {
-        this.force.x += this.direction === DIR.RIGHT ? -this.speed : this.speed;
-        if (this.direction === DIR.LEFT && this.force.x > 0 || this.direction === DIR.RIGHT && this.force.x < 0) {
+        this.force.x += this.direction === this.DIR.RIGHT ? -this.speed : this.speed;
+        if (this.direction === this.DIR.LEFT && this.force.x > 0 || this.direction === this.DIR.RIGHT && this.force.x < 0) {
           this.force.x = 0;
         }
       }
@@ -112,20 +112,20 @@ Game.addEntity('player', class extends Entity {
     }
 
     if (this.dead) {
-      this.animate(this.direction === DIR.RIGHT ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
+      this.animate(this.direction === this.DIR.RIGHT ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
     }
     else if (this.doJump || this.fall) {
       if (this.force.y < 0) {
-        this.animate(this.direction === DIR.RIGHT ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
+        this.animate(this.direction === this.DIR.RIGHT ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
       }
       else {
-        this.animate(this.direction === DIR.RIGHT ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
+        this.animate(this.direction === this.DIR.RIGHT ? this.animations.FALL_RIGHT : this.animations.FALL_LEFT);
       }
     } else if (this.force.x !== 0) {
-      this.animate(this.direction === DIR.RIGHT ? this.animations.RIGHT : this.animations.LEFT);
+      this.animate(this.direction === this.DIR.RIGHT ? this.animations.RIGHT : this.animations.LEFT);
     }
     else {
-      this.animate(this.direction === DIR.RIGHT ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
+      this.animate(this.direction === this.DIR.RIGHT ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
     }
     // recover energy while standing
     /*if (this.force.x == 0 && this.force.y == 0 && this.energy < this.maxEnergy)
@@ -182,7 +182,7 @@ Game.addEntity('player', class extends Entity {
     this.force.x = 0;
     this.animOffset = 64;
     Game.elements.add('player_bullet',{
-      x: this.direction === DIR.RIGHT ? this.x + this.width : this.x - 12,
+      x: this.direction === this.DIR.RIGHT ? this.x + this.width : this.x - 12,
       y: this.y + 21,
       direction: this.direction
     });
@@ -197,7 +197,7 @@ Game.addEntity('player', class extends Entity {
     this.canShoot = false;
     this.animOffset = 64;
     Game.elements.add('grenade', {
-      x: this.direction === DIR.RIGHT ? this.x + this.width : this.x,
+      x: this.direction === this.DIR.RIGHT ? this.x + this.width : this.x,
       y: this.y + 18,
       direction: this.direction
     });
