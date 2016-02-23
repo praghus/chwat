@@ -1,15 +1,15 @@
 //==========================================================================
 // GAME ELEMENTS
 //--------------------------------------------------------------------------
-var Elements = Class.create({
-
-  initialize: function (elementsLayer) {
+class Elements
+{
+  constructor(elementsLayer) {
     this.all = [];
     this.lights = [];
     this.createElements(elementsLayer);
-  },
+  }
   //------------------------------------------------------------------------
-  update: function (dt) {
+  update() {
     var all = this.all;
     all.forEach(function (Obj, i, all) {
       if (Obj.dead) {
@@ -25,21 +25,21 @@ var Elements = Class.create({
         all[j].overlapTest(all[k]);
       }
     }
-  },
+  }
   //------------------------------------------------------------------------
-  add: function (type, params) {
-    if (Game.Entities[type]) {
-      this.all.push(new Game.Entities[type](params));
+  add(type, params) {
+    if (Game.entities[type]) {
+      this.all.push(new Game.entities[type](params));
     }
-  },
+  }
   //------------------------------------------------------------------------
-  createElements: function (source) {
+  createElements(source) {
     for (var i = 0; i < source.length; i++) {
       var obj = source[i];
-      if (Game.Entities[obj.type]) {
+      if (Game.entities[obj.type]) {
         switch (obj.type) {
           case 'player':
-            player = new Game.Entities[obj.type](obj);
+            player = new Game.entities[obj.type](obj);
             break;
           default:
             this.add(obj.type, obj);
@@ -48,4 +48,4 @@ var Elements = Class.create({
       }
     }
   }
-});
+};

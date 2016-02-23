@@ -28,7 +28,7 @@ var FPS               = 60,
     DarkMask          = illuminated.DarkMask,
     PlayerLight = new Lamp({
       position: new Vec2(0,0),
-      color:    'rgba(255,255,255,0.08)',
+      color:    'rgba(255,255,255,0.1)',
       distance: 96,
       samples:  1,
       radius:   8
@@ -51,56 +51,7 @@ var FPS               = 60,
       'saw',			    'player_light'
     ];
 //--------------------------------------------------------------------------
-  function setup(images, level) {
-    map      = new Mapa(level);
-    camera   = new Camera();
-    elements = new Elements(level.layers[2].objects);
-    renderer = new Renderer(images);
-    renderer.msg(map.name,100);
-  }
-  //--------------------------------------------------------------------------
-  function update(dt) {
-    elements.update(dt);
-    camera.update(dt);
-    player.update(dt);
-  }
-  //--------------------------------------------------------------------------
-  function render(dt) {
-    renderer.render(dt);
-  }
-  //--------------------------------------------------------------------------
-  function resizeViewport() {
-    var gameArea  = document.getElementById('game'),
-        canvas    = document.getElementById('canvas'),
-        newWidth  = window.innerWidth,//  < MaxWidth  ? window.innerWidth  : MaxWidth,
-        newHeight = window.innerHeight,// < MaxHeight ? window.innerHeight : MaxHeight,
-        newRatio  = newWidth / newHeight;
-
-    PixelScale = window.innerWidth / 240;
-    Ratio = window.innerWidth / window.innerHeight;
-    ResolutionX = Math.round(window.innerWidth / PixelScale);
-    ResolutionY = Math.round(window.innerHeight / PixelScale);
-    if (newRatio > Ratio) {
-      newWidth = newHeight * Ratio;
-    } else {
-      newHeight = newWidth / Ratio;
-    }
-    gameArea.style.transform = 'none';
-    gameArea.style.width = newWidth + 'px';
-    gameArea.style.height = newHeight + 'px';
-    gameArea.style.marginTop = (-newHeight / 2) + 'px';
-    gameArea.style.marginLeft = (-newWidth / 2) + 'px';
-    ScaleX = Math.round(newWidth  / ResolutionX);
-    ScaleY = Math.round(newHeight / ResolutionY);
-    canvas.width = ScaleX * ResolutionX;
-    canvas.height = ScaleY * ResolutionY;
-  }
-  function resizeGame(){
-    resizeViewport();
-    camera.center();
-  }
-//--------------------------------------------------------------------------
-(function(){
+{
   var g1 = 'background-color: #444444;';
   var g2 = 'background-color: #333333;';
   var g3 = 'color:#CCCCCC;font-weight:bold; background-color: #222222;';
@@ -109,10 +60,20 @@ var FPS               = 60,
   resizeViewport();
   Game.Load.images(IMAGES, function(images) {
     Game.Load.json("assets/levels/main.json", function(level) {
-      setup(images, level);
+
+      map      = new Map(level);
+      camera   = new Camera();
+      elements = new Elements(level.layers[2].objects);
+      renderer = new Renderer(images);
+      renderer.msg(map.name,100);
+
       Game.run({
-        update: update,
-        render: render
+        update: () => {
+          elements.update();
+          camera.update();
+          player.update();
+        },
+        render: () => renderer.render()
       });
       Dom.on(document, 'keydown', function(ev) { return Game.onKey(ev, ev.keyCode, true);  }, false);
       Dom.on(document, 'keyup',   function(ev) { return Game.onKey(ev, ev.keyCode, false); }, false);
@@ -158,5 +119,39 @@ var FPS               = 60,
       resizeGame();
     });
   });
-}());
+
+
+  function resizeViewport() {
+    var gameArea  = document.getElementById('game'),
+        canvas    = document.getElementById('canvas'),
+        newWidth  = window.innerWidth,//  < MaxWidth  ? window.innerWidth  : MaxWidth,
+        newHeight = window.innerHeight,// < MaxHeight ? window.innerHeight : MaxHeight,
+        newRatio  = newWidth / newHeight;
+
+    PixelScale = window.innerWidth / 240;
+    Ratio = window.innerWidth / window.innerHeight;
+    ResolutionX = Math.round(window.innerWidth / PixelScale);
+    ResolutionY = Math.round(window.innerHeight / PixelScale);
+    if (newRatio > Ratio) {
+      newWidth = newHeight * Ratio;
+    } else {
+      newHeight = newWidth / Ratio;
+    }
+    gameArea.style.transform = 'none';
+    gameArea.style.width = newWidth + 'px';
+    gameArea.style.height = newHeight + 'px';
+    gameArea.style.marginTop = (-newHeight / 2) + 'px';
+    gameArea.style.marginLeft = (-newWidth / 2) + 'px';
+    ScaleX = Math.round(newWidth  / ResolutionX);
+    ScaleY = Math.round(newHeight / ResolutionY);
+    canvas.width = ScaleX * ResolutionX;
+    canvas.height = ScaleY * ResolutionY;
+  }
+
+  function resizeGame(){
+    resizeViewport();
+    camera.center();
+  }
+
+}
 

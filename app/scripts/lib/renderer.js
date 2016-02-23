@@ -1,22 +1,22 @@
 //==========================================================================
 // RENDERER
 //--------------------------------------------------------------------------
-var Renderer = Class.create({
-
-  initialize: function (images) {
+class Renderer
+{
+  constructor(images) {
     this.dynamicLights = UseDynamicLights;
     this.images = images;
     this.message = {dispCount: 0, dispIter: 0, txt: ''};
     this.lightmask = [];
     this.canvas = document.getElementById('canvas');//Game.Canvas.init(Dom.get('canvas'), ResolutionX, ResolutionY);
     this.ctx = this.canvas.getContext('2d');//this.canvas.getContext('2d');
-  },
+  }
   //------------------------------------------------------------------------
-  msg: function (txt, iter) {
+  msg(txt, iter) {
     this.message = {dispCount: 0, dispIter: iter, txt: txt};
-  },
+  }
   //------------------------------------------------------------------------
-  fontPrint: function (FontText, FontX, FontY) {
+  fontPrint(FontText, FontX, FontY) {
     FontText = FontText.toUpperCase();
     if (FontX === -1) {
       FontX = (ResolutionX - FontText.length * 8) / 2;
@@ -28,9 +28,9 @@ var Renderer = Class.create({
       var chr = FontText.charCodeAt(i);
       this.ctx.drawImage(this.images.font, ((chr) % 16) * 16, Math.ceil(((chr + 1) / 16) - 1) * 16, 16, 16, FontX + (i * 8), FontY, 8, 8);
     }
-  },
+  }
   //------------------------------------------------------------------------
-  render: function () {
+  render() {
     this.ctx.mozImageSmoothingEnabled = false;
     this.ctx.webkitImageSmoothingEnabled = false;
     this.ctx.msImageSmoothingEnabled = false;
@@ -61,9 +61,9 @@ var Renderer = Class.create({
     }
     this.renderScore(this.ctx);
     this.ctx.restore();
-  },
+  }
   //------------------------------------------------------------------------
-  renderLightingEffect: function (ctx) {
+  renderLightingEffect(ctx) {
     var all = elements.lights;
     all.forEach(function (Obj) {
       Obj.render(ctx, renderer.images[Obj.type]);
@@ -86,9 +86,9 @@ var Renderer = Class.create({
         -320 + Math.floor(player.y + (player.height / 2) + camera.y) - (player.height / 2)
       );
     }
-  },
+  }
   //------------------------------------------------------------------------
-  renderBack: function (ctx) {
+  renderBack(ctx) {
     if (!camera.underground) {
       ctx.fillStyle = '#73C3FF';
       ctx.fillRect(0, 0, ResolutionX, ResolutionY);
@@ -98,9 +98,9 @@ var Renderer = Class.create({
     } else {
       ctx.clearRect(0, 0, ResolutionX, ResolutionY);
     }
-  },
+  }
   //------------------------------------------------------------------------
-  renderGround: function (ctx) {
+  renderGround(ctx) {
     var y = Math.floor(camera.y % map.spriteSize), _y = Math.floor(-camera.y / map.spriteSize);
     while (y < ResolutionY) {
       var x = Math.floor(camera.x % map.spriteSize), _x = Math.floor(-camera.x / map.spriteSize);
@@ -152,9 +152,9 @@ var Renderer = Class.create({
       y += map.spriteSize;
       _y++;
     }
-  },
+  }
   //------------------------------------------------------------------------
-  renderForeGround: function (ctx) {
+  renderForeGround(ctx) {
     var y = Math.floor(camera.y % map.spriteSize), _y = Math.floor(-camera.y / map.spriteSize);
     while (y < ResolutionY) {
       var x = Math.floor(camera.x % map.spriteSize), _x = Math.floor(-camera.x / map.spriteSize);
@@ -173,9 +173,9 @@ var Renderer = Class.create({
       y += map.spriteSize;
       _y++;
     }
-  },
+  }
   //------------------------------------------------------------------------
-  renderForeGround2: function (ctx) {
+  renderForeGround2(ctx) {
     var y = Math.floor(camera.y % map.spriteSize), _y = Math.floor(-camera.y / map.spriteSize);
     while (y < ResolutionY) {
       var x = Math.floor(camera.x % map.spriteSize), _x = Math.floor(-camera.x / map.spriteSize);
@@ -190,20 +190,20 @@ var Renderer = Class.create({
       y += map.spriteSize;
       _y++;
     }
-  },
+  }
   //------------------------------------------------------------------------
-  renderPlayer: function (ctx) {
+  renderPlayer(ctx) {
     player.render(ctx, this.images.player);
-  },
+  }
   //------------------------------------------------------------------------
-  renderElements: function (ctx) {
+  renderElements(ctx) {
     var all = elements.all;
     all.forEach(function (Obj) {
       Obj.render(ctx, renderer.images[Obj.type]);
     });
-  },
+  }
   //------------------------------------------------------------------------
-  renderScore: function (ctx) {
+  renderScore(ctx) {
     ctx.drawImage(this.images.live, 0, 10, Math.round(player.maxEnergy / 10) * 11, 10, 5, 5, Math.round(player.maxEnergy / 10) * 11, 10);
     ctx.drawImage(this.images.live, 0, 0, (player.energy / 10) * 11, 10, 5, 5, (player.energy / 10) * 11, 10);
     ctx.drawImage(this.images.coin, 0, 0, 8, 8, ResolutionX - 16, 7, 8, 8);
@@ -216,4 +216,4 @@ var Renderer = Class.create({
       }
     }
   }
-});
+}

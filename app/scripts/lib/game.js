@@ -14,8 +14,14 @@ if (!window.requestAnimationFrame) {
 // FPSMeter
 //-------------------------------------------------------------------------
 var fpsmeter = new FPSMeter({
-  decimals: 0, graph: true, theme: 'dark', position: 'fixed',
-  top: 'auto', left: 'auto', bottom: '5px', right: '5px'
+  decimals  : 0,
+  graph     : true,
+  theme     : 'dark',
+  position  : 'fixed',
+  top       : 'auto',
+  left      : 'auto',
+  bottom    : '5px',
+  right     : '5px'
 });
 //-------------------------------------------------------------------------
 // SIMPLE CLASS CREATION
@@ -63,6 +69,7 @@ var Game = {
     left: false, right: false, up: false, down: false,
     jump: false, shoot: false, action: false, throw: false
   },
+  entities: {},
   run: function (options) {
     var now,
         dt = 0,
@@ -87,8 +94,8 @@ var Game = {
     frame();
   },
   addEntity: function(id, obj){
-    Game.Entities[id] = obj;
-    Class.extend(Game.Entities[id], Entity);
+    this.entities[id] = obj;
+    Class.extend(this.entities[id], Entity);
   },
   onKey: function (ev, key, pressed) {
     switch(key) {
@@ -102,7 +109,7 @@ var Game = {
     }
   }
 };
-Game.Entities = {};
+
 //-------------------------------------------------------------------------
 // ASSET LOADING UTILITIES
 //-------------------------------------------------------------------------

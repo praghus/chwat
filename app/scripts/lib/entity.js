@@ -1,8 +1,9 @@
 //==========================================================================
 // ACTIVE ELEMENT PROTOTYPE
 //--------------------------------------------------------------------------
-var Entity = Class.create({
-  initialize: function (obj) {
+class Entity
+{
+  constructor (obj) {
     this.PlayerM = 0;
     this.x = obj.x;
     this.y = obj.y;
@@ -39,9 +40,9 @@ var Entity = Class.create({
     ];
 
     //Dom.on(this, 'click', function(ev) { console.log(this);  }, false);
-  },
+  }
   //----------------------------------------------------------------------
-  draw: function (ctx, image) {
+  draw(ctx, image) {
     if (this.shadowCaster && renderer.dynamicLights) {
       renderer.lightmask.push(new RectangleObject({
         topleft: new Vec2(this.x + camera.x, this.y + camera.y),
@@ -63,23 +64,23 @@ var Entity = Class.create({
         this.width, this.height
       );
     }
-  },
+  }
   //----------------------------------------------------------------------
-  update: function () {
+  update() {
 
-  },
+  }
   //----------------------------------------------------------------------
-  render: function (ctx, image) {
+  render(ctx, image) {
     if (this.visible && this.onScreen()) {
       this.draw(ctx, image);
     }
-  },
+  }
   //----------------------------------------------------------------------
-  getMask: function () {
+  getMask() {
     return new P(new V(this.x, this.y), this.vectorMask);
-  },
+  }
   //----------------------------------------------------------------------
-  overlapTest: function (obj) {
+  overlapTest(obj) {
     if (!this.dead && Game.Math.overlap(this, obj) && (this.onScreen() || this.awake)) {
       // poligon collision checking
       if (SAT.testPolygonPolygon(this.getMask(), obj.getMask())) {
@@ -87,20 +88,20 @@ var Entity = Class.create({
         obj.collide(this);
       }
     }
-  },
+  }
   //----------------------------------------------------------------------
-  collide: function (element) {
+  collide(element) {
     //console.log("Object "+element.type+" collide with "+this.type);
-  },
+  }
   //----------------------------------------------------------------------
-  onScreen: function () {
+  onScreen() {
     return this.x + this.width + map.spriteSize > -camera.x &&
       this.x - map.spriteSize < -camera.x + ResolutionX &&
       this.y - map.spriteSize < -camera.y + ResolutionY &&
       this.y + this.height + map.spriteSize > -camera.y;
-  },
+  }
   //----------------------------------------------------------------------
-  hit: function (s) {
+  hit(s) {
     if (this.family === "enemies") {
       this.force.x += -(this.force.x * 4);
       this.force.y = -2;
@@ -112,9 +113,9 @@ var Entity = Class.create({
         elements.add('coin', {x: this.x + 8, y: this.y});
       }
     }
-  },
+  }
   //----------------------------------------------------------------------
-  seesPlayer: function () {
+  seesPlayer() {
     this.PlayerM = ((player.y + player.height) - (this.y + this.height)) / (player.x - this.x);
     if (!player.canHurt) {
       return false;
@@ -130,9 +131,9 @@ var Entity = Class.create({
       return true;
     }
     return false;
-  },
+  }
   //----------------------------------------------------------------------
-  animate: function (animation) {
+  animate(animation) {
     var entity = this;
     animation = animation || entity.animation;
     entity.animFrame = entity.animFrame || 0;
@@ -148,9 +149,9 @@ var Entity = Class.create({
       }
       entity.animCount = 0;
     }
-  },
+  }
   //----------------------------------------------------------------------
-  move: function () {
+  move() {
     if (this.force.x > this.maxSpeed) {
       this.force.x = this.maxSpeed;
     }
@@ -205,4 +206,4 @@ var Entity = Class.create({
 
     //return {x: expectedX === this.x, y: expectedY === this.y};
   }
-});
+}

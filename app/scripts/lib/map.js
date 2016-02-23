@@ -1,8 +1,8 @@
 //==========================================================================
 // Map
 //--------------------------------------------------------------------------
-var Mapa = Class.create({
-  initialize: function (level) {
+class Map {
+  constructor(level) {
     var j = 0,
         backData  = level.layers[0].data,
         mainData  = level.layers[1].data,
@@ -35,18 +35,18 @@ var Mapa = Class.create({
         j++;
       }
     }
-  },
+  }
   //----------------------------------------------------------------------
-  get: function (_l, _x, _y) {
+  get(_l, _x, _y) {
     if (_x < 0 || _y < 0 || _x > this.width || _y > this.height) {
       return false;
     }
     else {
       return this.data[_l][_x][_y];
     }
-  },
+  }
   //----------------------------------------------------------------------
-  tileData: function (_x, _y) {
+  tileData(_x, _y) {
     if (_x < 0 || _y < 0 || _x > this.width - 1 || _y > this.height - 1) {
       return false;
     }
@@ -57,27 +57,27 @@ var Mapa = Class.create({
         type: this.data.ground[_x][_y], solid: this.isSolid(_x, _y)
       };
     }
-  },
+  }
   //----------------------------------------------------------------------
-  isSolid: function (_x, _y) {
+  isSolid(_x, _y) {
     if (_x >= 0 && _x < this.data.ground.length && _y >= 0 && _y < this.data.ground[_x].length) {
       return this.data.ground[_x][_y] > 32 * 8;
     }
     else {
       return true;
     }
-  },
+  }
   //----------------------------------------------------------------------
-  isShadowCaster: function (_x, _y) {
+  isShadowCaster(_x, _y) {
     if (_x >= 0 && _x < this.data.ground.length && _y >= 0 && _y < this.data.ground[_x].length) {
       return this.data.ground[_x][_y] > 32 * 8 || this.data.ground[_x][_y] === 1;
     }
     else {
       return false;
     }
-  },
+  }
   //----------------------------------------------------------------------
-  addMask: function (obj) {
+  addMask(obj) {
     var x = Math.round(obj.x / map.spriteSize) - 1,
         y = Math.round(obj.y / map.spriteSize) - 1,
         w = Math.round(obj.width / map.spriteSize) + 2,
@@ -88,4 +88,4 @@ var Mapa = Class.create({
       }
     }
   }
-});
+}
