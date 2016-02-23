@@ -95,8 +95,8 @@ class Entity
   //----------------------------------------------------------------------
   onScreen() {
     return this.x + this.width + Game.map.spriteSize > -Game.camera.x &&
-      this.x - Game.map.spriteSize < -Game.camera.x + ResolutionX &&
-      this.y - Game.map.spriteSize < -Game.camera.y + ResolutionY &&
+      this.x - Game.map.spriteSize < -Game.camera.x + Game.resolution.x &&
+      this.y - Game.map.spriteSize < -Game.camera.y + Game.resolution.y &&
       this.y + this.height + Game.map.spriteSize > -Game.camera.y;
   }
   //----------------------------------------------------------------------
@@ -142,7 +142,7 @@ class Entity
       entity.animFrame = 0;
       entity.animCount = 0;
     }
-    else if (++(entity.animCount) === Math.round(FPS / animation.fps)) {
+    else if (++(entity.animCount) === Math.round(Game.fps / animation.fps)) {
       if (entity.animFrame <= entity.animation.frames && animation.loop) {
         entity.animFrame = Game.Math.normalize(entity.animFrame + 1, 0, entity.animation.frames);
       }
@@ -167,8 +167,8 @@ class Entity
         PH = Math.floor((this.expectedY + this.height) / Game.map.spriteSize),
         nearMatrix = [];
 
-    for (var x = PX; x <= PW; x++){
-      for (var y = PY; y <= PH; y++){
+    for (var y = PY; y <= PH; y++){
+      for (var x = PX; x <= PW; x++){
         nearMatrix.push(Game.map.tileData(x, y));
       }
     }

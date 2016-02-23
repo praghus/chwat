@@ -10,7 +10,7 @@ class Elements
   }
   //------------------------------------------------------------------------
   update() {
-    var all = this.all;
+    let { all } = this;
     all.forEach(function (Obj, i, all) {
       if (Obj.dead) {
         Game.elements.all[i] = Game.elements.all[Game.elements.all.length - 1];
@@ -19,9 +19,9 @@ class Elements
         Obj.update();
       }
     });
-    for (var j = 0; j < all.length; j++) {
+    for (let j = 0; j < all.length; j++) {
       all[j].overlapTest(player);
-      for (var k = j + 1; k < all.length; k++) {
+      for (let k = j + 1; k < all.length; k++) {
         all[j].overlapTest(all[k]);
       }
     }
@@ -34,8 +34,8 @@ class Elements
   }
   //------------------------------------------------------------------------
   createElements(source) {
-    for (var i = 0; i < source.length; i++) {
-      var obj = source[i];
+    for (let i = 0; i < source.length; i++) {
+      let obj = source[i];
       if (Game.entities[obj.type]) {
         switch (obj.type) {
           case 'player':

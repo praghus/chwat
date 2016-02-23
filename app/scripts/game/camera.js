@@ -12,34 +12,35 @@ class Camera
   }
   //------------------------------------------------------------------------
   update() {
-    if ((Game.player.x + this.x > ResolutionX / 2 && Game.player.force.x > 0) || (Game.player.x + this.x < ResolutionX / 2 && Game.player.force.x < 0)) {
-      this.x -= Math.floor(Game.player.force.x);
+    const { player, resolution, map } = Game;
+    if ((player.x + this.x > resolution.x / 2 && player.force.x > 0) || (player.x + this.x < resolution.x / 2 && player.force.x < 0)) {
+      this.x -= Math.floor(player.force.x);
     }
     if (this.x > 0) {
       this.x = 0;
     }
-    if (this.x - ResolutionX < -Game.map.width * Game.map.spriteSize) {
-      this.x = (-Game.map.width * Game.map.spriteSize) + ResolutionX;
+    if (this.x - resolution.x < -map.width * map.spriteSize) {
+      this.x = (-map.width * map.spriteSize) + resolution.x;
     }
-    this.y = -((Game.player.y + Game.player.height) - (ResolutionY / 2));
+    this.y = -((player.y + player.height) - (resolution.y / 2));
 
     if (this.y > 0) {
       this.y = 0;
     }
-    if (this.y < -Game.map.height * Game.map.spriteSize) {
-      this.y = (-Game.map.height * Game.map.spriteSize) / 2;
+    if (this.y < -map.height * map.spriteSize) {
+      this.y = (-map.height * map.spriteSize) / 2;
     }
     // above the surface
-    if (Math.round((Game.player.y + (Game.player.height / 2)) / Game.map.spriteSize) < Game.map.surface) {
+    if (Math.round((player.y + (player.height / 2)) / map.spriteSize) < map.surface) {
       this.underground = false;
-      if ((this.y - ResolutionY) < -Game.map.surface * Game.map.spriteSize) {
-        this.y = (-Game.map.surface * Game.map.spriteSize) + ResolutionY;
+      if ((this.y - resolution.y) < -map.surface * map.spriteSize) {
+        this.y = (-map.surface * map.spriteSize) + resolution.y;
       }
     } else {
       // under the surface
       this.underground = true;
-      if ((this.y) >= -Game.map.surface * Game.map.spriteSize) {
-        this.y = (-Game.map.surface * Game.map.spriteSize);
+      if ((this.y) >= -map.surface * map.spriteSize) {
+        this.y = (-map.surface * map.spriteSize);
       }
     }
     // shake
@@ -61,8 +62,9 @@ class Camera
   }
   //------------------------------------------------------------------------
   center() {
-    this.x = -(Game.player.x - (ResolutionX / 2));
-    this.y = -((Game.player.y + Game.player.height) - (ResolutionY / 2));
+    const { player, resolution } = Game;
+    this.x = -(player.x - (resolution.x / 2));
+    this.y = -((player.y + player.height) - (resolution.y / 2));
   }
   //------------------------------------------------------------------------
   shake() {

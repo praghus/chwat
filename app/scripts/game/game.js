@@ -1,26 +1,4 @@
 //-------------------------------------------------------------------------
-// POLYFILLS
-//-------------------------------------------------------------------------
-if (!window.requestAnimationFrame) {
-  window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function (callback) {
-      window.setTimeout(callback, 1000 / 60);
-    };
-}
-//-------------------------------------------------------------------------
-// FPSMeter
-//-------------------------------------------------------------------------
-let FPS = 60,
-    ResolutionX = 320,
-    ResolutionY = 180,
-    Ratio = 16 / 9,
-    PixelScale = 3,
-    ScaleX = 4,
-    ScaleY = 4;
-//-------------------------------------------------------------------------
 // SIMPLE DOM UTILITIES
 //-------------------------------------------------------------------------
 const Dom = {
@@ -33,7 +11,7 @@ const Dom = {
   on: function (ele, type, fn, capture) {
     Dom.get(ele).addEventListener(type, fn, capture);
   },
-  un: function (ele, type, fn, capture) {
+  off: function (ele, type, fn, capture) {
     Dom.get(ele).removeEventListener(type, fn, capture);
   },
   show: function (ele, type) {
@@ -42,38 +20,52 @@ const Dom = {
 };
 //=========================================================================
 let Game = {
+  fps       : 60,
+  debug     : false,
+  entities  : {},
+  map       : {},
+  elements  : {},
+  camera    : {},
+  player    : {},
+  renderer  : {},
+  fpsmeter  : {},
+  resolution: {
+    x: 320,
+    y: 180,
+    r: 16 / 9,
+    scale: {
+      x: 4,
+      y: 4,
+      pixel: 3
+    }
+  },
   input: {
     left: false, right: false, up: false, down: false,
     jump: false, shoot: false, action: false, throw: false
   },
-  entities: {},
-  map: {},
-  elements: {},
-  camera: {},
-  player: {},
-  renderer: {},
-  fpsmeter: new FPSMeter({
-    decimals  : 0,
-    graph     : true,
-    theme     : 'dark',
-    position  : 'fixed',
-    top       : 'auto',
-    left      : 'auto',
-    bottom    : '5px',
-    right     : '5px'
-  }),
   run: function (options) {
-    var now,
-      dt = 0,
-      last = Game.Math.timestamp(),
-      step = 1 / FPS,
-      update = options.update,
-      render = options.render;
-
-
-
+    let now,
+        dt = 0,
+        last = Game.Math.timestamp(),
+        step = 1 / Game.fps,
+        update = options.update,
+        render = options.render;
+    if (Game.debug) {
+      Game.fpsmeter = new FPSMeter({
+        decimals: 0,
+        graph: true,
+        theme: 'dark',
+        position: 'fixed',
+        top: 'auto',
+        left: 'auto',
+        bottom: '5px',
+        right: '5px'
+      });
+    }
     function frame() {
-      Game.fpsmeter.tickStart();
+      if (Game.debug) {
+        Game.fpsmeter.tickStart();
+      }
       now = Game.Math.timestamp();
       dt = dt + Math.min(1, (now - last) / 1000);
       while (dt > step) {
@@ -82,10 +74,11 @@ let Game = {
       }
       render(dt);
       last = now;
-      Game.fpsmeter.tick();
+      if (Game.debug) {
+        Game.fpsmeter.tick();
+      }
       requestAnimationFrame(frame);
     }
-
     frame();
   },
   addEntity: function (id, obj) {
@@ -94,58 +87,43 @@ let Game = {
   },
   onKey: function (ev, key, pressed) {
     switch (key) {
-      case KEY.LEFT:
-        this.input.left = pressed;
-        ev.preventDefault();
-        return false;
-      case KEY.RIGHT:
-        this.input.right = pressed;
-        ev.preventDefault();
-        return false;
-      case KEY.THROW:
-        this.input.throw = pressed;
-        ev.preventDefault();
-        return false;
-      case KEY.SHOOT:
-        this.input.shoot = pressed;
-        ev.preventDefault();
-        return false;
-      case KEY.SPACE:
-      case KEY.UP:
-        this.input.up = pressed;
-        ev.preventDefault();
-        return false;
-      case KEY.DOWN:
-        this.input.down = pressed;
-        ev.preventDefault();
-        return false;
+      case KEY.LEFT   : this.input.left   = pressed; break;
+      case KEY.RIGHT  : this.input.right  = pressed; break;
+      case KEY.THROW  : this.input.throw  = pressed; break;
+      case KEY.SHOOT  : this.input.shoot  = pressed; break;
+      case KEY.SPACE  :
+      case KEY.UP     : this.input.up     = pressed; break;
+      case KEY.DOWN   : this.input.down   = pressed; break;
     }
+    ev.preventDefault();
+    return false;
   },
   resizeViewport: function () {
-    var gameArea = document.getElementById('game'),
-      canvas = document.getElementById('canvas'),
-      newWidth = window.innerWidth,//  < MaxWidth  ? window.innerWidth  : MaxWidth,
-      newHeight = window.innerHeight,// < MaxHeight ? window.innerHeight : MaxHeight,
-      newRatio = newWidth / newHeight;
+    const gameArea = document.getElementById('game');
+    const canvas = document.getElementById('canvas');
+    let newWidth = window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
+    let newHeight = window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
+    let newRatio = newWidth / newHeight;
+    let { x, y, r, scale } = Game.resolution;
 
-    PixelScale = window.innerWidth / 240;
-    Ratio = window.innerWidth / window.innerHeight;
-    ResolutionX = Math.round(window.innerWidth / PixelScale);
-    ResolutionY = Math.round(window.innerHeight / PixelScale);
-    if (newRatio > Ratio) {
-      newWidth = newHeight * Ratio;
+    scale.pixel = window.innerWidth / 240;
+    r = window.innerWidth / window.innerHeight;
+    x = Math.round(window.innerWidth / scale.pixel);
+    y = Math.round(window.innerHeight / scale.pixel);
+    if (newRatio > Game.resolution.r) {
+      newWidth = newHeight * r;
     } else {
-      newHeight = newWidth / Ratio;
+      newHeight = newWidth / r;
     }
     gameArea.style.transform = 'none';
     gameArea.style.width = newWidth + 'px';
     gameArea.style.height = newHeight + 'px';
     gameArea.style.marginTop = (-newHeight / 2) + 'px';
     gameArea.style.marginLeft = (-newWidth / 2) + 'px';
-    ScaleX = Math.round(newWidth / ResolutionX);
-    ScaleY = Math.round(newHeight / ResolutionY);
-    canvas.width = ScaleX * ResolutionX;
-    canvas.height = ScaleY * ResolutionY;
+    scale.x = Math.round(newWidth / x);
+    scale.y = Math.round(newHeight / y);
+    canvas.width = scale.x * x;
+    canvas.height = scale.y * y;
   },
   resizeGame: function () {
     Game.resizeViewport();
@@ -157,30 +135,27 @@ let Game = {
   Load: {
     progress: function (ctx, perc) {
       ctx.save();
-      ctx.scale(ScaleX, ScaleY);
-      ctx.clearRect(0, 0, ResolutionX, ResolutionY);
+      ctx.scale(Game.resolution.scale.x, Game.resolution.scale.y);
+      ctx.clearRect(0, 0, Game.resolution.x, Game.resolution.y);
       ctx.fillStyle = '#000000';
-      ctx.fillRect(((ResolutionX - 100) / 2) - 2, (ResolutionY / 2) - 7, 104, 9);
+      ctx.fillRect(((Game.resolution.x - 100) / 2) - 2, (Game.resolution.y / 2) - 7, 104, 9);
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect((ResolutionX - 100) / 2, (ResolutionY / 2) - 5, 100, 5);
+      ctx.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100, 5);
       ctx.fillStyle = '#000000';
-      ctx.fillRect((ResolutionX - 100) / 2, (ResolutionY / 2) - 5, 100 * (perc / 100), 5);
+      ctx.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100 * (perc / 100), 5);
       ctx.restore();
     },
     images: function (names, callback) {
-      var n,
-        name,
-        result = {},
-        count = names.length,
-        loaded = 0,
-        canvas = document.getElementById('canvas'),
-        ctx = canvas.getContext('2d'),
-        onload = function () {
-          Game.Load.progress(ctx, ++loaded * (100 / names.length));
-          if (--count === 0) {
-            callback(result);
-          }
-        };
+      let n, name, result = {},
+          count = names.length, loaded = 0,
+          canvas = document.getElementById('canvas'),
+          ctx = canvas.getContext('2d'),
+          onload = function () {
+            Game.Load.progress(ctx, ++loaded * (100 / names.length));
+            if (--count === 0) {
+              callback(result);
+            }
+          };
       for (n = 0; n < names.length; n++) {
         name = names[n];
         result[name] = document.createElement('img');
@@ -274,7 +249,6 @@ let Game = {
   }
 };
 
-
 //-------------------------------------------------------------------------
 // DAT.GUI
 //-------------------------------------------------------------------------
@@ -325,3 +299,4 @@ class DAT {
     gui.gameData();
   }
 }
+window.Game = window.Game || Game;

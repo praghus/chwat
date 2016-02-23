@@ -13,7 +13,7 @@ Game.addEntity('lava', function () {
     for (var y = 0; y < Math.round(this.height / Game.map.spriteSize); y++) {
       for (var x = 0; x < Math.round(this.width / Game.map.spriteSize); x++) {
         var PX = Math.round((this.x + (x * Game.map.spriteSize)) / Game.map.spriteSize),
-          PY = Math.round((this.y + (y * Game.map.spriteSize)) / Game.map.spriteSize);
+            PY = Math.round((this.y + (y * Game.map.spriteSize)) / Game.map.spriteSize);
         if (!Game.map.isSolid(PX, PY)) {
           ctx.drawImage(image,
             this.animFrame * Game.map.spriteSize, y === 0 ? y : Game.map.spriteSize,

@@ -29,7 +29,7 @@ Game.addEntity('paddle', function () {
         element.doJump = false;
       }
       if (element.type === 'player') {
-        Game.camera.x = -(Game.player.x - (ResolutionX / 2));
+        Game.camera.x = -(Game.player.x - (Game.resolution.x / 2));
         if (Game.input.up) {
           Game.player.force.y = -6;
           Game.player.doJump = true;

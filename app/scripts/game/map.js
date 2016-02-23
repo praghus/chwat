@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------------
 class Map {
   constructor(level) {
-    var j = 0,
+    let j = 0,
         backData  = level.layers[0].data,
         mainData  = level.layers[1].data,
         foreData  = level.layers[3].data,
@@ -16,17 +16,19 @@ class Map {
     this.name = level.properties.Title;
     this.spriteSize = 16;
     this.spriteCols = 32;
-    this.data = {back: [], ground: [], mask: [], fore: [], fore2: []};
+    this.data = { back: [], ground: [], mask: [], fore: [], fore2: []};
 
-    for (var i = 0; i < this.width; i++) {
-      this.data.back[i]   = new Array(this.height);
-      this.data.ground[i] = new Array(this.height);
-      this.data.mask[i]   = new Array(this.height);
-      this.data.fore[i]   = new Array(this.height);
-      this.data.fore2[i]  = new Array(this.height);
+
+    for (let i = 0; i < this.width; i++) {
+      this.data.back[i] = [];
+      this.data.ground[i] = [];
+      this.data.mask[i] = [];
+      this.data.fore[i] = [];
+      this.data.fore2[i] = [];
     }
-    for (var y = 0; y < this.height; y++) {
-      for (var x = 0; x < this.width; x++) {
+
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
         this.data.ground[x][y] = mainData[j];
         this.data.back[x][y] = backData[j];
         this.data.fore[x][y] = foreData[j];
@@ -37,51 +39,47 @@ class Map {
     }
   }
   //----------------------------------------------------------------------
-  get(_l, _x, _y) {
-    if (_x < 0 || _y < 0 || _x > this.width || _y > this.height) {
-      return false;
-    }
-    else {
-      return this.data[_l][_x][_y];
-    }
+  inRange(y, x) {
+    return x >= 0 || y >= 0 || x < this.width || y < this.height;
   }
   //----------------------------------------------------------------------
-  tileData(_x, _y) {
-    if (_x < 0 || _y < 0 || _x > this.width - 1 || _y > this.height - 1) {
+  get(l, x, y) {
+    if(!this.inRange(x, y)){
       return false;
     }
-    else {
-      return {
-        x: _x * this.spriteSize, y: _y * this.spriteSize,
-        width: this.spriteSize, height: this.spriteSize,
-        type: this.data.ground[_x][_y], solid: this.isSolid(_x, _y)
-      };
-    }
+    return this.data[l][x][y];
   }
   //----------------------------------------------------------------------
-  isSolid(_x, _y) {
-    if (_x >= 0 && _x < this.data.ground.length && _y >= 0 && _y < this.data.ground[_x].length) {
-      return this.data.ground[_x][_y] > 32 * 8;
+  tileData(x, y) {
+    if(!this.inRange(x, y)){
+      return false;
     }
-    else {
+    return {
+      x: x * this.spriteSize, y: y * this.spriteSize,
+      width: this.spriteSize, height: this.spriteSize,
+      type: this.data.ground[x][y], solid: this.isSolid(x, y)
+    };
+  }
+  //----------------------------------------------------------------------
+  isSolid(x, y) {
+    if(!this.inRange(x, y)){
       return true;
     }
+    return this.data.ground[x][y] > 32 * 8;
   }
   //----------------------------------------------------------------------
-  isShadowCaster(_x, _y) {
-    if (_x >= 0 && _x < this.data.ground.length && _y >= 0 && _y < this.data.ground[_x].length) {
-      return this.data.ground[_x][_y] > 32 * 8 || this.data.ground[_x][_y] === 1;
-    }
-    else {
+  isShadowCaster(x, y){
+    if(!this.inRange(x, y)){
       return false;
     }
+    return this.data.ground[x][y] > 32 * 8 || this.data.ground[x][y] === 1;
   }
   //----------------------------------------------------------------------
   addMask(obj) {
-    var x = Math.round(obj.x / Game.map.spriteSize) - 1,
-        y = Math.round(obj.y / Game.map.spriteSize) - 1,
-        w = Math.round(obj.width / Game.map.spriteSize) + 2,
-        h = Math.round(obj.height / Game.map.spriteSize) + 2;
+    let x = Math.round(obj.x / this.spriteSize) - 1,
+        y = Math.round(obj.y / this.spriteSize) - 1,
+        w = Math.round(obj.width / this.spriteSize) + 2,
+        h = Math.round(obj.height / this.spriteSize) + 2;
     for (var _y = y; _y < y + h; _y++) {
       for (var _x = x; _x < x + w; _x++) {
         this.data.mask[_x][_y] = 1;

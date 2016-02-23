@@ -24,11 +24,11 @@ Game.addEntity('crusher', function () {
       var ELeft = Math.floor(this.x / Game.map.spriteSize),
         ETop = Math.floor(this.y / Game.map.spriteSize),
         EBottom = Math.floor((this.y + this.height) / Game.map.spriteSize);
-      if (Game.map.data.ground[ELeft][ETop] > 0) {
+      if (Game.map.get('ground', ETop, ELeft) > 0) {
         this.rise = false;
         this.fallTimeout = setTimeout(function () {this.fall = true;}.bind(this), this.fallDelay);
       }
-      if (Game.map.data.ground[ELeft][EBottom] > 0) {
+      if (Game.map.get('ground', EBottom, ELeft) > 0) {
         this.y = ETop * Game.map.spriteSize;
         this.force.y = 0;
         this.fall = false;

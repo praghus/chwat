@@ -8,9 +8,9 @@ class Renderer
     this.DarkAlpha = 1;
     this.dynamicLights = true;
     this.images = images;
-    this.message = {dispCount: 0, dispIter: 0, txt: ''};
+    this.message = { dispCount: 0, dispIter: 0, txt: '' };
     this.lightmask = [];
-    this.canvas = document.getElementById('canvas');//Game.Canvas.init(Dom.get('canvas'), ResolutionX, ResolutionY);
+    this.canvas = document.getElementById('canvas');//Game.Canvas.init(Dom.get('canvas'), Game.resolution.x, Game.resolution.y);
     this.ctx = this.canvas.getContext('2d');//this.canvas.getContext('2d');
     this.PlayerLight = new illuminated.Lamp({
       position  : new illuminated.Vec2(0,0),
@@ -28,67 +28,70 @@ class Renderer
   fontPrint(FontText, FontX, FontY) {
     FontText = FontText.toUpperCase();
     if (FontX === -1) {
-      FontX = (ResolutionX - FontText.length * 8) / 2;
+      FontX = (Game.resolution.x - FontText.length * 8) / 2;
     }
     if (FontY === -1) {
-      FontY = (ResolutionY - 8) / 2;
+      FontY = (Game.resolution.y - 8) / 2;
     }
-    for (var i = 0; i < FontText.length; i++) {
-      var chr = FontText.charCodeAt(i);
+    for (let i = 0; i < FontText.length; i++) {
+      const chr = FontText.charCodeAt(i);
       this.ctx.drawImage(this.images.font, ((chr) % 16) * 16, Math.ceil(((chr + 1) / 16) - 1) * 16, 16, 16, FontX + (i * 8), FontY, 8, 8);
     }
   }
   //------------------------------------------------------------------------
   render() {
-    this.ctx.mozImageSmoothingEnabled = false;
-    this.ctx.webkitImageSmoothingEnabled = false;
-    this.ctx.msImageSmoothingEnabled = false;
-    this.ctx.imageSmoothingEnabled = false;
+    const { ctx } = this;
+    const { x, y, scale } = Game.resolution;
+    ctx.mozImageSmoothingEnabled = false;
+    ctx.webkitImageSmoothingEnabled = false;
+    ctx.msImageSmoothingEnabled = false;
+    ctx.imageSmoothingEnabled = false;
     this.lightmask = [];
-    this.ctx.save();
-    this.ctx.scale(ScaleX, ScaleY);
-    this.ctx.clearRect(0, 0, ResolutionX, ResolutionY);
-    this.renderBack(this.ctx);
-    this.renderGround(this.ctx);
-    this.renderPlayer(this.ctx);
-    this.renderElements(this.ctx);
-    this.renderForeGround(this.ctx);
+    ctx.save();
+    ctx.scale(scale.x, scale.y);
+    ctx.clearRect(0, 0, x, y);
+    this.renderBack();
+    this.renderGround();
+    this.renderPlayer();
+    this.renderElements();
+    this.renderForeGround();
     if (Game.camera.underground || Game.player.inDark > 0) {
-      this.renderLightingEffect(this.ctx);
+      this.renderLightingEffect();
     }
-    this.renderForeGround2(this.ctx);
+    this.renderForeGround2();
     if (this.BlackOverlay > 0) {
-      this.ctx.globalAlpha = this.BlackOverlay;
-      this.ctx.fillStyle = 'black';
-      this.ctx.fillRect(-1, -1, ResolutionX + 1, ResolutionY + 1);
-      this.ctx.globalAlpha = 1;
+      ctx.globalAlpha = this.BlackOverlay;
+      ctx.fillStyle = 'black';
+      ctx.fillRect(-1, -1, x + 1, y + 1);
+      ctx.globalAlpha = 1;
       this.BlackOverlay -= 0.01;
     }
     if (this.message.dispCount < this.message.dispIter) {
       this.fontPrint(this.message.txt, -1, -1);
       this.message.dispCount++;
     }
-    this.renderScore(this.ctx);
-    this.ctx.restore();
+    this.renderScore();
+    ctx.restore();
   }
   //------------------------------------------------------------------------
-  renderLightingEffect(ctx) {
-    var all = Game.elements.lights;
-    all.forEach(function (Obj) {
+  renderLightingEffect() {
+    const { ctx } = this;
+    let   { lights } = Game.elements;
+    lights.forEach(function (Obj) {
       Obj.render(ctx, Game.renderer.images[Obj.type]);
     });
     if (this.dynamicLights) {
       this.PlayerLight.position = new illuminated.Vec2(Game.player.x + 8 + Game.camera.x, Game.player.y + 16 + Game.camera.y);
-      var lighting = new illuminated.Lighting({light: this.PlayerLight, objects: this.lightmask});
-      var darkmask = new illuminated.DarkMask({lights: [this.PlayerLight]});
-      lighting.compute(ResolutionX, ResolutionY);
-      darkmask.compute(ResolutionX, ResolutionY);
-      ctx.globalCompositeOperation = "lighter";
+      let lighting = new illuminated.Lighting({light: this.PlayerLight, objects: this.lightmask});
+      let darkmask = new illuminated.DarkMask({lights: [this.PlayerLight]});
+      lighting.compute(Game.resolution.x, Game.resolution.y);
+      darkmask.compute(Game.resolution.x, Game.resolution.y);
+      ctx.globalCompositeOperation = 'lighter';
       lighting.render(ctx);
-      ctx.globalCompositeOperation = "source-over";
+      ctx.globalCompositeOperation = 'source-over';
       darkmask.render(ctx);
     } else {
-      ctx.globalCompositeOperation = "source-over";
+      ctx.globalCompositeOperation = 'source-over';
       ctx.drawImage(
         this.images.light,
         -320 + Math.floor(Game.player.x + (Game.player.width / 2) + Game.camera.x),
@@ -97,24 +100,27 @@ class Renderer
     }
   }
   //------------------------------------------------------------------------
-  renderBack(ctx) {
+  renderBack() {
+    const { ctx } = this;
     if (!Game.camera.underground) {
       ctx.fillStyle = '#73C3FF';
-      ctx.fillRect(0, 0, ResolutionX, ResolutionY);
+      ctx.fillRect(0, 0, Game.resolution.x, Game.resolution.y);
       ctx.drawImage(this.images.bg2, (Game.camera.x / 15), 275 + (Game.camera.y / 2));
       ctx.drawImage(this.images.bg3, (Game.camera.x / 10), 100 + (Game.camera.y / 2));
       ctx.drawImage(this.images.bg4, -50 + (Game.camera.x / 5), 16 + (Game.camera.y / 2));
     } else {
-      ctx.clearRect(0, 0, ResolutionX, ResolutionY);
+      ctx.clearRect(0, 0, Game.resolution.x, Game.resolution.y);
     }
   }
   //------------------------------------------------------------------------
-  renderGround(ctx) {
-    var y = Math.floor(Game.camera.y % Game.map.spriteSize), _y = Math.floor(-Game.camera.y / Game.map.spriteSize);
-    while (y < ResolutionY) {
-      var x = Math.floor(Game.camera.x % Game.map.spriteSize), _x = Math.floor(-Game.camera.x / Game.map.spriteSize);
-      while (x < ResolutionX) {
-        var tile = Game.map.data.ground[_x][_y], back = Game.map.data.back[_x][_y];
+  renderGround() {
+    const { ctx } = this;
+    let  y = Math.floor(Game.camera.y % Game.map.spriteSize);
+    let _y = Math.floor(-Game.camera.y / Game.map.spriteSize);
+    while (y < Game.resolution.y) {
+      let x = Math.floor(Game.camera.x % Game.map.spriteSize), _x = Math.floor(-Game.camera.x / Game.map.spriteSize);
+      while (x < Game.resolution.x) {
+        const tile = Game.map.data.ground[_x][_y], back = Game.map.data.back[_x][_y];
         if (tile > 1 || back > 1) {
           // dynamic lights
           if (tile > 256 && this.dynamicLights) {
@@ -163,12 +169,14 @@ class Renderer
     }
   }
   //------------------------------------------------------------------------
-  renderForeGround(ctx) {
-    var y = Math.floor(Game.camera.y % Game.map.spriteSize), _y = Math.floor(-Game.camera.y / Game.map.spriteSize);
-    while (y < ResolutionY) {
-      var x = Math.floor(Game.camera.x % Game.map.spriteSize), _x = Math.floor(-Game.camera.x / Game.map.spriteSize);
-      while (x < ResolutionX) {
-        var tile = Game.map.data.fore[_x][_y], dark = Game.map.data.mask[_x][_y];
+  renderForeGround() {
+    const { ctx } = this;
+    let  y = Math.floor(Game.camera.y % Game.map.spriteSize);
+    let _y = Math.floor(-Game.camera.y / Game.map.spriteSize);
+    while (y < Game.resolution.y) {
+      let x = Math.floor(Game.camera.x % Game.map.spriteSize), _x = Math.floor(-Game.camera.x / Game.map.spriteSize);
+      while (x < Game.resolution.x) {
+        let tile = Game.map.data.fore[_x][_y], dark = Game.map.data.mask[_x][_y];
         if (tile > 0) {
           ctx.drawImage(this.images.tiles, (((tile - 1) % Game.map.spriteCols )) * Game.map.spriteSize, (Math.ceil(tile / Game.map.spriteCols) - 1) * Game.map.spriteSize, Game.map.spriteSize, Game.map.spriteSize, x, y, Game.map.spriteSize, Game.map.spriteSize);
         }
@@ -184,12 +192,14 @@ class Renderer
     }
   }
   //------------------------------------------------------------------------
-  renderForeGround2(ctx) {
-    var y = Math.floor(Game.camera.y % Game.map.spriteSize), _y = Math.floor(-Game.camera.y / Game.map.spriteSize);
-    while (y < ResolutionY) {
-      var x = Math.floor(Game.camera.x % Game.map.spriteSize), _x = Math.floor(-Game.camera.x / Game.map.spriteSize);
-      while (x < ResolutionX) {
-        var tile = Game.map.data.fore2[_x][_y];
+  renderForeGround2() {
+    const { ctx } = this;
+    let  y = Math.floor(Game.camera.y % Game.map.spriteSize);
+    let _y = Math.floor(-Game.camera.y / Game.map.spriteSize);
+    while (y < Game.resolution.y) {
+      let x = Math.floor(Game.camera.x % Game.map.spriteSize), _x = Math.floor(-Game.camera.x / Game.map.spriteSize);
+      while (x < Game.resolution.x) {
+        let tile = Game.map.data.fore2[_x][_y];
         if (tile > 0) {
           ctx.drawImage(this.images.tiles, (((tile - 1) % Game.map.spriteCols )) * Game.map.spriteSize, (Math.ceil(tile / Game.map.spriteCols) - 1) * Game.map.spriteSize, Game.map.spriteSize, Game.map.spriteSize, x, y, Game.map.spriteSize, Game.map.spriteSize);
         }
@@ -201,27 +211,30 @@ class Renderer
     }
   }
   //------------------------------------------------------------------------
-  renderPlayer(ctx) {
+  renderPlayer() {
+    const { ctx } = this;
     Game.player.render(ctx, this.images.player);
   }
   //------------------------------------------------------------------------
-  renderElements(ctx) {
-    var all = Game.elements.all;
+  renderElements() {
+    const { ctx } = this;
+    let { all } = Game.elements;
     all.forEach(function (Obj) {
       Obj.render(ctx, Game.renderer.images[Obj.type]);
     });
   }
   //------------------------------------------------------------------------
-  renderScore(ctx) {
+  renderScore() {
+    const { ctx } = this;
     ctx.drawImage(this.images.live, 0, 10, Math.round(Game.player.maxEnergy / 10) * 11, 10, 5, 5, Math.round(Game.player.maxEnergy / 10) * 11, 10);
     ctx.drawImage(this.images.live, 0, 0, (Game.player.energy / 10) * 11, 10, 5, 5, (Game.player.energy / 10) * 11, 10);
-    ctx.drawImage(this.images.coin, 0, 0, 8, 8, ResolutionX - 16, 7, 8, 8);
-    var cc = '' + parseInt(Game.player.coinCollect);
-    this.fontPrint(cc, ResolutionX - (16 + (cc.length * 8)), 8);
-    for (var i = 0; i < 2; i++) {
-      var item = Game.player.items[i];
+    ctx.drawImage(this.images.coin, 0, 0, 8, 8, Game.resolution.x - 16, 7, 8, 8);
+    let cc = '' + parseInt(Game.player.coinCollect);
+    this.fontPrint(cc, Game.resolution.x - (16 + (cc.length * 8)), 8);
+    for (let i = 0; i < 2; i++) {
+      const item = Game.player.items[i];
       if (item && item.type === "item") {
-        ctx.drawImage(this.images.item, parseInt(item.properties.frame) * item.width, 0, item.width, item.height, (ResolutionX - 43) + (i * 20), ResolutionY - 23, item.width, item.height);
+        ctx.drawImage(this.images.item, parseInt(item.properties.frame) * item.width, 0, item.width, item.height, (Game.resolution.x - 43) + (i * 20), Game.resolution.y - 23, item.width, item.height);
       }
     }
   }
