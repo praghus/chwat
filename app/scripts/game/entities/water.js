@@ -4,26 +4,28 @@
 Game.addEntity('water', class extends Entity {
   constructor(obj) {
     super(obj);
-    this.animation = {x: 0, y: 0, w: Game.map.spriteSize, h: Game.map.spriteSize, frames: 7, fps: 20, loop: true};
+    const { spriteSize } = Game.map;
+    this.animation = {x: 0, y: 0, w: spriteSize, h: spriteSize, frames: 7, fps: 20, loop: true};
     this.fall = false;
     this.wave = 0;
     this.direction = DIR.DOWN;
   }
   draw(ctx, image) {
+    const { spriteSize } = Game.map;
     ctx.globalAlpha = 0.4;
-    for (var y = 0; y < Math.round(this.height / Game.map.spriteSize); y++) {
-      for (var x = 0; x < Math.round(this.width / Game.map.spriteSize); x++) {
-        var PX = Math.round((this.x + (x * Game.map.spriteSize)) / Game.map.spriteSize),
-          PY = Math.round((this.y + (y * Game.map.spriteSize)) / Game.map.spriteSize);
+    for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
+      for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
+        let PX = Math.round((this.x + (x * spriteSize)) / spriteSize);
+        let PY = Math.round((this.y + (y * spriteSize)) / spriteSize);
         if (!Game.map.isSolid(PX, PY)) {
           ctx.drawImage(image,
-            this.animFrame * Game.map.spriteSize, y === 0 ? y + this.wave : Game.map.spriteSize,
-            Game.map.spriteSize, Game.map.spriteSize,
-            Math.floor(this.x + Game.camera.x) + (x * Game.map.spriteSize), Math.floor(this.y + Game.camera.y) + (y * Game.map.spriteSize),
-            Game.map.spriteSize, Game.map.spriteSize
+            this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,
+            spriteSize, spriteSize,
+            Math.floor(this.x + Game.camera.x) + (x * spriteSize), Math.floor(this.y + Game.camera.y) + (y * spriteSize),
+            spriteSize, spriteSize
           );
         }
-        if (y + 1 === Math.round(this.height / Game.map.spriteSize) && !Game.map.isSolid(PX, PY + 1)) {
+        if (y + 1 === Math.round(this.height / spriteSize) && !Game.map.isSolid(PX, PY + 1)) {
           this.fall = true;
         }
       }

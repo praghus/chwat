@@ -83,7 +83,6 @@ let Game = {
   },
   addEntity: function (id, obj) {
     this.entities[id] = obj;
-    //Class.extend(this.entities[id], Entity);
   },
   onKey: function (ev, key, pressed) {
     switch (key) {
@@ -131,8 +130,24 @@ let Game = {
 //-------------------------------------------------------------------------
 // ASSET LOADING UTILITIES
 //-------------------------------------------------------------------------
-  Load: {
-    progress: function (ctx, perc) {
+  Preload: function(params){
+    const d = Promise.defer();
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    progress(0);
+    getJSON(params.data).then(level => {
+      Game.map      = new Map(level);
+      Game.camera   = new Camera();
+      Game.elements = new Elements(level.layers[2].objects);
+      return getImages(params.assets);
+    }).then( images => {
+      Game.renderer = new Renderer(images);
+      d.resolve();
+    }).catch(function(error) {
+      console.log(error);
+    });
+
+    function progress(perc) {
       ctx.save();
       ctx.scale(Game.resolution.scale.x, Game.resolution.scale.y);
       ctx.clearRect(0, 0, Game.resolution.x, Game.resolution.y);
@@ -143,35 +158,46 @@ let Game = {
       ctx.fillStyle = '#000000';
       ctx.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100 * (perc / 100), 5);
       ctx.restore();
-    },
-    images: function (names, callback) {
-      let n, name, result = {},
-          count = names.length, loaded = 0,
-          canvas = document.getElementById('canvas'),
-          ctx = canvas.getContext('2d'),
-          onload = function () {
-            Game.Load.progress(ctx, ++loaded * (100 / names.length));
-            if (--count === 0) {
-              callback(result);
-            }
-          };
+    }
+
+    function getImages(names) {
+      const d = Promise.defer();
+      let n, name, result = {}, count = names.length, loaded = 0;
+      const onload = function () {
+          progress(++loaded * (100 / names.length));
+          if (--count === 0) {
+            d.resolve(result);
+          }
+        };
+
       for (n = 0; n < names.length; n++) {
         name = names[n];
         result[name] = document.createElement('img');
         Dom.on(result[name], 'load', onload);
         result[name].src = "assets/images/" + name + ".png";
       }
-    },
-    json: function (url, onsuccess) {
-      var request = new XMLHttpRequest();
-      request.onreadystatechange = function () {
-        if ((request.readyState === 4) && (request.status === 200)) {
-          onsuccess(JSON.parse(request.responseText));
+      return d.promise;
+    }
+
+    function getJSON(url) {
+      const xhr = new XMLHttpRequest();
+      const d = Promise.defer();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            d.resolve(JSON.parse(xhr.responseText));
+          } else {
+            d.reject(xhr.responseText);
+          }
         }
       };
-      request.open("GET", url, true);
-      request.send();
+      xhr.open('GET', url);
+      xhr.send();
+      return d.promise;
     }
+
+    return d.promise;
+
   },
 //-------------------------------------------------------------------------
 // MATH UTILITIES

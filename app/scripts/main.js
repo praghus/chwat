@@ -1,3 +1,5 @@
+'use strict';
+
 const
 //--------------------------------------------------------------------------
     KEY = {
@@ -28,12 +30,16 @@ const
   console.log("%c %c %c | -NIHIL- | %c %c ", g1, g2, g3, g2, g1);
 
   Game.resizeViewport();
-  Game.Load.images(Assets, function(images) {
-    Game.Load.json("assets/levels/main.json", (level)=> {
+  Game.Preload({data: "assets/levels/main.json", assets: Assets}).then({
 
-      Game.map      = new Map(level);
-      Game.camera   = new Camera();
-      Game.elements = new Elements(level.layers[2].objects);
+  });
+
+  /*Game.Load.getJSON("assets/levels/main.json").then(level => {
+    Game.map      = new Map(level);
+    Game.camera   = new Camera();
+    Game.elements = new Elements(level.layers[2].objects);
+    return Game.Load.getImages(Assets);
+  }).then( images => {
       Game.renderer = new Renderer(images);
       Game.renderer.msg(Game.map.name,100);
       Game.run({
@@ -82,9 +88,12 @@ const
       document.ontouchmove = function(event){event.preventDefault();};
 
       Game.resizeGame();
-    });
-  });
 
+
+})
+*/
+/*
+*/
   if (!window.requestAnimationFrame) {
       window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
