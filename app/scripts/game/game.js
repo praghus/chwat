@@ -128,7 +128,7 @@ let Game = {
     Game.camera.center();
   },
 //-------------------------------------------------------------------------
-// ASSET LOADING UTILITIES
+// ASSET PRELOADING
 //-------------------------------------------------------------------------
   Preload: function(params){
     const d = Promise.defer();
@@ -195,9 +195,7 @@ let Game = {
       xhr.send();
       return d.promise;
     }
-
     return d.promise;
-
   },
 //-------------------------------------------------------------------------
 // MATH UTILITIES

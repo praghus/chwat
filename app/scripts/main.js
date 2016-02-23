@@ -12,7 +12,7 @@ const
 //--------------------------------------------------------------------------
 // Images
 //--------------------------------------------------------------------------
-    Assets = [
+    Images = [
       'player',       'tiles',        'foretiles',	  'font',
       'shadows',      'live',         'bg2',          'bg3',
       'bg4',          'enemy_blob',   'enemy_tank',   'explosion1',
@@ -30,70 +30,56 @@ const
   console.log("%c %c %c | -NIHIL- | %c %c ", g1, g2, g3, g2, g1);
 
   Game.resizeViewport();
-  Game.Preload({data: "assets/levels/main.json", assets: Assets}).then({
+  Game.Preload({data: "assets/levels/main.json", assets: Images}).then(()=>{
+    Game.renderer.msg(Game.map.name,100);
+    Game.run({
+      update: ()=> {
+        Game.elements.update();
+        Game.camera.update();
+        Game.player.update();
+      },
+      render: ()=> Game.renderer.render()
+    });
+    Dom.on(document, 'keydown', function(ev) { return Game.onKey(ev, ev.keyCode, true);  }, false);
+    Dom.on(document, 'keyup',   function(ev) { return Game.onKey(ev, ev.keyCode, false); }, false);
 
+    let lPad = new Hammer(document.getElementById('trackpad-left'), {});
+    let rPad = new Hammer(document.getElementById('trackpad-right'), {});
+
+    lPad.get('pan').set({threshold: 3});
+    rPad.get('pan').set({threshold: 5});
+    rPad.get('tap').set({pointers: 1,threshold: 5, time: 150});
+    lPad.on('pan', function(ev){
+      switch(ev.additionalEvent){
+        case 'panleft': Game.input.left = !Game.input.right; break;
+        case 'panright': Game.input.right = !Game.input.left; break;
+      }
+    }).on('panend', function(){
+      Game.input.left = false;
+      Game.input.right = false;
+    });
+    rPad.on('pan', function(ev) {
+      switch(ev.additionalEvent) {
+        case 'panup': Game.input.up = true; break;
+        case 'pandown': Game.input.down = true; break;
+      }
+    }).on('panend', function() {
+      Game.input.up = false;
+      Game.input.down = false;
+    });
+    rPad.on('tap', function(){
+      Game.input.shoot = true;
+      setTimeout(()=> Game.input.shoot=false, 200);
+    });
+
+    window.addEventListener('resize', Game.resizeGame, false);
+    window.addEventListener('orientationchange', Game.resizeGame, false);
+    // prevent bumping effect on mobile browsers
+    document.ontouchmove = function(event){event.preventDefault();};
+
+    Game.resizeGame();
   });
 
-  /*Game.Load.getJSON("assets/levels/main.json").then(level => {
-    Game.map      = new Map(level);
-    Game.camera   = new Camera();
-    Game.elements = new Elements(level.layers[2].objects);
-    return Game.Load.getImages(Assets);
-  }).then( images => {
-      Game.renderer = new Renderer(images);
-      Game.renderer.msg(Game.map.name,100);
-      Game.run({
-        update: ()=> {
-          Game.elements.update();
-          Game.camera.update();
-          Game.player.update();
-        },
-        render: ()=> Game.renderer.render()
-      });
-      Dom.on(document, 'keydown', function(ev) { return Game.onKey(ev, ev.keyCode, true);  }, false);
-      Dom.on(document, 'keyup',   function(ev) { return Game.onKey(ev, ev.keyCode, false); }, false);
-
-      let lPad = new Hammer(document.getElementById('trackpad-left'), {});
-      let rPad = new Hammer(document.getElementById('trackpad-right'), {});
-
-      lPad.get('pan').set({threshold: 3});
-      rPad.get('pan').set({threshold: 5});
-      rPad.get('tap').set({pointers: 1,threshold: 5, time: 150});
-      lPad.on('pan', function(ev){
-        switch(ev.additionalEvent){
-          case 'panleft': Game.input.left = !Game.input.right; break;
-          case 'panright': Game.input.right = !Game.input.left; break;
-        }
-      }).on('panend', function(){
-        Game.input.left = false;
-        Game.input.right = false;
-      });
-      rPad.on('pan', function(ev) {
-        switch(ev.additionalEvent) {
-          case 'panup': Game.input.up = true; break;
-          case 'pandown': Game.input.down = true; break;
-        }
-      }).on('panend', function() {
-        Game.input.up = false;
-        Game.input.down = false;
-      });
-      rPad.on('tap', function(){
-        Game.input.shoot = true;
-        setTimeout(()=> Game.input.shoot=false, 200);
-      });
-
-      window.addEventListener('resize', Game.resizeGame, false);
-      window.addEventListener('orientationchange', Game.resizeGame, false);
-      // prevent bumping effect on mobile browsers
-      document.ontouchmove = function(event){event.preventDefault();};
-
-      Game.resizeGame();
-
-
-})
-*/
-/*
-*/
   if (!window.requestAnimationFrame) {
       window.requestAnimationFrame = window.webkitRequestAnimationFrame ||
       window.mozRequestAnimationFrame ||
