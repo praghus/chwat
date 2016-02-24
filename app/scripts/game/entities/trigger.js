@@ -6,7 +6,7 @@ Game.addEntity('trigger', function () {
   this.visible = false;
   this.update = function () {
     if (this.onScreen()) {
-      if (Game.Math.overlap(Game.player, this) && !this.dead ) {
+      if (Game.m.overlap(Game.player, this) && !this.dead ) {
         if (this.properties.activator === 'player' || Game.player.canUse(this.properties.activator)) {
           // @todo trigger action here
         }

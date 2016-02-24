@@ -81,7 +81,7 @@ class Entity
   }
   //----------------------------------------------------------------------
   overlapTest(obj) {
-    if (!this.dead && Game.Math.overlap(this, obj) && (this.onScreen() || this.awake)) {
+    if (!this.dead && Game.m.overlap(this, obj) && (this.onScreen() || this.awake)) {
       // poligon collision checking
       if (SAT.testPolygonPolygon(this.getMask(), obj.getMask())) {
         this.collide(obj);
@@ -145,7 +145,7 @@ class Entity
     }
     else if (++(entity.animCount) === Math.round(Game.fps / animation.fps)) {
       if (entity.animFrame <= entity.animation.frames && animation.loop) {
-        entity.animFrame = Game.Math.normalize(entity.animFrame + 1, 0, entity.animation.frames);
+        entity.animFrame = Game.m.normalize(entity.animFrame + 1, 0, entity.animation.frames);
       }
       entity.animCount = 0;
     }
@@ -177,7 +177,7 @@ class Entity
     // dla x-a
     for (var i = 0; i < nearMatrix.length; i++) {
       var c1 = {x: this.x + this.force.x, y: this.y, width: this.width, height: this.height};
-      if (nearMatrix[i].solid && Game.Math.overlap(c1, nearMatrix[i])) {
+      if (nearMatrix[i].solid && Game.m.overlap(c1, nearMatrix[i])) {
         if (this.force.x < 0) {
           this.force.x = nearMatrix[i].x + nearMatrix[i].width - this.x;
         }
@@ -190,7 +190,7 @@ class Entity
     this.x += this.force.x;
     for (var j = 0; j < nearMatrix.length; j++) {
       var c2 = {x: this.x, y: this.y + this.force.y, width: this.width, height: this.height};
-      if (nearMatrix[j].solid && Game.Math.overlap(c2, nearMatrix[j])) {
+      if (nearMatrix[j].solid && Game.m.overlap(c2, nearMatrix[j])) {
         if (this.force.y < 0) {
           this.force.y = nearMatrix[j].y + nearMatrix[j].height - this.y;
         }

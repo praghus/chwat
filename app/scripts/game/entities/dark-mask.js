@@ -46,7 +46,7 @@ Game.addEntity('dark_mask', class extends Entity {
   }
   update() {
     if (this.onScreen()) {
-      if (Game.Math.overlap(Game.player, this)) {
+      if (Game.m.overlap(Game.player, this)) {
         this.active = true;
         if (!this.activated) {
           Game.player.inDark += 1;

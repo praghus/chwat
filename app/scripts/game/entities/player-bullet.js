@@ -31,7 +31,7 @@ Game.addEntity('player_bullet', function (obj) {
           BX = this.direction === 0 ? EX - this.speed : EX + this.speed,
           p = Game.renderer.ctx.getImageData(BX + Game.camera.x, EY + Game.camera.y, 1, 1).data;
 
-      this.color = Game.Math.brighten('#' + ('000000' + Game.Math.rgbToHex(p[0], p[1], p[2])).slice(-6), 20);
+      this.color = Game.m.brighten('#' + ('000000' + Game.m.rgbToHex(p[0], p[1], p[2])).slice(-6), 20);
 
       if (Math.floor(BX / Game.map.spriteSize) >= 0 && Math.floor(EY / Game.map.spriteSize) >= 0) {
         if (Game.map.isSolid(Math.floor(BX / Game.map.spriteSize), Math.floor(EY / Game.map.spriteSize))) {

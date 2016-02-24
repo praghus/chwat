@@ -1,31 +1,37 @@
-const Game = {
-  fps       : 60,
-  debug     : true,
-  entities  : {},
-  map       : {},
-  elements  : {},
-  camera    : {},
-  player    : {},
-  renderer  : {},
-  fpsmeter  : {},
-  resolution: {
-    x: 320,
-    y: 180,
-    r: 16 / 9,
-    scale: {
-      x: 4,
-      y: 4,
-      pixel: 3
-    }
-  },
-  input: {
-    left: false, right: false, up: false, down: false,
-    jump: false, shoot: false, action: false, throw: false
-  },
-  run: function (options) {
+class GameController  {
+  constructor(elem) {
+    this.container = elem;
+    this.$ = document.getElementById('canvas').getContext('2d');
+    this.fps = 60;
+    this.debug = true;
+    this.entities = {};
+    this.map = {};
+    this.elements = {};
+    this.camera = {};
+    this.player = {};
+    this.renderer = {};
+    this.fpsmeter = {};
+    this.resolution = {
+      x: 320,
+      y: 180,
+      r: 16 / 9,
+      scale: {
+        x: 4,
+        y: 4,
+        pixel: 3
+      }
+    };
+    this.input = {
+      left: false, right: false, up: false, down: false,
+      jump: false, shoot: false, action: false, throw: false
+    };
+    this.m = new MathUtils();
+  }
+
+  run(options) {
     let now,
         dt = 0,
-        last = Game.Math.timestamp(),
+        last = Game.m.timestamp(),
         step = 1 / Game.fps,
         update = options.update,
         render = options.render;
@@ -46,7 +52,7 @@ const Game = {
       if (Game.debug) {
         Game.fpsmeter.tickStart();
       }
-      now = Game.Math.timestamp();
+      now = Game.m.timestamp();
       dt = dt + Math.min(1, (now - last) / 1000);
       while (dt > step) {
         dt = dt - step;
@@ -60,11 +66,13 @@ const Game = {
       requestAnimationFrame(frame);
     };
     frame();
-  },
-  addEntity: function (id, obj) {
+  }
+
+  addEntity(id, obj) {
     this.entities[id] = obj;
-  },
-  resizeViewport: function () {
+  }
+
+  resizeViewport() {
     const gameArea = document.getElementById('game');
     const canvas = document.getElementById('canvas');
     let newWidth = window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
@@ -89,15 +97,17 @@ const Game = {
     Game.resolution.scale.y = Math.round(newHeight / Game.resolution.y);
     canvas.width = Game.resolution.scale.x * Game.resolution.x;
     canvas.height = Game.resolution.scale.y * Game.resolution.y;
-  },
-  resizeGame: function () {
+  }
+
+  resizeGame() {
     Game.resizeViewport();
     Game.camera.center();
-  },
+  }
+
 //-------------------------------------------------------------------------
 // ASSET PRELOADING
 //-------------------------------------------------------------------------
-  Init: function(params){
+  Init(params){
     const d = Promise.defer();
     const $ = document.getElementById('canvas').getContext('2d');
 
@@ -165,81 +175,91 @@ const Game = {
     progress(0);
 
     return d.promise;
-  },
+  }
+}
+
+
 //-------------------------------------------------------------------------
 // MATH UTILITIES
 //-------------------------------------------------------------------------
-  Math: {
-    indexOf: function (array, searchElement) {
-      for (var i = 0, l = array.length; i < l; i++) {
-        if (searchElement === array[i]) {
-          return i;
-        }
-      }
-      return -1;
-    },
-    lerp: function (n, dn, dt) {
-      return n + (dn * dt);
-    },
-    timestamp: function () {
-      return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
-    },
-    bound: function (x, min, max) {
-      return Math.max(min, Math.min(max, x));
-    },
-    between: function (n, min, max) {
-      return ((n >= min) && (n <= max));
-    },
-    brighten: function (hex, percent) {
-      var a = Math.round(255 * percent / 100),
-        r = a + parseInt(hex.substr(1, 2), 16),
-        g = a + parseInt(hex.substr(3, 2), 16),
-        b = a + parseInt(hex.substr(5, 2), 16);
+class MathUtils {
 
-      r = r < 255 ? (r < 1 ? 0 : r) : 255;
-      g = g < 255 ? (g < 1 ? 0 : g) : 255;
-      b = b < 255 ? (b < 1 ? 0 : b) : 255;
-
-      return '#' + (0x1000000 + (r * 0x10000) + (g * 0x100) + b).toString(16).slice(1);
-    },
-    darken: function (hex, percent) {
-      return this.brighten(hex, -percent);
-    },
-    normalize: function (n, min, max) {
-      while (n < min) {
-        n += (max - min);
+  indexOf(array, searchElement) {
+    for (var i = 0, l = array.length; i < l; i++) {
+      if (searchElement === array[i]) {
+        return i;
       }
-      while (n >= max) {
-        n -= (max - min);
-      }
-      return n;
-    },
-    rgbToHex: function (r, g, b) {
-      if (r > 255 || g > 255 || b > 255) {
-        throw "Invalid color component";
-      }
-      return ((r < 16) || (g < 8) || b).toString(16);
-    },
-    overlap: function (a, b) {
-      return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
-    },
-    normalizeAngle180: function (angle) {
-      return this.normalize(angle, -180, 180);
-    },
-    normalizeAngle360: function (angle) {
-      return this.normalize(angle, 0, 360);
-    },
-    random: function (min, max) {
-      return (min + (Math.random() * (max - min)));
-    },
-    randomInt: function (min, max) {
-      return Math.round(this.random(min, max));
-    },
-    randomChoice: function (choices) {
-      return choices[this.randomInt(0, choices.length - 1)];
     }
+    return -1;
   }
-};
+
+  lerp(n, dn, dt) {
+    return n + (dn * dt);
+  }
+
+  timestamp() {
+    return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
+  }
+
+  bound(x, min, max) {
+    return Math.max(min, Math.min(max, x));
+  }
+
+  between(n, min, max) {
+    return ((n >= min) && (n <= max));
+  }
+
+  brighten(hex, percent) {
+    var a = Math.round(255 * percent / 100),
+      r = a + parseInt(hex.substr(1, 2), 16),
+      g = a + parseInt(hex.substr(3, 2), 16),
+      b = a + parseInt(hex.substr(5, 2), 16);
+
+    r = r < 255 ? (r < 1 ? 0 : r) : 255;
+    g = g < 255 ? (g < 1 ? 0 : g) : 255;
+    b = b < 255 ? (b < 1 ? 0 : b) : 255;
+
+    return '#' + (0x1000000 + (r * 0x10000) + (g * 0x100) + b).toString(16).slice(1);
+  }
+
+  darken(hex, percent) {
+    return this.brighten(hex, -percent);
+  }
+
+  normalize(n, min, max) {
+    while (n < min) {
+      n += (max - min);
+    }
+    while (n >= max) {
+      n -= (max - min);
+    }
+    return n;
+  }
+
+  rgbToHex(r, g, b) {
+    if (r > 255 || g > 255 || b > 255) {
+      throw "Invalid color component";
+    }
+    return ((r < 16) || (g < 8) || b).toString(16);
+  }
+
+  overlap(a, b) {
+    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
+  }
+
+
+  random(min, max) {
+    return (min + (Math.random() * (max - min)));
+  }
+
+  randomInt (min, max) {
+    return Math.round(this.random(min, max));
+  }
+
+  randomChoice(choices) {
+    return choices[this.randomInt(0, choices.length - 1)];
+  }
+}
 
 //-------------------------------------------------------------------------
 // DAT.GUI
@@ -291,4 +311,4 @@ class DAT {
     gui.gameData();
   }
 }
-window.Game = window.Game || Game;
+window.Game = window.Game || new GameController();

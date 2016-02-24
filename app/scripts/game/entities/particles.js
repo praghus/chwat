@@ -24,7 +24,7 @@ Game.addEntity('particles', function () {
       break;
   }
   this.overlapTest = function (obj) {
-    if (!this.dead && Game.Math.overlap(this, obj)) {
+    if (!this.dead && Game.m.overlap(this, obj)) {
       this.collide(obj);
       obj.collide(this);
     }
