@@ -3,7 +3,8 @@
 //--------------------------------------------------------------------------
 class Entity
 {
-  constructor (obj) {
+  constructor (obj, game) {
+    this._game = game;
     this.PlayerM = 0;
     this.x = obj.x;
     this.y = obj.y;
@@ -32,7 +33,7 @@ class Entity
     this.animOffset = 0;
     this.animFrame = 0;
     this.animCount = 0;
-    this.DIR = { UP: 0, RIGHT: 1, BOTTOM: 2, LEFT: 3},
+    this.DIR = { UP: 0, RIGHT: 1, BOTTOM: 2, LEFT: 3};
     this.vectorMask = [
       new SAT.Vector(0, 0),
       new SAT.Vector(this.width, 0),
@@ -43,24 +44,24 @@ class Entity
   }
   //----------------------------------------------------------------------
   draw(ctx, image) {
-    if (this.shadowCaster && Game.renderer.dynamicLights) {
-      Game.renderer.lightmask.push(new illuminated.RectangleObject({
-        topleft: new illuminated.Vec2(this.x + Game.camera.x, this.y + Game.camera.y),
-        bottomright: new illuminated.Vec2(this.x + this.width + Game.camera.x, this.y + this.height + Game.camera.y)
+    if (this.shadowCaster && this._game.renderer.dynamicLights) {
+      this._game.renderer.lightmask.push(new illuminated.RectangleObject({
+        topleft: new illuminated.Vec2(this.x + this._game.camera.x, this.y + this._game.camera.y),
+        bottomright: new illuminated.Vec2(this.x + this.width + this._game.camera.x, this.y + this.height + this._game.camera.y)
       }));
     }
     if (this.animation) {
       ctx.drawImage(image,
         this.animation.x + (this.animFrame * this.animation.w), this.animation.y + this.animOffset,
         this.animation.w, this.animation.h,
-        Math.floor(this.x + Game.camera.x), Math.floor(this.y + Game.camera.y),
+        Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y),
         this.animation.w, this.animation.h
       );
     }
     else {
       ctx.drawImage(image,
         this.animFrame * this.width, 0, this.width, this.height,
-        Math.floor(this.x + Game.camera.x), Math.floor(this.y + Game.camera.y),
+        Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y),
         this.width, this.height
       );
     }
@@ -81,7 +82,7 @@ class Entity
   }
   //----------------------------------------------------------------------
   overlapTest(obj) {
-    if (!this.dead && Game.m.overlap(this, obj) && (this.onScreen() || this.awake)) {
+    if (!this.dead && this._game.m.overlap(this, obj) && (this.onScreen() || this.awake)) {
       // poligon collision checking
       if (SAT.testPolygonPolygon(this.getMask(), obj.getMask())) {
         this.collide(obj);
@@ -95,10 +96,10 @@ class Entity
   }
   //----------------------------------------------------------------------
   onScreen() {
-    return this.x + this.width + Game.map.spriteSize > -Game.camera.x &&
-      this.x - Game.map.spriteSize < -Game.camera.x + Game.resolution.x &&
-      this.y - Game.map.spriteSize < -Game.camera.y + Game.resolution.y &&
-      this.y + this.height + Game.map.spriteSize > -Game.camera.y;
+    return this.x + this.width + this._game.map.spriteSize > -this._game.camera.x &&
+      this.x - this._game.map.spriteSize < -this._game.camera.x + this._game.resolution.x &&
+      this.y - this._game.map.spriteSize < -this._game.camera.y + this._game.resolution.y &&
+      this.y + this.height + this._game.map.spriteSize > -this._game.camera.y;
   }
   //----------------------------------------------------------------------
   hit(s) {
@@ -110,21 +111,21 @@ class Entity
         //Sound.dead1.play();
         Explosion1(this.x, this.y);
         this.dead = true;
-        Game.elements.add('coin', {x: this.x + 8, y: this.y});
+        this._game.elements.add('coin', {x: this.x + 8, y: this.y});
       }
     }
   }
   //----------------------------------------------------------------------
   seesPlayer() {
-    this.PlayerM = ((Game.player.y + Game.player.height) - (this.y + this.height)) / (Game.player.x - this.x);
-    if (!Game.player.canHurt) {
+    this.PlayerM = ((this._game.player.y + this._game.player.height) - (this.y + this.height)) / (this._game.player.x - this.x);
+    if (!this._game.player.canHurt) {
       return false;
     }
     if (this.PlayerM > -0.15 && this.PlayerM < 0.15) {
-      var steps = Math.abs(Math.floor(Game.player.x / Game.map.spriteSize) - Math.floor(this.x / Game.map.spriteSize)),
-        from = Game.player.x < this.x ? Math.floor(Game.player.x / Game.map.spriteSize) : Math.floor(this.x / Game.map.spriteSize);
+      var steps = Math.abs(Math.floor(this._game.player.x / this._game.map.spriteSize) - Math.floor(this.x / this._game.map.spriteSize)),
+        from = this._game.player.x < this.x ? Math.floor(this._game.player.x / this._game.map.spriteSize) : Math.floor(this.x / this._game.map.spriteSize);
       for (var X = from; X < from + steps; X++) {
-        if (Game.map.isSolid(X, Math.round(this.y / Game.map.spriteSize))) {
+        if (this._game.map.isSolid(X, Math.round(this.y / this._game.map.spriteSize))) {
           return false;
         }
       }
@@ -143,9 +144,9 @@ class Entity
       entity.animFrame = 0;
       entity.animCount = 0;
     }
-    else if (++(entity.animCount) === Math.round(Game.fps / animation.fps)) {
+    else if (++(entity.animCount) === Math.round(this._game.fps / animation.fps)) {
       if (entity.animFrame <= entity.animation.frames && animation.loop) {
-        entity.animFrame = Game.m.normalize(entity.animFrame + 1, 0, entity.animation.frames);
+        entity.animFrame = this._game.m.normalize(entity.animFrame + 1, 0, entity.animation.frames);
       }
       entity.animCount = 0;
     }
@@ -162,22 +163,22 @@ class Entity
     this.expectedX = this.x + this.force.x;
     this.expectedY = this.y + this.force.y;
 
-    var PX = Math.floor(this.expectedX / Game.map.spriteSize),
-        PY = Math.floor(this.expectedY / Game.map.spriteSize),
-        PW = Math.floor((this.expectedX + this.width) / Game.map.spriteSize),
-        PH = Math.floor((this.expectedY + this.height) / Game.map.spriteSize),
+    var PX = Math.floor(this.expectedX / this._game.map.spriteSize),
+        PY = Math.floor(this.expectedY / this._game.map.spriteSize),
+        PW = Math.floor((this.expectedX + this.width) / this._game.map.spriteSize),
+        PH = Math.floor((this.expectedY + this.height) / this._game.map.spriteSize),
         nearMatrix = [];
 
     for (var y = PY; y <= PH; y++){
       for (var x = PX; x <= PW; x++){
-        nearMatrix.push(Game.map.tileData(x, y));
+        nearMatrix.push(this._game.map.tileData(x, y));
       }
     }
 
     // dla x-a
     for (var i = 0; i < nearMatrix.length; i++) {
       var c1 = {x: this.x + this.force.x, y: this.y, width: this.width, height: this.height};
-      if (nearMatrix[i].solid && Game.m.overlap(c1, nearMatrix[i])) {
+      if (nearMatrix[i].solid && this._game.m.overlap(c1, nearMatrix[i])) {
         if (this.force.x < 0) {
           this.force.x = nearMatrix[i].x + nearMatrix[i].width - this.x;
         }
@@ -190,7 +191,7 @@ class Entity
     this.x += this.force.x;
     for (var j = 0; j < nearMatrix.length; j++) {
       var c2 = {x: this.x, y: this.y + this.force.y, width: this.width, height: this.height};
-      if (nearMatrix[j].solid && Game.m.overlap(c2, nearMatrix[j])) {
+      if (nearMatrix[j].solid && this._game.m.overlap(c2, nearMatrix[j])) {
         if (this.force.y < 0) {
           this.force.y = nearMatrix[j].y + nearMatrix[j].height - this.y;
         }
@@ -201,8 +202,8 @@ class Entity
     }
     this.y += this.force.y;
     this.onFloor = this.expectedY > this.y;
-    this.onLeftEdge = !Game.map.isSolid(PX, PH);
-    this.onRightEdge = !Game.map.isSolid(PW, PH);
+    this.onLeftEdge = !this._game.map.isSolid(PX, PH);
+    this.onRightEdge = !this._game.map.isSolid(PW, PH);
 
     //return {x: expectedX === this.x, y: expectedY === this.y};
   }

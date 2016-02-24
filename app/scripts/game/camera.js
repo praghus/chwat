@@ -3,7 +3,8 @@
 //--------------------------------------------------------------------------
 class Camera
 {
-  constructor() {
+  constructor(game) {
+    this._game = game;
     this.x = 0;
     this.y = 0;
     this.underground = false;
@@ -12,7 +13,7 @@ class Camera
   }
   //------------------------------------------------------------------------
   update() {
-    const { player, resolution, map } = Game;
+    const { player, resolution, map } = this._game;
     if ((player.x + this.x > resolution.x / 2 && player.force.x > 0) || (player.x + this.x < resolution.x / 2 && player.force.x < 0)) {
       this.x -= Math.floor(player.force.x);
     }
@@ -62,7 +63,7 @@ class Camera
   }
   //------------------------------------------------------------------------
   center() {
-    const { player, resolution } = Game;
+    const { player, resolution } = this._game;
     this.x = -(player.x - (resolution.x / 2));
     this.y = -((player.y + player.height) - (resolution.y / 2));
   }

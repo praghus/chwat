@@ -1,9 +1,9 @@
 //==========================================================================
 // PLAYER
 //--------------------------------------------------------------------------
-Game.addEntity('player', class extends Entity {
-  constructor(obj) {
-    super(obj);
+game.addEntity('player', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
     this.godMode = true;
     this.canShoot = true;
     this.canHurt = true;
@@ -35,11 +35,11 @@ Game.addEntity('player', class extends Entity {
   }
   //----------------------------------------------------------------------
   draw(ctx, image) {
-    if ((Game.camera.underground || Game.player.inDark > 0) && !Game.renderer.dynamicLights) {
+    if ((this._game.camera.underground || this._game.player.inDark > 0) && !this._game.renderer.dynamicLights) {
       ctx.globalCompositeOperation = "lighter";
-      ctx.drawImage(Game.renderer.images.player_light,
-        -128 + Math.floor(Game.player.x + (Game.player.width / 2) + Game.camera.x),
-        -128 + Math.floor(Game.player.y + (Game.player.height / 2) + Game.camera.y)
+      ctx.drawImage(this._game.renderer.images.player_light,
+        -128 + Math.floor(this._game.player.x + (this._game.player.width / 2) + this._game.camera.x),
+        -128 + Math.floor(this._game.player.y + (this._game.player.height / 2) + this._game.camera.y)
       );
       ctx.globalCompositeOperation = "source-over";
     }
@@ -47,9 +47,9 @@ Game.addEntity('player', class extends Entity {
       ctx.globalAlpha = 0.2;
     }
     ctx.drawImage(image,
-      this.animation.x + (this.animFrame * this.animation.w), Game.player.animation.y + this.animOffset,
+      this.animation.x + (this.animFrame * this.animation.w), this._game.player.animation.y + this.animOffset,
       this.animation.w, this.animation.h,
-      Math.floor(this.x + Game.camera.x) - 8, Math.floor(this.y + Game.camera.y) - 5, this.animation.w, this.animation.h
+      Math.floor(this.x + this._game.camera.x) - 8, Math.floor(this.y + this._game.camera.y) - 5, this.animation.w, this.animation.h
     );
     if (!this.canHurt && !this.dead) {
       ctx.globalAlpha = 1;
@@ -59,46 +59,46 @@ Game.addEntity('player', class extends Entity {
   update() {
     //if (this.godMode) this.kill = false;
     if (!this.dead) {
-      if (Game.input.left) {
+      if (this._game.input.left) {
         this.force.x -= this.speed;
         this.direction = this.DIR.LEFT;
       }
-      if (Game.input.right) {
+      if (this._game.input.right) {
         this.force.x += this.speed;
         this.direction = this.DIR.RIGHT;
       }
-      if (this.canJump && Game.input.up) {
+      if (this.canJump && this._game.input.up) {
         this.doJump = true;
         this.force.y = -7;
         this.canJump = false;
         //Sound.jump.play();
       }
-      if (Game.input.down && !this.fall && this.force.y === 0) {
+      if (this._game.input.down && !this.fall && this.force.y === 0) {
         this.fall = true;
         this.fallTimeout = setTimeout(() => this.fall = false, 400);
       }
-      if (Game.input.shoot && this.canShoot) {
+      if (this._game.input.shoot && this.canShoot) {
         this.shoot();
       }
-      if (Game.input.throw && this.canShoot && this.throwSpeed < this.throwMaxSpeed) {
+      if (this._game.input.throw && this.canShoot && this.throwSpeed < this.throwMaxSpeed) {
         this.throwSpeed += 0.5;
       }
-      if (this.throwSpeed > 0 && !Game.input.throw) {
+      if (this.throwSpeed > 0 && !this._game.input.throw) {
         this.throw();
       }
-      if (Game.input.action) {
+      if (this._game.input.action) {
         this.get(null);
-        Game.input.action = false;
+        this._game.input.action = false;
       }
       // slow down
-      if (!Game.input.left && !Game.input.right && this.force.x !== 0) {
+      if (!this._game.input.left && !this._game.input.right && this.force.x !== 0) {
         this.force.x += this.direction === this.DIR.RIGHT ? -this.speed : this.speed;
         if (this.direction === this.DIR.LEFT && this.force.x > 0 || this.direction === this.DIR.RIGHT && this.force.x < 0) {
           this.force.x = 0;
         }
       }
     }
-    this.force.y += Game.map.gravity;
+    this.force.y += this._game.map.gravity;
     this.move();
 
     if (this.onFloor) {
@@ -164,7 +164,7 @@ Game.addEntity('player', class extends Entity {
       var obj = this.items[1];
       obj.x = this.x;
       obj.y = (this.y + this.height) - obj.height;
-      Game.elements.add(new Item(obj));
+      this._game.elements.add(new Item(obj));
     }
     this.items[1] = this.items[0];
     this.items[0] = item;
@@ -181,7 +181,7 @@ Game.addEntity('player', class extends Entity {
     this.canShoot = false;
     this.force.x = 0;
     this.animOffset = 64;
-    Game.elements.add('player_bullet',{
+    this._game.elements.add('player_bullet',{
       x: this.direction === this.DIR.RIGHT ? this.x + this.width : this.x - 12,
       y: this.y + 21,
       direction: this.direction
@@ -196,7 +196,7 @@ Game.addEntity('player', class extends Entity {
   throw() {
     this.canShoot = false;
     this.animOffset = 64;
-    Game.elements.add('grenade', {
+    this._game.elements.add('grenade', {
       x: this.direction === this.DIR.RIGHT ? this.x + this.width : this.x,
       y: this.y + 18,
       direction: this.direction

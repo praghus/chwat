@@ -34,7 +34,7 @@ class GameController
     const render = options.render;
 
     if (this.debug) {
-      new DAT();
+      //new DAT();
       this.fpsmeter = new FPSMeter({
         decimals: 0,
         graph: true,
@@ -161,15 +161,15 @@ class GameController
 
     getJSON(params.data).then(level => {
       this.map      = new Map(level);
-      this.camera   = new Camera();
-      this.elements = new Elements(level.layers[2].objects);
+      this.camera   = new Camera(this);
+      this.elements = new Elements(level.layers[2].objects, this);
       return getImages(params.assets);
     }).then( images => {
-      this.renderer = new Renderer(images, $);
-      d.resolve(Game);
-    }).catch(function(error) {
+      this.renderer = new Renderer(images, this);
+      d.resolve();
+    })/*.catch(function(error) {
       console.log(error);
-    });
+    });*/
 
     this.resizeViewport();
     progress(0);
@@ -178,4 +178,4 @@ class GameController
   }
 }
 
-window.Game = window.Game || new GameController();
+
