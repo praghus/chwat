@@ -42,7 +42,7 @@ const Game = {
         right: '5px'
       });
     }
-    function frame() {
+    const frame = ()=> {
       if (Game.debug) {
         Game.fpsmeter.tickStart();
       }
@@ -58,24 +58,11 @@ const Game = {
         Game.fpsmeter.tick();
       }
       requestAnimationFrame(frame);
-    }
+    };
     frame();
   },
   addEntity: function (id, obj) {
     this.entities[id] = obj;
-  },
-  onKey: function (ev, key, pressed) {
-    switch (key) {
-      case KEY.LEFT   : this.input.left   = pressed; break;
-      case KEY.RIGHT  : this.input.right  = pressed; break;
-      case KEY.THROW  : this.input.throw  = pressed; break;
-      case KEY.SHOOT  : this.input.shoot  = pressed; break;
-      case KEY.SPACE  :
-      case KEY.UP     : this.input.up     = pressed; break;
-      case KEY.DOWN   : this.input.down   = pressed; break;
-    }
-    ev.preventDefault();
-    return false;
   },
   resizeViewport: function () {
     const gameArea = document.getElementById('game');
@@ -112,42 +99,40 @@ const Game = {
 //-------------------------------------------------------------------------
   Init: function(params){
     const d = Promise.defer();
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    const $ = document.getElementById('canvas').getContext('2d');
 
-    function progress(perc) {
-      ctx.save();
-      ctx.scale(Game.resolution.scale.x, Game.resolution.scale.y);
-      ctx.clearRect(0, 0, Game.resolution.x, Game.resolution.y);
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(((Game.resolution.x - 100) / 2) - 2, (Game.resolution.y / 2) - 7, 104, 9);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100, 5);
-      ctx.fillStyle = '#000000';
-      ctx.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100 * (perc / 100), 5);
-      ctx.restore();
-    }
+    const progress = (perc)=> {
+      $.save();
+      $.scale(Game.resolution.scale.x, Game.resolution.scale.y);
+      $.clearRect(0, 0, Game.resolution.x, Game.resolution.y);
+      $.fillStyle = '#000000';
+      $.fillRect(((Game.resolution.x - 100) / 2) - 2, (Game.resolution.y / 2) - 7, 104, 9);
+      $.fillStyle = '#FFFFFF';
+      $.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100, 5);
+      $.fillStyle = '#000000';
+      $.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100 * (perc / 100), 5);
+      $.restore();
+    };
 
-    function getImages(names) {
+    const getImages = (names)=> {
       const d = Promise.defer();
-      let n, name, count = names.length, loaded = 0, result = {};
+      let name, count = names.length, loaded = 0, result = {};
       const onload = () => {
         progress(++loaded * (100 / names.length));
         if (--count === 0) {
           d.resolve(result);
         }
       };
-
-      for (n = 0; n < names.length; n++) {
+      for (let n = 0; n < names.length; n++) {
         name = names[n];
         result[name] = document.createElement('img');
         Dom.on(result[name], 'load', onload);
         result[name].src = "assets/images/" + name + ".png";
       }
       return d.promise;
-    }
+    };
 
-    function getJSON(url) {
+    const getJSON = (url)=> {
       const xhr = new XMLHttpRequest();
       const d = Promise.defer();
       xhr.onreadystatechange = function () {
@@ -162,7 +147,7 @@ const Game = {
       xhr.open('GET', url);
       xhr.send();
       return d.promise;
-    }
+    };
 
     getJSON(params.data).then(level => {
       Game.map      = new Map(level);
@@ -170,7 +155,7 @@ const Game = {
       Game.elements = new Elements(level.layers[2].objects);
       return getImages(params.assets);
     }).then( images => {
-      Game.renderer = new Renderer(images);
+      Game.renderer = new Renderer(images, $);
       d.resolve(Game);
     }).catch(function(error) {
       console.log(error);
