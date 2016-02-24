@@ -1,6 +1,6 @@
-class GameController  {
-  constructor(elem) {
-    this.container = elem;
+class GameController
+{
+  constructor() {
     this.$ = document.getElementById('canvas').getContext('2d');
     this.fps = 60;
     this.debug = true;
@@ -15,11 +15,7 @@ class GameController  {
       x: 320,
       y: 180,
       r: 16 / 9,
-      scale: {
-        x: 4,
-        y: 4,
-        pixel: 3
-      }
+      scale: { x: 4, y: 4, pixel: 3 }
     };
     this.input = {
       left: false, right: false, up: false, down: false,
@@ -29,15 +25,17 @@ class GameController  {
   }
 
   run(options) {
-    let now,
-        dt = 0,
-        last = Game.m.timestamp(),
-        step = 1 / Game.fps,
-        update = options.update,
-        render = options.render;
-    if (Game.debug) {
+    let now;
+    let dt = 0;
+    let last = this.m.timestamp();
+    let step = 1 / this.fps;
+
+    const update = options.update;
+    const render = options.render;
+
+    if (this.debug) {
       new DAT();
-      Game.fpsmeter = new FPSMeter({
+      this.fpsmeter = new FPSMeter({
         decimals: 0,
         graph: true,
         theme: 'dark',
@@ -48,11 +46,12 @@ class GameController  {
         right: '5px'
       });
     }
+
     const frame = ()=> {
-      if (Game.debug) {
-        Game.fpsmeter.tickStart();
+      if (this.debug) {
+        this.fpsmeter.tickStart();
       }
-      now = Game.m.timestamp();
+      now = this.m.timestamp();
       dt = dt + Math.min(1, (now - last) / 1000);
       while (dt > step) {
         dt = dt - step;
@@ -60,8 +59,8 @@ class GameController  {
       }
       render(dt);
       last = now;
-      if (Game.debug) {
-        Game.fpsmeter.tick();
+      if (this.debug) {
+        this.fpsmeter.tick();
       }
       requestAnimationFrame(frame);
     };
@@ -79,29 +78,29 @@ class GameController  {
     let newHeight = window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
     let newRatio = newWidth / newHeight;
 
-    Game.resolution.scale.pixel = window.innerWidth / 240;
-    Game.resolution.r = window.innerWidth / window.innerHeight;
-    Game.resolution.x = Math.round(window.innerWidth / Game.resolution.scale.pixel);
-    Game.resolution.y = Math.round(window.innerHeight / Game.resolution.scale.pixel);
-    if (newRatio > Game.resolution.r) {
-      newWidth = newHeight * Game.resolution.r;
+    this.resolution.scale.pixel = window.innerWidth / 240;
+    this.resolution.r = window.innerWidth / window.innerHeight;
+    this.resolution.x = Math.round(window.innerWidth / this.resolution.scale.pixel);
+    this.resolution.y = Math.round(window.innerHeight / this.resolution.scale.pixel);
+    if (newRatio > this.resolution.r) {
+      newWidth = newHeight * this.resolution.r;
     } else {
-      newHeight = newWidth / Game.resolution.r;
+      newHeight = newWidth / this.resolution.r;
     }
     gameArea.style.transform = 'none';
     gameArea.style.width = newWidth + 'px';
     gameArea.style.height = newHeight + 'px';
     gameArea.style.marginTop = (-newHeight / 2) + 'px';
     gameArea.style.marginLeft = (-newWidth / 2) + 'px';
-    Game.resolution.scale.x = Math.round(newWidth / Game.resolution.x);
-    Game.resolution.scale.y = Math.round(newHeight / Game.resolution.y);
-    canvas.width = Game.resolution.scale.x * Game.resolution.x;
-    canvas.height = Game.resolution.scale.y * Game.resolution.y;
+    this.resolution.scale.x = Math.round(newWidth / this.resolution.x);
+    this.resolution.scale.y = Math.round(newHeight / this.resolution.y);
+    canvas.width = this.resolution.scale.x * this.resolution.x;
+    canvas.height = this.resolution.scale.y * this.resolution.y;
   }
 
   resizeGame() {
-    Game.resizeViewport();
-    Game.camera.center();
+    this.resizeViewport();
+    this.camera.center();
   }
 
 //-------------------------------------------------------------------------
@@ -112,15 +111,16 @@ class GameController  {
     const $ = document.getElementById('canvas').getContext('2d');
 
     const progress = (perc)=> {
+      const {x, y, scale} = this.resolution;
       $.save();
-      $.scale(Game.resolution.scale.x, Game.resolution.scale.y);
-      $.clearRect(0, 0, Game.resolution.x, Game.resolution.y);
+      $.scale(scale.x, scale.y);
+      $.clearRect(0, 0, x, y);
       $.fillStyle = '#000000';
-      $.fillRect(((Game.resolution.x - 100) / 2) - 2, (Game.resolution.y / 2) - 7, 104, 9);
+      $.fillRect(((x - 100) / 2) - 2, (y / 2) - 7, 104, 9);
       $.fillStyle = '#FFFFFF';
-      $.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100, 5);
+      $.fillRect((x - 100) / 2, (y / 2) - 5, 100, 5);
       $.fillStyle = '#000000';
-      $.fillRect((Game.resolution.x - 100) / 2, (Game.resolution.y / 2) - 5, 100 * (perc / 100), 5);
+      $.fillRect((x - 100) / 2, (y / 2) - 5, 100 * (perc / 100), 5);
       $.restore();
     };
 
@@ -160,155 +160,22 @@ class GameController  {
     };
 
     getJSON(params.data).then(level => {
-      Game.map      = new Map(level);
-      Game.camera   = new Camera();
-      Game.elements = new Elements(level.layers[2].objects);
+      this.map      = new Map(level);
+      this.camera   = new Camera();
+      this.elements = new Elements(level.layers[2].objects);
       return getImages(params.assets);
     }).then( images => {
-      Game.renderer = new Renderer(images, $);
+      this.renderer = new Renderer(images, $);
       d.resolve(Game);
     }).catch(function(error) {
       console.log(error);
     });
 
-    Game.resizeViewport();
+    this.resizeViewport();
     progress(0);
 
     return d.promise;
   }
 }
 
-
-//-------------------------------------------------------------------------
-// MATH UTILITIES
-//-------------------------------------------------------------------------
-class MathUtils {
-
-  indexOf(array, searchElement) {
-    for (var i = 0, l = array.length; i < l; i++) {
-      if (searchElement === array[i]) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  lerp(n, dn, dt) {
-    return n + (dn * dt);
-  }
-
-  timestamp() {
-    return window.performance && window.performance.now ? window.performance.now() : new Date().getTime();
-  }
-
-  bound(x, min, max) {
-    return Math.max(min, Math.min(max, x));
-  }
-
-  between(n, min, max) {
-    return ((n >= min) && (n <= max));
-  }
-
-  brighten(hex, percent) {
-    var a = Math.round(255 * percent / 100),
-      r = a + parseInt(hex.substr(1, 2), 16),
-      g = a + parseInt(hex.substr(3, 2), 16),
-      b = a + parseInt(hex.substr(5, 2), 16);
-
-    r = r < 255 ? (r < 1 ? 0 : r) : 255;
-    g = g < 255 ? (g < 1 ? 0 : g) : 255;
-    b = b < 255 ? (b < 1 ? 0 : b) : 255;
-
-    return '#' + (0x1000000 + (r * 0x10000) + (g * 0x100) + b).toString(16).slice(1);
-  }
-
-  darken(hex, percent) {
-    return this.brighten(hex, -percent);
-  }
-
-  normalize(n, min, max) {
-    while (n < min) {
-      n += (max - min);
-    }
-    while (n >= max) {
-      n -= (max - min);
-    }
-    return n;
-  }
-
-  rgbToHex(r, g, b) {
-    if (r > 255 || g > 255 || b > 255) {
-      throw "Invalid color component";
-    }
-    return ((r < 16) || (g < 8) || b).toString(16);
-  }
-
-  overlap(a, b) {
-    return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
-  }
-
-
-  random(min, max) {
-    return (min + (Math.random() * (max - min)));
-  }
-
-  randomInt (min, max) {
-    return Math.round(this.random(min, max));
-  }
-
-  randomChoice(choices) {
-    return choices[this.randomInt(0, choices.length - 1)];
-  }
-}
-
-//-------------------------------------------------------------------------
-// DAT.GUI
-//-------------------------------------------------------------------------
-class DAT {
-  constructor() {
-    let f1, f2, f3, gui = new dat.GUI();
-
-    dat.GUI.prototype.removeFolder = function (name) {
-      var folder = this.__folders[name];
-      if (!folder) {
-        return;
-      }
-      folder.close();
-      this.__ul.removeChild(folder.domElement.parentNode);
-      delete this.__folders[name];
-      this.onResize();
-    };
-
-    dat.GUI.prototype.gameData = function () {
-      if (f1) {
-        gui.removeFolder('Player');
-      }
-      if (f2) {
-        gui.removeFolder('Forces');
-      }
-      if (f3) {
-        gui.removeFolder('World');
-      }
-      f1 = gui.addFolder('Player');
-      f2 = gui.addFolder('Forces');
-      f3 = gui.addFolder('World');
-      f1.add(Game.renderer, 'dynamicLights');
-      f1.add(Game.player, 'godMode');
-      f1.add(Game.player, 'maxSpeed');
-      f1.add(Game.player, 'x').listen();
-      f1.add(Game.player, 'y').listen();
-      f1.add(Game.player, 'exterminate');
-      f2.add(Game.player.force, 'x').listen();
-      f2.add(Game.player.force, 'y').listen();
-      f3.add(Game.map, 'gravity', 0, 2);
-      f3.add(Game.camera, 'x').listen();
-      f3.add(Game.camera, 'y').listen();
-      f3.add(Game.camera, 'center');
-      f3.add(Game.camera, 'shake');
-      //f1.open();
-      //f2.open();
-    };
-    gui.gameData();
-  }
-}
 window.Game = window.Game || new GameController();

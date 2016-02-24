@@ -60,12 +60,8 @@ window.onload = ()=>
 
     lPad.on('pan', ev => {
       switch (ev.additionalEvent) {
-        case 'panleft':
-          Game.input.left = !Game.input.right;
-          break;
-        case 'panright':
-          Game.input.right = !Game.input.left;
-          break;
+        case 'panleft':Game.input.left = !Game.input.right;break;
+        case 'panright':Game.input.right = !Game.input.left;break;
       }
     }).on('panend', () => {
       Game.input.left = false;
@@ -74,12 +70,8 @@ window.onload = ()=>
 
     rPad.on('pan', ev => {
       switch (ev.additionalEvent) {
-        case 'panup':
-          Game.input.up = true;
-          break;
-        case 'pandown':
-          Game.input.down = true;
-          break;
+        case 'panup':Game.input.up = true;break;
+        case 'pandown':Game.input.down = true;break;
       }
     }).on('panend', () => {
       Game.input.up = false;
