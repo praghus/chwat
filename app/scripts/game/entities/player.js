@@ -19,6 +19,10 @@ game.addEntity('player', class extends Entity {
     this.throwMaxSpeed = 5;
     this.shootTimeout = null;
     this.items = new Array(2);
+    this.input = {
+      left: false, right: false, up: false, down: false,
+      jump: false, shoot: false, action: false, throw: false
+    };
     this.animations = {
       RIGHT       : {x: 0,    y: 16,  w: 32, h: 48, frames: 8, fps: 15, loop: true},
       JUMP_RIGHT  : {x: 256,  y: 16,  w: 32, h: 48, frames: 5, fps: 15, loop: false},
@@ -59,39 +63,39 @@ game.addEntity('player', class extends Entity {
   update() {
     //if (this.godMode) this.kill = false;
     if (!this.dead) {
-      if (this._game.input.left) {
+      if (this.input.left) {
         this.force.x -= this.speed;
         this.direction = this.DIR.LEFT;
       }
-      if (this._game.input.right) {
+      if (this.input.right) {
         this.force.x += this.speed;
         this.direction = this.DIR.RIGHT;
       }
-      if (this.canJump && this._game.input.up) {
+      if (this.canJump && this.input.up) {
         this.doJump = true;
         this.force.y = -7;
         this.canJump = false;
         //Sound.jump.play();
       }
-      if (this._game.input.down && !this.fall && this.force.y === 0) {
+      if (this.input.down && !this.fall && this.force.y === 0) {
         this.fall = true;
         this.fallTimeout = setTimeout(() => this.fall = false, 400);
       }
-      if (this._game.input.shoot && this.canShoot) {
+      if (this.input.shoot && this.canShoot) {
         this.shoot();
       }
-      if (this._game.input.throw && this.canShoot && this.throwSpeed < this.throwMaxSpeed) {
+      if (this.input.throw && this.canShoot && this.throwSpeed < this.throwMaxSpeed) {
         this.throwSpeed += 0.5;
       }
-      if (this.throwSpeed > 0 && !this._game.input.throw) {
+      if (this.throwSpeed > 0 && !this.input.throw) {
         this.throw();
       }
-      if (this._game.input.action) {
+      if (this.input.action) {
         this.get(null);
-        this._game.input.action = false;
+        this.input.action = false;
       }
       // slow down
-      if (!this._game.input.left && !this._game.input.right && this.force.x !== 0) {
+      if (!this.input.left && !this.input.right && this.force.x !== 0) {
         this.force.x += this.direction === this.DIR.RIGHT ? -this.speed : this.speed;
         if (this.direction === this.DIR.LEFT && this.force.x > 0 || this.direction === this.DIR.RIGHT && this.force.x < 0) {
           this.force.x = 0;

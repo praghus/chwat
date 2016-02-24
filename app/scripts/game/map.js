@@ -2,18 +2,18 @@
 // Map
 //--------------------------------------------------------------------------
 class Map {
-  constructor(level) {
-    let j = 0,
-        backData  = level.layers[0].data,
-        mainData  = level.layers[1].data,
-        foreData  = level.layers[3].data,
-        fore2Data = level.layers[4].data;
+  constructor(game) {
+    const data = game.data;
+    const backData  = data.layers[0].data;
+    const mainData  = data.layers[1].data;
+    const foreData  = data.layers[3].data;
+    const fore2Data = data.layers[4].data;
 
-    this.width = parseInt(level.width);
-    this.height = parseInt(level.height);
-    this.gravity = 0.3;//20 * 9.8 * 4;  //parseInt(level.properties.Gravity);
-    this.surface = parseInt(level.properties.SurfaceLevel);
-    this.name = level.properties.Title;
+    this.width = parseInt(data.width);
+    this.height = parseInt(data.height);
+    this.gravity = 0.3;//20 * 9.8 * 4;  //parseInt(data.properties.Gravity);
+    this.surface = parseInt(data.properties.SurfaceLevel);
+    this.name = data.properties.Title;
     this.spriteSize = 16;
     this.spriteCols = 32;
     this.data = { back: [], ground: [], mask: [], fore: [], fore2: []};
@@ -26,6 +26,7 @@ class Map {
       this.data.fore2[i] = [];
     }
 
+    let j = 0;
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         this.data.ground[x][y] = mainData[j];

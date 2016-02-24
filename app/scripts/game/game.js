@@ -1,7 +1,7 @@
 class GameController
 {
-  constructor() {
-    this.$ = document.getElementById('canvas').getContext('2d');
+  constructor(elem) {
+    this.$ = elem.getContext('2d');
     this.fps = 60;
     this.debug = true;
     this.entities = {};
@@ -11,15 +11,13 @@ class GameController
     this.player = {};
     this.renderer = {};
     this.fpsmeter = {};
+    this.images = {};
+    this.data = {};
     this.resolution = {
       x: 320,
       y: 180,
       r: 16 / 9,
       scale: { x: 4, y: 4, pixel: 3 }
-    };
-    this.input = {
-      left: false, right: false, up: false, down: false,
-      jump: false, shoot: false, action: false, throw: false
     };
     this.m = new MathUtils();
   }
@@ -106,9 +104,14 @@ class GameController
 //-------------------------------------------------------------------------
 // ASSET PRELOADING
 //-------------------------------------------------------------------------
-  Init(params){
+  init(params){
     const d = Promise.defer();
     const $ = document.getElementById('canvas').getContext('2d');
+
+    const g1 = 'background-color: #444444;';
+    const g2 = 'background-color: #333333;';
+    const g3 = 'color:#CCCCCC;font-weight:bold; background-color: #222222;';
+    console.log("%c %c %c | -NIHIL- | %c %c ", g1, g2, g3, g2, g1);
 
     const progress = (perc)=> {
       const {x, y, scale} = this.resolution;
@@ -159,17 +162,19 @@ class GameController
       return d.promise;
     };
 
-    getJSON(params.data).then(level => {
-      this.map      = new Map(level);
-      this.camera   = new Camera(this);
-      this.elements = new Elements(level.layers[2].objects, this);
+    getJSON(params.data).then((data)=> {
+      this.data = data;
+      this.map = new Map(this);
+      this.camera = new Camera(this);
+      this.elements = new Elements(this);
       return getImages(params.assets);
-    }).then( images => {
-      this.renderer = new Renderer(images, this);
+    }).then((images)=> {
+      this.images = images;
+      this.renderer = new Renderer(this);
       d.resolve();
-    })/*.catch(function(error) {
+    }).catch(function(error) {
       console.log(error);
-    });*/
+    });
 
     this.resizeViewport();
     progress(0);

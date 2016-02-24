@@ -3,21 +3,21 @@
 //--------------------------------------------------------------------------
 class Elements
 {
-  constructor(elementsLayer, game) {
+  constructor(game) {
     this._game = game;
     this.all = [];
     this.lights = [];
-    this.createElements(elementsLayer);
+    this.createElements(this._game.data.layers[2].objects);
   }
   //------------------------------------------------------------------------
   update() {
     let { all } = this;
-    all.forEach(function (Obj, i, all) {
-      if (Obj.dead) {
-        this._game.elements.all[i] = this._game.elements.all[Game.elements.all.length - 1];
+    all.forEach((elem, i) => {
+      if (elem.dead) {
+        this._game.elements.all[i] = this._game.elements.all[this._game.elements.all.length - 1];
         this._game.elements.all.length--;
       } else {
-        Obj.update();
+        elem.update();
       }
     });
     for (let j = 0; j < all.length; j++) {

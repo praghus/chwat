@@ -19,17 +19,12 @@ const
   ];
 //--------------------------------------------------------------------------
 
-  let game = new GameController();
+let game = new GameController(Dom.get('canvas'));
 
-  const g1 = 'background-color: #444444;';
-  const g2 = 'background-color: #333333;';
-  const g3 = 'color:#CCCCCC;font-weight:bold; background-color: #222222;';
-  console.log("%c %c %c | -NIHIL- | %c %c ", g1, g2, g3, g2, g1);
-
+//--------------------------------------------------------------------------
 window.onload = ()=>
 {
-
-  game.Init({data: "assets/levels/main.json", assets: Images}).then(()=> {
+  game.init({data: "assets/levels/main.json", assets: Images}).then(()=> {
     game.renderer.msg(game.map.name, 100);
     game.run({
       update: ()=> {
@@ -40,15 +35,16 @@ window.onload = ()=>
       render: ()=> game.renderer.render()
     });
 
+    let { input } = game.player;
     function onKey(ev, key, pressed) {
       switch (key) {
-        case KEY.LEFT   :game.input.left = pressed;break;
-        case KEY.RIGHT  :game.input.right = pressed;break;
-        case KEY.THROW  :game.input.throw = pressed;break;
-        case KEY.SHOOT  :game.input.shoot = pressed;break;
+        case KEY.LEFT   : input.left = pressed;break;
+        case KEY.RIGHT  : input.right = pressed;break;
+        case KEY.THROW  : input.throw = pressed;break;
+        case KEY.SHOOT  : input.shoot = pressed;break;
         case KEY.SPACE  :
-        case KEY.UP     :game.input.up = pressed;break;
-        case KEY.DOWN   :game.input.down = pressed;break;
+        case KEY.UP     : input.up = pressed;break;
+        case KEY.DOWN   : input.down = pressed;break;
       }
       ev.preventDefault();
       return false;
@@ -63,37 +59,37 @@ window.onload = ()=>
 
     lPad.on('pan', ev => {
       switch (ev.additionalEvent) {
-        case 'panleft':game.input.left = !game.input.right;break;
-        case 'panright':game.input.right = !game.input.left;break;
+        case 'panleft'  : input.left = !input.right;break;
+        case 'panright' : input.right = !input.left;break;
       }
     }).on('panend', () => {
-      game.input.left = false;
-      game.input.right = false;
+      input.left = false;
+      input.right = false;
     });
 
     rPad.on('pan', ev => {
       switch (ev.additionalEvent) {
-        case 'panup':game.input.up = true;break;
-        case 'pandown':game.input.down = true;break;
+        case 'panup':input.up = true;break;
+        case 'pandown':input.down = true;break;
       }
     }).on('panend', () => {
-      game.input.up = false;
-      game.input.down = false;
+      input.up = false;
+      input.down = false;
     });
 
     rPad.on('tap', () => {
-      game.input.shoot = true;
-      setTimeout(()=> game.input.shoot = false, 200);
+      input.shoot = true;
+      setTimeout(()=> input.shoot = false, 200);
     });
 
-    Dom.on(window, 'resize', game.resizeGame, false);
-    Dom.on(window, 'orientationchange', game.resizeGame, false);
+    Dom.on(window, 'resize', ()=> game.resizeGame, false);
+    Dom.on(window, 'orientationchange', ()=> game.resizeGame, false);
 
-    Dom.on(document, 'keydown', ev => onKey(ev, ev.keyCode, true), false);
-    Dom.on(document, 'keyup', ev => onKey(ev, ev.keyCode, false), false);
+    Dom.on(document, 'keydown', (ev)=> onKey(ev, ev.keyCode, true), false);
+    Dom.on(document, 'keyup', (ev)=> onKey(ev, ev.keyCode, false), false);
 
     // prevent bumping effect on mobile browsers
-    Dom.on(document, 'ontouchmove', event => event.preventDefault(), false);
+    Dom.on(document, 'ontouchmove', (ev)=> ev.preventDefault(), false);
 
     game.resizeGame();
   });
