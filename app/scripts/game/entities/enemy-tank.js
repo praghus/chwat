@@ -50,7 +50,7 @@ game.addEntity('enemy_tank', class extends Entity {
         this.countToShoot = 40;
         this.canShoot = false;
       }
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       if (this.countToShoot > 0) {
         this.countToShoot -= 1;
         this.force.x *= 0.8;

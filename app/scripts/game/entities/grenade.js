@@ -24,7 +24,7 @@ game.addEntity('grenade', class extends Entity {
 
   update() {
     if (!this.dead) {
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       this.force.x = this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       this.move();
       if (this.expectedX < this.x ) {

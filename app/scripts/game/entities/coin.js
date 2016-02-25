@@ -11,7 +11,7 @@ game.addEntity('coin', class extends Entity {
     this.animation = {x: 0, y: 0, w: 8, h: 8, frames: 10, fps: 30, loop: true};
     this.force = {x: 0, y: -5};
   }
-  
+
   collide(element) {
     if (element.type === 'player') {
       this.dead = true;
@@ -22,7 +22,7 @@ game.addEntity('coin', class extends Entity {
   update() {
     if (this.onScreen()) {
       this.animate();
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       this.move();
     }
   };

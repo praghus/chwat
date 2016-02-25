@@ -16,12 +16,12 @@ game.addEntity('crusher', class extends Entity {
 
   update() {
     if (this.onScreen()) {
-      const { spriteSize } = this._game.map;
+      const { spriteSize } = this._game.world;
       if (this.rise) {
         this.force.y -= 0.005;
       }
       if (this.fall) {
-        this.force.y += this._game.map.gravity;
+        this.force.y += this._game.world.gravity;
       }
       this.move();
 

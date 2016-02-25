@@ -13,7 +13,7 @@ game.addEntity('paddle', class extends Entity {
 
   draw($, image) {
     const { camera } = this._game;
-    const { spriteSize } = this._game.map;
+    const { spriteSize } = this._game.world;
     for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
       $.drawImage(image,
         0, 0, spriteSize, spriteSize,

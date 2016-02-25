@@ -4,7 +4,7 @@
 game.addEntity('lava', class extends Entity {
   constructor(obj, game) {
     super(obj, game);
-    const { spriteSize } = this._game.map;
+    const { spriteSize } = this._game.world;
     this.family = 'traps';
     this.damage = 1000;
     this.canShoot = true;
@@ -15,12 +15,12 @@ game.addEntity('lava', class extends Entity {
 
   draw($, image) {
     const { camera } = this._game;
-    const { spriteSize } = this._game.map;
+    const { spriteSize } = this._game.world;
     for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
       for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
         const PX = Math.round((this.x + (x * spriteSize)) / spriteSize);
         const PY = Math.round((this.y + (y * spriteSize)) / spriteSize);
-        if (!this._game.map.isSolid(PX, PY)) {
+        if (!this._game.world.isSolid(PX, PY)) {
           $.drawImage(image,
             this.animFrame * spriteSize, y === 0 ? y : spriteSize,
             spriteSize, spriteSize,
@@ -37,7 +37,7 @@ game.addEntity('lava', class extends Entity {
     this.shootTimeout = setTimeout(()=>{this.canShoot = true;}, this.shootDelay);
     this.canShoot = false;
   }
-  
+
   update() {
     if (this.onScreen()) {
       if (this.canShoot) {

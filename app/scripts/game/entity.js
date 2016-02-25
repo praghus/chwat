@@ -96,10 +96,10 @@ class Entity
   }
   //----------------------------------------------------------------------
   onScreen() {
-    return this.x + this.width + this._game.map.spriteSize > -this._game.camera.x &&
-      this.x - this._game.map.spriteSize < -this._game.camera.x + this._game.resolution.x &&
-      this.y - this._game.map.spriteSize < -this._game.camera.y + this._game.resolution.y &&
-      this.y + this.height + this._game.map.spriteSize > -this._game.camera.y;
+    return this.x + this.width + this._game.world.spriteSize > -this._game.camera.x &&
+      this.x - this._game.world.spriteSize < -this._game.camera.x + this._game.resolution.x &&
+      this.y - this._game.world.spriteSize < -this._game.camera.y + this._game.resolution.y &&
+      this.y + this.height + this._game.world.spriteSize > -this._game.camera.y;
   }
   //----------------------------------------------------------------------
   hit(s) {
@@ -112,10 +112,10 @@ class Entity
       return false;
     }
     if (this.PlayerM > -0.15 && this.PlayerM < 0.15) {
-      var steps = Math.abs(Math.floor(this._game.player.x / this._game.map.spriteSize) - Math.floor(this.x / this._game.map.spriteSize)),
-        from = this._game.player.x < this.x ? Math.floor(this._game.player.x / this._game.map.spriteSize) : Math.floor(this.x / this._game.map.spriteSize);
+      var steps = Math.abs(Math.floor(this._game.player.x / this._game.world.spriteSize) - Math.floor(this.x / this._game.world.spriteSize)),
+        from = this._game.player.x < this.x ? Math.floor(this._game.player.x / this._game.world.spriteSize) : Math.floor(this.x / this._game.world.spriteSize);
       for (var X = from; X < from + steps; X++) {
-        if (this._game.map.isSolid(X, Math.round(this.y / this._game.map.spriteSize))) {
+        if (this._game.world.isSolid(X, Math.round(this.y / this._game.world.spriteSize))) {
           return false;
         }
       }
@@ -153,15 +153,15 @@ class Entity
     this.expectedX = this.x + this.force.x;
     this.expectedY = this.y + this.force.y;
 
-    var PX = Math.floor(this.expectedX / this._game.map.spriteSize),
-        PY = Math.floor(this.expectedY / this._game.map.spriteSize),
-        PW = Math.floor((this.expectedX + this.width) / this._game.map.spriteSize),
-        PH = Math.floor((this.expectedY + this.height) / this._game.map.spriteSize),
+    var PX = Math.floor(this.expectedX / this._game.world.spriteSize),
+        PY = Math.floor(this.expectedY / this._game.world.spriteSize),
+        PW = Math.floor((this.expectedX + this.width) / this._game.world.spriteSize),
+        PH = Math.floor((this.expectedY + this.height) / this._game.world.spriteSize),
         nearMatrix = [];
 
     for (var y = PY; y <= PH; y++){
       for (var x = PX; x <= PW; x++){
-        nearMatrix.push(this._game.map.tileData(x, y));
+        nearMatrix.push(this._game.world.tileData(x, y));
       }
     }
 
@@ -193,8 +193,8 @@ class Entity
     this.y += this.force.y;
     this.onCeiling = this.expectedY < this.y;
     this.onFloor = this.expectedY > this.y;
-    this.onLeftEdge = !this._game.map.isSolid(PX, PH);
-    this.onRightEdge = !this._game.map.isSolid(PW, PH);
+    this.onLeftEdge = !this._game.world.isSolid(PX, PH);
+    this.onRightEdge = !this._game.world.isSolid(PW, PH);
 
     //return {x: expectedX === this.x, y: expectedY === this.y};
   }

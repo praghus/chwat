@@ -24,7 +24,7 @@ game.addEntity('lava_stone', class extends Entity {
 
   update() {
     if (!this.dead) {
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       this.force.x += this.direction > 0 ? this.speed : -this.speed;
       this.move();
       if (this.expectedX !== this.x || this.expectedY !== this.y) {

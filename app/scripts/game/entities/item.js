@@ -16,7 +16,7 @@ game.addEntity('item', class extends Entity {
 
   update() {
     if (this.onScreen()) {
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       this.move();
     }
   }

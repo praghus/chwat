@@ -163,9 +163,10 @@
   <object name="Spear" type="spear" x="3136" y="952" width="8" height="8"/>
   <object name="Spear" type="spear" x="3859" y="1048" width="8" height="8"/>
   <object name="Saw" type="saw" x="2752" y="1200" width="48" height="48"/>
-  <object name="Player" type="player" x="936" y="895" width="16" height="43"/>
+  <object name="Player" type="player" x="1633" y="706" width="16" height="43"/>
   <object type="jump_through" x="2448" y="704" width="48" height="8"/>
   <object name="Spear" type="spear" x="816" y="1080" width="8" height="8"/>
+  <object name="Water" type="water" x="1360" y="768" width="272" height="32"/>
  </objectgroup>
  <layer name="Fore Objects" width="256" height="256">
   <data encoding="base64" compression="zlib">

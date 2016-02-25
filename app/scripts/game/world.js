@@ -1,7 +1,7 @@
 //==========================================================================
 // Map
 //--------------------------------------------------------------------------
-class Map {
+class World {
   constructor(game) {
     const data = game.data;
     const backData  = data.layers[0].data;

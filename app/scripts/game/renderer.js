@@ -95,98 +95,98 @@ class Renderer
   //------------------------------------------------------------------------
   renderGround() {
     const { $, images } = this._game;
-    let  y = Math.floor(this._game.camera.y % this._game.map.spriteSize);
-    let _y = Math.floor(-this._game.camera.y / this._game.map.spriteSize);
+    let  y = Math.floor(this._game.camera.y % this._game.world.spriteSize);
+    let _y = Math.floor(-this._game.camera.y / this._game.world.spriteSize);
     while (y < this._game.resolution.y) {
-      let x = Math.floor(this._game.camera.x % this._game.map.spriteSize), _x = Math.floor(-this._game.camera.x / this._game.map.spriteSize);
+      let x = Math.floor(this._game.camera.x % this._game.world.spriteSize), _x = Math.floor(-this._game.camera.x / this._game.world.spriteSize);
       while (x < this._game.resolution.x) {
-        const tile = this._game.map.data.ground[_x][_y], back = this._game.map.data.back[_x][_y];
+        const tile = this._game.world.data.ground[_x][_y], back = this._game.world.data.back[_x][_y];
         if (tile > 1 || back > 1) {
           // dynamic lights
           if (tile > 256 && this.dynamicLights) {
             this.lightmask.push(new illuminated.RectangleObject({
               topleft: new illuminated.Vec2(x, y),
-              bottomright: new illuminated.Vec2(x + this._game.map.spriteSize, y + this._game.map.spriteSize)
+              bottomright: new illuminated.Vec2(x + this._game.world.spriteSize, y + this._game.world.spriteSize)
             }));
           }
           if (back > 1) {
-            $.drawImage(images.tiles, (((back - 1) % this._game.map.spriteCols )) * this._game.map.spriteSize, (Math.ceil(back / this._game.map.spriteCols) - 1) * this._game.map.spriteSize, this._game.map.spriteSize, this._game.map.spriteSize, x, y, this._game.map.spriteSize, this._game.map.spriteSize);
+            $.drawImage(images.tiles, (((back - 1) % this._game.world.spriteCols )) * this._game.world.spriteSize, (Math.ceil(back / this._game.world.spriteCols) - 1) * this._game.world.spriteSize, this._game.world.spriteSize, this._game.world.spriteSize, x, y, this._game.world.spriteSize, this._game.world.spriteSize);
           }
           if (tile > 1) {
-            $.drawImage(images.tiles, (((tile - 1) % this._game.map.spriteCols )) * this._game.map.spriteSize, (Math.ceil(tile / this._game.map.spriteCols) - 1) * this._game.map.spriteSize, this._game.map.spriteSize, this._game.map.spriteSize, x, y, this._game.map.spriteSize, this._game.map.spriteSize);
+            $.drawImage(images.tiles, (((tile - 1) % this._game.world.spriteCols )) * this._game.world.spriteSize, (Math.ceil(tile / this._game.world.spriteCols) - 1) * this._game.world.spriteSize, this._game.world.spriteSize, this._game.world.spriteSize, x, y, this._game.world.spriteSize, this._game.world.spriteSize);
           }
           // calculate shadow
           if (back > 1 && tile === 0) {
             var shadow = 0;
-            if (_x > 0 && _y > 0 && this._game.map.isShadowCaster(_x - 1, _y) && this._game.map.isShadowCaster(_x - 1, _y - 1) && this._game.map.isShadowCaster(_x, _y - 1)) {
+            if (_x > 0 && _y > 0 && this._game.world.isShadowCaster(_x - 1, _y) && this._game.world.isShadowCaster(_x - 1, _y - 1) && this._game.world.isShadowCaster(_x, _y - 1)) {
               shadow = 6;
             }
-            else if (_x > 0 && _y > 0 && this._game.map.isShadowCaster(_x - 1, _y - 1) && this._game.map.isShadowCaster(_x, _y - 1)) {
+            else if (_x > 0 && _y > 0 && this._game.world.isShadowCaster(_x - 1, _y - 1) && this._game.world.isShadowCaster(_x, _y - 1)) {
               shadow = 5;
             }
-            else if (_x > 0 && _y > 0 && this._game.map.isShadowCaster(_x - 1, _y) && this._game.map.isShadowCaster(_x - 1, _y - 1)) {
+            else if (_x > 0 && _y > 0 && this._game.world.isShadowCaster(_x - 1, _y) && this._game.world.isShadowCaster(_x - 1, _y - 1)) {
               shadow = 4;
             }
-            else if (_x > 0 && this._game.map.isShadowCaster(_x - 1, _y)) {
+            else if (_x > 0 && this._game.world.isShadowCaster(_x - 1, _y)) {
               shadow = 1;
             }
-            else if (_y > 0 && this._game.map.isShadowCaster(_x, _y - 1)) {
+            else if (_y > 0 && this._game.world.isShadowCaster(_x, _y - 1)) {
               shadow = 2;
             }
-            else if (_x > 0 && _y > 0 && this._game.map.isShadowCaster(_x - 1, _y - 1)) {
+            else if (_x > 0 && _y > 0 && this._game.world.isShadowCaster(_x - 1, _y - 1)) {
               shadow = 3;
             }
             if (shadow > 0) {
-              $.drawImage(images.shadows, (shadow - 1) * this._game.map.spriteSize, 0, this._game.map.spriteSize, this._game.map.spriteSize, x, y, this._game.map.spriteSize, this._game.map.spriteSize);
+              $.drawImage(images.shadows, (shadow - 1) * this._game.world.spriteSize, 0, this._game.world.spriteSize, this._game.world.spriteSize, x, y, this._game.world.spriteSize, this._game.world.spriteSize);
             }
           }
         }
-        x += this._game.map.spriteSize;
+        x += this._game.world.spriteSize;
         _x++;
       }
-      y += this._game.map.spriteSize;
+      y += this._game.world.spriteSize;
       _y++;
     }
   }
   //------------------------------------------------------------------------
   renderForeGround() {
     const { $, images } = this._game;
-    let  y = Math.floor(this._game.camera.y % this._game.map.spriteSize);
-    let _y = Math.floor(-this._game.camera.y / this._game.map.spriteSize);
+    let  y = Math.floor(this._game.camera.y % this._game.world.spriteSize);
+    let _y = Math.floor(-this._game.camera.y / this._game.world.spriteSize);
     while (y < this._game.resolution.y) {
-      let x = Math.floor(this._game.camera.x % this._game.map.spriteSize), _x = Math.floor(-this._game.camera.x / this._game.map.spriteSize);
+      let x = Math.floor(this._game.camera.x % this._game.world.spriteSize), _x = Math.floor(-this._game.camera.x / this._game.world.spriteSize);
       while (x < this._game.resolution.x) {
-        let tile = this._game.map.data.fore[_x][_y], dark = this._game.map.data.mask[_x][_y];
+        let tile = this._game.world.data.fore[_x][_y], dark = this._game.world.data.mask[_x][_y];
         if (tile > 0) {
-          $.drawImage(images.tiles, (((tile - 1) % this._game.map.spriteCols )) * this._game.map.spriteSize, (Math.ceil(tile / this._game.map.spriteCols) - 1) * this._game.map.spriteSize, this._game.map.spriteSize, this._game.map.spriteSize, x, y, this._game.map.spriteSize, this._game.map.spriteSize);
+          $.drawImage(images.tiles, (((tile - 1) % this._game.world.spriteCols )) * this._game.world.spriteSize, (Math.ceil(tile / this._game.world.spriteCols) - 1) * this._game.world.spriteSize, this._game.world.spriteSize, this._game.world.spriteSize, x, y, this._game.world.spriteSize, this._game.world.spriteSize);
         }
         if (dark === 0 && this._game.player.inDark > 0 && !this._game.camera.underground) {
           $.fillStyle = "black";
-          $.fillRect(x, y, this._game.map.spriteSize, this._game.map.spriteSize);
+          $.fillRect(x, y, this._game.world.spriteSize, this._game.world.spriteSize);
         }
-        x += this._game.map.spriteSize;
+        x += this._game.world.spriteSize;
         _x++;
       }
-      y += this._game.map.spriteSize;
+      y += this._game.world.spriteSize;
       _y++;
     }
   }
   //------------------------------------------------------------------------
   renderForeGround2() {
-    const { $, images, camera, map, resolution } = this._game;
-    let  y = Math.floor(camera.y % map.spriteSize);
-    let _y = Math.floor(-camera.y / map.spriteSize);
+    const { $, images, camera, world, resolution } = this._game;
+    let  y = Math.floor(camera.y % world.spriteSize);
+    let _y = Math.floor(-camera.y / world.spriteSize);
     while (y < resolution.y) {
-      let x = Math.floor(camera.x % map.spriteSize), _x = Math.floor(-camera.x / map.spriteSize);
+      let x = Math.floor(camera.x % world.spriteSize), _x = Math.floor(-camera.x / world.spriteSize);
       while (x < resolution.x) {
-        let tile = map.data.fore2[_x][_y];
+        let tile = world.data.fore2[_x][_y];
         if (tile > 0) {
-          $.drawImage(images.tiles, (((tile - 1) % map.spriteCols )) * map.spriteSize, (Math.ceil(tile / map.spriteCols) - 1) * map.spriteSize, map.spriteSize, map.spriteSize, x, y, map.spriteSize, map.spriteSize);
+          $.drawImage(images.tiles, (((tile - 1) % world.spriteCols )) * world.spriteSize, (Math.ceil(tile / world.spriteCols) - 1) * world.spriteSize, world.spriteSize, world.spriteSize, x, y, world.spriteSize, world.spriteSize);
         }
-        x += map.spriteSize;
+        x += world.spriteSize;
         _x++;
       }
-      y += map.spriteSize;
+      y += world.spriteSize;
       _y++;
     }
   }
@@ -209,11 +209,10 @@ class Renderer
     $.drawImage(images.coin, 0, 0, 8, 8, this._game.resolution.x - 16, 7, 8, 8);
     let cc = '' + parseInt(this._game.player.coinCollect);
     this.fontPrint(cc, this._game.resolution.x - (16 + (cc.length * 8)), 8);
-    for (let i = 0; i < 2; i++) {
-      const item = this._game.player.items[i];
-      if (item && item.type === "item") {
-        $.drawImage(images.item, parseInt(item.properties.frame) * item.width, 0, item.width, item.height, (this._game.resolution.x - 43) + (i * 20), this._game.resolution.y - 23, item.width, item.height);
-      }
+    for (let i in this._game.player.items) {
+      let item =this._game.player.items[i];
+      $.drawImage(images.item, parseInt(item.properties.frame) * item.width, 0, item.width, item.height, 4+(i++ * 20), this._game.resolution.y - 20, item.width, item.height);
+
     }
   }
   //------------------------------------------------------------------------

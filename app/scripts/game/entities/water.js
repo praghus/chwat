@@ -4,21 +4,20 @@
 game.addEntity('water', class extends Entity {
   constructor(obj, game) {
     super(obj, game);
-    const { spriteSize } = this._game.map;
-    this.fall = false;
+    const { spriteSize } = this._game.world;
     this.wave = 0;
     this.direction = this.DIR.DOWN;
     this.animation = {x: 0, y: 0, w: spriteSize, h: spriteSize, frames: 7, fps: 20, loop: true};
   }
   draw($, image) {
     const { camera } = this._game;
-    const { spriteSize } = this._game.map;
+    const { spriteSize } = this._game.world;
     $.globalAlpha = 0.4;
     for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
       for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
-        let PX = Math.round((this.x + (x * spriteSize)) / spriteSize);
-        let PY = Math.round((this.y + (y * spriteSize)) / spriteSize);
-        if (!this._game.map.isSolid(PX, PY)) {
+        const PX = Math.round((this.x + (x * spriteSize)) / spriteSize);
+        const PY = Math.round((this.y + (y * spriteSize)) / spriteSize);
+        if (!this._game.world.isSolid(PX, PY)) {
           $.drawImage(image,
             this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,
             spriteSize, spriteSize,
@@ -26,19 +25,13 @@ game.addEntity('water', class extends Entity {
             spriteSize, spriteSize
           );
         }
-        if (y + 1 === Math.round(this.height / spriteSize) && !this._game.map.isSolid(PX, PY + 1)) {
-          this.fall = true;
-        }
       }
-    }
-    if (this.fall) {
-      this.fall = false;
-      this.y += 32;
     }
     $.globalAlpha = 1;
   }
   update() {
     if (this.onScreen()) {
+
       this.animate();
       if (this.animFrame === 5) {
         this.wave += this.direction === this.DIR.DOWN ? 0.5 : -0.5;

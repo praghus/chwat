@@ -39,7 +39,7 @@ game.addEntity('enemy_blob', class extends Entity {
       this.awake = true;
     }
     if (this.awake && !this.dead) {
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       if (this.seesPlayer()) {
         this.direction = this._game.player.x > this.x ? this.DIR.RIGHT : this.DIR.LEFT;

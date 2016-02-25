@@ -37,7 +37,7 @@ class DAT {
       f1.add(Game.player, 'exterminate');
       f2.add(Game.player.force, 'x').listen();
       f2.add(Game.player.force, 'y').listen();
-      f3.add(Game.map, 'gravity', 0, 2);
+      f3.add(Game.world, 'gravity', 0, 2);
       f3.add(Game.camera, 'x').listen();
       f3.add(Game.camera, 'y').listen();
       f3.add(Game.camera, 'center');

@@ -38,7 +38,7 @@ game.addEntity('rock', class extends Entity {
       this.awake = true;
     }
     if (this.awake && !this.dead) {
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       if (this.onFloor && this.speed < this.maxSpeed) {
         this.speed += 0.01;
       }

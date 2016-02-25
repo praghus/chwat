@@ -25,7 +25,7 @@ const game = new GameController(Dom.get('canvas'));
 window.onload = ()=>
 {
   game.init({data: "assets/levels/main.json", assets: Images}).then(()=> {
-    game.renderer.msg(game.map.name, 100);
+    game.renderer.msg(game.world.name, 100);
     game.run({
       update: ()=> {
         game.elements.update();

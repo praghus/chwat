@@ -18,7 +18,7 @@ game.addEntity('player', class extends Entity {
     this.throwSpeed = 0;
     this.throwMaxSpeed = 5;
     this.shootTimeout = null;
-    this.items = new Array(2);
+    this.items = [];
     this.input = {
       left: false, right: false, up: false, down: false,
       jump: false, shoot: false, action: false, throw: false
@@ -38,25 +38,25 @@ game.addEntity('player', class extends Entity {
     this.animation = this.animations.STAND_RIGHT;
   }
   //----------------------------------------------------------------------
-  draw(ctx, image) {
+  draw($, image) {
     if ((this._game.camera.underground || this._game.player.inDark > 0) && !this._game.renderer.dynamicLights) {
-      ctx.globalCompositeOperation = "lighter";
-      ctx.drawImage(this._game.renderer.images.player_light,
+      $.globalCompositeOperation = "lighter";
+      $.drawImage(this._game.renderer.images.player_light,
         -128 + Math.floor(this._game.player.x + (this._game.player.width / 2) + this._game.camera.x),
         -128 + Math.floor(this._game.player.y + (this._game.player.height / 2) + this._game.camera.y)
       );
-      ctx.globalCompositeOperation = "source-over";
+      $.globalCompositeOperation = "source-over";
     }
     if (!this.canHurt && !this.dead) {
-      ctx.globalAlpha = 0.2;
+      $.globalAlpha = 0.2;
     }
-    ctx.drawImage(image,
+    $.drawImage(image,
       this.animation.x + (this.animFrame * this.animation.w), this._game.player.animation.y + this.animOffset,
       this.animation.w, this.animation.h,
       Math.floor(this.x + this._game.camera.x) - 8, Math.floor(this.y + this._game.camera.y) - 5, this.animation.w, this.animation.h
     );
     if (!this.canHurt && !this.dead) {
-      ctx.globalAlpha = 1;
+      $.globalAlpha = 1;
     }
   }
   //----------------------------------------------------------------------
@@ -102,7 +102,7 @@ game.addEntity('player', class extends Entity {
         }
       }
     }
-    this.force.y += this._game.map.gravity;
+    this.force.y += this._game.world.gravity;
     this.move();
 
     if (this.onFloor) {
@@ -147,7 +147,7 @@ game.addEntity('player', class extends Entity {
     if (this.energy <= 0 && !this.dead){
       //this.kill = true;
     }
-    setTimeout(() => this.canHurt = true, 1000);
+    setTimeout(()=> this.canHurt = true, 1000);
   }
   //----------------------------------------------------------------------
   canUse(id) {
@@ -164,15 +164,7 @@ game.addEntity('player', class extends Entity {
   }
   //----------------------------------------------------------------------
   get(item) {
-    if (this.items[1] && this.items[1].type === 'item') {
-      var obj = this.items[1];
-      obj.x = this.x;
-      obj.y = (this.y + this.height) - obj.height;
-      this._game.elements.add(new Item(obj));
-    }
-    this.items[1] = this.items[0];
-    this.items[0] = item;
-    this.action = false;
+    this.items.push(item);
   }
   //----------------------------------------------------------------------
   collide(element) {

@@ -10,7 +10,7 @@ game.addEntity('ladder', class extends Entity {
     const { input } = this._game.player;
     if (element.type === 'player') {
       if (input.up) {
-        this._game.player.force.y = -this._game.map.gravity - 0.5;
+        this._game.player.force.y = -this._game.world.gravity - 0.5;
       }
       else {
         this._game.player.force.y = 0.5;

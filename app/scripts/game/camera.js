@@ -13,35 +13,35 @@ class Camera
   }
   //------------------------------------------------------------------------
   update() {
-    const { player, resolution, map } = this._game;
+    const { player, resolution, world } = this._game;
     if ((player.x + this.x > resolution.x / 2 && player.force.x > 0) || (player.x + this.x < resolution.x / 2 && player.force.x < 0)) {
       this.x -= Math.floor(player.force.x);
     }
     if (this.x > 0) {
       this.x = 0;
     }
-    if (this.x - resolution.x < -map.width * map.spriteSize) {
-      this.x = (-map.width * map.spriteSize) + resolution.x;
+    if (this.x - resolution.x < -world.width * world.spriteSize) {
+      this.x = (-world.width * world.spriteSize) + resolution.x;
     }
     this.y = -((player.y + player.height) - (resolution.y / 2));
 
     if (this.y > 0) {
       this.y = 0;
     }
-    if (this.y < -map.height * map.spriteSize) {
-      this.y = (-map.height * map.spriteSize) / 2;
+    if (this.y < -world.height * world.spriteSize) {
+      this.y = (-world.height * world.spriteSize) / 2;
     }
     // above the surface
-    if (Math.round((player.y + (player.height / 2)) / map.spriteSize) < map.surface) {
+    if (Math.round((player.y + (player.height / 2)) / world.spriteSize) < world.surface) {
       this.underground = false;
-      if ((this.y - resolution.y) < -map.surface * map.spriteSize) {
-        this.y = (-map.surface * map.spriteSize) + resolution.y;
+      if ((this.y - resolution.y) < -world.surface * world.spriteSize) {
+        this.y = (-world.surface * world.spriteSize) + resolution.y;
       }
     } else {
       // under the surface
       this.underground = true;
-      if ((this.y) >= -map.surface * map.spriteSize) {
-        this.y = (-map.surface * map.spriteSize);
+      if ((this.y) >= -world.surface * world.spriteSize) {
+        this.y = (-world.surface * world.spriteSize);
       }
     }
     // shake

@@ -35,7 +35,7 @@ game.addEntity('particles', class extends Entity {
 
   update() {
     if (!this.dead) {
-      this.force.y += this._game.map.gravity;
+      this.force.y += this._game.world.gravity;
       this.move();
       if (this.y !== this.expectedY || this.x !== this.expectedX) {
         this.force.y *= -0.8;

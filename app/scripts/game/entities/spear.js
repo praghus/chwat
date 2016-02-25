@@ -4,7 +4,7 @@
 game.addEntity('spear', class extends Entity {
   constructor(obj, game) {
     super(obj, game);
-    const { spriteSize } = this._game.map;
+    const { spriteSize } = this._game.world;
     this.family = 'traps';
     this.damage = 20;
     this.maxHeight = spriteSize * 2;
@@ -22,7 +22,7 @@ game.addEntity('spear', class extends Entity {
   update() {
     if (this.onScreen()) {
       const { player } = this._game;
-      const { spriteSize } = this._game.map;
+      const { spriteSize } = this._game.world;
       this.seesPlayer();
       if ((this.animFrame === 0 && Math.round(Math.random() * 20) === 0) || this.animFrame > 0) {
         this.animate();
