@@ -19,5 +19,5 @@ game.addEntity('trigger', class extends Entity {
         }
       }
     }
-  };
+  }
 });

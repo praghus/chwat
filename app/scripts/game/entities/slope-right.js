@@ -25,5 +25,5 @@ game.addEntity('slope_right', class extends Entity {
     } else if (element.force.y === 0) {
       element.force.y += 1;
     }
-  };
+  }
 });

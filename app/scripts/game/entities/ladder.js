@@ -19,5 +19,5 @@ game.addEntity('ladder', class extends Entity {
         this._game.player.x = this.x;
       }
     }
-  };
+  }
 });

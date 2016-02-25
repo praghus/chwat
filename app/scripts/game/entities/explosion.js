@@ -25,5 +25,5 @@ game.addEntity('explosion', class extends Entity {
     if (this.animFrame === this.animation.frames - 1) {
       this.dead = true;
     }
-  };
+  }
 });

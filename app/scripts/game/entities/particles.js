@@ -54,5 +54,5 @@ game.addEntity('particles', class extends Entity {
     $.rect(this.x + this._game.camera.x, this.y + this._game.camera.y, this.width, this.height);
     $.fill();
     $.closePath();
-  };
+  }
 });

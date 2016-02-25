@@ -68,5 +68,5 @@ game.addEntity('paddle', class extends Entity {
         }, 1000);
       }
     }
-  };
+  }
 });

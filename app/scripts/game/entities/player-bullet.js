@@ -39,5 +39,5 @@ game.addEntity('player_bullet', class extends Entity {
         this._game.shootExplosion(this.x, this.y, this.color);
       }
     }
-  };
+  }
 });

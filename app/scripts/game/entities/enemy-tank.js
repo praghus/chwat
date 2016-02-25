@@ -21,7 +21,9 @@ game.addEntity('enemy_tank', class extends Entity {
   shoot() {
     this._game.elements.add('enemy_bullet', {x: this.x - 17, y: this.y + 6, direction: this.DIR.LEFT});
     this._game.elements.add('enemy_bullet', {x: this.x + this.width + 1, y: this.y + 6, direction: this.DIR.RIGHT});
-    this.shootTimeout = setTimeout(()=>{this.canShoot = true}, this.shootDelay);
+    this.shootTimeout = setTimeout(()=>{
+      this.canShoot = true;
+    }, this.shootDelay);
   }
 
   hit(s){
@@ -80,5 +82,5 @@ game.addEntity('enemy_tank', class extends Entity {
       }
       this.animate();
     }
-  };
+  }
 });

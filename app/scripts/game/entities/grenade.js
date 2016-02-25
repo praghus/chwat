@@ -46,6 +46,6 @@ game.addEntity('grenade', class extends Entity {
         this._game.grenadeExplosion(this.x, this.y);
       }
     }
-  };
+  }
 });
 

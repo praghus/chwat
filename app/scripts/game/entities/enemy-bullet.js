@@ -35,6 +35,6 @@ game.addEntity('enemy_bullet', class extends Entity {
         this._game.shootExplosion(this.x, this.y, '#EEEEFF');
       }
     }
-  };
+  }
 });
 

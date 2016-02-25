@@ -34,5 +34,5 @@ game.addEntity('lava_stone', class extends Entity {
         this._game.shootExplosion(this.x, this.y, this.color);
       }
     }
-  };
+  }
 });

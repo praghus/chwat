@@ -46,5 +46,5 @@ game.addEntity('rock', class extends Entity {
       this.force.x = this.direction > 0 ? this.speed : -this.speed;
       this.move();
     }
-  };
+  }
 });

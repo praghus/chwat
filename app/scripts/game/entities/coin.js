@@ -25,6 +25,6 @@ game.addEntity('coin', class extends Entity {
       this.force.y += this._game.world.gravity;
       this.move();
     }
-  };
+  }
 });
 

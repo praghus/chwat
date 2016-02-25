@@ -23,5 +23,5 @@ game.addEntity('jump_through', class extends Entity {
         this._game.player.doJump = true;
       }
     }
-  };
+  }
 });

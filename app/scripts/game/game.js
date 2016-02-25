@@ -140,9 +140,9 @@ class GameController
       this.images = images;
       this.renderer = new Renderer(this);
       d.resolve();
-    })/*.catch(function(error) {
+    }).catch(function(error) {
       console.log(error);
-    });*/
+    });
 
     this.resizeViewport();
     progress(0);

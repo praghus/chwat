@@ -11,7 +11,9 @@ game.addEntity('crusher', class extends Entity {
     this.solid = true;
     this.shadowCaster = true;
     this.fallDelay = parseInt(this.properties.delay);
-    this.fallTimeout = setTimeout(()=>{this.fall = true}, this.fallDelay);
+    this.fallTimeout = setTimeout(()=>{
+      this.fall = true;
+    }, this.fallDelay);
   }
 
   update() {
@@ -33,11 +35,13 @@ game.addEntity('crusher', class extends Entity {
       }
       if (this.onCeiling) {
         this.rise = false;
-        this.fallTimeout = setTimeout(()=> {this.fall = true}, this.fallDelay);
+        this.fallTimeout = setTimeout(()=> {
+          this.fall = true;
+        }, this.fallDelay);
       }
 
     } else {
       this.fallTimeout = null;
     }
-  };
+  }
 });
