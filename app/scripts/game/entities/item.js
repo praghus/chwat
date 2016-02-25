@@ -1,24 +1,23 @@
 //--------------------------------------------------------------------------
 // Item
 //--------------------------------------------------------------------------
-Game.addEntity('item', function () {
-  Entity.apply(this, arguments);
-  this.animFrame = parseInt(this.properties.frame);
-  this.collide = function (element) {
-    if (element.type === 'player' && !this.dead && Game.input.action) {
-      Game.player.get(this);
-      Game.input.action = false;
+game.addEntity('item', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.animFrame = parseInt(this.properties.frame);
+  }
+
+  collide(element) {
+    if (element.type === 'player' && !this.dead) {
+      this._game.player.get(this);
       this.dead = true;
     }
-    if (element.family === 'bullets' && this.properties.id === 'tnt') {
-      this.dead = true;
-      Game.elements.add('explosion2', {x: this.x - 24, y: this.y - 110});
-    }
-  };
-  this.update = function () {
+  }
+
+  update() {
     if (this.onScreen()) {
-      this.force.y += Game.map.gravity;
+      this.force.y += this._game.map.gravity;
       this.move();
     }
-  };
+  }
 });

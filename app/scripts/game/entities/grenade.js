@@ -1,25 +1,30 @@
 //--------------------------------------------------------------------------
 // Grenade
 //--------------------------------------------------------------------------
-Game.addEntity('grenade', function (obj) {
-  Entity.apply(this, arguments);
-  this.family = 'bullets';
-  this.type = 'grenade';
-  this.width = 4;
-  this.height = 4;
-  this.damage = 10;
-  this.speed = Game.player.throwSpeed + Math.abs(Game.player.force.x);
-  this.maxSpeed = 5;
-  this.force = {x: 0, y: 0};
-  this.collide = function (element) {
+game.addEntity('grenade', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    const { player } = this._game;
+    this.family = 'bullets';
+    this.type = 'grenade';
+    this.width = 4;
+    this.height = 4;
+    this.damage = 10;
+    this.speed = player.throwSpeed + Math.abs(player.force.x);
+    this.maxSpeed = 5;
+    this.force = {x: 0, y: 0};
+  }
+
+  collide(element) {
     if (element.solid) {
       this.dead = true;
-      GrenadeExplosion(this.x, this.y);
+      this._game.grenadeExplosion(this.x, this.y);
     }
-  };
-  this.update = function () {
+  }
+
+  update() {
     if (!this.dead) {
-      this.force.y += Game.map.gravity;
+      this.force.y += this._game.map.gravity;
       this.force.x = this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       this.move();
       if (this.expectedX < this.x ) {
@@ -38,7 +43,7 @@ Game.addEntity('grenade', function (obj) {
       }
       if (this.speed <= 0) {
         this.dead = true;
-        GrenadeExplosion(this.x, this.y);
+        this._game.grenadeExplosion(this.x, this.y);
       }
     }
   };

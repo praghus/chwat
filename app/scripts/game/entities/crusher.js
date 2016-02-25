@@ -1,40 +1,41 @@
 //--------------------------------------------------------------------------
 // Crusher
 //--------------------------------------------------------------------------
-Game.addEntity('crusher', function () {
-  Entity.apply(this, arguments);
-  this.family = 'traps';
-  this.damage = 1000;
-  this.fall = false;
-  this.rise = false;
-  this.solid = true;
-  this.shadowCaster = true;
-  this.fallDelay = parseInt(this.properties.delay);
-  this.fallTimeout = setTimeout(function() {this.fall = true;}.bind(this), this.fallDelay);
-  this.update = function () {
+game.addEntity('crusher', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.family = 'traps';
+    this.damage = 1000;
+    this.fall = false;
+    this.rise = false;
+    this.solid = true;
+    this.shadowCaster = true;
+    this.fallDelay = parseInt(this.properties.delay);
+    this.fallTimeout = setTimeout(()=>{this.fall = true}, this.fallDelay);
+  }
+
+  update() {
     if (this.onScreen()) {
+      const { spriteSize } = this._game.map;
       if (this.rise) {
-        this.y -= 1;
+        this.force.y -= 0.005;
       }
       if (this.fall) {
-        this.force.y += Game.map.gravity;
+        this.force.y += this._game.map.gravity;
       }
-      this.y += this.force.y;
+      this.move();
 
-      var ELeft = Math.floor(this.x / Game.map.spriteSize),
-        ETop = Math.floor(this.y / Game.map.spriteSize),
-        EBottom = Math.floor((this.y + this.height) / Game.map.spriteSize);
-      if (Game.map.get('ground', ETop, ELeft) > 0) {
-        this.rise = false;
-        this.fallTimeout = setTimeout(function () {this.fall = true;}.bind(this), this.fallDelay);
-      }
-      if (Game.map.get('ground', EBottom, ELeft) > 0) {
-        this.y = ETop * Game.map.spriteSize;
+      if (this.onFloor){
         this.force.y = 0;
         this.fall = false;
         this.rise = true;
-        Game.camera.shake();
+        this._game.camera.shake();
       }
+      if (this.onCeiling) {
+        this.rise = false;
+        this.fallTimeout = setTimeout(()=> {this.fall = true}, this.fallDelay);
+      }
+
     } else {
       this.fallTimeout = null;
     }

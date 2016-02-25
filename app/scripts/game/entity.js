@@ -68,7 +68,7 @@ class Entity
   }
   //----------------------------------------------------------------------
   update() {
-
+    // update
   }
   //----------------------------------------------------------------------
   render(ctx, image) {
@@ -103,17 +103,7 @@ class Entity
   }
   //----------------------------------------------------------------------
   hit(s) {
-    if (this.family === "enemies") {
-      this.force.x += -(this.force.x * 4);
-      this.force.y = -2;
-      this.energy -= s;
-      if (this.energy <= 0) {
-        //Sound.dead1.play();
-        Explosion1(this.x, this.y);
-        this.dead = true;
-        this._game.elements.add('coin', {x: this.x + 8, y: this.y});
-      }
-    }
+    // hit
   }
   //----------------------------------------------------------------------
   seesPlayer() {
@@ -201,6 +191,7 @@ class Entity
       }
     }
     this.y += this.force.y;
+    this.onCeiling = this.expectedY < this.y;
     this.onFloor = this.expectedY > this.y;
     this.onLeftEdge = !this._game.map.isSolid(PX, PH);
     this.onRightEdge = !this._game.map.isSolid(PW, PH);

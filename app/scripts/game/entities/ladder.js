@@ -1,19 +1,22 @@
 //--------------------------------------------------------------------------
 // Ladder
 //--------------------------------------------------------------------------
-Game.addEntity('ladder', function () {
-  Entity.apply(this, arguments);
-  this.visible = false;
-  this.collide = function (element) {
+game.addEntity('ladder', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.visible = false;
+  }
+  collide(element) {
+    const { input } = this._game.player;
     if (element.type === 'player') {
-      if (Game.input.up) {
-        Game.player.force.y = -Game.map.gravity - 0.5;
+      if (input.up) {
+        this._game.player.force.y = -this._game.map.gravity - 0.5;
       }
       else {
-        Game.player.force.y = 0.5;
+        this._game.player.force.y = 0.5;
       }
-      if (!Game.input.left && !Game.input.right && Game.player.x !== this.x) {
-        Game.player.x = this.x;
+      if (!input.left && !input.right && this._game.player.x !== this.x) {
+        this._game.player.x = this.x;
       }
     }
   };

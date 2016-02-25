@@ -17,6 +17,17 @@ game.addEntity('enemy_blob', class extends Entity {
     };
   }
 
+  hit(s){
+    this.force.x += -(this.force.x * 4);
+    this.force.y = -2;
+    this.energy -= s;
+    if (this.energy <= 0) {
+      this.dead = true;
+      this._game.explosion(this.x, this.y);
+      this._game.elements.add('coin', {x: this.x + 8, y: this.y});
+    }
+  }
+
   collide(element) {
     if (element.damage > 0 && element.family !== 'enemies') {
       this.hit(element.damage);
@@ -33,7 +44,9 @@ game.addEntity('enemy_blob', class extends Entity {
       if (this.seesPlayer()) {
         this.direction = this._game.player.x > this.x ? this.DIR.RIGHT : this.DIR.LEFT;
       }
+
       this.move();
+
       if ((this.PlayerM > 1.4 && this.PlayerM < 1.5) || (this.PlayerM < -1.4 && this.PlayerM > -1.5)) {
         this.force.y -= 2;
       }

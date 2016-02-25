@@ -1,17 +1,21 @@
 //--------------------------------------------------------------------------
 // Trigger
 //--------------------------------------------------------------------------
-Game.addEntity('trigger', function () {
-  Entity.apply(this, arguments);
-  this.visible = false;
-  this.update = function () {
+game.addEntity('trigger', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.visible = false;
+  }
+
+  update() {
     if (this.onScreen()) {
-      if (Game.m.overlap(Game.player, this) && !this.dead ) {
-        if (this.properties.activator === 'player' || Game.player.canUse(this.properties.activator)) {
+      const { player } = this._game;
+      if (this._game.m.overlap(player, this) && !this.dead ) {
+        if (this.properties.activator === 'player' || player.canUse(this.properties.activator)) {
           // @todo trigger action here
         }
         else {
-          Game.renderer.msg(this.properties.message, 50);
+          this._game.renderer.msg(this.properties.message, 50);
         }
       }
     }

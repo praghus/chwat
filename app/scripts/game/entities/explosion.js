@@ -1,21 +1,18 @@
 //--------------------------------------------------------------------------
 // Explosions
 //--------------------------------------------------------------------------
-Game.addEntity('explosion', function () {
-  Entity.apply(this, arguments);
-  this.family = 'traps';
-  this.type = 'explosion1';
-  this.width = 32;
-  this.height = 60;
-  this.damage = 2;
-  this.animation = {x: 0, y: 0, w: 32, h: 60, frames: 15, fps: 30, loop: true};
-  this.vectorMask = [
-    new V(0, 0),
-    new V(this.width, 0),
-    new V(this.width, this.height),
-    new V(0, this.height)
-  ];
-  this.update = function () {
+game.addEntity('explosion', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.family = 'traps';
+    this.type = 'explosion1';
+    this.width = 32;
+    this.height = 60;
+    this.damage = 2;
+    this.animation = {x: 0, y: 0, w: 32, h: 60, frames: 15, fps: 30, loop: true};
+  }
+
+  update() {
     if (this.onScreen()) {
       this.awake = true;
     }

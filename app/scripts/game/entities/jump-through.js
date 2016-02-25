@@ -1,22 +1,26 @@
 //--------------------------------------------------------------------------
 // Jump through
 //--------------------------------------------------------------------------
-Game.addEntity('jump_through', function () {
-  Entity.apply(this, arguments);
-  this.solid = true;
-  this.visible = false;
-  this.collide = function (element) {
+game.addEntity('jump_through', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.solid = true;
+    this.visible = false;
+  }
+
+  collide(element) {
+    const { input } = this._game.player;
     if (element.force.y > 0 && element.y + element.height < this.y + this.height) {
-      if (!Game.input.up && !Game.input.down && !element.fall) {
+      if (!input.up && !input.down && !element.fall) {
         element.y = (this.y ) - element.height;
         element.force.y = this.y - element.y - element.height;
       }
       if (element.doJump) {
         element.doJump = false;
       }
-      if (element.type === 'player' && Game.input.up) {
-        Game.player.force.y = -6;
-        Game.player.doJump = true;
+      if (element.type === 'player' && input.up) {
+        this._game.player.force.y = -6;
+        this._game.player.doJump = true;
       }
     }
   };

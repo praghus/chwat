@@ -441,8 +441,8 @@
                     },
                  "type":"jump_through",
                  "visible":true,
-                 "width":112,
-                 "x":896,
+                 "width":208,
+                 "x":800,
                  "y":496
                 }, 
                 {
@@ -793,8 +793,8 @@
                  "type":"player",
                  "visible":true,
                  "width":16,
-                 "x":153,
-                 "y":728
+                 "x":1633,
+                 "y":706
                 }, 
                 {
                  "height":8,
@@ -808,6 +808,32 @@
                  "width":48,
                  "x":2448,
                  "y":704
+                }, 
+                {
+                 "height":8,
+                 "name":"Spear",
+                 "properties":
+                    {
+
+                    },
+                 "type":"spear",
+                 "visible":true,
+                 "width":8,
+                 "x":816,
+                 "y":1080
+                }, 
+                {
+                 "height":32,
+                 "name":"Water",
+                 "properties":
+                    {
+
+                    },
+                 "type":"water",
+                 "visible":true,
+                 "width":272,
+                 "x":1360,
+                 "y":752
                 }],
          "opacity":1,
          "type":"objectgroup",

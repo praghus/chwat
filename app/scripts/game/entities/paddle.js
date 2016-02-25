@@ -1,25 +1,32 @@
 //--------------------------------------------------------------------------
 // Paddle
 //--------------------------------------------------------------------------
-Game.addEntity('paddle', function () {
-  Entity.apply(this, arguments);
-  this.solid = true;
-  this.speed = 1;
-  this.stop = false;
-  this.maxSpeed = 1;
-  this.turnTimeout = null;
-  this.draw = function (ctx, image) {
-    for (var x = 0; x < Math.round(this.width / Game.map.spriteSize); x++) {
-      ctx.drawImage(image,
-        0, 0, Game.map.spriteSize, Game.map.spriteSize,
-        Math.floor(this.x + Game.camera.x) + (x * Game.map.spriteSize), Math.floor(this.y + Game.camera.y),
-        Game.map.spriteSize, Game.map.spriteSize
+game.addEntity('paddle', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.solid = true;
+    this.speed = 1;
+    this.stop = false;
+    this.maxSpeed = 1;
+    this.turnTimeout = null;
+  }
+
+  draw($, image) {
+    const { camera } = this._game;
+    const { spriteSize } = this._game.map;
+    for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
+      $.drawImage(image,
+        0, 0, spriteSize, spriteSize,
+        Math.floor(this.x + camera.x) + (x * spriteSize), Math.floor(this.y + camera.y),
+        spriteSize, spriteSize
       );
     }
-  };
-  this.collide = function (element) {
+  }
+
+  collide (element) {
+    const { input } = this._game.player;
     if (element.force.y > 0 && element.y + element.height < this.y + this.height) {
-      if (!Game.input.up && !Game.input.down && !element.fall) {
+      if (!input.up && !input.down && !element.fall) {
         element.y = (this.y ) - element.height;
         element.force.y = this.y - element.y - element.height;
       }
@@ -29,20 +36,20 @@ Game.addEntity('paddle', function () {
         element.doJump = false;
       }
       if (element.type === 'player') {
-        Game.camera.x = -(Game.player.x - (Game.resolution.x / 2));
-        if (Game.input.up) {
-          Game.player.force.y = -6;
-          Game.player.doJump = true;
+        this._game.camera.x = -(this._game.player.x - (this._game.resolution.x / 2));
+        if (input.up) {
+          this._game.player.force.y = -6;
+          this._game.player.doJump = true;
         }
       }
     }
-  };
-  this.update = function () {
+  }
+
+  update() {
     if (this.onScreen()) {
       this.awake = true;
     }
     if (this.awake && !this.dead) {
-
       if(!this.stop) {
         this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
         this.move();
@@ -53,12 +60,12 @@ Game.addEntity('paddle', function () {
         this.stop = true;
         this.direction = this.direction === this.DIR.RIGHT ? this.DIR.LEFT : this.DIR.RIGHT;
 
-        this.turnTimeout = setTimeout(function () {
+        this.turnTimeout = setTimeout(()=> {
           if(this.stop){
             this.stop = false;
           }
           this.turnTimeout = null;
-        }.bind(this), 1000);
+        }, 1000);
       }
     }
   };
