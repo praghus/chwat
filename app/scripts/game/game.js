@@ -69,38 +69,6 @@ class GameController
     this.entities[id] = obj;
   }
 
-  resizeViewport() {
-    const gameArea = document.getElementById('game');
-    const canvas = document.getElementById('canvas');
-    let newWidth = window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
-    let newHeight = window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
-    let newRatio = newWidth / newHeight;
-
-    this.resolution.scale.pixel = window.innerWidth / 240;
-    this.resolution.r = window.innerWidth / window.innerHeight;
-    this.resolution.x = Math.round(window.innerWidth / this.resolution.scale.pixel);
-    this.resolution.y = Math.round(window.innerHeight / this.resolution.scale.pixel);
-    if (newRatio > this.resolution.r) {
-      newWidth = newHeight * this.resolution.r;
-    } else {
-      newHeight = newWidth / this.resolution.r;
-    }
-    gameArea.style.transform = 'none';
-    gameArea.style.width = newWidth + 'px';
-    gameArea.style.height = newHeight + 'px';
-    gameArea.style.marginTop = (-newHeight / 2) + 'px';
-    gameArea.style.marginLeft = (-newWidth / 2) + 'px';
-    this.resolution.scale.x = Math.round(newWidth / this.resolution.x);
-    this.resolution.scale.y = Math.round(newHeight / this.resolution.y);
-    canvas.width = this.resolution.scale.x * this.resolution.x;
-    canvas.height = this.resolution.scale.y * this.resolution.y;
-  }
-
-  resizeGame() {
-    this.resizeViewport();
-    this.camera.center();
-  }
-
 //-------------------------------------------------------------------------
 // ASSET PRELOADING
 //-------------------------------------------------------------------------
@@ -180,6 +148,85 @@ class GameController
     progress(0);
 
     return d.promise;
+  }
+//-------------------------------------------------------------------------
+
+  resizeViewport() {
+    const gameArea = document.getElementById('game');
+    const canvas = document.getElementById('canvas');
+    let newWidth = window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
+    let newHeight = window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
+    let newRatio = newWidth / newHeight;
+
+    this.resolution.scale.pixel = window.innerWidth / 240;
+    this.resolution.r = window.innerWidth / window.innerHeight;
+    this.resolution.x = Math.round(window.innerWidth / this.resolution.scale.pixel);
+    this.resolution.y = Math.round(window.innerHeight / this.resolution.scale.pixel);
+    if (newRatio > this.resolution.r) {
+      newWidth = newHeight * this.resolution.r;
+    } else {
+      newHeight = newWidth / this.resolution.r;
+    }
+    gameArea.style.transform = 'none';
+    gameArea.style.width = newWidth + 'px';
+    gameArea.style.height = newHeight + 'px';
+    gameArea.style.marginTop = (-newHeight / 2) + 'px';
+    gameArea.style.marginLeft = (-newWidth / 2) + 'px';
+    this.resolution.scale.x = Math.round(newWidth / this.resolution.x);
+    this.resolution.scale.y = Math.round(newHeight / this.resolution.y);
+    canvas.width = this.resolution.scale.x * this.resolution.x;
+    canvas.height = this.resolution.scale.y * this.resolution.y;
+  }
+
+  resizeGame() {
+    this.resizeViewport();
+    this.camera.center();
+  }
+//-------------------------------------------------------------------------
+  shootExplosion(x, y, color) {
+    const particle_count = 5 + parseInt(Math.random() * 5);
+    for (let i = 0; i < particle_count; i++) {
+      let r = (1 + Math.random());
+      this.elements.add('particles', {
+        x: x,
+        y: y,
+        width: r,
+        height: r,
+        type: 'shoot_particle',
+        properties: {color: color}
+      });
+    }
+  }
+
+  grenadeExplosion(x, y) {
+    const particle_count = 10 + parseInt(Math.random() * 5);
+    this.elements.add('explosion',{x: x - 16, y: y - 58});
+    this.camera.shake();
+    for (let i = 0; i < particle_count; i++) {
+      let r = (1 + Math.random());
+      this.elements.add('particles', {
+        x: x,
+        y: y,
+        width: r,
+        height: r,
+        type: 'shoot_particle',
+        properties: {color: 'rgb(100,100,100)'}
+      });
+    }
+  }
+
+  explosion(x, y) {
+    const particle_count = 5 + parseInt(Math.random() * 10);
+    for (let i = 0; i < particle_count; i++) {
+      let r = (1 + Math.random() * 2);
+      this.elements.add('particles', {
+        x: x + 8,
+        y: y,
+        width: r,
+        height: r,
+        properties: {color: 'rgb(255,100,100)'}
+      });
+    }
   }
 }
 

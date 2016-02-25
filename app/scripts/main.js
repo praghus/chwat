@@ -19,7 +19,7 @@ const
   ];
 //--------------------------------------------------------------------------
 
-let game = new GameController(Dom.get('canvas'));
+const game = new GameController(Dom.get('canvas'));
 
 //--------------------------------------------------------------------------
 window.onload = ()=>

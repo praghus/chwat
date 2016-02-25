@@ -1,23 +1,28 @@
 //--------------------------------------------------------------------------
 // Player bullet
 //--------------------------------------------------------------------------
-Game.addEntity('player_bullet', function (obj) {
-  Entity.apply(this, arguments);
-  this.family = 'bullets';
-  this.type = 'player_bullet';
-  this.width = 8;
-  this.height = 1;
-  this.speed = 10;
-  this.maxSpeed = 10;
-  this.damage = 20;
-  this.color = '#666666';
-  this.collide = function (element) {
+
+game.addEntity('player_bullet', class extends Entity {
+  constructor(obj, game) {
+    super(obj, game);
+    this.family = 'bullets';
+    this.type = 'player_bullet';
+    this.width = 8;
+    this.height = 1;
+    this.speed = 10;
+    this.maxSpeed = 10;
+    this.damage = 20;
+    this.color = '#666666';
+  }
+
+  collide(element) {
     if (element.solid) {
       this.dead = true;
-      ShootExplosion(this.x, this.y, this.color);
+      this._game.shootExplosion(this.x, this.y, this.color);
     }
-  };
-  this.update = function () {
+  }
+
+  update() {
     if (!this.dead) {
       this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       this.move();
@@ -39,7 +44,7 @@ Game.addEntity('player_bullet', function (obj) {
         }
       }*/
       if (this.dead) {
-        ShootExplosion(this.x, this.y, this.color);
+        this._game.shootExplosion(this.x, this.y, this.color);
       }
     }
   };
