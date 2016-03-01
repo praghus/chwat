@@ -13,9 +13,9 @@ const
     'bg4',          'enemy_blob',   'enemy_tank',   'enemy_bat',
     'explosion1',   'explosion2',   'dark_mask',    'item',
     'enemy_bullet', 'coin',	        'player_bullet','grenade',
-    'water',        'lava',         'crush',        'crusher',
+    'water',        'lava',         'crusher',      'player_light',
     'lava_glow',    'light',		    'rock',			    'spear',
-    'saw',			    'paddle',       'player_light'
+    'saw',			    'paddle'
   ];
 //--------------------------------------------------------------------------
 
