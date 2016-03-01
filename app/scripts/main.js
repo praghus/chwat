@@ -10,12 +10,12 @@ const
   Images = [
     'player',       'tiles',        'foretiles',	  'font',
     'shadows',      'live',         'bg2',          'bg3',
-    'bg4',          'enemy_blob',   'enemy_tank',   'explosion1',
-    'explosion2',   'dark_mask',    'item',         'paddle',
+    'bg4',          'enemy_blob',   'enemy_tank',   'enemy_bat',
+    'explosion1',   'explosion2',   'dark_mask',    'item',
     'enemy_bullet', 'coin',	        'player_bullet','grenade',
     'water',        'lava',         'crush',        'crusher',
     'lava_glow',    'light',		    'rock',			    'spear',
-    'saw',			    'player_light'
+    'saw',			    'paddle',       'player_light'
   ];
 //--------------------------------------------------------------------------
 
@@ -38,13 +38,13 @@ window.onload = ()=>
     let { input } = game.player;
     function onKey(ev, key, pressed) {
       switch (key) {
-        case KEY.LEFT   : input.left = pressed;break;
-        case KEY.RIGHT  : input.right = pressed;break;
-        case KEY.THROW  : input.throw = pressed;break;
-        case KEY.SHOOT  : input.shoot = pressed;break;
+        case KEY.LEFT   : input.left = pressed; break;
+        case KEY.RIGHT  : input.right = pressed; break;
+        case KEY.THROW  : input.throw = pressed; break;
+        case KEY.SHOOT  : input.shoot = pressed; break;
         case KEY.SPACE  :
-        case KEY.UP     : input.up = pressed;break;
-        case KEY.DOWN   : input.down = pressed;break;
+        case KEY.UP     : input.up = pressed; break;
+        case KEY.DOWN   : input.down = pressed; break;
       }
       ev.preventDefault();
       return false;
@@ -59,8 +59,8 @@ window.onload = ()=>
 
     lPad.on('pan', ev => {
       switch (ev.additionalEvent) {
-        case 'panleft'  : input.left = !input.right;break;
-        case 'panright' : input.right = !input.left;break;
+        case 'panleft'  : input.left = !input.right; break;
+        case 'panright' : input.right = !input.left; break;
       }
     }).on('panend', () => {
       input.left = false;
