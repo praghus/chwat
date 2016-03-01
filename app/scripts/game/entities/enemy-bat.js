@@ -4,19 +4,24 @@
 game.addEntity('enemy_bat', class extends Entity {
   constructor(obj, game) {
     super(obj, game);
-    this.family     = "enemies";
-    this.maxSpeed   = 1;
-    this.speed      = 0.2;
-    this.energy     = 30;
-    this.maxEnergy  = 30;
-    this.damage     = 10;
-    //this.canFly     = true;
-    this.solid      = true;
-    this.animFrame  = Math.random()*6;
+    this.family = "enemies";
+    this.maxSpeed = 1;
+    this.speed = 0.2;
+    this.energy = 30;
+    this.maxEnergy = 30;
+    this.damage = 10;
+    this.solid = true;
+    this.animFrame = Math.random()*6;
     this.animations = {
       RIGHT: {x:0,  y:0,  w:28, h:20, frames:6, fps:16, loop:true},
       LEFT:  {x:0,  y:20, w:28, h:20, frames:6, fps:16, loop:true}
     };
+    this.vectorMask = [
+      new SAT.Vector(4, 0),
+      new SAT.Vector(this.width-8, 0),
+      new SAT.Vector(this.width-8, this.height),
+      new SAT.Vector(4, this.height)
+    ];
   }
 
   hit(s){
