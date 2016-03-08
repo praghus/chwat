@@ -82,8 +82,8 @@ window.onload = ()=>
       setTimeout(()=> input.shoot = false, 200);
     });
 
-    Dom.on(window, 'resize', ()=> game.resizeGame, false);
-    Dom.on(window, 'orientationchange', ()=> game.resizeGame, false);
+    Dom.on(window, 'resize', ()=> game.resizeGame(), false);
+    Dom.on(window, 'orientationchange', ()=> game.resizeGame(), false);
 
     Dom.on(document, 'keydown', (ev)=> onKey(ev, ev.keyCode, true), false);
     Dom.on(document, 'keyup', (ev)=> onKey(ev, ev.keyCode, false), false);
