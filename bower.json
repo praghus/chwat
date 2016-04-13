@@ -2,7 +2,6 @@
   "name": "nihil",
   "private": true,
   "dependencies": {
-    "modernizr": "~2.8.1",
     "dat-gui": "~0.5.1"
   },
   "devDependencies": {
