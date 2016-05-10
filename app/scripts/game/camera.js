@@ -28,9 +28,6 @@ class Camera
     if (this.y > 0) {
       this.y = 0;
     }
-    if (this.y < -world.height * world.spriteSize) {
-      this.y = (-world.height * world.spriteSize) / 2;
-    }
     // above the surface
     if (Math.round((player.y + (player.height / 2)) / world.spriteSize) < world.surface) {
       this.underground = false;
@@ -44,6 +41,11 @@ class Camera
         this.y = (-world.surface * world.spriteSize);
       }
     }
+
+    if (this.y  - resolution.y  < -world.height * world.spriteSize) {
+      this.y = (-world.height * world.spriteSize) + resolution.y;
+    }
+
     // shake
     if (this.rector !== 2) {
       if (this.a === 1) {

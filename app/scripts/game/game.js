@@ -147,9 +147,9 @@ class GameController {
             this.renderer=new Renderer(this);
             resolve();
           });
-        }).catch(function (error) {
-          reject(new Error(error));
-        });
+        });//.catch(function (error) {
+          //reject(new Error(error));
+        //});
       }
     );
 

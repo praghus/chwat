@@ -4,10 +4,10 @@
 class World {
   constructor(game) {
     const data = game.data;
-    const backData  = data.layers[0].data;
-    const mainData  = data.layers[1].data;
-    const foreData  = data.layers[3].data;
-    const fore2Data = data.layers[4].data;
+    const backData  = data.layers[1].data;
+    const mainData  = data.layers[2].data;
+    const foreData  = data.layers[4].data;
+    const fore2Data = data.layers[5].data;
 
     this.width = parseInt(data.width);
     this.height = parseInt(data.height);
@@ -80,8 +80,8 @@ class World {
         y = Math.round(obj.y / this.spriteSize) - 1,
         w = Math.round(obj.width / this.spriteSize) + 2,
         h = Math.round(obj.height / this.spriteSize) + 2;
-    for (var _y = y; _y < y + h; _y++) {
-      for (var _x = x; _x < x + w; _x++) {
+    for (let _y = y; _y < y + h; _y++) {
+      for (let _x = x; _x < x + w; _x++) {
         this.data.mask[_x][_y] = 1;
       }
     }

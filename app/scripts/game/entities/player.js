@@ -53,7 +53,7 @@ game.addEntity('player', class extends Entity {
     $.drawImage(image,
       this.animation.x + (this.animFrame * this.animation.w), this._game.player.animation.y + this.animOffset,
       this.animation.w, this.animation.h,
-      Math.floor(this.x + this._game.camera.x) - 8, Math.floor(this.y + this._game.camera.y) - 5, this.animation.w, this.animation.h
+      Math.floor(this.x + this._game.camera.x) - 8, Math.floor(this.y + this._game.camera.y) - 16, this.animation.w, this.animation.h
     );
     if (!this.canHurt && !this.dead) {
       $.globalAlpha = 1;

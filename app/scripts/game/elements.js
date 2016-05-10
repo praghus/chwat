@@ -7,7 +7,7 @@ class Elements
     this._game = game;
     this.all = [];
     this.lights = [];
-    this.createElements(this._game.data.layers[2].objects);
+    this.createElements(this._game.data.layers[3].objects);
   }
   //------------------------------------------------------------------------
   update() {

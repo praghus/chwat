@@ -1,5 +1,6 @@
 const
 //--------------------------------------------------------------------------
+  // @todo move to game object
   KEY = {
     LEFT:  37,      UP:    38,      RIGHT: 39,      DOWN:   40,
     SPACE: 32,      SHOOT: 69,      THROW: 87,      ACTION: 81
@@ -24,7 +25,7 @@ const game = new GameController(Dom.get('canvas'));
 //--------------------------------------------------------------------------
 window.onload = ()=>
 {
-  game.init({data: "assets/levels/main.json", assets: Images}).then(()=> {
+  game.init({data: "assets/levels/map.json", assets: Images}).then(()=> {
     game.renderer.msg(game.world.name, 100);
     game.run({
       update: ()=> {
@@ -36,6 +37,7 @@ window.onload = ()=>
     });
 
     let { input } = game.player;
+    // @todo move key handling to game object
     function onKey(ev, key, pressed) {
       switch (key) {
         case KEY.LEFT   : input.left = pressed; break;
