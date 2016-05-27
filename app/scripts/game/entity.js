@@ -6,6 +6,7 @@ class Entity
   constructor (obj, game) {
     this._game = game;
     this.PlayerM = 0;
+    this.id = obj.id;
     this.x = obj.x;
     this.y = obj.y;
     this.width = obj.width;
@@ -102,8 +103,8 @@ class Entity
       this.y + this.height + this._game.world.spriteSize > -this._game.camera.y;
   }
   //----------------------------------------------------------------------
-  hit(s) {
-    // hit
+  kill() {
+    this.dead = true;
   }
   //----------------------------------------------------------------------
   seesPlayer() {

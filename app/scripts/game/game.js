@@ -12,6 +12,11 @@ class GameController {
     this.fpsmeter={};
     this.images={};
     this.data={};
+    this.input = {
+      left  : false, right  : false,
+      up    : false, down   : false,
+      jump  : false, action : false
+    };
     this.resolution={
       x: 320,
       y: 180,
@@ -152,44 +157,52 @@ class GameController {
         //});
       }
     );
-
-
   }
-
 //-------------------------------------------------------------------------
-
   resizeViewport() {
-    const gameArea=document.getElementById('game');
-    const canvas=document.getElementById('canvas');
-    let newWidth=window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
-    let newHeight=window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
-    let newRatio=newWidth / newHeight;
+    const gameArea = document.getElementById('game');
+    const canvas = document.getElementById('canvas');
+    let newWidth = window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
+    let newHeight = window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
+    let newRatio = newWidth / newHeight;
 
-    this.resolution.scale.pixel=window.innerWidth / 240;
-    this.resolution.r=window.innerWidth / window.innerHeight;
-    this.resolution.x=Math.round(window.innerWidth / this.resolution.scale.pixel);
-    this.resolution.y=Math.round(window.innerHeight / this.resolution.scale.pixel);
+
+    this.resolution.scale.pixel = window.innerHeight / 160;
+    this.resolution.r = window.innerWidth / window.innerHeight;
+    this.resolution.x = Math.round(window.innerWidth / this.resolution.scale.pixel);
+    this.resolution.y = Math.round(window.innerHeight / this.resolution.scale.pixel);
     if (newRatio > this.resolution.r) {
       newWidth=newHeight * this.resolution.r;
     } else {
       newHeight=newWidth / this.resolution.r;
     }
-    gameArea.style.transform='none';
-    gameArea.style.width=newWidth + 'px';
-    gameArea.style.height=newHeight + 'px';
-    gameArea.style.marginTop=(-newHeight / 2) + 'px';
-    gameArea.style.marginLeft=(-newWidth / 2) + 'px';
-    this.resolution.scale.x=Math.round(newWidth / this.resolution.x);
-    this.resolution.scale.y=Math.round(newHeight / this.resolution.y);
-    canvas.width=this.resolution.scale.x * this.resolution.x;
-    canvas.height=this.resolution.scale.y * this.resolution.y;
+    gameArea.style.transform = 'none';
+    gameArea.style.width = newWidth + 'px';
+    gameArea.style.height = newHeight + 'px';
+    gameArea.style.marginTop = (-newHeight / 2) + 'px';
+    gameArea.style.marginLeft = (-newWidth / 2) + 'px';
+    this.resolution.scale.x = Math.round(newWidth / this.resolution.x);
+    this.resolution.scale.y = Math.round(newHeight / this.resolution.y);
+    canvas.width = this.resolution.scale.x * this.resolution.x;
+    canvas.height = this.resolution.scale.y * this.resolution.y;
   }
 
   resizeGame() {
     this.resizeViewport();
     this.camera.center();
   }
-
+//-------------------------------------------------------------------------
+  onKey(ev, key, pressed) {
+    switch (key) {
+      case KEY.LEFT   : this.input.left = pressed; break;
+      case KEY.RIGHT  : this.input.right = pressed; break;
+      case KEY.DOWN   : this.input.down = pressed; break;
+      case KEY.UP     : this.input.up = pressed; break;
+      case KEY.SPACE  : this.input.action = pressed; break;
+    }
+    ev.preventDefault();
+    return false;
+  }
 //-------------------------------------------------------------------------
   shootExplosion(x, y, color) {
     const particle_count=5 + parseInt(Math.random() * 5);

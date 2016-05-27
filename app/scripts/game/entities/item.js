@@ -8,7 +8,7 @@ game.addEntity('item', class extends Entity {
   }
 
   collide(element) {
-    if (element.type === 'player' && !this.dead) {
+    if (element.type === 'player' && !this.dead && this._game.input.action) {
       this._game.player.get(this);
       this.dead = true;
     }

@@ -28,6 +28,17 @@ class Elements
     }
   }
   //------------------------------------------------------------------------
+  clearInRange(rect) {
+    let { all } = this;
+    //let rect = { x: x, y: y, width: w, height: h };
+    for (let j = 0; j < all.length; j++) {
+      let obj = all[j];
+      if (!obj.dead && this._game.m.overlap(obj, rect)) {
+        obj.dead = true;
+      }
+    }
+  }
+  //------------------------------------------------------------------------
   add(type, obj) {
     if (this._game.entities[type]) {
       this.all.push(new this._game.entities[type](obj, this._game));

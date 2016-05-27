@@ -9,7 +9,7 @@ game.addEntity('jump_through', class extends Entity {
   }
 
   collide(element) {
-    const { input } = this._game.player;
+    const { input } = this._game;
     if (element.force.y > 0 && element.y + element.height < this.y + this.height) {
       if (!input.up && !input.down && !element.fall) {
         element.y = (this.y ) - element.height;

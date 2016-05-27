@@ -14,16 +14,18 @@ game.addEntity('slope_left', class extends Entity {
   }
 
   collide(element) {
-    const expectedY = (this.y - element.height) + (element.x - this.x) * (this.height / this.width);
-    if (element.y >= expectedY) {
-      element.force.y = 0;
-      element.y = expectedY;
-      element.doJump = false;
-      if (element.type === 'player' && this._game.player.input.up) {
-        element.force.y = -6;
+    if(!this.dead && element.solid) {
+      const expectedY=(this.y - element.height) + (element.x - this.x) * (this.height / this.width);
+      if (element.y >= expectedY) {
+        element.force.y=0;
+        element.y=expectedY;
+        element.doJump=false;
+        if (element.type === 'player' && this._game.input.up) {
+          element.force.y= -6;
+        }
+      } else if (element.force.y === 0) {
+        element.force.y+=1;
       }
-    } else if (element.force.y === 0) {
-      element.force.y += 1;
     }
   }
 });

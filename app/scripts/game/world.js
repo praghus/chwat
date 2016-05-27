@@ -61,6 +61,12 @@ class World {
     };
   }
   //----------------------------------------------------------------------
+  clearTile(x, y, layer) {
+    if(this.inRange(x, y)){
+      this.data[layer][x][y] = null;
+    }
+  }
+  //----------------------------------------------------------------------
   isSolid(x, y) {
     if(!this.inRange(x, y)){
       return true;

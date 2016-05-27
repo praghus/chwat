@@ -30,9 +30,9 @@ class MathUtils
 
   brighten(hex, percent) {
     var a = Math.round(255 * percent / 100),
-      r = a + parseInt(hex.substr(1, 2), 16),
-      g = a + parseInt(hex.substr(3, 2), 16),
-      b = a + parseInt(hex.substr(5, 2), 16);
+        r = a + parseInt(hex.substr(1, 2), 16),
+        g = a + parseInt(hex.substr(3, 2), 16),
+        b = a + parseInt(hex.substr(5, 2), 16);
 
     r = r < 255 ? (r < 1 ? 0 : r) : 255;
     g = g < 255 ? (g < 1 ? 0 : g) : 255;

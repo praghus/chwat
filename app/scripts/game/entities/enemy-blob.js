@@ -51,8 +51,24 @@ game.addEntity('enemy_blob', class extends Entity {
       this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
 
       this.move();
+      if (this.onLeftEdge) {
+        this.direction = this.DIR.RIGHT;
+        this.force.x *= -0.6;
+      }
+      if (this.onRightEdge) {
+        this.direction = this.DIR.LEFT;
+        this.force.x *= -0.6;
+      }
+      if (this.expectedX < this.x ) {
+        this.direction = this.DIR.RIGHT;
+        this.force.x *= -0.6;
+      }
+      if (this.expectedX > this.x ) {
+        this.direction = this.DIR.LEFT;
+        this.force.x *= -0.6;
+      }
 
-      if (this.seesPlayer() && this.onCeiling) {
+/*      if (this.seesPlayer() && this.onCeiling) {
         this.jump=false;
       }
       if (this.onFloor && (this.onLeftEdge || this.onRightEdge)) {
@@ -61,7 +77,6 @@ game.addEntity('enemy_blob', class extends Entity {
           ()=>this.switchDirs()
         ])();
       }
-
       if (this.onFloor && this.expectedX !== this.x ) {
         this._game.m.randomChoice([
           ()=>this.jump = true,
@@ -78,7 +93,7 @@ game.addEntity('enemy_blob', class extends Entity {
           ])();
         }
       }
-
+*/
       if(this.onFloor) {
         this.animate(this.direction === this.DIR.RIGHT ? this.animations.DOWN_RIGHT : this.animations.DOWN_LEFT);
       } else if(this.onCeiling){

@@ -210,9 +210,10 @@ class Renderer
     let cc = '' + parseInt(this._game.player.coinCollect);
     this.fontPrint(cc, this._game.resolution.x - (16 + (cc.length * 8)), 8);
     for (let i in this._game.player.items) {
-      let item =this._game.player.items[i];
-      $.drawImage(images.item, parseInt(item.properties.frame) * item.width, 0, item.width, item.height, 4+(i++ * 20), this._game.resolution.y - 20, item.width, item.height);
-
+      let item = this._game.player.items[i];
+      if (item && item.properties) {
+        $.drawImage(images.item, parseInt(item.properties.frame) * item.width, 0, item.width, item.height, 4 + (i++ * 20), this._game.resolution.y - 20, item.width, item.height);
+      }
     }
   }
   //------------------------------------------------------------------------
