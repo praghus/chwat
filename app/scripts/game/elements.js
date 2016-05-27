@@ -28,6 +28,10 @@ class Elements
     }
   }
   //------------------------------------------------------------------------
+  getById(id){
+    return this.all.find((x) => x.id === id);
+  }
+  //------------------------------------------------------------------------
   clearInRange(rect) {
     let { all } = this;
     //let rect = { x: x, y: y, width: w, height: h };

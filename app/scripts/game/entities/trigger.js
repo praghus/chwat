@@ -5,15 +5,18 @@ game.addEntity('trigger', class extends Entity {
   constructor(obj, game) {
     super(obj, game);
     this.visible = false;
+    this.activated = false;
   }
   collide(element) {
     if (this._game.input.action && element.type === 'player') {
       const { player } = this._game;
       if (this.properties.activator === 'player' || player.canUse(this.properties.activator)) {
         // @todo clear elements
-        this._game.elements.clearInRange(this);
-        this.clearTiles();
-        this.kill();
+        this.activated = true;
+        if (this.properties.related){
+          let rel = this._game.elements.getById(this.properties.related);
+          rel.activated = true;
+        }
       }
       else {
         this._game.renderer.msg(this.properties.message, 50);
@@ -21,9 +24,12 @@ game.addEntity('trigger', class extends Entity {
     }
   }
   update() {
-    /*if (this.onScreen()) {
-
-    }*/
+    //if (this.onScreen()) {
+    if (this.activated){
+      this._game.elements.clearInRange(this);
+      this.clearTiles();
+      this.kill();
+    }
   }
   clearTiles(){
     const { spriteSize } = this._game.world;
