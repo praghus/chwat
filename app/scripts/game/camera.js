@@ -14,15 +14,23 @@ class Camera
   //------------------------------------------------------------------------
   update() {
     const { player, resolution, world } = this._game;
-    if ((player.x + this.x > resolution.x / 2 && player.force.x > 0) || (player.x + this.x < resolution.x / 2 && player.force.x < 0)) {
-      this.x -= Math.floor(player.force.x);
+
+    if (player.x + this.x > resolution.x / 2) {
+      this.x -= player.force.x > 0 ? Math.floor(player.force.x) : .5;
     }
+
+    if (player.x + this.x < resolution.x / 2) {
+      this.x -= player.force.x < 0 ? Math.floor(player.force.x) : -.5;
+    }
+    
     if (this.x > 0) {
       this.x = 0;
     }
+
     if (this.x - resolution.x < -world.width * world.spriteSize) {
       this.x = (-world.width * world.spriteSize) + resolution.x;
     }
+
     this.y = -((player.y + player.height) - (resolution.y / 2));
 
     if (this.y > 0) {
