@@ -30,6 +30,7 @@ game.addEntity('trigger', class extends Entity {
         this._game.elements.clearInRange(this);
         this.clearTiles();
       }
+      this._game.elements.clearInRange(this);
       this.dead = true;
     }
   }

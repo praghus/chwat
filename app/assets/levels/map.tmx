@@ -258,7 +258,7 @@
    </properties>
   </object>
   <object id="63" name="Slope" type="slope_right" x="4336" y="1376" width="80" height="80"/>
-  <object id="65" name="Rock" type="rock" x="0" y="1056" width="32" height="32"/>
+  <object id="65" name="Rock" type="rock" x="16" y="1056" width="32" height="32"/>
   <object id="66" name="Blob" type="enemy_blob" x="1440" y="741" width="20" height="20"/>
   <object id="67" name="Blob" type="enemy_blob" x="1984" y="736" width="20" height="20"/>
   <object id="68" name="Blob" type="enemy_blob" x="3008" y="736" width="20" height="20"/>

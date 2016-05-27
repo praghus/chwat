@@ -94,13 +94,15 @@ class Renderer
   }
   //------------------------------------------------------------------------
   renderGround() {
-    const { $, images } = this._game;
+    const { $, images, world } = this._game;
     let  y = Math.floor(this._game.camera.y % this._game.world.spriteSize);
     let _y = Math.floor(-this._game.camera.y / this._game.world.spriteSize);
     while (y < this._game.resolution.y) {
-      let x = Math.floor(this._game.camera.x % this._game.world.spriteSize), _x = Math.floor(-this._game.camera.x / this._game.world.spriteSize);
+      let  x = Math.floor(this._game.camera.x % this._game.world.spriteSize);
+      let _x = Math.floor(-this._game.camera.x / this._game.world.spriteSize);
       while (x < this._game.resolution.x) {
-        const tile = this._game.world.data.ground[_x][_y], back = this._game.world.data.back[_x][_y];
+        const tile = world.get('ground', _x, _y);
+        const back = world.get('back', _x, _y);
         if (tile > 1 || back > 1) {
           // dynamic lights
           if (tile > 256 && this.dynamicLights) {
@@ -150,13 +152,15 @@ class Renderer
   }
   //------------------------------------------------------------------------
   renderForeGround() {
-    const { $, images } = this._game;
+    const { $, images, world } = this._game;
     let  y = Math.floor(this._game.camera.y % this._game.world.spriteSize);
     let _y = Math.floor(-this._game.camera.y / this._game.world.spriteSize);
     while (y < this._game.resolution.y) {
-      let x = Math.floor(this._game.camera.x % this._game.world.spriteSize), _x = Math.floor(-this._game.camera.x / this._game.world.spriteSize);
+      let  x = Math.floor(this._game.camera.x % this._game.world.spriteSize);
+      let _x = Math.floor(-this._game.camera.x / this._game.world.spriteSize);
       while (x < this._game.resolution.x) {
-        let tile = this._game.world.data.fore[_x][_y], dark = this._game.world.data.mask[_x][_y];
+        const tile = world.get('fore', _x, _y);
+        const dark = world.get('mask', _x, _y);
         if (tile > 0) {
           $.drawImage(images.tiles, (((tile - 1) % this._game.world.spriteCols )) * this._game.world.spriteSize, (Math.ceil(tile / this._game.world.spriteCols) - 1) * this._game.world.spriteSize, this._game.world.spriteSize, this._game.world.spriteSize, x, y, this._game.world.spriteSize, this._game.world.spriteSize);
         }
@@ -177,9 +181,10 @@ class Renderer
     let  y = Math.floor(camera.y % world.spriteSize);
     let _y = Math.floor(-camera.y / world.spriteSize);
     while (y < resolution.y) {
-      let x = Math.floor(camera.x % world.spriteSize), _x = Math.floor(-camera.x / world.spriteSize);
+      let  x = Math.floor(camera.x % world.spriteSize);
+      let _x = Math.floor(-camera.x / world.spriteSize);
       while (x < resolution.x) {
-        let tile = world.data.fore2[_x][_y];
+        const tile = world.get('fore2', _x, _y);
         if (tile > 0) {
           $.drawImage(images.tiles, (((tile - 1) % world.spriteCols )) * world.spriteSize, (Math.ceil(tile / world.spriteCols) - 1) * world.spriteSize, world.spriteSize, world.spriteSize, x, y, world.spriteSize, world.spriteSize);
         }

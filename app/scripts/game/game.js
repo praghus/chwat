@@ -49,12 +49,12 @@ class GameController {
       });
     }
 
-    const frame=()=> {
+    const frame = ()=> {
       if (this.debug) {
         this.fpsmeter.tickStart();
       }
-      now=this.m.timestamp();
-      dt=dt + Math.min(1, (now - last) / 1000);
+      now = this.m.timestamp();
+      dt = dt + Math.min(1, (now - last) / 1000);
       while (dt > step) {
         dt=dt - step;
         update(step);
