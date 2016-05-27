@@ -43,9 +43,9 @@ game.addEntity('enemy_blob', class extends Entity {
 
   update() {
     if (this.onScreen()) {
-      this.awake = true;
+      this.activated = true;
     }
-    if (this.awake && !this.dead) {
+    if (this.activated && !this.dead) {
 
       this.force.y += this.jump ? -0.2 : this._game.world.gravity;
       this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;

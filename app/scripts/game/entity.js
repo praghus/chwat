@@ -23,7 +23,7 @@ class Entity
     this.doJump = false;
     this.canShoot = false;
     this.canJump = false;
-    this.awake = false;
+    this.activated = false;
     this.dead = false;
     this.fall = false;
     this.onFloor = false;
@@ -83,7 +83,7 @@ class Entity
   }
   //----------------------------------------------------------------------
   overlapTest(obj) {
-    if (!this.dead && this._game.m.overlap(this, obj) && (this.onScreen() || this.awake)) {
+    if (!this.dead && this._game.m.overlap(this, obj) && (this.onScreen() || this.activated)) {
       // poligon collision checking
       if (SAT.testPolygonPolygon(this.getMask(), obj.getMask())) {
         this.collide(obj);

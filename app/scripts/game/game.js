@@ -88,11 +88,11 @@ class GameController {
       $.save();
       $.scale(scale.x, scale.y);
       $.clearRect(0, 0, x, y);
-      $.fillStyle='#000000';
+      $.fillStyle='#333333';
       $.fillRect(((x - 100) / 2) - 2, (y / 2) - 7, 104, 9);
-      $.fillStyle='#FFFFFF';
-      $.fillRect((x - 100) / 2, (y / 2) - 5, 100, 5);
       $.fillStyle='#000000';
+      $.fillRect((x - 100) / 2, (y / 2) - 5, 100, 5);
+      $.fillStyle='#333333';
       $.fillRect((x - 100) / 2, (y / 2) - 5, 100 * (perc / 100), 5);
       $.restore();
     };

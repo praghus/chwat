@@ -4,6 +4,7 @@
 game.addEntity('rock', class extends Entity {
   constructor(obj, game) {
     super(obj, game);
+    this.doShake = false;
     this.family = 'traps';
     this.speed = 0.2;
     this.maxSpeed = 2;
@@ -34,10 +35,10 @@ game.addEntity('rock', class extends Entity {
   }
 
   update() {
-    if (this.onScreen()) {
-      this.awake = true;
-    }
-    if (this.awake && !this.dead) {
+    /*if (this.onScreen()) {
+      this.activated = true;
+    }*/
+    if (this.activated && !this.dead) {
       this.force.y += this._game.world.gravity;
       if (this.onFloor && this.speed < this.maxSpeed) {
         this.speed += 0.01;
@@ -45,6 +46,12 @@ game.addEntity('rock', class extends Entity {
       //if(this.force.y < 0 && this.speed > 1) this.speed -=0.25;
       this.force.x = this.direction > 0 ? this.speed : -this.speed;
       this.move();
+      if(!this.onFloor) {
+        this.doShake = true;
+      } else if (this.doShake){
+        this._game.camera.shake();
+        this.doShake = false;
+      }
     }
   }
 });

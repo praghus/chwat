@@ -43,9 +43,9 @@ game.addEntity('enemy_bat', class extends Entity {
 
   update() {
     if (this.onScreen()) {
-      this.awake = true;
+      this.activated = true;
     }
-    if (this.awake && !this.dead) {
+    if (this.activated && !this.dead) {
       this.force.y += this.y > this._game.player.y ? -0.01 : 0.01;
       this.force.x += this.direction === this.DIR.RIGHT ? this.speed : -this.speed;
       if (this.seesPlayer()) {

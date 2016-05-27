@@ -45,9 +45,9 @@ game.addEntity('enemy_tank', class extends Entity {
 
   update() {
     if (this.onScreen()) {
-      this.awake = true;
+      this.activated = true;
     }
-    if (this.awake && !this.dead) {
+    if (this.activated && !this.dead) {
       if (this.seesPlayer() && this.canShoot) {
         this.countToShoot = 40;
         this.canShoot = false;

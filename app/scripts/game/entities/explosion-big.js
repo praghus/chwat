@@ -11,9 +11,9 @@ game.addEntity('explosion-big', class extends Entity {
 
   update() {
     if (this.onScreen()) {
-      this.awake = true;
+      this.activated = true;
     }
-    if (this.awake && !this.dead) {
+    if (this.activated && !this.dead) {
       this.animate();
     }
     if (this.animFrame > 5) {

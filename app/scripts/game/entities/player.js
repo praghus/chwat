@@ -149,6 +149,9 @@ game.addEntity('player', class extends Entity {
   }
   //----------------------------------------------------------------------
   canUse(id) {
+    if(id === 'player'){
+      return true;
+    }
     if (this.items[0] && this.items[0].properties.id === id) {
       this.items[0] = this.items[1];
       this.items[1] = null;

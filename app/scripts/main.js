@@ -15,7 +15,7 @@ const
     'enemy_bullet', 'coin',	        'player_bullet','grenade',
     'water',        'lava',         'crusher',      'player_light',
     'lava_glow',    'light',		    'rock',			    'spear',
-    'saw'//,			    'paddle'
+    'saw',			    'paddle'
   ];
 //--------------------------------------------------------------------------
 
