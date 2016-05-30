@@ -61,6 +61,10 @@ game.addEntity('player', class extends Entity {
     let {input} = this._game;
     //if (this.godMode) this.kill = false;
     if (!this.dead) {
+      if (input.action) {
+        this.get(null);
+        input.action = false;
+      }
       if (input.left) {
         this.force.x -= this.speed;
         this.direction = this.DIR.LEFT;
@@ -71,27 +75,12 @@ game.addEntity('player', class extends Entity {
       }
       if (this.onFloor && input.up) {
         this.doJump = true;
-        this.force.y = -6.5;
-        this.canJump = false;
-        //Sound.jump.play();
       }
-      if (input.down && !this.fall && this.force.y === 0) {
+      /*if (input.down && !this.fall && this.force.y === 0) {
         this.fall = true;
         this.fallTimeout = setTimeout(() => this.fall = false, 400);
-      }
-      if (input.shoot && this.canShoot) {
-        this.shoot();
-      }
-      if (input.throw && this.canShoot && this.throwSpeed < this.throwMaxSpeed) {
-        this.throwSpeed += 0.5;
-      }
-      if (this.throwSpeed > 0 && !input.throw) {
-        this.throw();
-      }
-      if (input.action) {
-        this.get(null);
-        input.action = false;
-      }
+      }*/
+
       // slow down
       if (!input.left && !input.right && this.force.x !== 0) {
         this.force.x += this.direction === this.DIR.RIGHT ? -this.speed : this.speed;
@@ -100,24 +89,33 @@ game.addEntity('player', class extends Entity {
         }
       }
     }
-    this.force.y += this._game.world.gravity;
+    if(this.doJump ){
+      this.force.y -= .5;
+      if(this.force.y < -5){
+        this.doJump = false;
+        this.fall = true;
+      }
+    } else {
+      this.force.y+=this._game.world.gravity;
+    }
     this.move();
 
     if (this.onFloor) {
-      this.force.y *= -0.6;
+      this.force.y *= -.6;
       this.doJump = false;
       this.fall = false;
-      this.canJump = true;
     }
+
     if (this.expectedY < this.y) {
       this.doJump = false;
+      this.fall = true;
     }
 
     if (this.dead) {
       this.animate(this.direction === this.DIR.RIGHT ? this.animations.DEAD_RIGHT : this.animations.DEAD_LEFT);
     }
     else if (this.doJump || this.fall) {
-      if (this.force.y < 0) {
+      if (this.force.y < -2) {
         this.animate(this.direction === this.DIR.RIGHT ? this.animations.JUMP_RIGHT : this.animations.JUMP_LEFT);
       }
       else {
@@ -129,25 +127,8 @@ game.addEntity('player', class extends Entity {
     else {
       this.animate(this.direction === this.DIR.RIGHT ? this.animations.STAND_RIGHT : this.animations.STAND_LEFT);
     }
-    // recover energy while standing
-    /*if (this.force.x == 0 && this.force.y == 0 && this.energy < this.maxEnergy)
-      this.energy += 0.01;*/
+  }
 
-  }
-  //----------------------------------------------------------------------
-  hit(s) {
-    if (this.godMode || !this.canHurt) {
-      return;
-    }
-    this.energy -= s;
-    this.force.y -= 3;
-    this.canHurt = false;
-    if (this.energy <= 0 && !this.dead){
-      //this.kill = true;
-    }
-    setTimeout(()=> this.canHurt = true, 1000);
-  }
-  //----------------------------------------------------------------------
   canUse(id) {
     if(id === 'player'){
       return true;
@@ -163,7 +144,7 @@ game.addEntity('player', class extends Entity {
     }
     return false;
   }
-  //----------------------------------------------------------------------
+
   get(item) {
     //if(item) {
       console.log(item);
@@ -177,45 +158,22 @@ game.addEntity('player', class extends Entity {
       this._game.input.action = false;
     //}
   }
-  //----------------------------------------------------------------------
   collide(element) {
     if (element.damage > 0 && (element.family === 'enemies' || element.family === 'traps')) {
       this.hit(element.damage);
     }
   }
-  //----------------------------------------------------------------------
-  shoot() {
-    this.canShoot = false;
-    this.force.x = 0;
-    this.animOffset = 64;
-    this._game.elements.add('player_bullet',{
-      x: this.direction === this.DIR.RIGHT ? this.x + this.width : this.x - 12,
-      y: this.y + 21,
-      direction: this.direction
-    });
-    this.shootTimeout = setTimeout(() => {
-      this.canShoot = true;
-      this.animOffset = 0;
-    }, this.shootDelay);
-    //Sound.shoot.play();
-  }
-  //----------------------------------------------------------------------
-  throw() {
-    this.canShoot = false;
-    this.animOffset = 64;
-    this._game.elements.add('grenade', {
-      x: this.direction === this.DIR.RIGHT ? this.x + this.width : this.x,
-      y: this.y + 18,
-      direction: this.direction
-    });
-    this.throwSpeed = 0;
-    this.shootTimeout = setTimeout(() => {
-      this.canShoot = true;
-      this.animOffset = 0;
-    }, this.throwDelay);
-  }
-  //----------------------------------------------------------------------
-  exterminate() {
-    //this.kill = true;
+
+  hit(s) {
+    if (this.godMode || !this.canHurt) {
+      return;
+    }
+    this.energy -= s;
+    this.force.y -= 3;
+    this.canHurt = false;
+    if (this.energy <= 0 && !this.dead){
+      //this.kill = true;
+    }
+    setTimeout(()=> this.canHurt = true, 1000);
   }
 });

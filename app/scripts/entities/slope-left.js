@@ -20,8 +20,10 @@ game.addEntity('slope_left', class extends Entity {
         element.force.y = 0;
         element.y = expectedY;
         element.doJump = false;
+        element.fall = false;
+        element.onFloor = true;
         if (element.type === 'player' && this._game.input.up) {
-          element.force.y = -6;
+          element.doJump = true;
         }
       } else if (element.force.y === 0) {
         element.force.y += 1;

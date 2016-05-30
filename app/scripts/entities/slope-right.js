@@ -15,13 +15,15 @@ game.addEntity('slope_right', class extends Entity {
 
   collide(element) {
     if(!this.dead && element.solid) {
-      const expectedY=(this.y - element.height) + this.height - (((element.x + element.width) - this.x) * (this.height / this.width));
+      const expectedY = (this.y - element.height) + this.height - (((element.x + element.width) - this.x) * (this.height / this.width));
       if (element.y >= expectedY) {
-        element.force.y=0;
-        element.y=expectedY;
-        element.doJump=false;
+        element.force.y = 0;
+        element.y = expectedY;
+        element.doJump = false;
+        element.fall = false;
+        element.onFloor = true;
         if (element.type === 'player' && this._game.input.up) {
-          element.force.y= -6;
+          element.doJump = true;
         }
       } else if (element.force.y === 0) {
         element.force.y+=1;
