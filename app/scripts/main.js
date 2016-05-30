@@ -25,15 +25,6 @@ const game = new GameController(Dom.get('canvas'));
 window.onload = ()=>
 {
   game.init({data: "assets/levels/map.json", assets: Images}).then(()=> {
-    game.renderer.msg(game.world.name, 100);
-    game.run({
-      update: ()=> {
-        game.elements.update();
-        game.camera.update();
-        game.player.update();
-      },
-      render: ()=> game.renderer.render()
-    });
 
     let { input } = game;
     let lPad = new Hammer(Dom.get('trackpad-left'), {});
@@ -68,14 +59,15 @@ window.onload = ()=>
       setTimeout(()=> input.action = false, 200);
     });
 
-    Dom.on(window, 'resize', ()=> game.resizeGame(), false);
-    Dom.on(window, 'orientationchange', ()=> game.resizeGame(), false);
+    Dom.on(window, 'resize', ()=> game.resize(), false);
+    Dom.on(window, 'orientationchange', ()=> game.resize(), false);
     Dom.on(document, 'keydown', (ev)=> game.onKey(ev, ev.keyCode, true), false);
     Dom.on(document, 'keyup', (ev)=> game.onKey(ev, ev.keyCode, false), false);
     // prevent bumping effect on mobile browsers
     Dom.on(document, 'ontouchmove', (ev)=> ev.preventDefault(), false);
 
-    game.resizeGame();
+    game.resize();
+    game.go('main');
   });
 };
 

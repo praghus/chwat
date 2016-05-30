@@ -34,14 +34,13 @@ game.addEntity('trigger', class extends Entity {
       this.dead = true;
     }
   }
-
   clearTiles(){
     const { spriteSize } = this._game.world;
-      for (let x=0; x < Math.round(this.width / spriteSize); x++) {
+      for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
         this._game.shootExplosion(this.x + (x*spriteSize), this.y, '#6C5040');
         for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
-          const PX=Math.round((this.x + (x * spriteSize)) / spriteSize);
-          const PY=Math.round((this.y + (y * spriteSize)) / spriteSize);
+          const PX = Math.round((this.x + (x * spriteSize)) / spriteSize);
+          const PY = Math.round((this.y + (y * spriteSize)) / spriteSize);
           this._game.world.clearTile(PX, PY, 'ground');
       }
     }

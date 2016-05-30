@@ -1,43 +1,53 @@
 class GameController {
   constructor(elem) {
-    this.$=elem.getContext('2d');
-    this.fps=60;
-    this.debug=true;
-    this.entities={};
-    this.world={};
-    this.elements={};
-    this.camera={};
-    this.player={};
-    this.renderer={};
-    this.fpsmeter={};
-    this.images={};
-    this.data={};
+    this.$ = elem.getContext('2d');
+    this.fps = 60;
+    this.debug = true;
+    this.state = {};
+    this.states = {};
+    this.entities = {};
+    this.world = {};
+    this.elements = {};
+    this.camera = {};
+    this.player = {};
+    this.renderer = {};
+    this.fpsmeter = {};
+    this.images = {};
+    this.data = {};
     this.input = {
       left  : false, right  : false,
       up    : false, down   : false,
       jump  : false, action : false
     };
-    this.resolution={
-      x: 320,
-      y: 180,
-      r: 16 / 9,
-      scale: {x: 4, y: 4, pixel: 3}
-    };
-    this.m=new MathUtils();
+    this.resolution = { x: 320, y: 180, r: 16 / 9, scale: {x: 4, y: 4, pixel: 3}};
+    this.m = new MathUtils();
   }
-
-  run(options) {
+//-------------------------------------------------------------------------
+  addEntity(id, obj) {
+    this.entities[id] = obj;
+  }
+  addState(id, obj) {
+    this.states[id] = new obj();
+  }
+//-------------------------------------------------------------------------
+  go(state) {
     let now;
-    let dt=0;
-    let last=this.m.timestamp();
-    let step=1 / this.fps;
-
-    const update=options.update;
-    const render=options.render;
-
+    let dt = 0;
+    let last = this.m.timestamp();
+    let step = 1 / this.fps;
+    if(this.states[state]) {
+      this.state = this.states[state];
+    } else {
+      console.log('Wrong state!');
+      return;
+    }
+    const {init, update, render} = this.state;
+    if (init) {
+      init();
+    }
     if (this.debug) {
       //new DAT();
-      this.fpsmeter=new FPSMeter({
+      this.fpsmeter = new FPSMeter({
         decimals: 0,
         graph: true,
         theme: 'dark',
@@ -48,7 +58,6 @@ class GameController {
         right: '5px'
       });
     }
-
     const frame = ()=> {
       if (this.debug) {
         this.fpsmeter.tickStart();
@@ -56,21 +65,17 @@ class GameController {
       now = this.m.timestamp();
       dt = dt + Math.min(1, (now - last) / 1000);
       while (dt > step) {
-        dt=dt - step;
+        dt = dt - step;
         update(step);
       }
       render(dt);
-      last=now;
+      last = now;
       if (this.debug) {
         this.fpsmeter.tick();
       }
       requestAnimationFrame(frame);
     };
     frame();
-  }
-
-  addEntity(id, obj) {
-    this.entities[id]=obj;
   }
 
 //-------------------------------------------------------------------------
@@ -142,14 +147,14 @@ class GameController {
         this.resizeViewport();
         progress(0);
         getJSON(params.data).then((data)=> {
-          this.data=data;
-          this.world=new World(this);
-          this.camera=new Camera(this);
-          this.elements=new Elements(this);
+          this.data = data;
+          this.world = new World(this);
+          this.camera = new Camera(this);
+          this.elements = new Elements(this);
         }).then(()=> {
           getImages(params.assets).then((images)=> {
             this.images=images;
-            this.renderer=new Renderer(this);
+            this.renderer = new Renderer(this);
             resolve();
           });
         });//.catch(function (error) {
@@ -165,7 +170,6 @@ class GameController {
     let newWidth = window.innerWidth;//  < MaxWidth  ? window.innerWidth  : MaxWidth,
     let newHeight = window.innerHeight;// < MaxHeight ? window.innerHeight : MaxHeight,
     let newRatio = newWidth / newHeight;
-
 
     this.resolution.scale.pixel = window.innerHeight / 160;
     this.resolution.r = window.innerWidth / window.innerHeight;
@@ -187,7 +191,7 @@ class GameController {
     canvas.height = this.resolution.scale.y * this.resolution.y;
   }
 
-  resizeGame() {
+  resize() {
     this.resizeViewport();
     this.camera.center();
   }

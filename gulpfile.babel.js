@@ -9,12 +9,13 @@ import { stream as wiredep } from 'wiredep';
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
-gulp.task('entities', function () {
+gulp.task('index', function () {
   var target = gulp.src('./app/index.html');
-  var sources = gulp.src(['./app/scripts/game/entities/*.js'], {read: false});
+  var sources = gulp.src(['./app/scripts/entities/*.js', './app/scripts/states/*.js'], {read: false});
   return target.pipe(inject(sources, {ignorePath: 'app', addRootSlash: false }))
     .pipe(gulp.dest('./app'));
 });
+
 
 gulp.task('styles', () => {
   return gulp.src('app/styles/*.scss')

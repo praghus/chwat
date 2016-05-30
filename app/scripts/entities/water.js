@@ -48,14 +48,14 @@ game.addEntity('water', class extends Entity {
       if(this.wave < -2) {
         this.direction = this.DIR.DOWN;
       }
-      if (this._game.m.overlap(this._game.player, this)) {
+      /*if (this._game.m.overlap(this._game.player, this)) {
         if (!this._game.input.up) {
           this._game.player.force.y = +0.5;
         }
         else if (this._game.player.force.y > 0 && this._game.player.y >= this.y - 16) {
           this._game.player.force.y = -1.5;
         }
-      }
+      }*/
     }
   }
 });

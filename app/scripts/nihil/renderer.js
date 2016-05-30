@@ -26,10 +26,10 @@ class Renderer
     $.webkitImageSmoothingEnabled = false;
     $.msImageSmoothingEnabled = false;
     $.imageSmoothingEnabled = false;
-    this.lightmask = [];
     $.save();
     $.scale(scale.x, scale.y);
     $.clearRect(0, 0, x, y);
+    this.lightmask = [];
     this.renderBack();
     this.renderGround();
     this.renderPlayer();

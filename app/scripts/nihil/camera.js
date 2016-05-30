@@ -15,14 +15,14 @@ class Camera
   update() {
     const { player, resolution, world } = this._game;
 
-    if (player.x + this.x > resolution.x / 2) {
+    if ((player.x + (player.width/2)) + this.x > resolution.x / 2) {
       this.x -= player.force.x > 0 ? Math.floor(player.force.x) : .5;
     }
 
-    if (player.x + this.x < resolution.x / 2) {
+    if ((player.x + (player.width/2)) + this.x < resolution.x / 2) {
       this.x -= player.force.x < 0 ? Math.floor(player.force.x) : -.5;
     }
-    
+
     if (this.x > 0) {
       this.x = 0;
     }
@@ -74,7 +74,7 @@ class Camera
   //------------------------------------------------------------------------
   center() {
     const { player, resolution } = this._game;
-    this.x = -(player.x - (resolution.x / 2));
+    this.x = -((player.x + (player.width/2))- (resolution.x / 2));
     this.y = -((player.y + player.height) - (resolution.y / 2));
   }
   //------------------------------------------------------------------------

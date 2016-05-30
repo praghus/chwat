@@ -37,7 +37,7 @@ class Elements
     //let rect = { x: x, y: y, width: w, height: h };
     for (let j = 0; j < all.length; j++) {
       let obj = all[j];
-      if (!obj.dead && this._game.m.overlap(obj, rect)) {
+      if (!obj.dead && obj.type !== 'trigger' && this._game.m.overlap(obj, rect)) {
         obj.dead = true;
       }
     }
