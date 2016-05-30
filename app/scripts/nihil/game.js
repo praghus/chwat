@@ -2,7 +2,7 @@ class GameController {
   constructor(elem) {
     this.$ = elem.getContext('2d');
     this.fps = 60;
-    this.debug = true;
+    this.debug = false;
     this.state = {};
     this.states = {};
     this.entities = {};
@@ -27,7 +27,7 @@ class GameController {
     this.entities[id] = obj;
   }
   addState(id, obj) {
-    this.states[id] = new obj();
+    this.states[id] = new obj(this);
   }
 //-------------------------------------------------------------------------
   go(state) {
@@ -41,12 +41,11 @@ class GameController {
       console.log('Wrong state!');
       return;
     }
-    const {init, update, render} = this.state;
-    if (init) {
-      init();
+    if (this.state.init) {
+      this.state.init();
     }
     if (this.debug) {
-      //new DAT();
+      new DAT();
       this.fpsmeter = new FPSMeter({
         decimals: 0,
         graph: true,
@@ -66,9 +65,9 @@ class GameController {
       dt = dt + Math.min(1, (now - last) / 1000);
       while (dt > step) {
         dt = dt - step;
-        update(step);
+        this.state.update(step);
       }
-      render(dt);
+      this.state.render(dt);
       last = now;
       if (this.debug) {
         this.fpsmeter.tick();
@@ -153,7 +152,7 @@ class GameController {
           this.elements = new Elements(this);
         }).then(()=> {
           getImages(params.assets).then((images)=> {
-            this.images=images;
+            this.images = images;
             this.renderer = new Renderer(this);
             resolve();
           });

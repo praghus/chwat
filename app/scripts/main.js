@@ -26,6 +26,7 @@ window.onload = ()=>
 {
   game.init({data: "assets/levels/map.json", assets: Images}).then(()=> {
 
+
     let { input } = game;
     let lPad = new Hammer(Dom.get('trackpad-left'), {});
     let rPad = new Hammer(Dom.get('trackpad-right'), {});
@@ -67,7 +68,7 @@ window.onload = ()=>
     Dom.on(document, 'ontouchmove', (ev)=> ev.preventDefault(), false);
 
     game.resize();
-    game.go('main');
+    game.go('mainState');
   });
 };
 

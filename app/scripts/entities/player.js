@@ -36,14 +36,14 @@ game.addEntity('player', class extends Entity {
   }
   //----------------------------------------------------------------------
   draw($, image) {
-    if ((this._game.camera.underground || this._game.player.inDark > 0) && !this._game.renderer.dynamicLights) {
+    /*if ((this._game.camera.underground || this._game.player.inDark > 0) && !this._game.state.dynamicLights) {
       $.globalCompositeOperation = "lighter";
       $.drawImage(this._game.renderer.images.player_light,
         -128 + Math.floor(this._game.player.x + (this._game.player.width / 2) + this._game.camera.x),
         -128 + Math.floor(this._game.player.y + (this._game.player.height / 2) + this._game.camera.y)
       );
       $.globalCompositeOperation = "source-over";
-    }
+    }*/
     if (!this.canHurt && !this.dead) {
       $.globalAlpha = 0.2;
     }
@@ -69,7 +69,7 @@ game.addEntity('player', class extends Entity {
         this.force.x += this.speed;
         this.direction = this.DIR.RIGHT;
       }
-      if (this.canJump && input.up) {
+      if (this.onFloor && input.up) {
         this.doJump = true;
         this.force.y = -6.5;
         this.canJump = false;

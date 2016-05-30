@@ -44,7 +44,7 @@ class Entity
     //Dom.on(this, 'click', function(ev) { console.log(this);  }, false);
   }
   //----------------------------------------------------------------------
-  draw(ctx, image) {
+  draw($, image) {
     if (this.shadowCaster && this._game.renderer.dynamicLights) {
       this._game.renderer.lightmask.push(new illuminated.RectangleObject({
         topleft: new illuminated.Vec2(this.x + this._game.camera.x, this.y + this._game.camera.y),
@@ -52,7 +52,7 @@ class Entity
       }));
     }
     if (this.animation) {
-      ctx.drawImage(image,
+      $.drawImage(image,
         this.animation.x + (this.animFrame * this.animation.w), this.animation.y + this.animOffset,
         this.animation.w, this.animation.h,
         Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y),
@@ -60,7 +60,7 @@ class Entity
       );
     }
     else {
-      ctx.drawImage(image,
+      $.drawImage(image,
         this.animFrame * this.width, 0, this.width, this.height,
         Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y),
         this.width, this.height
@@ -72,9 +72,9 @@ class Entity
     // update
   }
   //----------------------------------------------------------------------
-  render(ctx, image) {
+  render($, image) {
     if (this.visible && this.onScreen()) {
-      this.draw(ctx, image);
+      this.draw($, image);
     }
   }
   //----------------------------------------------------------------------

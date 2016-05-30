@@ -17,14 +17,14 @@ game.addEntity('slope_left', class extends Entity {
     if(!this.dead && element.solid) {
       const expectedY=(this.y - element.height) + (element.x - this.x) * (this.height / this.width);
       if (element.y >= expectedY) {
-        element.force.y=0;
-        element.y=expectedY;
-        element.doJump=false;
+        element.force.y = 0;
+        element.y = expectedY;
+        element.doJump = false;
         if (element.type === 'player' && this._game.input.up) {
-          element.force.y= -6;
+          element.force.y = -6;
         }
       } else if (element.force.y === 0) {
-        element.force.y+=1;
+        element.force.y += 1;
       }
     }
   }
