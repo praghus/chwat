@@ -91,7 +91,7 @@ game.addEntity('player', class extends Entity {
     }
     if(this.doJump ){
       this.force.y -= .5;
-      if(this.force.y < -5){
+      if(this.force.y < -4.5){
         this.doJump = false;
         this.fall = true;
       }
@@ -101,7 +101,7 @@ game.addEntity('player', class extends Entity {
     this.move();
 
     if (this.onFloor) {
-      this.force.y *= -.6;
+      this.force.y *= -.2;
       this.doJump = false;
       this.fall = false;
     }

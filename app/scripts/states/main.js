@@ -1,5 +1,5 @@
 game.addState('mainState', class extends State {
-  
+
   constructor(game) {
     super(game);
     this.BlackOverlay = 1;
@@ -14,17 +14,17 @@ game.addState('mainState', class extends State {
       radius    : 8
     });
   }
-  
+
   init(){
     this._game.renderer.msg(game.world.name, 100);
   }
-  
+
   update() {
     this._game.elements.update();
     this._game.camera.update();
     this._game.player.update();
   }
-  
+
   render() {
     this._game.renderer.render(()=>{
       const { $ } = this._game;
@@ -114,7 +114,7 @@ game.addState('mainState', class extends State {
             $.drawImage(images.tiles, (((tile - 1) % this._game.world.spriteCols )) * this._game.world.spriteSize, (Math.ceil(tile / this._game.world.spriteCols) - 1) * this._game.world.spriteSize, this._game.world.spriteSize, this._game.world.spriteSize, x, y, this._game.world.spriteSize, this._game.world.spriteSize);
           }
           // calculate shadow
-          if (back > 1 && tile === 0) {
+          if (back > 1 && tile < 256) {
             var shadow = 0;
             if (_x > 0 && _y > 0 && this._game.world.isShadowCaster(_x - 1, _y) && this._game.world.isShadowCaster(_x - 1, _y - 1) && this._game.world.isShadowCaster(_x, _y - 1)) {
               shadow = 6;

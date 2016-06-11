@@ -150,22 +150,20 @@ class Entity
     if (this.force.x < -this.maxSpeed) {
       this.force.x = -this.maxSpeed;
     }
-
     this.expectedX = this.x + this.force.x;
     this.expectedY = this.y + this.force.y;
 
-    var PX = Math.floor(this.expectedX / this._game.world.spriteSize),
-        PY = Math.floor(this.expectedY / this._game.world.spriteSize),
-        PW = Math.floor((this.expectedX + this.width) / this._game.world.spriteSize),
-        PH = Math.floor((this.expectedY + this.height) / this._game.world.spriteSize),
-        nearMatrix = [];
+    const PX = Math.floor(this.expectedX / this._game.world.spriteSize);
+    const PY = Math.floor(this.expectedY / this._game.world.spriteSize);
+    const PW = Math.floor((this.expectedX + this.width) / this._game.world.spriteSize);
+    const PH = Math.floor((this.expectedY + this.height) / this._game.world.spriteSize);
+    let nearMatrix = [];
 
     for (var y = PY; y <= PH; y++){
       for (var x = PX; x <= PW; x++){
         nearMatrix.push(this._game.world.tileData(x, y));
       }
     }
-
     // dla x-a
     for (var i = 0; i < nearMatrix.length; i++) {
       var c1 = {x: this.x + this.force.x, y: this.y, width: this.width, height: this.height};
@@ -196,7 +194,6 @@ class Entity
     this.onFloor = this.expectedY > this.y;
     this.onLeftEdge = !this._game.world.isSolid(PX, PH);
     this.onRightEdge = !this._game.world.isSolid(PW, PH);
-
     //return {x: expectedX === this.x, y: expectedY === this.y};
   }
 }

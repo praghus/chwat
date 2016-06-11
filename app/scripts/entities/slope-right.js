@@ -12,7 +12,6 @@ game.addEntity('slope_right', class extends Entity {
       new SAT.Vector(this.width, this.height)
     ];
   }
-
   collide(element) {
     if(!this.dead && element.solid) {
       const expectedY = (this.y - element.height) + this.height - (((element.x + element.width) - this.x) * (this.height / this.width));
