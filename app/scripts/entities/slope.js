@@ -23,21 +23,19 @@ game.addEntity('slope', class extends Entity {
   collide(element) {
     if(!this.dead && element.solid)
     {
-      const expectedY = this.properties.direction === 'right'
-        ? (this.y - element.height) + this.height - (((element.x + element.width) - this.x) * (this.height / this.width))
-        : (this.y - element.height) + (element.x - this.x) * (this.height / this.width);
+      const expectedY = this.properties.direction === 'right' ? (this.y - element.height) + this.height - (((element.x + element.width) - this.x) * (this.height / this.width)) : (this.y - element.height) + (element.x - this.x) * (this.height / this.width);
 
-      if (element.y >= expectedY) {
+      if (element.y >= expectedY && !element.doJump ) {
         element.y = expectedY;
         element.force.y = 0;
         element.fall = false;
-        element.doJump = false;
+        //element.doJump = false;
         element.onFloor = true;
-        if (element.type === 'player' && this._game.input.up) {
-          element.doJump = true;
-        }
       } else if (element.force.y === 0) {
         element.force.y+=1;
+      }
+      if (element.type === 'player' && this._game.input.up) {
+        element.doJump = true;
       }
     }
   }

@@ -6,7 +6,7 @@ game.addEntity('paddle', class extends Entity {
     super(obj, game);
     const { spriteSize } = this._game.world;
     this.solid = true;
-    this.speed = .1;
+    this.speed = 0.1;
     this.stop = false;
     this.maxSpeed = 1;
     this.destPosY = this.properties.destY * spriteSize;
@@ -25,24 +25,14 @@ game.addEntity('paddle', class extends Entity {
   }
 
   collide (element) {
-    const { input } = this._game;
-    if (element.force.y > 0 && element.y + element.height < this.y + this.height) {
-      //if (!input.up && !input.down && !element.fall) {
-        element.y = (this.y ) - element.height;
-        element.force.y = this.y - element.y - element.height;
-      //}
-      element.doJump = false;
-      //element.x += this.force.x;
+    if (this.activated && !element.doJump && element.force.y > 0 && element.y + element.height > this.y + this.height -16) {
+      element.y = this.y - element.height ;
+      element.force.y = this.y - element.y - element.height;
+      element.fall = false;
+      element.onFloor = true;
       if (element.doJump) {
         element.doJump = false;
       }
-      /*if (element.type === 'player') {
-        this._game.camera.x = -(this._game.player.x - (this._game.resolution.x / 2));
-        if (input.up) {
-          this._game.player.force.y = -6;
-          this._game.player.doJump = true;
-        }
-      }*/
     }
   }
 

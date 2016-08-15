@@ -36,14 +36,16 @@ game.addEntity('player', class extends Entity {
   }
   //----------------------------------------------------------------------
   draw($, image) {
-    /*if ((this._game.camera.underground || this._game.player.inDark > 0) && !this._game.state.dynamicLights) {
+    /** /
+    if ((this._game.camera.underground || this._game.player.inDark > 0) && !this._game.state.dynamicLights) {
       $.globalCompositeOperation = "lighter";
-      $.drawImage(this._game.renderer.images.player_light,
+      $.drawImage(this._game.images.player_light,
         -128 + Math.floor(this._game.player.x + (this._game.player.width / 2) + this._game.camera.x),
         -128 + Math.floor(this._game.player.y + (this._game.player.height / 2) + this._game.camera.y)
       );
       $.globalCompositeOperation = "source-over";
-    }*/
+    }
+    /**/
     if (!this.canHurt && !this.dead) {
       $.globalAlpha = 0.2;
     }
@@ -90,7 +92,7 @@ game.addEntity('player', class extends Entity {
       }
     }
     if(this.doJump ){
-      this.force.y -= .5;
+      this.force.y -= 0.5;
       if(this.force.y < -4.5){
         this.doJump = false;
         this.fall = true;
@@ -101,7 +103,7 @@ game.addEntity('player', class extends Entity {
     this.move();
 
     if (this.onFloor) {
-      this.force.y *= -.2;
+      this.force.y *= -0.2;
       this.doJump = false;
       this.fall = false;
     }
@@ -130,28 +132,31 @@ game.addEntity('player', class extends Entity {
   }
 
   canUse(id) {
-    if(id === 'player'){
-      return true;
-    }
+    return ((this.items[0] && this.items[0].properties.id === id) ||
+            (this.items[1] && this.items[1].properties.id === id) ||
+            (id === 'player'));
+  }
+
+  use(id){
+    let r;
     if (this.items[0] && this.items[0].properties.id === id) {
+      r = this.items[0];
       this.items[0] = this.items[1];
       this.items[1] = null;
-      return true;
     }
     if (this.items[1] && this.items[1].properties.id === id) {
+      r = this.items[1];
       this.items[1] = null;
-      return true;
     }
-    return false;
+    return r;
   }
 
   get(item) {
     //if(item) {
-      console.log(item);
       if(this.items[1]) {
         this.items[1].x = this.x+16;
         this.items[1].y = this.y;
-        this._game.elements.all.push(new this._game.entities['item'](this.items[1], this._game));
+        this._game.elements.all.push(new this._game.entities.item(this.items[1], this._game));
       }
       this.items[1]=this.items[0];
       this.items[0]=item;

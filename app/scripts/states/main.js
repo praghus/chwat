@@ -101,7 +101,7 @@ game.addState('mainState', class extends State {
         const back = world.get('back', _x, _y);
         if (tile > 1 || back > 1) {
           // dynamic lights
-          if (tile > 256 && this.dynamicLights) {
+          if (tile > 224 && this.dynamicLights) {
             this.lightmask.push(new illuminated.RectangleObject({
               topleft: new illuminated.Vec2(x, y),
               bottomright: new illuminated.Vec2(x + this._game.world.spriteSize, y + this._game.world.spriteSize)
@@ -114,7 +114,7 @@ game.addState('mainState', class extends State {
             $.drawImage(images.tiles, (((tile - 1) % this._game.world.spriteCols )) * this._game.world.spriteSize, (Math.ceil(tile / this._game.world.spriteCols) - 1) * this._game.world.spriteSize, this._game.world.spriteSize, this._game.world.spriteSize, x, y, this._game.world.spriteSize, this._game.world.spriteSize);
           }
           // calculate shadow
-          if (back > 1 && tile < 256) {
+          if (back > 1 && tile < 224) {
             var shadow = 0;
             if (_x > 0 && _y > 0 && this._game.world.isShadowCaster(_x - 1, _y) && this._game.world.isShadowCaster(_x - 1, _y - 1) && this._game.world.isShadowCaster(_x, _y - 1)) {
               shadow = 6;

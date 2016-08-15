@@ -2,21 +2,24 @@
 // Trigger
 //--------------------------------------------------------------------------
 game.addEntity('trigger', class extends Entity {
+
   constructor(obj, game) {
     super(obj, game);
     this.visible = false;
     this.activated = false;
   }
+
   collide(element) {
     if (!this.activated && !this.dead && (this._game.input.action || this.properties.activator === 'player') && element.type === 'player') {
       const { player } = this._game;
-      console.log(this.properties);
       if (player.canUse(this.properties.activator)) {
-        // @todo clear elements
+        const a = player.use(this.properties.activator);
         this.activated = true;
         if (this.properties.related){
           let rel = this._game.elements.getById(this.properties.related);
           rel.activated = true;
+          rel.trigger = this;
+          rel.activator = a;
         }
       }
       else if(this.properties.message){
@@ -24,16 +27,18 @@ game.addEntity('trigger', class extends Entity {
       }
     }
   }
+
   update() {
     if (this.activated){
       if(this.properties.clear) {
         this._game.elements.clearInRange(this);
         this.clearTiles();
       }
-      this._game.elements.clearInRange(this);
+      //this._game.elements.clearInRange(this);
       this.dead = true;
     }
   }
+
   clearTiles(){
     const { spriteSize } = this._game.world;
       for (let x = 0; x < Math.round(this.width / spriteSize); x++) {

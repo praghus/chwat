@@ -15,8 +15,10 @@ const
     'enemy_bullet', 'coin',	        'player_bullet','grenade',
     'water',        'lava',         'crusher',      'player_light',
     'lava_glow',    'light',		    'rock',			    'spear',
-    'saw',			    'paddle'
-  ];
+    'catapult',		  'paddle',       'vil1',         'bridge'
+  ],
+//--------------------------------------------------------------------------
+  JumpThrough = [269];
 //--------------------------------------------------------------------------
 
 const game = new GameController(Dom.get('canvas'));
@@ -26,7 +28,6 @@ window.onload = ()=>
 {
   game.init({data: "assets/levels/map.json", assets: Images}).then(()=> {
 
-
     let { input } = game;
     let lPad = new Hammer(Dom.get('trackpad-left'), {});
     let rPad = new Hammer(Dom.get('trackpad-right'), {});
@@ -35,27 +36,27 @@ window.onload = ()=>
     rPad.get('pan').set({threshold: 5});
     rPad.get('tap').set({pointers: 1, threshold: 5, time: 150});
 
-    lPad.on('pan', ev => {
+    lPad.on('pan', ev=> {
       switch (ev.additionalEvent) {
-        case 'panleft'  : input.left = !input.right; break;
-        case 'panright' : input.right = !input.left; break;
+        case 'panleft': input.left = !input.right; break;
+        case 'panright': input.right = !input.left; break;
       }
-    }).on('panend', () => {
+    }).on('panend', ()=> {
       input.left = false;
       input.right = false;
     });
 
-    rPad.on('pan', ev => {
+    rPad.on('pan', ev=> {
       switch (ev.additionalEvent) {
-        case 'panup'    : input.up = true;    break;
-        case 'pandown'  : input.down = true;  break;
+        case 'panup': input.up = true; break;
+        case 'pandown': input.down = true; break;
       }
-    }).on('panend', () => {
+    }).on('panend', ()=> {
       input.up = false;
       input.down = false;
     });
 
-    rPad.on('tap', () => {
+    rPad.on('tap', ()=> {
       input.action = true;
       setTimeout(()=> input.action = false, 200);
     });

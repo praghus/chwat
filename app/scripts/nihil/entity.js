@@ -41,7 +41,6 @@ class Entity
       new SAT.Vector(this.width, this.height),
       new SAT.Vector(0, this.height)
     ];
-    //Dom.on(this, 'click', function(ev) { console.log(this);  }, false);
   }
   //----------------------------------------------------------------------
   draw($, image) {
@@ -66,6 +65,15 @@ class Entity
         this.width, this.height
       );
     }
+    // hints
+    /*const { images } = this._game;
+    $.drawImage(images.item,
+      0, 0, 16, 16,
+      Math.floor(this.x + this._game.camera.x + this.width / 2) - 8, Math.floor(this.y + this._game.camera.y) - 20,
+      16, 16
+    );*/
+
+
   }
   //----------------------------------------------------------------------
   update() {
@@ -157,16 +165,17 @@ class Entity
     const PY = Math.floor(this.expectedY / this._game.world.spriteSize);
     const PW = Math.floor((this.expectedX + this.width) / this._game.world.spriteSize);
     const PH = Math.floor((this.expectedY + this.height) / this._game.world.spriteSize);
+
     let nearMatrix = [];
 
-    for (var y = PY; y <= PH; y++){
-      for (var x = PX; x <= PW; x++){
+    for (let y = PY; y <= PH; y++){
+      for (let x = PX; x <= PW; x++){
         nearMatrix.push(this._game.world.tileData(x, y));
       }
     }
-    // dla x-a
-    for (var i = 0; i < nearMatrix.length; i++) {
-      var c1 = {x: this.x + this.force.x, y: this.y, width: this.width, height: this.height};
+
+    for (let i = 0; i < nearMatrix.length; i++) {
+      let c1 = {x: this.x + this.force.x, y: this.y, width: this.width, height: this.height};
       if (nearMatrix[i].solid && this._game.m.overlap(c1, nearMatrix[i])) {
         if (this.force.x < 0) {
           this.force.x = nearMatrix[i].x + nearMatrix[i].width - this.x;
@@ -176,12 +185,13 @@ class Entity
         }
       }
     }
-    //(SAT.testPolygonPolygon(this.getMask(), obj.getMask()))
+
     this.x += this.force.x;
-    for (var j = 0; j < nearMatrix.length; j++) {
-      var c2 = {x: this.x, y: this.y + this.force.y, width: this.width, height: this.height};
+
+    for (let j = 0; j < nearMatrix.length; j++) {
+      let c2 = {x: this.x, y: this.y + this.force.y, width: this.width, height: this.height};
       if (nearMatrix[j].solid && this._game.m.overlap(c2, nearMatrix[j])) {
-        if (this.force.y < 0) {
+        if (this.force.y < 0 && JumpThrough.indexOf(nearMatrix[j].type) ===-1) {
           this.force.y = nearMatrix[j].y + nearMatrix[j].height - this.y;
         }
         else if (this.force.y > 0) {
@@ -189,7 +199,9 @@ class Entity
         }
       }
     }
+
     this.y += this.force.y;
+
     this.onCeiling = this.expectedY < this.y;
     this.onFloor = this.expectedY > this.y;
     this.onLeftEdge = !this._game.world.isSolid(PX, PH);

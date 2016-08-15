@@ -2,7 +2,7 @@ class GameController {
   constructor(elem) {
     this.$ = elem.getContext('2d');
     this.fps = 60;
-    this.debug = false;
+    this.debug = true;
     this.state = {};
     this.states = {};
     this.entities = {};
@@ -117,7 +117,7 @@ class GameController {
             Dom.on(result[name], 'load', onload);
             result[name].src="assets/images/" + name + ".png";
           }
-        })
+        });
     };
 
     const getJSON=(url)=> {

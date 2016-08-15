@@ -15,10 +15,10 @@ class Camera
   update() {
     const { player, resolution, world } = this._game;
     if ((player.x + (player.width/2)) + this.x > resolution.x / 2) {
-      this.x -= player.force.x > 0 ? Math.floor(player.force.x) : .5;
+      this.x -= player.force.x > 0 ? Math.floor(player.force.x) : 0.5;
     }
     if ((player.x + (player.width/2)) + this.x < resolution.x / 2) {
-      this.x -= player.force.x < 0 ? Math.floor(player.force.x) : -.5;
+      this.x -= player.force.x < 0 ? Math.floor(player.force.x) : -0.5;
     }
     if (this.x > 0) {
       this.x = 0;

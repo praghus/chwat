@@ -33,7 +33,6 @@ class DAT {
       f1.add(game.player, 'maxSpeed');
       f1.add(game.player, 'x').listen();
       f1.add(game.player, 'y').listen();
-      f1.add(game.player, 'exterminate');
       f2.add(game.player.force, 'x').listen();
       f2.add(game.player.force, 'y').listen();
       f3.add(game.world, 'gravity', 0, 2);
