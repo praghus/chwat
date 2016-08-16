@@ -44,6 +44,9 @@ class Entity
   }
   //----------------------------------------------------------------------
   draw($, image) {
+    if(image === undefined){
+      return;
+    }
     if (this.shadowCaster && this._game.renderer.dynamicLights) {
       this._game.renderer.lightmask.push(new illuminated.RectangleObject({
         topleft: new illuminated.Vec2(this.x + this._game.camera.x, this.y + this._game.camera.y),
@@ -64,6 +67,11 @@ class Entity
         Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y),
         this.width, this.height
       );
+    }
+    let { player } = this._game;
+    const r = (player.x-this.x)^2 + (player.y-this.y)^2;
+    if ( r < 64 && r > -64){
+      console.log( r + ' in radius ' + this.type);
     }
     // hints
     /*const { images } = this._game;
