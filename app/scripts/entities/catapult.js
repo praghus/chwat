@@ -20,11 +20,10 @@ game.addEntity('catapult', class extends Entity {
       this.trigger.dead = false;
       element.force.y = -25;
       let item = this.activator;
-
-        item.x = this.x;
-        item.y =this.y;
+      item.x = this.x;
+      item.y =this.y;
       element.fall = false;
-      this.activated = false;
+      setTimeout(()=>this.activated = false, 1000);
       this._game.elements.add('item', item);
     }
   }
@@ -32,6 +31,8 @@ game.addEntity('catapult', class extends Entity {
   update() {
     if (this.activated && !this.dead) {
       this.animation = this.animations.DOWN;
+    } else {
+      this.animation = this.animations.UP;
     }
   }
 });

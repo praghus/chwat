@@ -32,8 +32,8 @@ game.addState('mainState', class extends State {
       this.lightmask = [];
       this.renderBack();
       this.renderGround();
-      this.renderPlayer();
       this.renderElements();
+      this.renderPlayer();
       this.renderForeGround();
       if (game.camera.underground || game.player.inDark > 0) {
         this.renderLightingEffect();
