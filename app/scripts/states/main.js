@@ -16,7 +16,7 @@ game.addState('mainState', class extends State {
   }
 
   init(){
-    this._game.renderer.msg(game.world.name, 100);
+    this._game.renderer.msg(game.world.name, 1000);
   }
 
   update() {

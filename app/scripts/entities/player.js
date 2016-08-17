@@ -17,7 +17,8 @@ game.addEntity('player', class extends Entity {
     this.shootDelay = 500;
     this.throwSpeed = 0;
     this.throwMaxSpeed = 5;
-    this.shootTimeout = null;
+    this.hintTimeout = null;
+    this.hintObj = {};
     this.solid = true;
     this.items = [];
     this.animations = {

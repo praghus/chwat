@@ -5,7 +5,7 @@ class Renderer
 {
   constructor(game) {
     this._game = game;
-    this.message = { dispCount: 0, dispIter: 0, txt: '' };
+    this.message = { txt: '', timeout: undefined };
   }
   //------------------------------------------------------------------------
   render(callback) {
@@ -19,15 +19,17 @@ class Renderer
     $.scale(scale.x, scale.y);
     $.clearRect(0, 0, x, y);
     callback();
-    if (this.message.dispCount < this.message.dispIter) {
+    if (this.message.txt !== '') {
       this.fontPrint(this.message.txt, -1, -1);
-      this.message.dispCount++;
     }
     $.restore();
   }
   //------------------------------------------------------------------------
-  msg(txt, iter) {
-    this.message = { dispCount: 0, dispIter: iter, txt: txt };
+  msg(txt, timeout) {
+    this.message = {
+      txt: txt,
+      timeout:setTimeout(()=>this.message={ txt: '', timeout: undefined }, timeout)
+    };
   }
   //------------------------------------------------------------------------
   fontPrint(FontText, FontX, FontY) {

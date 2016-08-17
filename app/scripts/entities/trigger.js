@@ -23,7 +23,7 @@ game.addEntity('trigger', class extends Entity {
         }
       }
       else if(this.properties.message){
-        this._game.renderer.msg(this.properties.message, 50);
+        this._game.renderer.msg(this.properties.message, 1000);
       }
     }
   }
