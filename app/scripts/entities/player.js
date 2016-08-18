@@ -55,6 +55,12 @@ game.addEntity('player', class extends Entity {
       this.animation.w, this.animation.h,
       Math.floor(this.x + this._game.camera.x) - 8, Math.floor(this.y + this._game.camera.y) - 5, this.animation.w, this.animation.h
     );
+
+    $.drawImage(
+      this._game.images.sbubble,
+      Math.floor(this.x + this._game.camera.x) - 4, Math.floor(this.y + this._game.camera.y) - 28
+    );
+
     if (!this.canHurt && !this.dead) {
       $.globalAlpha = 1;
     }

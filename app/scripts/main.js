@@ -15,7 +15,8 @@ const
     'enemy_bullet', 'coin',	        'player_bullet','grenade',
     'water',        'lava',         'crusher',      'player_light',
     'lava_glow',    'light',		    'rock',			    'spear',
-    'catapult',		  'paddle',       'vil1',         'bridge'
+    'catapult',		  'paddle',       'vil1',         'bridge',
+    'sbubble'
   ],
 //--------------------------------------------------------------------------
   JumpThrough = [269];
