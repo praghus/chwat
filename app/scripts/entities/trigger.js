@@ -11,24 +11,34 @@ game.addEntity('trigger', class extends Entity {
 
   collide(element) {
     if (!this.activated && !this.dead && (this._game.input.action || this.properties.activator === 'player') && element.type === 'player') {
-      const { player } = this._game;
+      const { player, elements } = this._game;
       if (player.canUse(this.properties.activator)) {
         const a = player.use(this.properties.activator);
         this.activated = true;
+        player.hideHint();
         if (this.properties.related){
-          let rel = this._game.elements.getById(this.properties.related);
+          let rel = elements.getById(this.properties.related);
           rel.activated = true;
           rel.trigger = this;
           rel.activator = a;
         }
       }
-      else if(this.properties.message){
+      /*else if(this.properties.message){
         this._game.renderer.msg(this.properties.message, 1000);
-      }
+      }*/
     }
   }
 
   update() {
+    if(this._game.input.action && this.properties.activator && this.properties.activator !== 'player') {
+      let {player, elements} = this._game;
+      const r = (player.x - (this.x+this.width/2)) ^ 2 + (player.y - (this.y+this.height/2)) ^ 2;
+      if (r < (this.width/2)+8 && r > -((this.width/2)+8)) {
+        const item = elements.getByProperties('id', this.properties.activator);
+        console.log(r + ' in radius ', item);
+        player.showHint(item);
+      }
+    }
     if (this.activated){
       if(this.properties.clear) {
         this._game.elements.clearInRange(this);

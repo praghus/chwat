@@ -28,8 +28,12 @@ class Elements
     }
   }
   //------------------------------------------------------------------------
-  getById(id){
+  getById(id) {
     return this.all.find((x) => x.id === id);
+  }
+  //------------------------------------------------------------------------
+  getByProperties(k, v) {
+    return this.all.find((x) => x.properties && x.properties[k] === v);
   }
   //------------------------------------------------------------------------
   clearInRange(rect) {

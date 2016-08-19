@@ -17,8 +17,7 @@ game.addEntity('player', class extends Entity {
     this.shootDelay = 500;
     this.throwSpeed = 0;
     this.throwMaxSpeed = 5;
-    this.hintTimeout = null;
-    this.hintObj = {};
+    this.hint = { show: false, timeout: undefined };
     this.solid = true;
     this.items = [];
     this.animations = {
@@ -56,14 +55,34 @@ game.addEntity('player', class extends Entity {
       Math.floor(this.x + this._game.camera.x) - 8, Math.floor(this.y + this._game.camera.y) - 5, this.animation.w, this.animation.h
     );
 
-    $.drawImage(
-      this._game.images.sbubble,
-      Math.floor(this.x + this._game.camera.x) - 4, Math.floor(this.y + this._game.camera.y) - 28
-    );
 
-    if (!this.canHurt && !this.dead) {
-      $.globalAlpha = 1;
+    if(this.hint.show && this.hint.item) {
+      const {images} = this._game;
+      $.drawImage(
+        images.sbubble,
+        Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y) - 28
+      );
+
+      $.drawImage(images.item,
+        this.hint.item.animation.x + (this.hint.item.animFrame * this.hint.item.animation.w), this.hint.item.animation.y + this.hint.item.animOffset,
+        this.hint.item.animation.w, this.hint.item.animation.h,
+        Math.floor(this.x + this._game.camera.x + this.width / 2), Math.floor(this.y + this._game.camera.y) - 28,
+        this.hint.item.animation.w, this.hint.item.animation.h
+      );
+
     }
+  }
+  //----------------------------------------------------------------------
+  showHint(item) {
+    if(!this.hint.show) {
+      this.hint.item = item;
+      this.hint.show = true;
+      this.hint.timeout = setTimeout(()=>this.hint = {show: false, item: undefined, timeout: undefined}, 2000);
+    }
+  }
+  //----------------------------------------------------------------------
+  hideHint() {
+    this.hint = {show: false, item: undefined, timeout: undefined};
   }
   //----------------------------------------------------------------------
   update() {

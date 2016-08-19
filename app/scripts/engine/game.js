@@ -78,14 +78,14 @@ class GameController {
   }
 
 //-------------------------------------------------------------------------
-// ASSET PRELOADING
+// ASSETS PRELOADING
 //-------------------------------------------------------------------------
   init(params) {
     const $=document.getElementById('canvas').getContext('2d');
     const g1='background-color: #444444;';
     const g2='background-color: #333333;';
     const g3='color:#CCCCCC;font-weight:bold; background-color: #222222;';
-    console.log("%c %c %c | -NIHIL- | %c %c ", g1, g2, g3, g2, g1);
+    console.log("%c %c %c | -CHWAT- | %c %c ", g1, g2, g3, g2, g1);
 
     const progress=(perc)=> {
       const {x, y, scale} = this.resolution;

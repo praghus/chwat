@@ -68,11 +68,7 @@ class Entity
         this.width, this.height
       );
     }
-    let { player } = this._game;
-    const r = (player.x-this.x)^2 + (player.y-this.y)^2;
-    if ( r < 64 && r > -64){
-      console.log( r + ' in radius ' + this.type);
-    }
+
     // hints
     /*const { images } = this._game;
     $.drawImage(images.item,
