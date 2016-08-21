@@ -2,7 +2,7 @@ class GameController {
   constructor(elem) {
     this.$ = elem.getContext('2d');
     this.fps = 60;
-    this.debug = true;
+    this.debug = false;
     this.state = {};
     this.states = {};
     this.entities = {};

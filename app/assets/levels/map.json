@@ -19,7 +19,7 @@
          "name":"Back",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":280,
          "x":0,
          "y":0
@@ -1075,15 +1075,15 @@
                  "y":656
                 }, 
                 {
-                 "height":43,
+                 "height":48,
                  "id":177,
-                 "name":"Wiesniak",
+                 "name":"Cook",
                  "rotation":0,
                  "type":"vil1",
                  "visible":true,
                  "width":16,
-                 "x":1088,
-                 "y":720
+                 "x":416,
+                 "y":416
                 }, 
                 {
                  "height":80,
@@ -1181,8 +1181,8 @@
                  "type":"trigger",
                  "visible":true,
                  "width":48,
-                 "x":1072,
-                 "y":720
+                 "x":400,
+                 "y":416
                 }, 
                 {
                  "height":16,
@@ -1213,7 +1213,7 @@
                  "type":"player",
                  "visible":true,
                  "width":16,
-                 "x":1344,
+                 "x":1312,
                  "y":720
                 }, 
                 {

@@ -11,7 +11,7 @@
  <imagelayer name="Warstwa Obrazka 1" offsetx="-1.09091" offsety="-1">
   <image source="a30580f3814d8240.jpg" width="4481" height="1441"/>
  </imagelayer>
- <layer name="Back" width="280" height="92">
+ <layer name="Back" width="280" height="92" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -451,7 +451,7 @@
     <property name="message" value="Przydalaby sie klucz"/>
    </properties>
   </object>
-  <object id="177" name="Wiesniak" type="vil1" x="1088" y="720" width="16" height="43"/>
+  <object id="177" name="Cook" type="vil1" x="416" y="416" width="16" height="48"/>
   <object id="189" name="Bridge" type="bridge" x="3664" y="544" width="160" height="80"/>
   <object id="193" name="TNT" type="item" x="848" y="1328" width="16" height="16">
    <properties>
@@ -472,7 +472,7 @@
     <property name="id" value="crowbar"/>
    </properties>
   </object>
-  <object id="199" name="trigger" type="trigger" x="1072" y="720" width="48" height="48">
+  <object id="199" name="trigger" type="trigger" x="400" y="416" width="48" height="48">
    <properties>
     <property name="activator" value="cake"/>
     <property name="clear" type="bool" value="false"/>
@@ -485,7 +485,7 @@
     <property name="id" value="cake"/>
    </properties>
   </object>
-  <object id="201" name="Player" type="player" x="1344" y="720" width="16" height="43"/>
+  <object id="201" name="Player" type="player" x="1312" y="720" width="16" height="43"/>
   <object id="202" name="Catapult" type="catapult" x="1152" y="752" width="64" height="16"/>
   <object id="203" name="Weight" type="item" x="1248" y="752" width="16" height="16">
    <properties>
