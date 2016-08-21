@@ -60,7 +60,7 @@ game.addEntity('player', class extends Entity {
       const {images} = this._game;
       $.drawImage(
         images.sbubble,
-        Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y) - 28
+        Math.floor(this.x + this._game.camera.x), Math.floor(this.y + this._game.camera.y) - 30
       );
 
       $.drawImage(images.item,

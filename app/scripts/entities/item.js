@@ -16,7 +16,8 @@ game.addEntity('item', class extends Entity {
       cake:     {x:96,  y:0,  w: 16, h: 16, frames: 1, fps: 0, loop: false},
       weight:   {x:112, y:0,  w: 16, h: 16, frames: 1, fps: 0, loop: false},
       cure:     {x:128, y:0,  w: 16, h: 16, frames: 1, fps: 0, loop: false},
-      dring:    {x:144, y:0,  w: 16, h: 16, frames: 1, fps: 0, loop: false}
+      handle:   {x:144, y:0,  w: 16, h: 16, frames: 1, fps: 0, loop: false},
+      stick:    {x:160, y:0,  w: 16, h: 16, frames: 1, fps: 0, loop: false}
     };
     this.animation = this.types[this.properties.id];
   }

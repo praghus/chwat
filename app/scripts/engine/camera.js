@@ -26,7 +26,7 @@ class Camera
     if (this.x - resolution.x < -world.width * world.spriteSize) {
       this.x = (-world.width * world.spriteSize) + resolution.x;
     }
-    this.y = -((player.y + player.height) - (resolution.y / 1.5));
+    this.y = -((player.y + player.height) - (resolution.y / 1.2));
     if (this.y > 0) {
       this.y = 0;
     }
@@ -43,23 +43,15 @@ class Camera
         this.y = (-world.surface * world.spriteSize);
       }
     }
-    if (this.y  - resolution.y  < -world.height * world.spriteSize) {
+    if (this.y - resolution.y < -world.height * world.spriteSize) {
       this.y = (-world.height * world.spriteSize) + resolution.y;
     }
     // shake
     if (this.rector !== 2) {
-      if (this.a === 1) {
-        this.y = this.y + this.rector;
-      }
-      else if (this.a === 2) {
-        this.x = this.x + this.rector;
-      }
-      else if (this.a === 3) {
-        this.y = this.y - this.rector;
-      }
-      else {
-        this.x = this.x - this.rector;
-      }
+      if (this.a === 1) { this.y = this.y + this.rector; }
+      else if (this.a === 2) { this.x = this.x + this.rector; }
+      else if (this.a === 3) { this.y = this.y - this.rector; }
+      else { this.x = this.x - this.rector; }
       if(this.a < 4) { this.a++; } else { this.a = 1; }
     }
   }
