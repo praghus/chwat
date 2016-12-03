@@ -11,9 +11,9 @@ class Renderer
   render(callback) {
     const { $ } = this._game;
     const { x, y, scale } = this._game.resolution;
-    //$.mozImageSmoothingEnabled = false;
-    //$.webkitImageSmoothingEnabled = false;
-    //$.msImageSmoothingEnabled = false;
+    $.mozImageSmoothingEnabled = false;
+    $.webkitImageSmoothingEnabled = false;
+    $.msImageSmoothingEnabled = false;
     $.imageSmoothingEnabled = false;
     $.save();
     $.scale(scale.x, scale.y);
@@ -47,4 +47,3 @@ class Renderer
     }
   }
 }
-
