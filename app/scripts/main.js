@@ -27,7 +27,7 @@ const game = new GameController(Dom.get('canvas'));
 //--------------------------------------------------------------------------
 window.onload = ()=>
 {
-  game.init({data: "assets/levels/map.json", assets: Images}).then(()=> {
+  game.init({data: 'assets/levels/map.json', assets: Images}).then(()=> {
 
     let { input } = game;
     let lPad = new Hammer(Dom.get('trackpad-left'), {});
@@ -73,5 +73,3 @@ window.onload = ()=>
     game.go('mainState');
   });
 };
-
-
