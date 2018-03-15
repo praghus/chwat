@@ -294,7 +294,7 @@ export default class Player extends Entity {
 
     restoreCheckpoint () {
         if (!this.respawnTimeout) {
-            const { camera } = this._game
+            const { camera, renderer } = this._game
             const { x, y } = this.lastPosition
             this.respawnTimeout = setTimeout(() => {
                 this.x = x
@@ -303,6 +303,7 @@ export default class Player extends Entity {
                 this.maxEnergy = 100
                 this.hurtTimeout = null
                 this.respawnTimeout = null
+                renderer.blackOverlay = 1
                 camera.center()
             }, 1000)
         }

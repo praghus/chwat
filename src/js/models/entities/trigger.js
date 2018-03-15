@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import {ENTITIES_TYPE, INPUTS, LAYERS} from '../../lib/constants'
+import { ENTITIES_TYPE, INPUTS, LAYERS } from '../../lib/constants'
 
 export default class Trigger extends Entity {
     constructor (obj, game) {
@@ -37,7 +37,18 @@ export default class Trigger extends Entity {
     update () {
         if (this.activated) {
             const { elements } = this._game
-            if (this.properties.clear) {
+            if (this.properties.produce) {
+                elements.add({
+                    type: ENTITIES_TYPE.ITEM,
+                    name: this.properties.produce_name || '',
+                    properties: {
+                        id: this.properties.produce
+                    },
+                    x: this.x + 16,
+                    y: this.y
+                })
+            }
+            else if (this.properties.clear) {
                 elements.clearInRange(this)
                 this.clearTiles()
             }

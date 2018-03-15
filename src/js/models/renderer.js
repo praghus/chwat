@@ -8,6 +8,7 @@ export default class Renderer {
         this._game = game
         this.frame = 0
         this.fps = 0
+        this.blackOverlay = 1
         this.then = performance.now()
         this.dynamicLights = true
         this.lightmask = []
@@ -40,7 +41,13 @@ export default class Renderer {
             }
         })
         this.renderHUD()
-
+        if (this.blackOverlay > 0) {
+            ctx.globalAlpha = this.blackOverlay
+            ctx.fillStyle = 'black'
+            ctx.fillRect(0, 0, resolutionX, resolutionY)
+            ctx.globalAlpha = 1
+            this.blackOverlay -= 0.01
+        }
         ctx.restore()
     }
 
