@@ -1,7 +1,4 @@
+.idea
 node_modules
 dist
-.tmp
-.sass-cache
-.idea
-bower_components
-test/bower_components
+npm-debug.log
