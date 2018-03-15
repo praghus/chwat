@@ -1,4 +1,4 @@
-# POSTHUMUS :skull:
-Canvas zombie shooter made with React and Redux
+# CHWAT
+Remake of a Commodore 64 adventure platformer - [Chwat](http://www.mobygames.com/game/chwat) 
 
-[Latest build](http://nihil.pl/posthumus2/)
+[Latest build](http://nihil.pl/chwat/)
