@@ -8,6 +8,7 @@ export default class Entity {
         this.id = obj.id
         this.x = obj.x
         this.y = obj.y
+        this.name = obj.name
         this.asset = obj.asset || null
         this.color = obj.color
         this.width = obj.width

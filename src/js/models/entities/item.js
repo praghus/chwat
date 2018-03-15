@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { ENTITIES_TYPE, INPUTS } from '../../lib/constants'
+import { ENTITIES_TYPE, FONTS, INPUTS } from '../../lib/constants'
 
 export default class Item extends Entity {
     constructor (obj, game) {
@@ -7,7 +7,7 @@ export default class Item extends Entity {
         this.width = 16
         this.height = 16
         this.types = {
-            key: {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
+            key: {x: 16, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             key_1: {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             tnt: {x: 16, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             crowbar: {x: 32, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
@@ -18,9 +18,20 @@ export default class Item extends Entity {
             weight: {x: 112, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             cure: {x: 128, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             handle: {x: 144, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
-            stick: {x: 0, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false}
+            stick: {x: 0, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
+            undefined: {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false}
         }
-        this.animation = this.types[this.properties.id]
+        this.animation = this.types[this.properties.id] || this.types.undefined
+    }
+    draw (ctx) {
+        const { camera, renderer } = this._game
+        const font = FONTS.FONT_SMALL
+        super.draw(ctx)
+        renderer.fontPrint(this.name,
+            this.x + camera.x + 8 - ((this.name.length / 2) * font.size),
+            this.y + camera.y - 8,
+            font
+        )
     }
 
     collide (element) {

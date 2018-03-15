@@ -1,18 +1,19 @@
 import {
-    Bat, Blob, Catapult, Checkpoint, Coin, Crusher, DarkMask, Dust, Item, JumpThrough, Lava,
-    LavaStone, Paddle, Particle, Player, Rock, Slope, SpiderTrap, Spikes, Torch, Trigger, Water
+    Bat, Blob, Bridge, Catapult, Checkpoint, Coin, Crusher, DarkMask,
+    Dust, Item, JumpThrough, Lava, LavaStone, Paddle, Particle, Player,
+    Rock, Slope, SpiderTrap, Spikes, Torch, Trigger, Water
 } from '../models/entities'
 
 export const NON_COLLIDE_INDEX = 32 * 8
-
-export const COLORS = {
-    PLAYER_LIGHT: 'rgba(255,255,255,0.1)'
-}
 
 export const FONTS = {
     FONT_SMALL: { name: 'font_small', size: 5},
     FONT_NORMAL: { name: 'font_normal', size: 8},
     FONT_BIG: { name: 'font_big', size: 16}
+}
+
+export const COLORS = {
+    PLAYER_LIGHT: 'rgba(255,255,255,0.1)'
 }
 
 export const LIGHTS = {
@@ -24,7 +25,6 @@ export const LAYERS = {
     BACKGROUND: 'background',
     FOREGROUND1: 'foreground1',
     FOREGROUND2: 'foreground2',
-    DARKS: 'darks',
     OBJECTS: 'objects'
 }
 
@@ -54,6 +54,7 @@ export const INPUT_KEYS = {
 export const ENTITIES_TYPE = {
     BAT: 'bat',
     BLOB: 'blob',
+    BRIDGE: 'bridge',
     CATAPULT: 'catapult',
     CHECKPOINT: 'checkpoint',
     COIN: 'coin',
@@ -91,6 +92,7 @@ export const ASSETS = {
     BAT: 'bat',
     BLOB: 'blob',
     BUBBLE: 'sbubble',
+    BRIDGE: 'bridge',
     CATAPULT: 'catapult',
     COIN: 'coin',
     CRUSHER: 'crusher',
@@ -113,6 +115,7 @@ export const ASSETS = {
 export const ENTITIES = [
     { type: ENTITIES_TYPE.BAT, family: ENTITIES_FAMILY.ENEMIES, model: Bat, asset: ASSETS.BAT },
     { type: ENTITIES_TYPE.BLOB, family: ENTITIES_FAMILY.ENEMIES, model: Blob, asset: ASSETS.BLOB },
+    { type: ENTITIES_TYPE.BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: Bridge, asset: ASSETS.BRIDGE },
     { type: ENTITIES_TYPE.CATAPULT, family: ENTITIES_FAMILY.MODIFIERS, model: Catapult, asset: ASSETS.CATAPULT },
     { type: ENTITIES_TYPE.CHECKPOINT, family: ENTITIES_FAMILY.MODIFIERS, model: Checkpoint },
     { type: ENTITIES_TYPE.COIN, family: ENTITIES_FAMILY.ITEMS, model: Coin, asset: ASSETS.COIN },

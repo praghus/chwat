@@ -31,9 +31,6 @@ export default class World {
                 this.objects = this.objects.concat(objects)
             }
         })
-
-        // create mask layer for shadows calculations
-        // this.data.darks = [...Array(width).keys()].map(() => Array(height))
     }
 
     getPlayer () {
@@ -41,7 +38,7 @@ export default class World {
     }
 
     getObjects () {
-        return this.objects
+        return this.objects.filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
     }
 
     inRange (x, y) {

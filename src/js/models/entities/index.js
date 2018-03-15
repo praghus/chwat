@@ -1,5 +1,6 @@
 export { default as Bat } from './bat'
 export { default as Blob } from './blob'
+export { default as Bridge } from './bridge'
 export { default as Catapult } from './catapult'
 export { default as Checkpoint } from './checkpoint'
 export { default as Coin } from './coin'
