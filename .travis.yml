@@ -1,9 +1,0 @@
-language: node_js
-notifications:
-  email:
-  - praghus@gmail.com
-node_js:
-  - "4.1"
-before_script:
-  - npm install -g gulp
-script: gulp build
