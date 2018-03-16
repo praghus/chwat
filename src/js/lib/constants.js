@@ -1,7 +1,7 @@
 import {
-    Bat, Blob, Bridge, Catapult, Checkpoint, Coin, Crusher, DarkMask,
-    Dust, Item, JumpThrough, Lava, LavaStone, Paddle, Particle, Player,
-    Rock, Slope, SpiderTrap, Spikes, Torch, Trigger, Water
+    Bat, Blob, Bridge, Catapult, Checkpoint, Coin, Crusher, DarkMask, Dust,
+    Item, JumpThrough, Lava, LavaStone, Paddle, Particle, Player, Rock, Slope,
+    SpiderTrap, Spikes, Switch, Torch, Trigger, Water, WoodenBridge
 } from '../models/entities'
 
 export const NON_COLLIDE_INDEX = 32 * 8
@@ -13,7 +13,12 @@ export const FONTS = {
 }
 
 export const COLORS = {
-    PLAYER_LIGHT: 'rgba(255,255,255,0.1)'
+    PLAYER_LIGHT: 'rgba(255,255,255,0.1)',
+    BLUE_SKY: '#73c3ff',
+    DARK_GREY: '#222',
+    BLACK: '#000',
+    DARK_RED: '#d00',
+    LIGHT_RED: '#f00'
 }
 
 export const LIGHTS = {
@@ -73,10 +78,12 @@ export const ENTITIES_TYPE = {
     SLOPE_RIGHT: 'slope_right',
     SPIDER_TRAP: 'spider_trap',
     SPIKES: 'spikes',
+    SWITCH: 'switch',
     TORCH_BIG: 'torch_big',
     TORCH_SMALL: 'torch_small',
     TRIGGER: 'trigger',
-    WATER: 'water'
+    WATER: 'water',
+    WOODEN_BRIDGE: 'wooden_bridge'
 }
 
 export const ENTITIES_FAMILY = {
@@ -107,6 +114,7 @@ export const ASSETS = {
     PLAYER: 'player',
     ROCK: 'rock',
     SPIDER_TRAP: 'spider_trap',
+    SWITCH: 'switch',
     TORCH: 'torches',
     TILES: 'tiles',
     WATER: 'water'
@@ -134,10 +142,12 @@ export const ENTITIES = [
     { type: ENTITIES_TYPE.SPIKES, family: ENTITIES_FAMILY.TRAPS, model: Spikes },
     { type: ENTITIES_TYPE.SLOPE_LEFT, family: ENTITIES_FAMILY.MODIFIERS, model: Slope },
     { type: ENTITIES_TYPE.SLOPE_RIGHT, family: ENTITIES_FAMILY.MODIFIERS, model: Slope },
+    { type: ENTITIES_TYPE.SWITCH, family: ENTITIES_FAMILY.MODIFIERS, model: Switch, asset: ASSETS.SWITCH },
     { type: ENTITIES_TYPE.TORCH_BIG, family: ENTITIES_FAMILY.MODIFIERS, model: Torch, asset: ASSETS.TORCH },
     { type: ENTITIES_TYPE.TORCH_SMALL, family: ENTITIES_FAMILY.MODIFIERS, model: Torch, asset: ASSETS.TORCH },
     { type: ENTITIES_TYPE.TRIGGER, family: ENTITIES_FAMILY.MODIFIERS, model: Trigger },
-    { type: ENTITIES_TYPE.WATER, family: ENTITIES_FAMILY.TRAPS, model: Water, asset: ASSETS.WATER }
+    { type: ENTITIES_TYPE.WATER, family: ENTITIES_FAMILY.TRAPS, model: Water, asset: ASSETS.WATER },
+    { type: ENTITIES_TYPE.WOODEN_BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: WoodenBridge }
 ]
 
 export function getEntityByType (entityType) {

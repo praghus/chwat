@@ -49,6 +49,9 @@ export default class Rock extends Entity {
                 camera.shake()
                 this.doShake = false
             }
+            if (this.expectedX > this.x) {
+                this.kill()
+            }
         }
     }
 }

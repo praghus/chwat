@@ -1,5 +1,5 @@
 import '../lib/illuminated'
-import { ASSETS, FONTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX } from '../lib/constants'
+import { ASSETS, COLORS, FONTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX } from '../lib/constants'
 
 const { DarkMask, Lighting, Vec2, RectangleObject } = window.illuminated
 
@@ -43,9 +43,8 @@ export default class Renderer {
         this.renderHUD()
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay
-            ctx.fillStyle = 'black'
+            ctx.fillStyle = COLORS.BLACK
             ctx.fillRect(0, 0, resolutionX, resolutionY)
-            ctx.globalAlpha = 1
             this.blackOverlay -= 0.01
         }
         ctx.restore()
@@ -54,17 +53,20 @@ export default class Renderer {
     fontPrint (text, x = -1, y = -1, font = FONTS.FONT_NORMAL) {
         const { ctx, assets, viewport } = this._game
         const { resolutionX, resolutionY } = viewport
+        const textLines = text.split('\n')
 
         x = x === -1 ? (resolutionX - text.length * font.size) / 2 : x
         y = y === -1 ? (resolutionY - font.size) / 2 : y
 
-        for (let i = 0; i < text.length; i++) {
-            const chr = text.charCodeAt(i)
-            ctx.drawImage(assets[font.name],
-                ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
-                font.size, font.size, x + (i * font.size), y, font.size, font.size
-            )
-        }
+        textLines.reverse().map((output, index) => {
+            for (let i = 0; i < output.length; i++) {
+                const chr = output.charCodeAt(i)
+                ctx.drawImage(assets[font.name],
+                    ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
+                    font.size, font.size, x + (i * font.size), y - (index * (font.size+1)), font.size, font.size
+                )
+            }
+        })
     }
 
     renderStaticBackground () {
@@ -73,7 +75,7 @@ export default class Renderer {
 
         if (!camera.underground && player.inDark === 0) {
             const cameraX = camera.x + 3300
-            ctx.fillStyle = '#73C3FF'
+            ctx.fillStyle = COLORS.BLUE_SKY
             ctx.fillRect(0, 0, resolutionX, resolutionY)
             if (cameraX < 0) {
                 ctx.drawImage(assets[ASSETS.MOUNTAINS], (cameraX / 15), 275 + (camera.y / 2))
@@ -109,7 +111,7 @@ export default class Renderer {
                     }
                     if (tile > 0) {
                         ctx.drawImage(assets[ASSETS.TILES],
-                            (((tile - 1) % spriteCols)) * spriteSize,
+                            ((tile - 1) % spriteCols) * spriteSize,
                             (Math.ceil(tile / spriteCols) - 1) * spriteSize,
                             spriteSize, spriteSize, x, y,
                             spriteSize, spriteSize)
@@ -171,18 +173,18 @@ export default class Renderer {
         const fpsIndicator = `FPS:${Math.round(fps)}`
 
         // FPS meter
-        this.fontPrint(fpsIndicator, resolutionX - (5 + fpsIndicator.length * 5), 4, FONTS.FONT_SMALL)
+        this.fontPrint(fpsIndicator, resolutionX - (5 + fpsIndicator.length * 5), 5, FONTS.FONT_SMALL)
 
         // energy
         ctx.save()
-        ctx.fillStyle = '#222'
+        ctx.fillStyle = COLORS.DARK_GREY
         ctx.fillRect(17, 4, 52, 5)
-        ctx.fillStyle = '#000'
+        ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(18, 5, 50, 3)
-        ctx.fillStyle = '#d60000'
+        ctx.fillStyle = COLORS.DARK_RED
         ctx.fillRect(18, 5, energy / 2, 3)
-        ctx.fillStyle = '#ff0000'
-        ctx.fillRect(18, 5, energy / 2, 1)
+        ctx.fillStyle = COLORS.LIGHT_RED
+        ctx.fillRect(18, 6, energy / 2, 1)
         ctx.restore()
 
         // lives
@@ -194,6 +196,7 @@ export default class Renderer {
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 26)
         items.map((item, index) => {
             if (item && item.properties) {
+                this.fontPrint(item.name, 4, (resolutionY - 20) + index * 9, FONTS.FONT_SMALL)
                 ctx.drawImage(
                     assets[ASSETS.ITEMS],
                     item.animation.x, item.animation.y,

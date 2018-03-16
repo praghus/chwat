@@ -1,6 +1,6 @@
 import SAT from 'sat'
 import { overlap, normalize } from '../lib/helpers'
-import { DIRECTIONS, ENTITIES_TYPE } from '../lib/constants'
+import {DIRECTIONS, ENTITIES_TYPE, FONTS} from '../lib/constants'
 
 export default class Entity {
     constructor (obj, game) {
@@ -31,6 +31,10 @@ export default class Entity {
         this.animation = null
         this.animFrame = 0
         this.animCount = 0
+        this.message = null
+        this.messageTimeout = null
+        this.messageDuration = 2000
+        this.hideMessage = this.hideMessage.bind(this)
     }
 
     onScreen () {
@@ -69,9 +73,11 @@ export default class Entity {
 
     draw (ctx) {
         const { camera, assets, renderer } = this._game
-        const asset = assets[this.asset]
-        const sprite = asset || assets['no_image']
+
         if (this.visible && this.onScreen()) {
+            const asset = assets[this.asset]
+            const sprite = asset || assets['no_image']
+
             if (this.shadowCaster && renderer.dynamicLights) {
                 renderer.addLightmaskElement(
                     this.x + camera.x, this.y + camera.y,
@@ -92,6 +98,14 @@ export default class Entity {
                     Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
                     this.width, this.height
                 )
+            }
+        }
+        if (this.message) {
+            const { text, x, y } = this.message
+            const posX = Math.floor(x + camera.x)
+            const posY = Math.floor(y + camera.y)
+            if (posX > 0 && posY >= 0) {
+                renderer.fontPrint(text, posX, posY, FONTS.FONT_SMALL)
             }
         }
     }
@@ -152,42 +166,12 @@ export default class Entity {
         this.dead = true
     }
 
-    // seesPlayer () {
-    //     const { player, world } = this._game
-    //     const { spriteSize } = world
-    //
-    //     const playerM = ((player.y + player.height) - (this.y + this.height)) / (player.x - this.x)
-    //
-    //     if (!player.canHurt() ||
-    //         (this.x < player.x && this.direction !== DIRECTIONS.RIGHT) ||
-    //         (this.x > player.x && this.direction !== DIRECTIONS.LEFT)) {
-    //         return false
-    //     }
-    //
-    //     if (playerM > -0.9 && playerM < 0.9) {
-    //         const steps = Math.abs(Math.floor(player.x / spriteSize) - Math.floor(this.x / spriteSize))
-    //         const from = player.x < this.x ? Math.floor(player.x / spriteSize) : Math.floor(this.x / spriteSize)
-    //         for (let X = from; X < from + steps; X++) {
-    //             if (world.isSolid(X, Math.round(this.y / spriteSize))) {
-    //                 return false
-    //             }
-    //         }
-    //         return true
-    //     }
-    //     return false
-    // }
-
     move () {
         const { world } = this._game
         const { spriteSize } = world
 
-        if (this.force.x > this.maxSpeed) {
-            this.force.x = this.maxSpeed
-        }
-
-        if (this.force.x < -this.maxSpeed) {
-            this.force.x = -this.maxSpeed
-        }
+        if (this.force.x > this.maxSpeed) this.force.x = this.maxSpeed
+        if (this.force.x < -this.maxSpeed) this.force.x = -this.maxSpeed
 
         this.expectedX = this.x + this.force.x
         this.expectedY = this.y + this.force.y
@@ -217,9 +201,7 @@ export default class Entity {
         for (let y = PY; y <= PH; y++) {
             for (let x = PX; x <= PW; x++) {
                 const data = world.tileData(x, y)
-                if (data.solid) {
-                    nearMatrix.push(data)
-                }
+                if (data.solid) nearMatrix.push(data)
             }
         }
 
@@ -256,14 +238,28 @@ export default class Entity {
         }
     }
 
-    particles (color, count) {
-        const { elements } = this._game
-        elements.emitParticles(count + (Math.random() * count), {
-            x: this.direction === DIRECTIONS.RIGHT ? this.x + this.width : this.x,
-            y: this.y,
-            width: 1,
-            height: 1,
-            color
-        })
+    showMessage (text, x = this.x, y = this.y) {
+        if (!this.messageTimeout) {
+            this.message = { text, x, y }
+            this.messageTimeout = setTimeout(this.hideMessage, this.messageDuration)
+        }
     }
+
+    hideMessage () {
+        if (this.messageTimeout) {
+            this.message = null
+            this.messageTimeout = null
+        }
+    }
+
+    // particles (color, count) {
+    //     const { elements } = this._game
+    //     elements.emitParticles(count + (Math.random() * count), {
+    //         x: this.direction === DIRECTIONS.RIGHT ? this.x + this.width : this.x,
+    //         y: this.y,
+    //         width: 1,
+    //         height: 1,
+    //         color
+    //     })
+    // }
 }

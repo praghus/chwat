@@ -38,7 +38,17 @@ export default class World {
     }
 
     getObjects () {
-        return this.objects.filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
+        const byType = (a, b) => {
+            if (
+                a.type === ENTITIES_TYPE.ROCK ||
+                a.type === ENTITIES_TYPE.SWITCH ||
+                a.type === ENTITIES_TYPE.TRIGGER
+            ) return 1
+            if (a.type < b.type) return -1
+            if (a.type > b.type) return 1
+            return 0
+        }
+        return this.objects.sort(byType).filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
     }
 
     inRange (x, y) {
@@ -46,10 +56,12 @@ export default class World {
     }
 
     get (l, x, y) {
-        if (!this.inRange(x, y)) {
-            return false
-        }
-        return this.data[l][x][y]
+        return this.inRange(x, y) && this.data[l][x][y]
+    }
+
+    put (l, x, y, value) {
+        if (!this.inRange(x, y)) return false
+        this.data[l][x][y] = value
     }
 
     tileData (x, y) {
