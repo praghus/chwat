@@ -24,14 +24,16 @@ export default class Item extends Entity {
         this.animation = this.types[this.properties.id] || this.types.undefined
     }
     draw (ctx) {
-        const { camera, renderer } = this._game
-        const font = FONTS.FONT_SMALL
-        super.draw(ctx)
-        renderer.fontPrint(this.name,
-            this.x + camera.x + 8 - ((this.name.length / 2) * font.size),
-            this.y + camera.y - 8,
-            font
-        )
+        if (this.onScreen()) {
+            const {camera, renderer} = this._game
+            const font = FONTS.FONT_SMALL
+            super.draw(ctx)
+            renderer.fontPrint(this.name,
+                this.x + camera.x + 8 - ((this.name.length / 2) * font.size),
+                this.y + camera.y - 8,
+                font
+            )
+        }
     }
 
     collide (element) {

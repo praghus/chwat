@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import {ENTITIES_TYPE, INPUTS} from '../../lib/constants'
+import { ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Bridge extends Entity {
     constructor (obj, game) {

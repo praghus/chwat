@@ -8,7 +8,6 @@ export default class Elements {
     constructor (entities, game) {
         this._game = game
         this.objects = []
-        // this.darks = []
         this.lights = {
             [LIGHTS.PLAYER_LIGHT]: new Lamp({
                 position: new Vec2(0, 0),
@@ -40,30 +39,17 @@ export default class Elements {
                 }
             }
         })
-        // this.darks.forEach((dark) => {
-        //     dark.update()
-        //     dark.overlapTest(player)
-        // })
     }
 
     create (obj) {
-        const entity = getEntityByType(obj.type)
+        const { type, family } = obj
+        const entity = getEntityByType(type)
         if (entity) {
             const Model = entity.model
-            return new Model(Object.assign({}, obj, entity), this._game)
+            return new Model(Object.assign({family}, obj, entity), this._game)
         }
         return null
     }
-
-    // setLight (id, color, distance = 300) {
-    //     this.lights[id] = new Lamp({
-    //         position: new Vec2(0, 0),
-    //         color,
-    //         distance,
-    //         samples: 1,
-    //         radius: 1
-    //     })
-    // }
 
     getLight (id) {
         return this.lights[id] || null
@@ -90,6 +76,7 @@ export default class Elements {
             if (
                 overlap(obj, rect) && !obj.dead &&
                 obj.type !== ENTITIES_TYPE.TRIGGER &&
+                obj.type !== ENTITIES_TYPE.WATER &&
                 obj.type !== ENTITIES_TYPE.ITEM
             ) {
                 obj.kill()
@@ -97,28 +84,28 @@ export default class Elements {
         })
     }
 
-    emitParticles (count, properties) {
-        const particle_count = count || 1
-        for (let i = 0; i < particle_count; i++) {
-            const props = Object.assign({}, properties)
-            props.x = properties.x + Math.random() * 8
-            this.add(Object.assign({}, {type: ENTITIES_TYPE.PARTICLE}, props))
-        }
-    }
-
-    particlesExplosion (x, y) {
-        const particle_count = 10 + (Math.random() * 5)
-        for (let i = 0; i < particle_count; i++) {
-            const r = (1 + Math.random())
-            this.add({
-                x: x,
-                y: y,
-                width: r,
-                height: r,
-                mass: 0.2,
-                type: ENTITIES_TYPE.PARTICLE,
-                color: `rgb(${128 + ((Math.random() * 32) * 4)}, 0, 0)`
-            })
-        }
-    }
+    // emitParticles (count, properties) {
+    //     const particle_count = count || 1
+    //     for (let i = 0; i < particle_count; i++) {
+    //         const props = Object.assign({}, properties)
+    //         props.x = properties.x + Math.random() * 8
+    //         this.add(Object.assign({}, {type: ENTITIES_TYPE.PARTICLE}, props))
+    //     }
+    // }
+    //
+    // particlesExplosion (x, y) {
+    //     const particle_count = 10 + (Math.random() * 5)
+    //     for (let i = 0; i < particle_count; i++) {
+    //         const r = (1 + Math.random())
+    //         this.add({
+    //             x: x,
+    //             y: y,
+    //             width: r,
+    //             height: r,
+    //             mass: 0.2,
+    //             type: ENTITIES_TYPE.PARTICLE,
+    //             color: `rgb(${128 + ((Math.random() * 32) * 4)}, 0, 0)`
+    //         })
+    //     }
+    // }
 }

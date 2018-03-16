@@ -7,14 +7,20 @@ export default class Blob extends Entity {
         this.direction = DIRECTIONS.LEFT
         this.maxSpeed = 0.5
         this.speed = 0.01
-        this.damage = 50
+        this.damage = 25
         this.solid = true
+        this.bounds = {
+            x: 5,
+            y: 10,
+            width: this.width - 10,
+            height: this.height - 10
+        }
         this.animations = {
-            DOWN_RIGHT: {x: 0, y: 0, w: 20, h: 20, frames: 6, fps: 10, loop: true},
-            DOWN_LEFT: {x: 0, y: 20, w: 20, h: 20, frames: 6, fps: 10, loop: true},
-            UP_RIGHT: {x: 0, y: 60, w: 20, h: 20, frames: 6, fps: 10, loop: true},
-            UP_LEFT: {x: 0, y: 40, w: 20, h: 20, frames: 6, fps: 10, loop: true},
-            JUMP: {x: 0, y: 80, w: 20, h: 20, frames: 2, fps: 5, loop: false}
+            DOWN_RIGHT: {x: 0, y: 0, w: 20, h: 20, frames: 6, fps: 12, loop: true},
+            DOWN_LEFT: {x: 0, y: 20, w: 20, h: 20, frames: 6, fps: 12, loop: true},
+            UP_RIGHT: {x: 0, y: 60, w: 20, h: 20, frames: 6, fps: 12, loop: true},
+            UP_LEFT: {x: 0, y: 40, w: 20, h: 20, frames: 6, fps: 12, loop: true},
+            JUMP: {x: 0, y: 80, w: 20, h: 20, frames: 2, fps: 6, loop: false}
         }
     }
 

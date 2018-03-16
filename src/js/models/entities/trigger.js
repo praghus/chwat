@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { ENTITIES_TYPE, INPUTS, LAYERS } from '../../lib/constants'
+import {ENTITIES_TYPE, INPUTS, LAYERS} from '../../lib/constants'
 
 export default class Trigger extends Entity {
     constructor (obj, game) {
@@ -10,26 +10,35 @@ export default class Trigger extends Entity {
     }
 
     collide (element) {
-        const { elements, input, player } = this._game
-        const { activator, related } = this.properties
+        const { elements, input, player, world } = this._game
+        const { activator, hint, offsetX, offsetY, related } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
-        if (triggered && element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
-            if (player.canUse(activator)) {
-                const a = player.useItem(activator)
-                this.activated = true
-                player.hideHint()
-                if (related) {
-                    const rel = elements.getById(related)
-                    rel.activated = true
-                    rel.trigger = this
-                    rel.activator = a
+        if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
+            if (triggered) {
+                if (player.canUse(activator)) {
+                    const a = player.useItem(activator)
+                    this.activated = true
+                    this.hideMessage()
+                    player.hideHint()
+                    if (related) {
+                        const rel = elements.getById(related)
+                        rel.activated = true
+                        rel.trigger = this
+                        rel.activator = a
+                    }
+                }
+                else {
+                    const item = elements.getByProperties('id', activator)
+                    player.showHint(item)
+                    this.hideMessage()
                 }
             }
-            else {
-                // const r = (player.x - (this.x + this.width / 2)) ^ 2 + (player.y - (this.y + this.height / 2)) ^ 2
-                const item = elements.getByProperties('id', this.properties.activator)
-                // console.log(r + ' in radius ', item);
-                player.showHint(item)
+            else if (hint && !player.hintTimeout) {
+                const [x, y] = [
+                    offsetX ? this.x + parseFloat(offsetX) * world.spriteSize : this.x,
+                    offsetY ? this.y + parseFloat(offsetY) * world.spriteSize : this.y
+                ]
+                this.showMessage(hint, x, y)
             }
         }
     }
@@ -37,18 +46,17 @@ export default class Trigger extends Entity {
     update () {
         if (this.activated) {
             const { elements } = this._game
-            if (this.properties.produce) {
+            const { clear, produce, produce_name } = this.properties
+            if (produce) {
                 elements.add({
                     type: ENTITIES_TYPE.ITEM,
-                    name: this.properties.produce_name || '',
-                    properties: {
-                        id: this.properties.produce
-                    },
+                    name: produce_name || '',
+                    properties: { id: produce },
                     x: this.x + 16,
                     y: this.y
                 })
             }
-            else if (this.properties.clear) {
+            if (clear) {
                 elements.clearInRange(this)
                 this.clearTiles()
             }

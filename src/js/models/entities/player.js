@@ -299,6 +299,7 @@ export default class Player extends Entity {
             this.respawnTimeout = setTimeout(() => {
                 this.x = x
                 this.y = y
+                this.inDark = 0
                 this.energy = 100
                 this.maxEnergy = 100
                 this.hurtTimeout = null
