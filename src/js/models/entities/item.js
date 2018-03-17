@@ -9,6 +9,7 @@ export default class Item extends Entity {
         this.types = {
             key: {x: 16, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             key_1: {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
+            knocker: {x: 32, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             tnt: {x: 16, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             crowbar: {x: 32, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             spade: {x: 48, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},

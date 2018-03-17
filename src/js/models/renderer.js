@@ -1,5 +1,7 @@
 import '../lib/illuminated'
-import { ASSETS, COLORS, FONTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX } from '../lib/constants'
+import {
+    ASSETS, COLORS, FONTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX, SPECIAL_TILES_INDEX
+} from '../lib/constants'
 
 const { DarkMask, Lighting, Vec2, RectangleObject } = window.illuminated
 
@@ -50,20 +52,17 @@ export default class Renderer {
         ctx.restore()
     }
 
-    fontPrint (text, x = -1, y = -1, font = FONTS.FONT_NORMAL) {
-        const { ctx, assets, viewport } = this._game
-        const { resolutionX, resolutionY } = viewport
+    fontPrint (text, x, y, font = FONTS.FONT_NORMAL) {
+        const { ctx, assets } = this._game
         const textLines = text.split('\n')
-
-        x = x === -1 ? (resolutionX - text.length * font.size) / 2 : x
-        y = y === -1 ? (resolutionY - font.size) / 2 : y
-
         textLines.reverse().map((output, index) => {
             for (let i = 0; i < output.length; i++) {
                 const chr = output.charCodeAt(i)
                 ctx.drawImage(assets[font.name],
                     ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
-                    font.size, font.size, x + (i * font.size), y - (index * (font.size+1)), font.size, font.size
+                    font.size, font.size,
+                    x + (i * font.size), y - (index * (font.size + 1)),
+                    font.size, font.size
                 )
             }
         })
@@ -72,7 +71,7 @@ export default class Renderer {
     renderStaticBackground () {
         const { ctx, camera, assets, viewport, player } = this._game
         const { resolutionX, resolutionY } = viewport
-
+        const fogBorder = 600
         if (!camera.underground && player.inDark === 0) {
             const cameraX = camera.x + 3300
             ctx.fillStyle = COLORS.BLUE_SKY
@@ -81,6 +80,17 @@ export default class Renderer {
                 ctx.drawImage(assets[ASSETS.MOUNTAINS], (cameraX / 15), 275 + (camera.y / 2))
                 ctx.drawImage(assets[ASSETS.FAR_FOREST], (cameraX / 10), 100 + (camera.y / 2))
                 ctx.drawImage(assets[ASSETS.FOREST], (cameraX / 5), (camera.y / 2))
+
+                if (camera.y > -fogBorder) {
+                    ctx.save()
+                    ctx.globalAlpha = ((fogBorder + camera.y) / fogBorder).toFixed(2) * 2
+                    ctx.fillRect(0, 0, resolutionX, resolutionY)
+                    //ctx.drawImage(assets[ASSETS.FOG], 0, 0, resolutionX, resolutionY)
+                    ctx.restore()
+                }
+            }
+            else {
+                ctx.drawImage(assets[ASSETS.SKY], 0, 0, resolutionX, resolutionY)
             }
         }
     }
@@ -106,7 +116,7 @@ export default class Renderer {
                 const tile = world.get(layer, _x, _y)
                 if (tile > 0) {
                     // illuminated.js light mask
-                    if (shouldCreateLightmask && tile > NON_COLLIDE_INDEX) {
+                    if (shouldCreateLightmask && tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
                         this.addLightmaskElement(x, y, spriteSize, spriteSize)
                     }
                     if (tile > 0) {

@@ -35,7 +35,7 @@ export default class Bridge extends Entity {
 
     update () {
         if (this.activated && !this.dead) {
-            this.animation = this.animations.DOWN;
+            this.animation = this.animations.DOWN
         }
     }
 }

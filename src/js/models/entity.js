@@ -1,6 +1,6 @@
 import SAT from 'sat'
 import { overlap, normalize } from '../lib/helpers'
-import {DIRECTIONS, ENTITIES_TYPE, FONTS} from '../lib/constants'
+import { canJumpThrough, DIRECTIONS, ENTITIES_TYPE, FONTS } from '../lib/constants'
 
 export default class Entity {
     constructor (obj, game) {
@@ -102,11 +102,11 @@ export default class Entity {
         }
         if (this.message) {
             const { text, x, y } = this.message
-            const posX = Math.floor(x + camera.x)
-            const posY = Math.floor(y + camera.y)
-            if (posX > 0 && posY >= 0) {
-                renderer.fontPrint(text, posX, posY, FONTS.FONT_SMALL)
-            }
+            renderer.fontPrint(text,
+                Math.floor(x + camera.x),
+                Math.floor(y + camera.y),
+                FONTS.FONT_SMALL
+            )
         }
     }
 
@@ -149,15 +149,12 @@ export default class Entity {
     }
 
     hit (damage) {
-        if (!this.dead && !this.dying) {
-            const { elements } = this._game
+        if (!this.dead) {
             this.force.x += -(this.force.x * 4)
             this.force.y = -2
             this.energy -= damage
             if (this.energy <= 0) {
-                this.dying = true
-                elements.add({type: ENTITIES_TYPE.COIN, x: this.x + 8, y: this.y})
-                elements.particlesExplosion(this.x, this.y)
+                this.kill()
             }
         }
     }
@@ -206,7 +203,8 @@ export default class Entity {
         }
 
         nearMatrix.forEach((tile) => {
-            if (overlap(nextX, tile)) {
+            const jumpThrough = canJumpThrough(tile.type)
+            if (!jumpThrough && overlap(nextX, tile)) {
                 if (this.force.x < 0) {
                     this.force.x = tile.x + tile.width - offsetX
                 }
@@ -215,11 +213,13 @@ export default class Entity {
                 }
             }
             if (overlap(nextY, tile)) {
-                // && tile !JumpThrough
-                if (this.force.y < 0) {
+                if (this.force.y < 0 && !jumpThrough) {
                     this.force.y = tile.y + tile.height - offsetY
                 }
-                else if (this.force.y > 0) {
+                else if (
+                    (this.force.y > 0 && !jumpThrough) ||
+                    (jumpThrough && this.y + this.height <= tile.y)
+                ) {
                     this.force.y = tile.y - offsetY - boundsHeight
                 }
             }
@@ -251,15 +251,4 @@ export default class Entity {
             this.messageTimeout = null
         }
     }
-
-    // particles (color, count) {
-    //     const { elements } = this._game
-    //     elements.emitParticles(count + (Math.random() * count), {
-    //         x: this.direction === DIRECTIONS.RIGHT ? this.x + this.width : this.x,
-    //         y: this.y,
-    //         width: 1,
-    //         height: 1,
-    //         color
-    //     })
-    // }
 }

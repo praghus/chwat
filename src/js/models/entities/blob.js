@@ -24,11 +24,11 @@ export default class Blob extends Entity {
         }
     }
 
-    collide (element) {
-        if (element.damage > 0 && element.family !== ENTITIES_FAMILY.ENEMIES) {
-            this.hit(element.damage)
-        }
-    }
+    // collide (element) {
+    //     if (element.damage > 0 && element.family !== ENTITIES_FAMILY.ENEMIES) {
+    //         this.hit(element.damage)
+    //     }
+    // }
 
     update () {
         if (this.onScreen()) {

@@ -75,6 +75,7 @@ export default class Elements {
         objects.map((obj) => {
             if (
                 overlap(obj, rect) && !obj.dead &&
+                obj.type !== ENTITIES_TYPE.BALLOON &&
                 obj.type !== ENTITIES_TYPE.TRIGGER &&
                 obj.type !== ENTITIES_TYPE.WATER &&
                 obj.type !== ENTITIES_TYPE.ITEM
@@ -84,28 +85,12 @@ export default class Elements {
         })
     }
 
-    // emitParticles (count, properties) {
-    //     const particle_count = count || 1
-    //     for (let i = 0; i < particle_count; i++) {
-    //         const props = Object.assign({}, properties)
-    //         props.x = properties.x + Math.random() * 8
-    //         this.add(Object.assign({}, {type: ENTITIES_TYPE.PARTICLE}, props))
-    //     }
-    // }
-    //
-    // particlesExplosion (x, y) {
-    //     const particle_count = 10 + (Math.random() * 5)
-    //     for (let i = 0; i < particle_count; i++) {
-    //         const r = (1 + Math.random())
-    //         this.add({
-    //             x: x,
-    //             y: y,
-    //             width: r,
-    //             height: r,
-    //             mass: 0.2,
-    //             type: ENTITIES_TYPE.PARTICLE,
-    //             color: `rgb(${128 + ((Math.random() * 32) * 4)}, 0, 0)`
-    //         })
-    //     }
-    // }
+    emitParticles (count, properties) {
+        const particle_count = count || 1
+        for (let i = 0; i < particle_count; i++) {
+            const props = Object.assign({}, properties)
+            props.x = properties.x + Math.random() * 8
+            this.add(Object.assign({}, {type: ENTITIES_TYPE.PARTICLE}, props))
+        }
+    }
 }

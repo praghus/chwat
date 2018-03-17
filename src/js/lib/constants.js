@@ -1,10 +1,12 @@
 import {
-    Bat, Blob, Bridge, Catapult, Checkpoint, Coin, Crusher, DarkMask, Dust,
+    AirBalloon, Bat, Blob, Bridge, Catapult, Checkpoint, Coin, Crusher, DarkMask, Dust,
     Item, JumpThrough, Lava, LavaStone, Paddle, Particle, Player, Rock, Slope,
     SpiderTrap, Spikes, Switch, Torch, Trigger, Water, WoodenBridge
 } from '../models/entities'
 
-export const NON_COLLIDE_INDEX = 32 * 8
+export const NON_COLLIDE_INDEX = 256
+export const SPECIAL_TILES_INDEX = 1024
+export const JUMP_THROUGH_TILES = [1088, 1089]
 
 export const FONTS = {
     FONT_SMALL: { name: 'font_small', size: 5},
@@ -57,6 +59,7 @@ export const INPUT_KEYS = {
 }
 
 export const ENTITIES_TYPE = {
+    BALLOON: 'balloon',
     BAT: 'bat',
     BLOB: 'blob',
     BRIDGE: 'bridge',
@@ -96,6 +99,7 @@ export const ENTITIES_FAMILY = {
 }
 
 export const ASSETS = {
+    BALLOON: 'air_balloon',
     BAT: 'bat',
     BLOB: 'blob',
     BUBBLE: 'sbubble',
@@ -105,6 +109,7 @@ export const ASSETS = {
     CRUSHER: 'crusher',
     DUST: 'dust',
     FAR_FOREST: 'bg3',
+    FOG: 'bg5',
     FOREST: 'bg4',
     FRAMES: 'frames',
     HEART: 'heart',
@@ -113,6 +118,7 @@ export const ASSETS = {
     PADDLE: 'paddle',
     PLAYER: 'player',
     ROCK: 'rock',
+    SKY: 'bg6',
     SPIDER_TRAP: 'spider_trap',
     SWITCH: 'switch',
     TORCH: 'torches',
@@ -121,6 +127,7 @@ export const ASSETS = {
 }
 
 export const ENTITIES = [
+    { type: ENTITIES_TYPE.BALLOON, family: ENTITIES_FAMILY.MODIFIERS, model: AirBalloon, asset: ASSETS.BALLOON },
     { type: ENTITIES_TYPE.BAT, family: ENTITIES_FAMILY.ENEMIES, model: Bat, asset: ASSETS.BAT },
     { type: ENTITIES_TYPE.BLOB, family: ENTITIES_FAMILY.ENEMIES, model: Blob, asset: ASSETS.BLOB },
     { type: ENTITIES_TYPE.BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: Bridge, asset: ASSETS.BRIDGE },
@@ -156,4 +163,8 @@ export function getEntityByType (entityType) {
 
 export function getKeyPressed (key) {
     return Object.keys(INPUT_KEYS).find((input) => INPUT_KEYS[input].indexOf(key) !== -1)
+}
+
+export function canJumpThrough (tile) {
+    return JUMP_THROUGH_TILES.indexOf(tile) !== -1
 }
