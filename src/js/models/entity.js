@@ -66,14 +66,14 @@ export default class Entity {
     }
 
     draw (ctx) {
-        const { camera, assets, renderer } = this._scene
+        const { assets, camera, dynamicLights, addLightmaskElement } = this._scene
 
         if (this.visible && this.onScreen()) {
             const asset = assets[this.asset]
             const sprite = asset || assets['no_image']
 
-            if (this.shadowCaster && renderer.dynamicLights) {
-                renderer.addLightmaskElement(
+            if (this.shadowCaster && dynamicLights) {
+                addLightmaskElement(
                     this.x + camera.x, this.y + camera.y,
                     this.width, this.height
                 )
@@ -94,19 +94,20 @@ export default class Entity {
                 )
             }
         }
-        if (this.bounds) {
-            ctx.save()
-            ctx.strokeStyle = '#ff0000'
-            ctx.beginPath()
-
-            ctx.moveTo(this.x + camera.x + this.bounds.x, this.y + camera.y + this.bounds.y)
-            ctx.lineTo(this.x + camera.x + this.bounds.x + this.bounds.width, this.y + camera.y + this.bounds.y)
-            ctx.lineTo(this.x + camera.x + this.bounds.x + this.bounds.width, this.y + camera.y + this.bounds.y + this.bounds.height)
-            ctx.lineTo(this.x + camera.x + this.bounds.x, this.y + camera.y + this.bounds.y + this.bounds.height)
-            ctx.lineTo(this.x + camera.x + this.bounds.x, this.y + camera.y + this.bounds.y)
-            ctx.stroke()
-            ctx.restore()
-        }
+        // if (this.bounds) {
+        //     const bx = this.x + camera.x + this.bounds.x
+        //     const by = this.y + camera.y + this.bounds.y
+        //     ctx.save()
+        //     ctx.strokeStyle = '#ff0000'
+        //     ctx.beginPath()
+        //     ctx.moveTo(bx, by)
+        //     ctx.lineTo(bx + this.bounds.width, by)
+        //     ctx.lineTo(bx + this.bounds.width, by + this.bounds.height)
+        //     ctx.lineTo(bx, by + this.bounds.height)
+        //     ctx.lineTo(bx, by)
+        //     ctx.stroke()
+        //     ctx.restore()
+        // }
         if (this.message) {
             const { fontPrint } = this._scene
             const { text, x, y } = this.message

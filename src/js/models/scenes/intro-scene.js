@@ -1,5 +1,5 @@
 import '../../lib/illuminated'
-import Scene from './scene'
+import Scene from '../scene'
 
 export default class IntroScene extends Scene {
     constructor (game) {

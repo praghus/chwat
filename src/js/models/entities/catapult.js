@@ -28,6 +28,7 @@ export default class Catapult extends Entity {
                     this.activated = false
                     this.timeout = null
                     elements.add(Object.assign(this.activator, {
+                        dead: false,
                         x: this.x - 48,
                         y: this.y
                     }))

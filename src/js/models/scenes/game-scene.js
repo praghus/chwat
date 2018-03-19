@@ -1,5 +1,5 @@
 import '../../lib/illuminated'
-import Scene from './scene'
+import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
 import { ASSETS, COLORS, FONTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX, SPECIAL_TILES_INDEX } from '../../lib/constants'
 import { Camera, Elements, World } from '../index'
@@ -16,6 +16,7 @@ export default class GameScene extends Scene {
         this.player = this.elements.create(this.world.getPlayer())
         this.camera = new Camera(this)
         this.camera.setFollow(this.player)
+        this.addLightmaskElement = this.addLightmaskElement.bind(this)
     }
 
     update (nextProps) {
@@ -52,7 +53,9 @@ export default class GameScene extends Scene {
                     : this.renderLayer(layer)
             }
         })
+
         this.renderHUD()
+
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay
             ctx.fillStyle = COLORS.BLACK
@@ -128,19 +131,9 @@ export default class GameScene extends Scene {
     renderObjects () {
         const { ctx, elements } = this
         const { objects } = elements
-        // todo: render order
+        // todo: render elements in order
         objects.forEach((obj) => obj.draw(ctx))
         this.player.draw(ctx)
-    }
-
-    /**
-     * illuminated.js
-     */
-    addLightmaskElement (x, y, width, height) {
-        this.lightmask.push(new RectangleObject({
-            topleft: new Vec2(x, y),
-            bottomright: new Vec2(x + width, y + height)
-        }))
     }
 
     renderLightingEffect () {
@@ -207,5 +200,15 @@ export default class GameScene extends Scene {
                 )
             }
         })
+    }
+
+    /**
+     * illuminated.js
+     */
+    addLightmaskElement (x, y, width, height) {
+        this.lightmask.push(new RectangleObject({
+            topleft: new Vec2(x, y),
+            bottomright: new Vec2(x + width, y + height)
+        }))
     }
 }

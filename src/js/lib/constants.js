@@ -6,7 +6,7 @@ import {
 
 export const NON_COLLIDE_INDEX = 256
 export const SPECIAL_TILES_INDEX = 1024
-export const JUMP_THROUGH_TILES = [1088, 1089]
+export const JUMP_THROUGH_TILES = [836, 868, 1088, 1089]
 
 export const STAGES = {
     INTRO: 'INTRO',

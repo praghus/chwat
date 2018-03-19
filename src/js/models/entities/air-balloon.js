@@ -24,7 +24,7 @@ export default class AirBalloon extends Entity {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { camera, player, renderer } = this._scene
+            const { camera, player } = this._scene
             this.position = this.position === this.positions.CASTLE
                 ? this.positions.ISLE
                 : this.positions.CASTLE
@@ -33,7 +33,8 @@ export default class AirBalloon extends Entity {
             this.y = this.position.y
             player.x = this.position.player.x
             player.y = this.position.player.y
-            renderer.blackOverlay = 1
+            player.checkpoint()
+            this._scene.blackOverlay = 1
             camera.center()
         }
     }

@@ -1,4 +1,4 @@
-import { FONTS } from '../../lib/constants'
+import { FONTS } from '../lib/constants'
 
 export default class Scene {
     constructor (game) {
@@ -12,6 +12,7 @@ export default class Scene {
         this.frameTime = null
         this.frameStart = performance.now()
         this.then = performance.now()
+        this.blackOverlay = 1
         this.countFPS = this.countFPS.bind(this)
         this.fontPrint = this.fontPrint.bind(this)
     }
@@ -27,13 +28,7 @@ export default class Scene {
     }
 
     draw () {
-        const { ctx, viewport } = this
-        const { resolutionX, resolutionY, scale } = viewport
-        ctx.imageSmoothingEnabled = false
-        ctx.save()
-        ctx.scale(scale, scale)
-        ctx.clearRect(0, 0, resolutionX, resolutionY)
-        ctx.restore()
+        // draw
     }
 
     fontPrint (text, x, y, font = FONTS.FONT_NORMAL) {

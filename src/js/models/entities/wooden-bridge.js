@@ -37,12 +37,12 @@ export default class WoodenBridge extends Entity {
 
     update () {
         if (this.activated) {
-            const { renderer, world } = this._scene
+            const { world } = this._scene
             this.activators.map((item) => item.kill())
             world.put(LAYERS.MAIN, 443, 15, 868)
             world.put(LAYERS.MAIN, 444, 15, 868)
             world.put(LAYERS.MAIN, 445, 15, 868)
-            renderer.blackOverlay = 1
+            this._scene.blackOverlay = 1
             this.dead = true
         }
         else {

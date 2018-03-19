@@ -7,9 +7,11 @@ export default class Item extends Entity {
         this.width = 16
         this.height = 16
         this.types = {
+            coin: {x: 0, y: 48, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             key: {x: 16, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             key_1: {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             knocker: {x: 32, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
+            map: {x: 48, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             tnt: {x: 16, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             crowbar: {x: 32, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             spade: {x: 48, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
@@ -20,6 +22,8 @@ export default class Item extends Entity {
             cure: {x: 128, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             handle: {x: 144, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             stick: {x: 0, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
+            sulfur: {x: 0, y: 32, w: 16, h: 16, frames: 1, fps: 0, loop: false},
+            scythe: {x: 16, y: 32, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             undefined: {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false}
         }
         this.animation = this.types[this.properties.id] || this.types.undefined
