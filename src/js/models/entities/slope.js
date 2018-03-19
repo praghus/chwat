@@ -1,10 +1,10 @@
 import SAT from 'sat'
 import Entity from '../entity'
-import { ENTITIES_TYPE, INPUTS } from '../../lib/constants'
+import { ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Slope extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = false
         this.visible = false
         if (this.type === ENTITIES_TYPE.SLOPE_RIGHT) {
@@ -24,8 +24,8 @@ export default class Slope extends Entity {
     }
 
     collide (element) {
-        if (!this.dead && element.solid && element.type !== ENTITIES_TYPE.BLOB) {
-            const { input } = this._game
+        if (!this.dead && element.solid && element.family !== ENTITIES_FAMILY.ENEMIES) {
+            const { input } = this._scene
             const { x, width, height } = element
             const expectedY = this.type === ENTITIES_TYPE.SLOPE_RIGHT
                 ? (this.y - height) + this.height - (((x + width) - this.x) * (this.height / this.width))

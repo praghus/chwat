@@ -1,8 +1,8 @@
 import Entity from '../entity'
 
 export default class Spikes extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.damage = 1000
         this.canAnimate = true
         this.shineDelay = 2000
@@ -12,7 +12,7 @@ export default class Spikes extends Entity {
     }
 
     draw (ctx) {
-        const { assets, camera } = this._game
+        const { assets, camera } = this._scene
         ctx.drawImage(assets.shine,
             this.animation.x + this.animFrame * this.animation.w, this.animation.y,
             this.animation.w, this.animation.h,

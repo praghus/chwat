@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class Dust extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.width = 8
         this.height = 8
         this.animations = {

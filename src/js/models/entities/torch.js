@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Torch extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.width = 8
         this.height = 8
         this.animations = {

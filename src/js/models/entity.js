@@ -1,23 +1,12 @@
 import SAT from 'sat'
 import { overlap, normalize } from '../lib/helpers'
-import {DIRECTIONS, ENTITIES_TYPE, FONTS} from '../lib/constants'
+import { canJumpThrough, FONTS } from '../lib/constants'
 
 export default class Entity {
-    constructor (obj, game) {
-        this._game = game
-        this.id = obj.id
-        this.x = obj.x
-        this.y = obj.y
-        this.name = obj.name
-        this.asset = obj.asset || null
-        this.color = obj.color
-        this.width = obj.width
-        this.height = obj.height
-        this.family = obj.family || null
-        this.type = obj.type
-        this.properties = obj.properties
-        this.direction = obj.direction || DIRECTIONS.LEFT
+    constructor (obj, scene) {
+        this._scene = scene
         this.force = { x: 0, y: 0 }
+        this.bounds = null
         this.speed = 0
         this.maxSpeed = 1
         this.activated = false
@@ -34,52 +23,57 @@ export default class Entity {
         this.message = null
         this.messageTimeout = null
         this.messageDuration = 2000
+        this.vectorMask = null
+        // map all object properties
+        Object.keys(obj).map((prop) => {
+            this[prop] = obj[prop]
+        })
         this.hideMessage = this.hideMessage.bind(this)
     }
 
     onScreen () {
-        const { world, camera, viewport } = this._game
+        const { world, camera, viewport } = this._scene
         const { resolutionX, resolutionY } = viewport
+        const { x, y, width, height } = this
         const { spriteSize } = world
 
-        return this.x + this.width + spriteSize > -camera.x &&
-                this.x - spriteSize < -camera.x + resolutionX &&
-                this.y - spriteSize < -camera.y + resolutionY &&
-                this.y + this.height + spriteSize > -camera.y
+        return (
+            x + width + spriteSize > -camera.x &&
+            y + height + spriteSize > -camera.y &&
+            x - spriteSize < -camera.x + resolutionX &&
+            y - spriteSize < -camera.y + resolutionY
+        )
     }
 
-    animate (animation) {
-        const entity = this
+    animate (animation = this.animation) {
+        this.animFrame = this.animFrame || 0
+        this.animCount = this.animCount || 0
 
-        animation = animation || entity.animation
-        entity.animFrame = entity.animFrame || 0
-        entity.animCount = entity.animCount || 0
-
-        if (entity.animation !== animation) {
-            entity.animation = animation
-            entity.animFrame = 0
-            entity.animCount = 0
+        if (this.animation !== animation) {
+            this.animation = animation
+            this.animFrame = 0
+            this.animCount = 0
         }
-        else if (++(entity.animCount) === Math.round(60 / animation.fps)) {
-            if (entity.animFrame <= entity.animation.frames && animation.loop) {
-                entity.animFrame = normalize(entity.animFrame + 1, 0, entity.animation.frames)
+        else if (++(this.animCount) === Math.round(60 / animation.fps)) {
+            if (this.animFrame <= this.animation.frames && animation.loop) {
+                this.animFrame = normalize(this.animFrame + 1, 0, this.animation.frames)
             }
-            else if (entity.animFrame < entity.animation.frames - 1 && !animation.loop) {
-                entity.animFrame += 1
+            else if (this.animFrame < this.animation.frames - 1 && !animation.loop) {
+                this.animFrame += 1
             }
-            entity.animCount = 0
+            this.animCount = 0
         }
     }
 
     draw (ctx) {
-        const { camera, assets, renderer } = this._game
+        const { assets, camera, dynamicLights, addLightmaskElement } = this._scene
 
         if (this.visible && this.onScreen()) {
             const asset = assets[this.asset]
             const sprite = asset || assets['no_image']
 
-            if (this.shadowCaster && renderer.dynamicLights) {
-                renderer.addLightmaskElement(
+            if (this.shadowCaster && dynamicLights) {
+                addLightmaskElement(
                     this.x + camera.x, this.y + camera.y,
                     this.width, this.height
                 )
@@ -100,13 +94,28 @@ export default class Entity {
                 )
             }
         }
+        // if (this.bounds) {
+        //     const bx = this.x + camera.x + this.bounds.x
+        //     const by = this.y + camera.y + this.bounds.y
+        //     ctx.save()
+        //     ctx.strokeStyle = '#ff0000'
+        //     ctx.beginPath()
+        //     ctx.moveTo(bx, by)
+        //     ctx.lineTo(bx + this.bounds.width, by)
+        //     ctx.lineTo(bx + this.bounds.width, by + this.bounds.height)
+        //     ctx.lineTo(bx, by + this.bounds.height)
+        //     ctx.lineTo(bx, by)
+        //     ctx.stroke()
+        //     ctx.restore()
+        // }
         if (this.message) {
+            const { fontPrint } = this._scene
             const { text, x, y } = this.message
-            const posX = Math.floor(x + camera.x)
-            const posY = Math.floor(y + camera.y)
-            if (posX > 0 && posY >= 0) {
-                renderer.fontPrint(text, posX, posY, FONTS.FONT_SMALL)
-            }
+            fontPrint(text,
+                Math.floor(x + camera.x),
+                Math.floor(y + camera.y),
+                FONTS.FONT_SMALL
+            )
         }
     }
 
@@ -115,11 +124,16 @@ export default class Entity {
     }
 
     getBounds () {
-        return this.bounds || {
-            x: 0,
-            y: 0,
-            width: this.width,
-            height: this.height
+        const { width, height } = this
+        return this.bounds || {x: 0, y: 0, width, height}
+    }
+
+    getBoundingRect () {
+        const {x, y, width, height} = this.getBounds()
+        return {
+            x: this.x + x,
+            y: this.y + y,
+            width, height
         }
     }
 
@@ -135,12 +149,12 @@ export default class Entity {
     }
 
     overlapTest (obj) {
-        if (!this.dead && overlap(this, obj) && (this.onScreen() || this.activated)) {
-            // poligon collision checking
-            if (SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())) {
-                this.collide(obj)
-                obj.collide(this)
-            }
+        if (!this.dead && (this.onScreen() || this.activated) &&
+            overlap(this.getBoundingRect(), obj.getBoundingRect()) &&
+            SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())
+        ) {
+            this.collide(obj)
+            obj.collide(this)
         }
     }
 
@@ -149,15 +163,12 @@ export default class Entity {
     }
 
     hit (damage) {
-        if (!this.dead && !this.dying) {
-            const { elements } = this._game
+        if (!this.dead) {
             this.force.x += -(this.force.x * 4)
             this.force.y = -2
             this.energy -= damage
             if (this.energy <= 0) {
-                this.dying = true
-                elements.add({type: ENTITIES_TYPE.COIN, x: this.x + 8, y: this.y})
-                elements.particlesExplosion(this.x, this.y)
+                this.kill()
             }
         }
     }
@@ -167,7 +178,7 @@ export default class Entity {
     }
 
     move () {
-        const { world } = this._game
+        const { world } = this._scene
         const { spriteSize } = world
 
         if (this.force.x > this.maxSpeed) this.force.x = this.maxSpeed
@@ -206,7 +217,8 @@ export default class Entity {
         }
 
         nearMatrix.forEach((tile) => {
-            if (overlap(nextX, tile)) {
+            const jumpThrough = canJumpThrough(tile.type)
+            if (!jumpThrough && overlap(nextX, tile)) {
                 if (this.force.x < 0) {
                     this.force.x = tile.x + tile.width - offsetX
                 }
@@ -215,11 +227,13 @@ export default class Entity {
                 }
             }
             if (overlap(nextY, tile)) {
-                // && tile !JumpThrough
-                if (this.force.y < 0) {
+                if (this.force.y < 0 && !jumpThrough) {
                     this.force.y = tile.y + tile.height - offsetY
                 }
-                else if (this.force.y > 0) {
+                else if (
+                    (this.force.y > 0 && !jumpThrough) ||
+                    (jumpThrough && this.y + this.height <= tile.y)
+                ) {
                     this.force.y = tile.y - offsetY - boundsHeight
                 }
             }
@@ -251,15 +265,4 @@ export default class Entity {
             this.messageTimeout = null
         }
     }
-
-    // particles (color, count) {
-    //     const { elements } = this._game
-    //     elements.emitParticles(count + (Math.random() * count), {
-    //         x: this.direction === DIRECTIONS.RIGHT ? this.x + this.width : this.x,
-    //         y: this.y,
-    //         width: 1,
-    //         height: 1,
-    //         color
-    //     })
-    // }
 }

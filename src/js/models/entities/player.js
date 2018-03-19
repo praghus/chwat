@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { ASSETS, DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Player extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.direction = DIRECTIONS.RIGHT
         this.inDark = 0
         this.lives = 3
@@ -19,9 +19,9 @@ export default class Player extends Entity {
         this.hintTimeout = null
         this.respawnTimeout = null
         this.bounds = {
-            x: 8,
+            x: 10,
             y: 8,
-            width: this.width - 16,
+            width: this.width - 20,
             height: this.height - 8
         }
         this.lastPosition = {
@@ -54,7 +54,7 @@ export default class Player extends Entity {
         ctx.restore()
 
         if (this.hint) {
-            const { assets, camera } = this._game
+            const { assets, camera } = this._scene
             const { animation, animFrame } = this.hint
             ctx.drawImage(
                 assets[ASSETS.BUBBLE],
@@ -71,8 +71,7 @@ export default class Player extends Entity {
     }
 
     update () {
-        const { input, world } = this._game
-
+        const { input, world } = this._scene
         if (!this.dead) {
             if (this.canMove()) {
                 if (input[INPUTS.INPUT_LEFT]) {
@@ -190,9 +189,10 @@ export default class Player extends Entity {
         }, 3000)
     }
 
+    // todo: move to parent
     addDust (direction) {
         if (!this.onFloor) return
-        const { elements } = this._game
+        const { elements } = this._scene
         elements.add({
             type: ENTITIES_TYPE.DUST,
             x: direction === DIRECTIONS.RIGHT
@@ -244,9 +244,10 @@ export default class Player extends Entity {
 
     getItem (item) {
         if (this.canTake()) {
-            const { elements } = this._game
+            const { elements } = this._scene
             if (this.items[1]) {
                 elements.add(Object.assign(this.items[1], {
+                    dead: false,
                     x: this.x + 16,
                     y: this.y
                 }))
@@ -294,7 +295,7 @@ export default class Player extends Entity {
 
     restoreCheckpoint () {
         if (!this.respawnTimeout) {
-            const { camera, renderer } = this._game
+            const { camera } = this._scene
             const { x, y } = this.lastPosition
             this.respawnTimeout = setTimeout(() => {
                 this.x = x
@@ -304,7 +305,7 @@ export default class Player extends Entity {
                 this.maxEnergy = 100
                 this.hurtTimeout = null
                 this.respawnTimeout = null
-                renderer.blackOverlay = 1
+                this._scene.blackOverlay = 1
                 camera.center()
             }, 1000)
         }

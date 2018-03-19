@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Coin extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.width = 8
         this.height = 8
         this.animation = {x: 0, y: 0, w: 8, h: 8, frames: 10, fps: 30, loop: true}
@@ -11,7 +11,7 @@ export default class Coin extends Entity {
     }
 
     collide (element) {
-        const { player } = this._game
+        const { player } = this._scene
         if (element.type === ENTITIES_TYPE.PLAYER) {
             this.dead = true
             player.coinCollect += 1
@@ -19,7 +19,7 @@ export default class Coin extends Entity {
     }
 
     update () {
-        const { gravity } = this._game.world
+        const { gravity } = this._scene.world
         if (this.onScreen()) {
             this.animate()
             this.force.y += gravity

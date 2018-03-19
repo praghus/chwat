@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { overlap } from '../../lib/helpers'
 
 export default class Particle extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         const dir = Math.random() * 2 * Math.PI
         this.maxSpeed = 0.5 + Math.random() * 1
         this.force = obj.force || {
@@ -38,7 +38,7 @@ export default class Particle extends Entity {
     }
 
     draw (ctx) {
-        const { camera } = this._game
+        const { camera } = this._scene
         ctx.save()
         ctx.fillStyle = this.color
         ctx.beginPath()

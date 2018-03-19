@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Catapult extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
         this.animations = {
             UP: {x: 0, y: 0, w: 64, h: 16, frames: 1, fps: 0, loop: false},
@@ -15,7 +15,7 @@ export default class Catapult extends Entity {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { elements } = this._game
+            const { elements } = this._scene
 
             this.trigger.activated = false
             this.trigger.dead = false
@@ -28,6 +28,7 @@ export default class Catapult extends Entity {
                     this.activated = false
                     this.timeout = null
                     elements.add(Object.assign(this.activator, {
+                        dead: false,
                         x: this.x - 48,
                         y: this.y
                     }))

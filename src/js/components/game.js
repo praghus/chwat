@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Canvas from './canvas'
-import levelData from '../../assets/levels/map.json'
-import { Camera, Elements, World, Renderer } from '../models'
-import { getKeyPressed } from '../lib/constants'
+import { IntroScene, GameScene } from '../models/scenes'
+import { getKeyPressed, STAGES } from '../lib/constants'
 
 const propTypes = {
     assets: PropTypes.object.isRequired,
@@ -19,70 +18,54 @@ const propTypes = {
 export default class Game extends Component {
     constructor (props) {
         super(props)
-        this.camera = null
-        this.elements = null
-        this.renderer = null
-        this.player = null
-        this.world = null
-        this.assets = {}
-        this.wrapper = null
-        this.loadedCount = 0
-        this.fps = 0
-        this.lastLoop = null
-        this.frameTime = null
-        this.then = performance.now()
-        this.assetsLoaded = false
         this.viewport = props.viewport
         this.ticker = props.ticker
         this.assets = props.assets
         this.playSound = props.playSound.bind(this)
+        this.wrapper = null
+        this.loadedCount = 0
+        this.input = null
+        this.assetsLoaded = false
+        this.currentStage = null
+        this.stage = null
+        this.stages = null
     }
 
     componentDidMount () {
-        const { onKey, onMouse } = this.props
-        this.world = new World(levelData)
-        this.camera = new Camera(this)
-        this.renderer = new Renderer(this)
-        this.elements = new Elements(this.world.getObjects(), this)
-        this.player = this.elements.create(this.world.getPlayer())
-        this.camera.center()
-
-        this.wrapper.addEventListener('click', onMouse, false)
+        const { onKey, startTicker } = this.props
+        this.ctx = this.canvas.context
+        this.stages = {
+            [STAGES.INTRO]: new IntroScene(this),
+            [STAGES.GAME]: new GameScene(this)
+        }
+        // this.wrapper.addEventListener('click', onMouse, false)
         document.addEventListener('keydown', ({code}) => onKey(getKeyPressed(code), true))
         document.addEventListener('keyup', ({code}) => onKey(getKeyPressed(code), false))
 
-        this.ctx = this.canvas.context
-        this.props.startTicker()
+        this.setStage(STAGES.GAME)
+
+        startTicker()
     }
 
     componentWillReceiveProps (nextProps) {
-        this.assets = nextProps.assets
-        this.ticker = nextProps.ticker
-        this.input = nextProps.input.keyPressed
-        this.viewport = nextProps.viewport
-        this.frameStart = performance.now()
-
-        const { interval } = this.ticker
-        const delta = this.frameStart - this.then
-
-        // obey 60 fps limit
-        if (delta > interval) {
-            this.elements.update()
-            this.camera.update()
-            this.player.update()
-            this.then = this.frameStart - (delta % interval)
-            this.countFPS()
+        switch (this.currentStage) {
+        case STAGES.INTRO:
+            // intro state
+            break
+        case STAGES.GAME:
+            this.stage.update(nextProps)
+            break
         }
     }
 
     componentDidUpdate () {
-        if (this.ctx) {
-            this.renderer.draw()
+        if (this.ctx && this.stage) {
+            this.stage.draw()
         }
     }
 
     componentWillUnmount () {
-        this.wrapper.removeEventListener('click', this.updateMousePos, false)
+        // this.wrapper.removeEventListener('click', this.updateMousePos, false)
         document.removeEventListener('keydown', ({code}) => this.onKey(code, true))
         document.removeEventListener('keyup', ({code}) => this.onKey(code, false))
     }
@@ -96,13 +79,14 @@ export default class Game extends Component {
         )
     }
 
-    countFPS () {
-        const now = performance.now()
-        const currentFrameTime = now - this.lastLoop
-        this.frameTime += (currentFrameTime - this.frameTime) / 100
-        this.fps = 1000 / this.frameTime
-        this.lastLoop = now
-    };
+    setStage (stage) {
+        this.currentStage = stage
+        this.stage = this.getStage(stage)
+    }
+
+    getStage (stage) {
+        return this.stages[stage]
+    }
 }
 
 Game.propTypes = propTypes

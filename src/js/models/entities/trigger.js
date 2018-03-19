@@ -2,15 +2,15 @@ import Entity from '../entity'
 import {ENTITIES_TYPE, INPUTS, LAYERS} from '../../lib/constants'
 
 export default class Trigger extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = false
         this.visible = false
         this.activated = false
     }
 
     collide (element) {
-        const { elements, input, player, world } = this._game
+        const { elements, input, player, world } = this._scene
         const { activator, hint, offsetX, offsetY, related } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
@@ -45,8 +45,8 @@ export default class Trigger extends Entity {
 
     update () {
         if (this.activated) {
-            const { elements } = this._game
-            const { clear, produce, produce_name } = this.properties
+            const { camera, elements } = this._scene
+            const { clear, produce, produce_name, shake } = this.properties
             if (produce) {
                 elements.add({
                     type: ENTITIES_TYPE.ITEM,
@@ -58,24 +58,26 @@ export default class Trigger extends Entity {
             }
             if (clear) {
                 elements.clearInRange(this)
-                this.clearTiles()
+                this.clearTiles(clear)
+            }
+            if (shake) {
+                camera.shake()
             }
             this.dead = true
         }
     }
 
-    clearTiles () {
-        const { camera, world } = this._game
+    clearTiles (layer) {
+        const { world } = this._scene
         const { spriteSize } = world
         for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
             for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
                 world.clearTile(
                     Math.round((this.x + (x * spriteSize)) / spriteSize),
                     Math.round((this.y + (y * spriteSize)) / spriteSize),
-                    LAYERS.MAIN
+                    layer
                 )
             }
         }
-        camera.shake()
     }
 }

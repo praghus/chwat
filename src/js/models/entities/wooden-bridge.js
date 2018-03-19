@@ -2,8 +2,8 @@ import Entity from '../entity'
 import {ENTITIES_TYPE, LAYERS} from '../../lib/constants'
 
 export default class WoodenBridge extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = false
         this.visible = false
         this.activated = false
@@ -11,7 +11,7 @@ export default class WoodenBridge extends Entity {
     }
 
     collide (element) {
-        const { world } = this._game
+        const { world } = this._scene
         const { hint, offsetX, offsetY } = this.properties
 
         if (!this.dead) {
@@ -37,12 +37,12 @@ export default class WoodenBridge extends Entity {
 
     update () {
         if (this.activated) {
-            const { renderer, world } = this._game
+            const { world } = this._scene
             this.activators.map((item) => item.kill())
             world.put(LAYERS.MAIN, 443, 15, 868)
             world.put(LAYERS.MAIN, 444, 15, 868)
             world.put(LAYERS.MAIN, 445, 15, 868)
-            renderer.blackOverlay = 1
+            this._scene.blackOverlay = 1
             this.dead = true
         }
         else {

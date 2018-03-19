@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class Water extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.damage = 100
         this.wave = 0
         this.animation = {x: 0, y: 0, w: 16, h: 16, frames: 7, fps: 20, loop: true}
@@ -11,14 +11,14 @@ export default class Water extends Entity {
     }
 
     draw (ctx) {
-        const { assets, camera, world } = this._game
+        const { assets, camera, world } = this._scene
         const { spriteSize } = world
 
         for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
             for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
                 const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
                 const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-                if (this.properties.selective || !this._game.world.isSolid(PX, PY)) {
+                if (this.properties.selective || !this._scene.world.isSolid(PX, PY)) {
                     ctx.drawImage(assets[this.asset],
                         this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,
                         spriteSize, spriteSize,
