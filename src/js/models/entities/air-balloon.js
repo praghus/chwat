@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class AirBalloon extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.positions = {
             CASTLE: { x: 5056, y: 90, player: { x: 5152, y: 48}},
             ISLE: { x: 128, y: 720, player: { x: 230, y: 720}}
@@ -13,7 +13,7 @@ export default class AirBalloon extends Entity {
     }
     draw (ctx) {
         if (this.visible) {
-            const {assets, camera} = this._game
+            const {assets, camera} = this._scene
             ctx.drawImage(
                 assets[ASSETS.BALLOON],
                 Math.floor(this.x + camera.x) - 72,
@@ -24,7 +24,7 @@ export default class AirBalloon extends Entity {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { camera, player, renderer } = this._game
+            const { camera, player, renderer } = this._scene
             this.position = this.position === this.positions.CASTLE
                 ? this.positions.ISLE
                 : this.positions.CASTLE

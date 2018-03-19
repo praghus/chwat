@@ -2,8 +2,8 @@ import Entity from '../entity'
 import {ENTITIES_TYPE, INPUTS, LAYERS} from '../../lib/constants'
 
 export default class Switch extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
         this.activated = false
         this.animations = {
@@ -15,7 +15,7 @@ export default class Switch extends Entity {
     }
 
     collide (element) {
-        const { camera, input, world } = this._game
+        const { camera, input, world } = this._scene
         if (!this.activated && input[INPUTS.INPUT_ACTION] && element.type === ENTITIES_TYPE.PLAYER) {
             const { message, offsetX, offsetY, produce } = this.properties
             this.activated = true

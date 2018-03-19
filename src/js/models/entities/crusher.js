@@ -2,8 +2,8 @@ import Entity from '../entity'
 import {DIRECTIONS, ENTITIES_TYPE} from '../../lib/constants'
 
 export default class Crusher extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.damage = 1000
         this.fall = false
         this.rise = false
@@ -17,7 +17,7 @@ export default class Crusher extends Entity {
 
     update () {
         if (this.onScreen()) {
-            const { camera, elements, world } = this._game
+            const { camera, elements, world } = this._scene
 
             if (this.rise) {
                 this.force.y -= 0.005

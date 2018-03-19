@@ -1,23 +1,12 @@
 import SAT from 'sat'
 import { overlap, normalize } from '../lib/helpers'
-import { canJumpThrough, DIRECTIONS, ENTITIES_TYPE, FONTS } from '../lib/constants'
+import { canJumpThrough, FONTS } from '../lib/constants'
 
 export default class Entity {
-    constructor (obj, game) {
-        this._game = game
-        this.id = obj.id
-        this.x = obj.x
-        this.y = obj.y
-        this.name = obj.name
-        this.asset = obj.asset || null
-        this.color = obj.color
-        this.width = obj.width
-        this.height = obj.height
-        this.family = obj.family || null
-        this.type = obj.type
-        this.properties = obj.properties
-        this.direction = obj.direction || DIRECTIONS.LEFT
+    constructor (obj, scene) {
+        this._scene = scene
         this.force = { x: 0, y: 0 }
+        this.bounds = null
         this.speed = 0
         this.maxSpeed = 1
         this.activated = false
@@ -34,45 +23,50 @@ export default class Entity {
         this.message = null
         this.messageTimeout = null
         this.messageDuration = 2000
+        this.vectorMask = null
+        // map all object properties
+        Object.keys(obj).map((prop) => {
+            this[prop] = obj[prop]
+        })
         this.hideMessage = this.hideMessage.bind(this)
     }
 
     onScreen () {
-        const { world, camera, viewport } = this._game
+        const { world, camera, viewport } = this._scene
         const { resolutionX, resolutionY } = viewport
+        const { x, y, width, height } = this
         const { spriteSize } = world
 
-        return this.x + this.width + spriteSize > -camera.x &&
-                this.x - spriteSize < -camera.x + resolutionX &&
-                this.y - spriteSize < -camera.y + resolutionY &&
-                this.y + this.height + spriteSize > -camera.y
+        return (
+            x + width + spriteSize > -camera.x &&
+            y + height + spriteSize > -camera.y &&
+            x - spriteSize < -camera.x + resolutionX &&
+            y - spriteSize < -camera.y + resolutionY
+        )
     }
 
-    animate (animation) {
-        const entity = this
+    animate (animation = this.animation) {
+        this.animFrame = this.animFrame || 0
+        this.animCount = this.animCount || 0
 
-        animation = animation || entity.animation
-        entity.animFrame = entity.animFrame || 0
-        entity.animCount = entity.animCount || 0
-
-        if (entity.animation !== animation) {
-            entity.animation = animation
-            entity.animFrame = 0
-            entity.animCount = 0
+        if (this.animation !== animation) {
+            this.animation = animation
+            this.animFrame = 0
+            this.animCount = 0
         }
-        else if (++(entity.animCount) === Math.round(60 / animation.fps)) {
-            if (entity.animFrame <= entity.animation.frames && animation.loop) {
-                entity.animFrame = normalize(entity.animFrame + 1, 0, entity.animation.frames)
+        else if (++(this.animCount) === Math.round(60 / animation.fps)) {
+            if (this.animFrame <= this.animation.frames && animation.loop) {
+                this.animFrame = normalize(this.animFrame + 1, 0, this.animation.frames)
             }
-            else if (entity.animFrame < entity.animation.frames - 1 && !animation.loop) {
-                entity.animFrame += 1
+            else if (this.animFrame < this.animation.frames - 1 && !animation.loop) {
+                this.animFrame += 1
             }
-            entity.animCount = 0
+            this.animCount = 0
         }
     }
 
     draw (ctx) {
-        const { camera, assets, renderer } = this._game
+        const { camera, assets, renderer } = this._scene
 
         if (this.visible && this.onScreen()) {
             const asset = assets[this.asset]
@@ -100,9 +94,23 @@ export default class Entity {
                 )
             }
         }
+        if (this.bounds) {
+            ctx.save()
+            ctx.strokeStyle = '#ff0000'
+            ctx.beginPath()
+
+            ctx.moveTo(this.x + camera.x + this.bounds.x, this.y + camera.y + this.bounds.y)
+            ctx.lineTo(this.x + camera.x + this.bounds.x + this.bounds.width, this.y + camera.y + this.bounds.y)
+            ctx.lineTo(this.x + camera.x + this.bounds.x + this.bounds.width, this.y + camera.y + this.bounds.y + this.bounds.height)
+            ctx.lineTo(this.x + camera.x + this.bounds.x, this.y + camera.y + this.bounds.y + this.bounds.height)
+            ctx.lineTo(this.x + camera.x + this.bounds.x, this.y + camera.y + this.bounds.y)
+            ctx.stroke()
+            ctx.restore()
+        }
         if (this.message) {
+            const { fontPrint } = this._scene
             const { text, x, y } = this.message
-            renderer.fontPrint(text,
+            fontPrint(text,
                 Math.floor(x + camera.x),
                 Math.floor(y + camera.y),
                 FONTS.FONT_SMALL
@@ -115,11 +123,16 @@ export default class Entity {
     }
 
     getBounds () {
-        return this.bounds || {
-            x: 0,
-            y: 0,
-            width: this.width,
-            height: this.height
+        const { width, height } = this
+        return this.bounds || {x: 0, y: 0, width, height}
+    }
+
+    getBoundingRect () {
+        const {x, y, width, height} = this.getBounds()
+        return {
+            x: this.x + x,
+            y: this.y + y,
+            width, height
         }
     }
 
@@ -135,12 +148,12 @@ export default class Entity {
     }
 
     overlapTest (obj) {
-        if (!this.dead && overlap(this, obj) && (this.onScreen() || this.activated)) {
-            // poligon collision checking
-            if (SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())) {
-                this.collide(obj)
-                obj.collide(this)
-            }
+        if (!this.dead && (this.onScreen() || this.activated) &&
+            overlap(this.getBoundingRect(), obj.getBoundingRect()) &&
+            SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())
+        ) {
+            this.collide(obj)
+            obj.collide(this)
         }
     }
 
@@ -164,7 +177,7 @@ export default class Entity {
     }
 
     move () {
-        const { world } = this._game
+        const { world } = this._scene
         const { spriteSize } = world
 
         if (this.force.x > this.maxSpeed) this.force.x = this.maxSpeed

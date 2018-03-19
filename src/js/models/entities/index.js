@@ -1,4 +1,4 @@
-export { default as AirBalloon } from './air_balloon'
+export { default as AirBalloon } from './air-balloon'
 export { default as Bat } from './bat'
 export { default as Blob } from './blob'
 export { default as Bridge } from './bridge'

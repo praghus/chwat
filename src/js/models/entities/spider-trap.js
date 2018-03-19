@@ -1,8 +1,8 @@
 import Entity from '../entity'
 
 export default class SpiderTrap extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.damage = 1000
         this.fall = false
         this.rise = false
@@ -17,7 +17,7 @@ export default class SpiderTrap extends Entity {
     }
 
     draw (ctx) {
-        const { camera, assets } = this._game
+        const { camera, assets } = this._scene
         if (this.onScreen()) {
             ctx.beginPath()
             ctx.moveTo(this.startX + camera.x, this.startY + camera.y)
@@ -38,7 +38,7 @@ export default class SpiderTrap extends Entity {
                 this.force.y -= 0.005
             }
             else if (this.fall) {
-                this.force.y += this._game.world.gravity
+                this.force.y += this._scene.world.gravity
             }
             else {
                 this.force.y = 0

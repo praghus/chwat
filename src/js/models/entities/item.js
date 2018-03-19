@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { ENTITIES_TYPE, FONTS, INPUTS } from '../../lib/constants'
 
 export default class Item extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.width = 16
         this.height = 16
         this.types = {
@@ -24,12 +24,13 @@ export default class Item extends Entity {
         }
         this.animation = this.types[this.properties.id] || this.types.undefined
     }
+
     draw (ctx) {
         if (this.onScreen()) {
-            const {camera, renderer} = this._game
+            const { camera, fontPrint } = this._scene
             const font = FONTS.FONT_SMALL
             super.draw(ctx)
-            renderer.fontPrint(this.name,
+            fontPrint(this.name,
                 this.x + camera.x + 8 - ((this.name.length / 2) * font.size),
                 this.y + camera.y - 8,
                 font
@@ -38,14 +39,14 @@ export default class Item extends Entity {
     }
 
     collide (element) {
-        const { input, player } = this._game
+        const { input, player } = this._scene
         if (input[INPUTS.INPUT_ACTION] && element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             player.getItem(this)
         }
     }
 
     update () {
-        const { gravity } = this._game.world
+        const { gravity } = this._scene.world
         if (this.onScreen()) {
             this.force.y += gravity
             this.move()

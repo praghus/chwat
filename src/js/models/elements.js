@@ -5,8 +5,8 @@ import { overlap } from '../lib/helpers'
 const { Lamp, Vec2 } = window.illuminated
 
 export default class Elements {
-    constructor (entities, game) {
-        this._game = game
+    constructor (entities, scene) {
+        this._scene = scene
         this.objects = []
         this.lights = {
             [LIGHTS.PLAYER_LIGHT]: new Lamp({
@@ -23,7 +23,7 @@ export default class Elements {
     }
 
     update () {
-        const { player } = this._game
+        const { player } = this._scene
         this.objects.forEach((obj, i) => {
             if (obj) {
                 if (obj.dead) {
@@ -46,7 +46,7 @@ export default class Elements {
         const entity = getEntityByType(type)
         if (entity) {
             const Model = entity.model
-            return new Model(Object.assign({family}, obj, entity), this._game)
+            return new Model(Object.assign({family}, obj, entity), this._scene)
         }
         return null
     }

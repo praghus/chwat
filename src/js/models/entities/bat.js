@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { DIRECTIONS, ENTITIES_FAMILY } from '../../lib/constants'
 
 export default class Bat extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.direction = DIRECTIONS.LEFT
         this.maxSpeed = 1
         this.speed = 0.2
@@ -17,10 +17,10 @@ export default class Bat extends Entity {
             LEFT: {x: 0, y: 20, w: 28, h: 20, frames: 6, fps: 16, loop: true}
         }
         this.bounds = {
-            x: 2,
+            x: 5,
             y: 0,
-            width: this.width - 4,
-            height: this.height
+            width: this.width-10,
+            height: this.height-8
         }
     }
 
@@ -34,38 +34,27 @@ export default class Bat extends Entity {
         if (this.onScreen()) {
             this.awake = true
         }
-        if (this.dying) {
-            this.kill()
-        }
-        if (this.awake && !this.dead && !this.dying) {
-            const { camera } = this._game
-            this.force.y += this.y > this._game.player.y ? -0.01 : 0.01
-            this.force.x += this.direction === DIRECTIONS.RIGHT ? this.speed : -this.speed
-            if (this.onScreen()) {
-                this.direction = this._game.player.x > this.x ? DIRECTIONS.RIGHT : DIRECTIONS.LEFT
-                if (-(this.y + this.force.y) > camera.y) {
-                    this.force.y += this.speed
-                }
-            }
+
+        if (this.awake && !this.dead) {
+            const flyingRight = this.direction === DIRECTIONS.RIGHT
+            this.force.y = 0
+            this.force.x += flyingRight
+                ? this.speed
+                : -this.speed
+
             this.move()
+
             if (this.expectedX !== this.x) {
-                this.force.y -= 0.03
-                if (this.expectedY !== this.y) {
-                    if (this.expectedX < this.x) {
-                        this.direction = DIRECTIONS.RIGHT
-                        this.force.x *= -0.6
-                    }
-                    if (this.expectedX > this.x) {
-                        this.direction = DIRECTIONS.LEFT
-                        this.force.x *= -0.6
-                    }
-                }
-            }
-            else if (this.expectedY !== this.y) {
-                this.force.y += this.direction === DIRECTIONS.RIGHT ? this.speed : -this.speed
+                this.direction = flyingRight
+                    ? DIRECTIONS.LEFT
+                    : DIRECTIONS.RIGHT
+                this.force.x *= -0.6
             }
 
-            this.animate(this.direction === DIRECTIONS.RIGHT ? this.animations.RIGHT : this.animations.LEFT)
+            this.animate(flyingRight
+                ? this.animations.RIGHT
+                : this.animations.LEFT
+            )
         }
     }
 }

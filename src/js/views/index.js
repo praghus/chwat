@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Game } from '../components'
 import { requireAll } from '../lib/helpers'
-import {startTicker, tickTime, updateKeyPressed, updateMousePos } from '../actions'
+import { startTicker, tickTime, updateKeyPressed, updateMousePos } from '../actions'
 
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(

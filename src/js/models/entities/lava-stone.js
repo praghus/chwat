@@ -2,8 +2,8 @@ import Entity from '../entity'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class LavaStone extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.damage = 100
         this.width = 4
         this.height = 4
@@ -16,7 +16,7 @@ export default class LavaStone extends Entity {
     }
 
     draw (ctx) {
-        const { camera } = this._game
+        const { camera } = this._scene
         ctx.save()
         ctx.fillStyle = this.color
         ctx.fillRect(this.x + camera.x, this.y + camera.y, this.width, this.height)
@@ -25,11 +25,11 @@ export default class LavaStone extends Entity {
 
     update () {
         if (!this.dead) {
-            this.force.y += this._game.world.gravity
+            this.force.y += this._scene.world.gravity
             this.force.x += this.direction > 0 ? this.speed : -this.speed
             this.move()
             if (this.expectedX !== this.x || this.expectedY !== this.y) {
-                const { elements } = this._game
+                const { elements } = this._scene
                 this.dead = true
                 elements.emitParticles(5 + parseInt(Math.random() * 5), {
                     x: this.direction === DIRECTIONS.RIGHT ? this.x + this.width : this.x,

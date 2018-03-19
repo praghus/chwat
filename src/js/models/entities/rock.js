@@ -2,8 +2,8 @@ import Entity from '../entity'
 import {DIRECTIONS} from '../../lib/constants'
 
 export default class Rock extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.doShake = false
         this.speed = 0.2
         this.maxSpeed = 2
@@ -13,7 +13,7 @@ export default class Rock extends Entity {
         this.rotation = 0
     }
     draw (ctx) {
-        const { assets, camera } = this._game
+        const { assets, camera } = this._scene
         const r = Math.PI / 16
         ctx.save()
         ctx.translate(Math.floor(this.x + camera.x), Math.floor(this.y + camera.y))
@@ -28,7 +28,7 @@ export default class Rock extends Entity {
 
     update () {
         if (this.activated && !this.dead) {
-            const { camera, world } = this._game
+            const { camera, world } = this._scene
 
             this.force.y += world.gravity
 
