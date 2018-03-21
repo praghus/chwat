@@ -1,7 +1,10 @@
 import '../../lib/illuminated'
 import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
-import { ASSETS, COLORS, FONTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX, SPECIAL_TILES_INDEX } from '../../lib/constants'
+import {
+    ASSETS, COLORS, FONTS, INPUTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX,
+    SPECIAL_TILES_INDEX
+} from '../../lib/constants'
 import { Camera, Elements, World } from '../index'
 
 const { DarkMask, Lighting, Vec2, RectangleObject } = window.illuminated
@@ -161,13 +164,19 @@ export default class GameScene extends Scene {
     }
 
     renderHUD () {
-        const { ctx, assets, fps, player, viewport } = this
+        const { ctx, camera, assets, debug, fps, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
         const { energy, lives, items } = player
+        const font = FONTS.FONT_SMALL
         const fpsIndicator = `FPS:${Math.round(fps)}`
 
         // FPS meter
-        this.fontPrint(fpsIndicator, resolutionX - (5 + fpsIndicator.length * 5), 5, FONTS.FONT_SMALL)
+        this.fontPrint(fpsIndicator, resolutionX - (5 + fpsIndicator.length * 5), 5, font)
+
+        // Camera position in debug mode
+        if (debug) {
+            this.fontPrint(`camera\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 32, font)
+        }
 
         // energy
         ctx.save()
@@ -183,14 +192,14 @@ export default class GameScene extends Scene {
 
         // lives
         ctx.drawImage(assets[ASSETS.HEART], 0, 0)
-        this.fontPrint(`x${lives}`, 17, 10, FONTS.FONT_SMALL)
+        this.fontPrint(`x${lives}`, 17, 10, font)
 
         // items
         const align = (resolutionX - 60)
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 26)
         items.map((item, index) => {
             if (item && item.properties) {
-                this.fontPrint(item.name, 4, (resolutionY - 20) + index * 9, FONTS.FONT_SMALL)
+                this.fontPrint(item.name, 4, (resolutionY - 20) + index * 9, font)
                 ctx.drawImage(
                     assets[ASSETS.ITEMS],
                     item.animation.x, item.animation.y,

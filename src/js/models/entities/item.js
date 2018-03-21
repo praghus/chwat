@@ -31,14 +31,17 @@ export default class Item extends Entity {
 
     draw (ctx) {
         if (this.onScreen()) {
-            const { camera, fontPrint } = this._scene
+            const { camera, debug, fontPrint } = this._scene
             const font = FONTS.FONT_SMALL
             super.draw(ctx)
-            fontPrint(this.name,
-                this.x + camera.x + 8 - ((this.name.length / 2) * font.size),
-                this.y + camera.y - 8,
-                font
-            )
+            // don't display name in debug mode coz it's already displayed.
+            if (!debug) {
+                fontPrint(this.name,
+                    this.x + camera.x + 8 - ((this.name.length / 2) * font.size),
+                    this.y + camera.y - 8,
+                    font
+                )
+            }
         }
     }
 

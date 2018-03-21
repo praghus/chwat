@@ -1,5 +1,5 @@
 import SAT from 'sat'
-import { overlap, normalize } from '../lib/helpers'
+import { outline, overlap, normalize } from '../lib/helpers'
 import { canJumpThrough, FONTS } from '../lib/constants'
 
 export default class Entity {
@@ -24,6 +24,7 @@ export default class Entity {
         this.messageTimeout = null
         this.messageDuration = 2000
         this.vectorMask = null
+        this.playSound = scene.playSound
         // map all object properties
         Object.keys(obj).map((prop) => {
             this[prop] = obj[prop]
@@ -66,7 +67,14 @@ export default class Entity {
     }
 
     draw (ctx) {
-        const { assets, camera, dynamicLights, addLightmaskElement } = this._scene
+        const {
+            addLightmaskElement,
+            assets,
+            camera,
+            debug,
+            dynamicLights,
+            fontPrint
+        } = this._scene
 
         if (this.visible && this.onScreen()) {
             const asset = assets[this.asset]
@@ -82,7 +90,7 @@ export default class Entity {
                 ctx.drawImage(sprite,
                     this.animation.x + this.animFrame * this.animation.w, this.animation.y,
                     this.animation.w, this.animation.h,
-                    this.x + camera.x, this.y + camera.y,
+                    Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
                     this.animation.w, this.animation.h
                 )
             }
@@ -94,22 +102,50 @@ export default class Entity {
                 )
             }
         }
-        // if (this.bounds) {
-        //     const bx = this.x + camera.x + this.bounds.x
-        //     const by = this.y + camera.y + this.bounds.y
-        //     ctx.save()
-        //     ctx.strokeStyle = '#ff0000'
-        //     ctx.beginPath()
-        //     ctx.moveTo(bx, by)
-        //     ctx.lineTo(bx + this.bounds.width, by)
-        //     ctx.lineTo(bx + this.bounds.width, by + this.bounds.height)
-        //     ctx.lineTo(bx, by + this.bounds.height)
-        //     ctx.lineTo(bx, by)
-        //     ctx.stroke()
-        //     ctx.restore()
-        // }
+        // debug
+        // -------------------------------------------
+        if (debug) {
+            if (this.vectorMask) {ctx.save()
+                ctx.strokeStyle = '#ff0'
+                ctx.beginPath()
+                ctx.moveTo(this.x + camera.x, this.y + camera.y)
+                this.vectorMask.map(({x, y}) => ctx.lineTo(
+                    this.x + x + camera.x,
+                    this.y + y + camera.y
+                ))
+                ctx.lineTo(
+                    this.vectorMask[0].x + this.x + camera.x,
+                    this.vectorMask[0].y + this.y + camera.y)
+                ctx.stroke()
+                ctx.restore()
+            }
+            else {
+                outline(ctx, this.visible ? '#0f0' : '#f0f', {
+                    x: this.x + camera.x,
+                    y: this.y + camera.y,
+                    width: this.width,
+                    height: this.height
+                })
+
+                if (this.bounds) {
+                    outline(ctx, '#f00', {
+                        x: this.x + camera.x + this.bounds.x,
+                        y: this.y + camera.y + this.bounds.y,
+                        width: this.bounds.width,
+                        height: this.bounds.height
+                    })
+                }
+            }
+            if (this.visible) {
+                fontPrint(`${this.name || this.type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
+                    Math.floor(this.x + camera.x),
+                    Math.floor(this.y + camera.y),
+                    FONTS.FONT_SMALL
+                )
+            }
+        }
+
         if (this.message) {
-            const { fontPrint } = this._scene
             const { text, x, y } = this.message
             fontPrint(text,
                 Math.floor(x + camera.x),

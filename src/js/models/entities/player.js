@@ -1,4 +1,5 @@
 import Entity from '../entity'
+import { playerJump, playerGet } from '../../actions/sounds'
 import { ASSETS, DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Player extends Entity {
@@ -70,41 +71,45 @@ export default class Player extends Entity {
         }
     }
 
-    update () {
+    update (dt) {
         const { input, world } = this._scene
-        if (!this.dead) {
-            if (this.canMove()) {
-                if (input[INPUTS.INPUT_LEFT]) {
-                    this.force.x -= this.speed
-                    if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
-                    this.direction = DIRECTIONS.LEFT
-                }
-                if (input[INPUTS.INPUT_RIGHT]) {
-                    this.force.x += this.speed
-                    if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
-                    this.direction = DIRECTIONS.RIGHT
-                }
-                if (input[INPUTS.INPUT_UP] && this.canJump()) {
-                    this.doJump = true
-                }
-                if (input[INPUTS.INPUT_ACTION]) {
-                    this.getItem(null)
-                }
+
+        if (this.canMove()) {
+            if (input[INPUTS.INPUT_LEFT]) {
+                this.force.x -= this.speed
+                if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
+                this.direction = DIRECTIONS.LEFT
             }
-            // slow down
-            if (!input[INPUTS.INPUT_LEFT] && !input[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
-                this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.speed : this.speed
-                if (this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
-                    this.direction === DIRECTIONS.RIGHT && this.force.x < 0) {
-                    this.force.x = 0
-                }
+            if (input[INPUTS.INPUT_RIGHT]) {
+                this.force.x += this.speed
+                if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
+                this.direction = DIRECTIONS.RIGHT
+            }
+            if (input[INPUTS.INPUT_UP] && this.canJump()) {
+                this.doJump = true
+                // todo: better sound dispatching
+                this.playSound(playerJump)
+            }
+            if (input[INPUTS.INPUT_ACTION]) {
+                this.getItem(null)
+            }
+        }
+        // slow down
+        if (!input[INPUTS.INPUT_LEFT] && !input[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
+            this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.speed : this.speed
+            if (this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
+                this.direction === DIRECTIONS.RIGHT && this.force.x < 0) {
+                this.force.x = 0
             }
         }
 
-        this.force.y += world.gravity
-        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
+        this.force.y += this.force.y > 0
+            ? world.gravity * 1.5
+            : world.gravity
 
         this.move()
+
+        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
 
         if (this.onFloor) {
             if (this.fall) {
@@ -255,6 +260,7 @@ export default class Player extends Entity {
             this.items[1] = this.items[0]
             this.items[0] = item
             if (item) item.kill()
+            this.playSound(playerGet)
             this.takeTimeout = setTimeout(() => {
                 this.takeTimeout = null
             }, 500)

@@ -7,11 +7,12 @@ import {
 const initialState = {
     mousePos: [0, 0],
     keyPressed: {
-        [INPUTS.INPUT_FIRE]: false,
+        [INPUTS.INPUT_ACTION]: false,
         [INPUTS.INPUT_LEFT]: false,
         [INPUTS.INPUT_RIGHT]: false,
         [INPUTS.INPUT_DOWN]: false,
-        [INPUTS.INPUT_UP]: false
+        [INPUTS.INPUT_UP]: false,
+        [INPUTS.INPUT_DEBUG]: false
     }
 }
 

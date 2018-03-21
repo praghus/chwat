@@ -26,10 +26,11 @@ export default class Slope extends Entity {
     collide (element) {
         if (!this.dead && element.solid && element.family !== ENTITIES_FAMILY.ENEMIES) {
             const { input } = this._scene
-            const { x, width, height } = element
+            const { x, width } = element.getBounds()
+            const calculatedX = element.x + x
             const expectedY = this.type === ENTITIES_TYPE.SLOPE_RIGHT
-                ? (this.y - height) + this.height - (((x + width) - this.x) * (this.height / this.width))
-                : (this.y - height) + (x - this.x) * (this.height / this.width)
+                ? (this.y - element.height) + this.height - (((calculatedX + width) - this.x) * (this.height / this.width))
+                : (this.y - element.height) + (calculatedX - this.x) * (this.height / this.width)
 
             if (element.y >= expectedY && !element.jump) {
                 element.y = expectedY
