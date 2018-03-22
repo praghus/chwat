@@ -10,8 +10,8 @@ export default class IntroScene extends Scene {
         }
     }
 
-    draw () {
-        const { assets, ctx, viewport } = this
+    draw (ctx) {
+        const { assets, viewport } = this
         const { resolutionX, resolutionY, scale } = viewport
         // 270
         ctx.imageSmoothingEnabled = false
@@ -23,7 +23,7 @@ export default class IntroScene extends Scene {
         ctx.drawImage(assets[ASSETS.FAR_FOREST], 0, -10)
         ctx.drawImage(assets[ASSETS.FOREST], -100, -300)
         ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 30)
-        this.fontPrint('PRESS SPACE TO BEGIN', Math.ceil(resolutionX / 2) - 50, resolutionY - 70, FONTS.FONT_SMALL)
+        this.fontPrint(ctx, 'PRESS SPACE TO BEGIN', Math.ceil(resolutionX / 2) - 50, resolutionY - 70, FONTS.FONT_SMALL)
         ctx.restore()
     }
 }

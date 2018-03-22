@@ -40,7 +40,7 @@ export default class Item extends Entity {
             super.draw(ctx)
             // don't display name in debug mode coz it's already displayed.
             if (!debug) {
-                fontPrint(this.name,
+                fontPrint(ctx, this.name,
                     this.x + camera.x + 8 - ((this.name.length / 2) * font.size),
                     this.y + camera.y - 8,
                     font

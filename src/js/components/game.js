@@ -54,7 +54,7 @@ export default class Game extends Component {
 
     componentDidUpdate () {
         if (this.ctx && this.scene) {
-            this.scene.draw()
+            this.scene.draw(this.ctx)
         }
     }
 

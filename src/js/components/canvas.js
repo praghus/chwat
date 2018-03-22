@@ -17,6 +17,7 @@ export default class Canvas extends Component {
     componentDidMount () {
         const canvas = findDOMNode(this.canvas)
         this.context = canvas.getContext('2d')
+        this.context.imageSmoothingEnabled = false
     }
 
     render () {

@@ -2,7 +2,6 @@ import {FONTS, INPUTS} from '../lib/constants'
 
 export default class Scene {
     constructor (game) {
-        this.ctx = game.ctx
         this.assets = game.assets
         this.viewport = game.viewport
         this.ticker = game.ticker
@@ -37,12 +36,12 @@ export default class Scene {
         }
     }
 
-    draw () {
+    draw (ctx) {
         // draw
     }
 
-    fontPrint (text, x, y, font = FONTS.FONT_NORMAL) {
-        const { ctx, assets } = this
+    fontPrint (ctx, text, x, y, font = FONTS.FONT_NORMAL) {
+        const { assets } = this
         text.split('\n').reverse().map((output, index) => {
             for (let i = 0; i < output.length; i++) {
                 const chr = output.charCodeAt(i)

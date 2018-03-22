@@ -152,7 +152,7 @@ export default class Entity {
                     }
                 }
                 if (visible) {
-                    fontPrint(`${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
+                    fontPrint(ctx, `${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
                         posX,
                         posY - 8,
                         font
@@ -161,7 +161,7 @@ export default class Entity {
                 // ${String.fromCharCode(26)}
                 if (force.x !== 0) {
                     const forceX = `${force.x.toFixed(2)}`
-                    fontPrint(forceX,
+                    fontPrint(ctx, forceX,
                         force.x > 0 ? posX + width + 1 : posX - (forceX.length * font.size) - 1,
                         posY + height / 2,
                         font
@@ -169,7 +169,7 @@ export default class Entity {
                 }
                 if (force.y !== 0) {
                     const forceY = `${force.y.toFixed(2)}`
-                    fontPrint(forceY,
+                    fontPrint(ctx, forceY,
                         posX + (width - (forceY.length * font.size)) / 2,
                         posY + height / 2,
                         font
@@ -179,7 +179,7 @@ export default class Entity {
         }
         if (this.message) {
             const { text, x, y } = this.message
-            fontPrint(text,
+            fontPrint(ctx, text,
                 Math.floor(x + camera.x),
                 Math.floor(y + camera.y),
                 font
