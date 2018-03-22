@@ -6,6 +6,10 @@ export default class Item extends Entity {
         super(obj, scene)
         this.width = 16
         this.height = 16
+        this.initialPosition = {
+            x: this.x,
+            y: this.y
+        }
         this.types = {
             coin: {x: 0, y: 48, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             key: {x: 16, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
@@ -30,7 +34,7 @@ export default class Item extends Entity {
     }
 
     draw (ctx) {
-        if (this.onScreen()) {
+        if (this.onScreen() && this.visible) {
             const { camera, debug, fontPrint } = this._scene
             const font = FONTS.FONT_SMALL
             super.draw(ctx)
@@ -47,7 +51,7 @@ export default class Item extends Entity {
 
     collide (element) {
         const { input, player } = this._scene
-        if (input[INPUTS.INPUT_ACTION] && element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
+        if (input[INPUTS.INPUT_ACTION] && element.type === ENTITIES_TYPE.PLAYER && this.visible) {
             player.getItem(this)
         }
     }
@@ -58,5 +62,16 @@ export default class Item extends Entity {
             this.force.y += gravity
             this.move()
         }
+    }
+
+    placeAt (x, y) {
+        this.x = x
+        this.y = y
+        this.visible = true
+    }
+
+    restore () {
+        const { x, y } = this.initialPosition
+        this.placeAt(x, y)
     }
 }

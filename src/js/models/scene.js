@@ -7,8 +7,10 @@ export default class Scene {
         this.viewport = game.viewport
         this.ticker = game.ticker
         this.playSound = game.playSound
+        this.setScene = game.setScene
         this.fps = 0
-        this.debug = true
+        this.debug = false
+        this.lastInput = null
         this.delta = null
         this.lastLoop = null
         this.frameTime = null
@@ -21,8 +23,8 @@ export default class Scene {
 
     update (nextProps) {
         const { assets, input, ticker, viewport } = nextProps
-        const lastInput = Object.assign({}, this.input)
 
+        this.lastInput = Object.assign({}, this.input)
         this.assets = assets
         this.ticker = ticker
         this.viewport = viewport
@@ -30,7 +32,7 @@ export default class Scene {
         this.frameStart = performance.now()
         this.delta = this.frameStart - this.then
 
-        if (this.input[INPUTS.INPUT_DEBUG] && !lastInput[INPUTS.INPUT_DEBUG]) {
+        if (this.fetchAction(INPUTS.INPUT_DEBUG)) {
             this.debug = !this.debug
         }
     }
@@ -61,5 +63,9 @@ export default class Scene {
         this.frameTime += (currentFrameTime - this.frameTime) / 100
         this.fps = 1000 / this.frameTime
         this.lastLoop = now
-    };
+    }
+
+    fetchAction (action){
+        return this.input[action] && !this.lastInput[action]
+    }
 }

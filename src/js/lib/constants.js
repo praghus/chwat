@@ -8,7 +8,7 @@ export const NON_COLLIDE_INDEX = 256
 export const SPECIAL_TILES_INDEX = 1024
 export const JUMP_THROUGH_TILES = [836, 868, 1088, 1089]
 
-export const STAGES = {
+export const SCENES = {
     INTRO: 'INTRO',
     GAME: 'GAME'
 }
@@ -121,6 +121,7 @@ export const ASSETS = {
     FRAMES: 'frames',
     HEART: 'heart',
     ITEMS: 'items',
+    LOGO: 'chwat',
     MOUNTAINS: 'bg2',
     PADDLE: 'paddle',
     PLAYER: 'player',

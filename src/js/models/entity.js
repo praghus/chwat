@@ -1,6 +1,6 @@
 import SAT from 'sat'
 import { outline, overlap, normalize } from '../lib/helpers'
-import { canJumpThrough, FONTS } from '../lib/constants'
+import {canJumpThrough, DIRECTIONS, FONTS} from '../lib/constants'
 
 export default class Entity {
     constructor (obj, scene) {
@@ -16,6 +16,7 @@ export default class Entity {
         this.bounds = null
         this.speed = 0
         this.maxSpeed = 1
+        this.awake = false
         this.activated = false
         this.dead = false
         this.jump = false
@@ -83,8 +84,10 @@ export default class Entity {
             fontPrint
         } = this._scene
 
+        const font = FONTS.FONT_SMALL
+
         if (this.onScreen()) {
-            const { animation, animFrame, bounds, width, height, name, type, visible } = this
+            const { animation, animFrame, bounds, width, height, name, type, visible, force } = this
             const [ posX, posY ] = [
                 Math.floor(this.x + camera.x),
                 Math.floor(this.y + camera.y)
@@ -114,8 +117,7 @@ export default class Entity {
                     )
                 }
             }
-            // debug
-            // -------------------------------------------
+
             if (debug) {
                 if (this.vectorMask) {
                     ctx.save()
@@ -140,7 +142,6 @@ export default class Entity {
                         width,
                         height
                     })
-
                     if (bounds) {
                         outline(ctx, '#f00', {
                             x: posX + bounds.x,
@@ -154,7 +155,24 @@ export default class Entity {
                     fontPrint(`${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
                         posX,
                         posY - 8,
-                        FONTS.FONT_SMALL
+                        font
+                    )
+                }
+                // ${String.fromCharCode(26)}
+                if (force.x !== 0) {
+                    const forceX = `${force.x.toFixed(2)}`
+                    fontPrint(forceX,
+                        force.x > 0 ? posX + width + 1 : posX - (forceX.length * font.size) - 1,
+                        posY + height / 2,
+                        font
+                    )
+                }
+                if (force.y !== 0) {
+                    const forceY = `${force.y.toFixed(2)}`
+                    fontPrint(forceY,
+                        posX + (width - (forceY.length * font.size)) / 2,
+                        posY + height / 2,
+                        font
                     )
                 }
             }
@@ -164,7 +182,7 @@ export default class Entity {
             fontPrint(text,
                 Math.floor(x + camera.x),
                 Math.floor(y + camera.y),
-                FONTS.FONT_SMALL
+                font
             )
         }
     }
@@ -199,7 +217,7 @@ export default class Entity {
     }
 
     overlapTest (obj) {
-        if (!this.dead && (this.onScreen() || this.activated) &&
+        if (!this.dead && (this.onScreen() || this.activated || this.awake) &&
             overlap(this.getBoundingRect(), obj.getBoundingRect()) &&
             SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())
         ) {
@@ -225,6 +243,15 @@ export default class Entity {
 
     kill () {
         this.dead = true
+    }
+
+    bounce () {
+        if (this.force.x !== 0) {
+            this.force.x *= -1.5
+            this.direction = this.direction === DIRECTIONS.RIGHT
+                ? DIRECTIONS.LEFT
+                : DIRECTIONS.RIGHT
+        }
     }
 
     move () {

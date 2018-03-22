@@ -16,7 +16,7 @@ export default class Trigger extends Entity {
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
                 if (player.canUse(activator)) {
-                    const a = player.useItem(activator)
+                    const item = player.useItem(activator)
                     this.activated = true
                     this.hideMessage()
                     player.hideHint()
@@ -24,7 +24,7 @@ export default class Trigger extends Entity {
                         const rel = elements.getById(related)
                         rel.activated = true
                         rel.trigger = this
-                        rel.activator = a
+                        rel.activator = item
                     }
                 }
                 else {

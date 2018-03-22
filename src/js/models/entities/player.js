@@ -242,18 +242,16 @@ export default class Player extends Entity {
 
     getItem (item) {
         if (this.canTake()) {
-            const { elements } = this._scene
             if (this.items[1]) {
-                elements.add(Object.assign(this.items[1], {
-                    dead: false,
-                    x: this.x + 16,
-                    y: this.y
-                }))
+                this.items[1].placeAt(this.x + 16, this.y)
             }
             [this.items[0], this.items[1]] = [item, this.items[0]]
-            this.playSound(playerGet)
+
+            if (item) {
+                item.visible = false
+                this.playSound(playerGet)
+            }
             this.setItemTimeout()
-            if (item) item.kill()
         }
     }
 

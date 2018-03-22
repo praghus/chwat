@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Canvas from './canvas'
 import { IntroScene, GameScene } from '../models/scenes'
-import { getKeyPressed, STAGES } from '../lib/constants'
+import { getKeyPressed, SCENES } from '../lib/constants'
 
 const propTypes = {
     assets: PropTypes.object.isRequired,
@@ -26,41 +26,35 @@ export default class Game extends Component {
         this.loadedCount = 0
         this.input = null
         this.assetsLoaded = false
-        this.currentStage = null
-        this.stage = null
-        this.stages = null
+        this.scene = null
+        this.scenes = null
+        this.getScene = this.getScene.bind(this)
+        this.setScene = this.setScene.bind(this)
     }
 
     componentDidMount () {
         const { onKey, startTicker } = this.props
         this.ctx = this.canvas.context
-        this.stages = {
-            [STAGES.INTRO]: new IntroScene(this),
-            [STAGES.GAME]: new GameScene(this)
+        this.scenes = {
+            [SCENES.INTRO]: new IntroScene(this),
+            [SCENES.GAME]: new GameScene(this)
         }
         // this.wrapper.addEventListener('click', onMouse, false)
         document.addEventListener('keydown', ({code}) => onKey(getKeyPressed(code), true))
         document.addEventListener('keyup', ({code}) => onKey(getKeyPressed(code), false))
-
-        this.setStage(STAGES.GAME)
-
+        this.setScene(SCENES.INTRO)
         startTicker()
     }
 
     componentWillReceiveProps (nextProps) {
-        switch (this.currentStage) {
-        case STAGES.INTRO:
-            // intro state
-            break
-        case STAGES.GAME:
-            this.stage.update(nextProps)
-            break
+        if (this.scene) {
+            this.scene.update(nextProps)
         }
     }
 
     componentDidUpdate () {
-        if (this.ctx && this.stage) {
-            this.stage.draw()
+        if (this.ctx && this.scene) {
+            this.scene.draw()
         }
     }
 
@@ -79,13 +73,12 @@ export default class Game extends Component {
         )
     }
 
-    setStage (stage) {
-        this.currentStage = stage
-        this.stage = this.getStage(stage)
+    setScene (scene) {
+        this.scene = this.getScene(scene)
     }
 
-    getStage (stage) {
-        return this.stages[stage]
+    getScene (scene) {
+        return this.scenes[scene]
     }
 }
 
