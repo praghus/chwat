@@ -13,11 +13,11 @@ export default class Player extends Entity {
         this.maxSpeed = 2
         this.speed = 0.2
         this.solid = true
-        this.takeTimeout = null
+        this.hintTimeout = null
         this.hurtTimeout = null
+        this.itemTimeout = null
         this.items = [null, null]
         this.hint = null
-        this.hintTimeout = null
         this.respawnTimeout = null
         this.bounds = {
             x: 10,
@@ -221,30 +221,23 @@ export default class Player extends Entity {
     }
 
     canTake () {
-        return !this.takeTimeout
+        return !this.itemTimeout
     }
 
-    canUse (id) {
-        return !this.takeTimeout && (
-            (this.items[0] && this.items[0].properties.id === id) ||
-            (this.items[1] && this.items[1].properties.id === id) ||
-            (id === ENTITIES_TYPE.PLAYER)
-        )
+    canUse (itemId) {
+        const haveItem = this.items.find((item) => item && item.properties.id === itemId)
+        return !this.itemTimeout && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
-    // todo: make it better
-    useItem (item) {
-        let r
-        if (this.items[0] && this.items[0].properties.id === item) {
-            r = this.items[0]
-            this.items[0] = this.items[1]
-            this.items[1] = null
+    useItem (itemId) {
+        const item = this.items.find((item) => item && item.properties.id === itemId)
+        if (item) {
+            [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
+                ? [this.items[1], null]
+                : [this.items[0], null]
+            this.setItemTimeout()
+            return item
         }
-        if (this.items[1] && this.items[1].properties.id === item) {
-            r = this.items[1]
-            this.items[1] = null
-        }
-        return r
     }
 
     getItem (item) {
@@ -257,18 +250,21 @@ export default class Player extends Entity {
                     y: this.y
                 }))
             }
-            this.items[1] = this.items[0]
-            this.items[0] = item
-            if (item) item.kill()
+            [this.items[0], this.items[1]] = [item, this.items[0]]
             this.playSound(playerGet)
-            this.takeTimeout = setTimeout(() => {
-                this.takeTimeout = null
-            }, 500)
+            this.setItemTimeout()
+            if (item) item.kill()
         }
     }
 
+    setItemTimeout () {
+        this.itemTimeout = setTimeout(() => {
+            this.itemTimeout = null
+        }, 500)
+    }
+
     showHint (item) {
-        if (!this.hintTimeout && !this.takeTimeout) {
+        if (!this.hintTimeout && !this.itemTimeout) {
             this.hint = item
             this.hintTimeout = setTimeout(this.hideHint, 2000)
         }

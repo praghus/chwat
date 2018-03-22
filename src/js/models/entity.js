@@ -5,7 +5,14 @@ import { canJumpThrough, FONTS } from '../lib/constants'
 export default class Entity {
     constructor (obj, scene) {
         this._scene = scene
-        this.force = { x: 0, y: 0 }
+        this.x = null
+        this.y = null
+        this.width = null
+        this.height = null
+        this.force = {
+            x: 0,
+            y: 0
+        }
         this.bounds = null
         this.speed = 0
         this.maxSpeed = 1
@@ -76,75 +83,82 @@ export default class Entity {
             fontPrint
         } = this._scene
 
-        if (this.visible && this.onScreen()) {
-            const asset = assets[this.asset]
-            const sprite = asset || assets['no_image']
+        if (this.onScreen()) {
+            const { animation, animFrame, bounds, width, height, name, type, visible } = this
+            const [ posX, posY ] = [
+                Math.floor(this.x + camera.x),
+                Math.floor(this.y + camera.y)
+            ]
+            if (visible) {
+                const asset = assets[this.asset]
+                const sprite = asset || assets['no_image']
 
-            if (this.shadowCaster && dynamicLights) {
-                addLightmaskElement(
-                    this.x + camera.x, this.y + camera.y,
-                    this.width, this.height
-                )
-            }
-            if (this.animation) {
-                ctx.drawImage(sprite,
-                    this.animation.x + this.animFrame * this.animation.w, this.animation.y,
-                    this.animation.w, this.animation.h,
-                    Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
-                    this.animation.w, this.animation.h
-                )
-            }
-            else {
-                ctx.drawImage(sprite,
-                    0, 0, asset ? this.width : 16, asset ? this.height : 16,
-                    Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
-                    this.width, this.height
-                )
-            }
-        }
-        // debug
-        // -------------------------------------------
-        if (debug) {
-            if (this.vectorMask) {ctx.save()
-                ctx.strokeStyle = '#ff0'
-                ctx.beginPath()
-                ctx.moveTo(this.x + camera.x, this.y + camera.y)
-                this.vectorMask.map(({x, y}) => ctx.lineTo(
-                    this.x + x + camera.x,
-                    this.y + y + camera.y
-                ))
-                ctx.lineTo(
-                    this.vectorMask[0].x + this.x + camera.x,
-                    this.vectorMask[0].y + this.y + camera.y)
-                ctx.stroke()
-                ctx.restore()
-            }
-            else {
-                outline(ctx, this.visible ? '#0f0' : '#f0f', {
-                    x: this.x + camera.x,
-                    y: this.y + camera.y,
-                    width: this.width,
-                    height: this.height
-                })
-
-                if (this.bounds) {
-                    outline(ctx, '#f00', {
-                        x: this.x + camera.x + this.bounds.x,
-                        y: this.y + camera.y + this.bounds.y,
-                        width: this.bounds.width,
-                        height: this.bounds.height
-                    })
+                if (this.shadowCaster && dynamicLights) {
+                    addLightmaskElement(posX, posY, width, height)
+                }
+                if (animation) {
+                    ctx.drawImage(sprite,
+                        animation.x + animFrame * animation.w, animation.y,
+                        animation.w, animation.h,
+                        posX, posY,
+                        animation.w, animation.h
+                    )
+                }
+                else {
+                    ctx.drawImage(sprite,
+                        0, 0,
+                        asset ? width : 16,
+                        asset ? height : 16,
+                        posX, posY,
+                        width, height
+                    )
                 }
             }
-            if (this.visible) {
-                fontPrint(`${this.name || this.type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
-                    Math.floor(this.x + camera.x),
-                    Math.floor(this.y + camera.y),
-                    FONTS.FONT_SMALL
-                )
+            // debug
+            // -------------------------------------------
+            if (debug) {
+                if (this.vectorMask) {
+                    ctx.save()
+                    ctx.strokeStyle = '#ff0'
+                    ctx.beginPath()
+                    ctx.moveTo(posX, posY)
+                    this.vectorMask.map(({x, y}) => ctx.lineTo(
+                        posX + x,
+                        posY + y
+                    ))
+                    ctx.lineTo(
+                        this.vectorMask[0].x + posX,
+                        this.vectorMask[0].y + posY
+                    )
+                    ctx.stroke()
+                    ctx.restore()
+                }
+                else {
+                    outline(ctx, visible ? '#0f0' : '#f0f', {
+                        x: posX,
+                        y: posY,
+                        width,
+                        height
+                    })
+
+                    if (bounds) {
+                        outline(ctx, '#f00', {
+                            x: posX + bounds.x,
+                            y: posY + bounds.y,
+                            width: bounds.width,
+                            height: bounds.height
+                        })
+                    }
+                }
+                if (visible) {
+                    fontPrint(`${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
+                        posX,
+                        posY - 8,
+                        FONTS.FONT_SMALL
+                    )
+                }
             }
         }
-
         if (this.message) {
             const { text, x, y } = this.message
             fontPrint(text,
