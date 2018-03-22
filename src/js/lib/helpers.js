@@ -58,3 +58,20 @@ export function randomInt (min, max) {
 export function randomChoice (choices) {
     return choices[randomInt(0, choices.length - 1)]
 }
+
+export function outline (color, {x, y, width, height}) {
+    return (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = color
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + width, y)
+        ctx.lineTo(x + width, y + height)
+        ctx.lineTo(x, y + height)
+        ctx.lineTo(x, y)
+        ctx.stroke()
+        ctx.restore()
+    }
+}
+
+

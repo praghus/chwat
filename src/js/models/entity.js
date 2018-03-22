@@ -1,14 +1,22 @@
 import SAT from 'sat'
-import { overlap, normalize } from '../lib/helpers'
-import { canJumpThrough, FONTS } from '../lib/constants'
+import { outline, overlap, normalize } from '../lib/helpers'
+import {canJumpThrough, DIRECTIONS, FONTS} from '../lib/constants'
 
 export default class Entity {
     constructor (obj, scene) {
         this._scene = scene
-        this.force = { x: 0, y: 0 }
+        this.x = null
+        this.y = null
+        this.width = null
+        this.height = null
+        this.force = {
+            x: 0,
+            y: 0
+        }
         this.bounds = null
         this.speed = 0
         this.maxSpeed = 1
+        this.awake = false
         this.activated = false
         this.dead = false
         this.jump = false
@@ -24,6 +32,7 @@ export default class Entity {
         this.messageTimeout = null
         this.messageDuration = 2000
         this.vectorMask = null
+        this.playSound = scene.playSound
         // map all object properties
         Object.keys(obj).map((prop) => {
             this[prop] = obj[prop]
@@ -66,56 +75,111 @@ export default class Entity {
     }
 
     draw (ctx) {
-        const { assets, camera, dynamicLights, addLightmaskElement } = this._scene
+        const {
+            addLightmaskElement,
+            assets,
+            camera,
+            debug,
+            dynamicLights,
+            fontPrint
+        } = this._scene
 
-        if (this.visible && this.onScreen()) {
-            const asset = assets[this.asset]
-            const sprite = asset || assets['no_image']
+        const font = FONTS.FONT_SMALL
 
-            if (this.shadowCaster && dynamicLights) {
-                addLightmaskElement(
-                    this.x + camera.x, this.y + camera.y,
-                    this.width, this.height
-                )
+        if (this.onScreen()) {
+            const { animation, animFrame, bounds, width, height, name, type, visible, force } = this
+            const [ posX, posY ] = [
+                Math.floor(this.x + camera.x),
+                Math.floor(this.y + camera.y)
+            ]
+            if (visible) {
+                const asset = assets[this.asset]
+                const sprite = asset || assets['no_image']
+
+                if (this.shadowCaster && dynamicLights) {
+                    addLightmaskElement(posX, posY, width, height)
+                }
+                if (animation) {
+                    ctx.drawImage(sprite,
+                        animation.x + animFrame * animation.w, animation.y,
+                        animation.w, animation.h,
+                        posX, posY,
+                        animation.w, animation.h
+                    )
+                }
+                else {
+                    ctx.drawImage(sprite,
+                        0, 0,
+                        asset ? width : 16,
+                        asset ? height : 16,
+                        posX, posY,
+                        width, height
+                    )
+                }
             }
-            if (this.animation) {
-                ctx.drawImage(sprite,
-                    this.animation.x + this.animFrame * this.animation.w, this.animation.y,
-                    this.animation.w, this.animation.h,
-                    this.x + camera.x, this.y + camera.y,
-                    this.animation.w, this.animation.h
-                )
-            }
-            else {
-                ctx.drawImage(sprite,
-                    0, 0, asset ? this.width : 16, asset ? this.height : 16,
-                    Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
-                    this.width, this.height
-                )
+
+            if (debug) {
+                if (this.vectorMask) {
+                    ctx.save()
+                    ctx.strokeStyle = '#ff0'
+                    ctx.beginPath()
+                    ctx.moveTo(posX, posY)
+                    this.vectorMask.map(({x, y}) => ctx.lineTo(
+                        posX + x,
+                        posY + y
+                    ))
+                    ctx.lineTo(
+                        this.vectorMask[0].x + posX,
+                        this.vectorMask[0].y + posY
+                    )
+                    ctx.stroke()
+                    ctx.restore()
+                }
+                else {
+                    outline(visible ? '#0f0' : '#f0f', {
+                        x: posX,
+                        y: posY,
+                        width,
+                        height
+                    })(ctx)
+                    if (bounds) {
+                        outline('#f00', {
+                            x: posX + bounds.x,
+                            y: posY + bounds.y,
+                            width: bounds.width,
+                            height: bounds.height
+                        })(ctx)
+                    }
+                }
+                if (visible) {
+                    fontPrint(`${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
+                        posX,
+                        posY - 8,
+                    )(ctx)
+                }
+                // ${String.fromCharCode(26)}
+                if (force.x !== 0) {
+                    const forceX = `${force.x.toFixed(2)}`
+                    fontPrint(forceX,
+                        force.x > 0 ? posX + width + 1 : posX - (forceX.length * 5) - 1,
+                        posY + height / 2,
+                    )(ctx)
+                }
+                if (force.y !== 0) {
+                    const forceY = `${force.y.toFixed(2)}`
+                    fontPrint(forceY,
+                        posX + (width - (forceY.length * 5)) / 2,
+                        posY + height / 2
+                    )(ctx)
+                }
             }
         }
-        // if (this.bounds) {
-        //     const bx = this.x + camera.x + this.bounds.x
-        //     const by = this.y + camera.y + this.bounds.y
-        //     ctx.save()
-        //     ctx.strokeStyle = '#ff0000'
-        //     ctx.beginPath()
-        //     ctx.moveTo(bx, by)
-        //     ctx.lineTo(bx + this.bounds.width, by)
-        //     ctx.lineTo(bx + this.bounds.width, by + this.bounds.height)
-        //     ctx.lineTo(bx, by + this.bounds.height)
-        //     ctx.lineTo(bx, by)
-        //     ctx.stroke()
-        //     ctx.restore()
-        // }
         if (this.message) {
-            const { fontPrint } = this._scene
             const { text, x, y } = this.message
             fontPrint(text,
                 Math.floor(x + camera.x),
-                Math.floor(y + camera.y),
-                FONTS.FONT_SMALL
-            )
+                Math.floor(y + camera.y)
+            )(ctx)
         }
     }
 
@@ -149,7 +213,7 @@ export default class Entity {
     }
 
     overlapTest (obj) {
-        if (!this.dead && (this.onScreen() || this.activated) &&
+        if (!this.dead && (this.onScreen() || this.activated || this.awake) &&
             overlap(this.getBoundingRect(), obj.getBoundingRect()) &&
             SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())
         ) {
@@ -175,6 +239,15 @@ export default class Entity {
 
     kill () {
         this.dead = true
+    }
+
+    bounce () {
+        if (this.force.x !== 0) {
+            this.force.x *= -1.5
+            this.direction = this.direction === DIRECTIONS.RIGHT
+                ? DIRECTIONS.LEFT
+                : DIRECTIONS.RIGHT
+        }
     }
 
     move () {

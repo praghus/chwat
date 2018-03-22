@@ -1,8 +1,15 @@
 import '../../lib/illuminated'
 import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
-import { ASSETS, COLORS, FONTS, LAYERS, LIGHTS, NON_COLLIDE_INDEX, SPECIAL_TILES_INDEX } from '../../lib/constants'
 import { Camera, Elements, World } from '../index'
+import {
+    ASSETS,
+    COLORS,
+    LAYERS,
+    LIGHTS,
+    NON_COLLIDE_INDEX,
+    SPECIAL_TILES_INDEX
+} from '../../lib/constants'
 
 const { DarkMask, Lighting, Vec2, RectangleObject } = window.illuminated
 
@@ -30,8 +37,8 @@ export default class GameScene extends Scene {
         }
     }
 
-    draw () {
-        const { ctx, player, viewport, world } = this
+    draw (ctx) {
+        const { player, viewport, world } = this
         const { resolutionX, resolutionY, scale } = viewport
         const { renderOrder } = world
         const castingShadows = this.dynamicLights && (this.camera.underground || player.inDark > 0)
@@ -41,20 +48,20 @@ export default class GameScene extends Scene {
         ctx.scale(scale, scale)
         ctx.clearRect(0, 0, resolutionX, resolutionY)
 
-        this.renderStaticBackground()
+        this.renderStaticBackground(ctx)
 
         renderOrder.map((layer) => {
             if (layer === LAYERS.OBJECTS) {
-                this.renderObjects()
+                this.renderObjects(ctx)
             }
             else {
                 layer === LAYERS.FOREGROUND2 && castingShadows
-                    ? this.renderLightingEffect()
-                    : this.renderLayer(layer)
+                    ? this.renderLightingEffect(ctx)
+                    : this.renderLayer(ctx, layer)
             }
         })
 
-        this.renderHUD()
+        this.renderHUD(ctx)
 
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay
@@ -65,8 +72,8 @@ export default class GameScene extends Scene {
         ctx.restore()
     }
 
-    renderStaticBackground () {
-        const { ctx, assets, player, viewport } = this
+    renderStaticBackground (ctx) {
+        const { assets, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
         const fogBorder = 600
         if (!this.camera.underground && player.inDark === 0) {
@@ -74,9 +81,9 @@ export default class GameScene extends Scene {
             ctx.fillStyle = COLORS.BLUE_SKY
             ctx.fillRect(0, 0, resolutionX, resolutionY)
             if (cameraX < 0) {
-                ctx.drawImage(assets[ASSETS.MOUNTAINS], (cameraX / 15), 275 + (this.camera.y / 2))
-                ctx.drawImage(assets[ASSETS.FAR_FOREST], (cameraX / 10), 100 + (this.camera.y / 2))
-                ctx.drawImage(assets[ASSETS.FOREST], (cameraX / 5), (this.camera.y / 2))
+                ctx.drawImage(assets[ASSETS.MOUNTAINS], cameraX / 15, 275 + (this.camera.y / 2))
+                ctx.drawImage(assets[ASSETS.FAR_FOREST], cameraX / 10, 100 + (this.camera.y / 2))
+                ctx.drawImage(assets[ASSETS.FOREST], cameraX / 5, this.camera.y / 2)
 
                 if (this.camera.y > -fogBorder) {
                     ctx.save()
@@ -91,8 +98,8 @@ export default class GameScene extends Scene {
         }
     }
 
-    renderLayer (layer) {
-        const { ctx, assets, viewport, world } = this
+    renderLayer (ctx, layer) {
+        const { assets, viewport, world } = this
         const { resolutionX, resolutionY } = viewport
         const { spriteCols, spriteSize } = world
 
@@ -128,16 +135,16 @@ export default class GameScene extends Scene {
         }
     }
 
-    renderObjects () {
-        const { ctx, elements } = this
+    renderObjects (ctx) {
+        const { elements } = this
         const { objects } = elements
         // todo: render elements in order
         objects.forEach((obj) => obj.draw(ctx))
         this.player.draw(ctx)
     }
 
-    renderLightingEffect () {
-        const { ctx, elements, player, viewport } = this
+    renderLightingEffect (ctx) {
+        const { elements, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
         const light = elements.getLight(LIGHTS.PLAYER_LIGHT)
 
@@ -160,14 +167,19 @@ export default class GameScene extends Scene {
         ctx.restore()
     }
 
-    renderHUD () {
-        const { ctx, assets, fps, player, viewport } = this
+    renderHUD (ctx) {
+        const { camera, assets, debug, fps, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
         const { energy, lives, items } = player
         const fpsIndicator = `FPS:${Math.round(fps)}`
 
         // FPS meter
-        this.fontPrint(fpsIndicator, resolutionX - (5 + fpsIndicator.length * 5), 5, FONTS.FONT_SMALL)
+        this.fontPrint(fpsIndicator, resolutionX - (5 + fpsIndicator.length * 5), 5)(ctx)
+
+        // Camera position in debug mode
+        if (debug) {
+            this.fontPrint(`camera\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 32)(ctx)
+        }
 
         // energy
         ctx.save()
@@ -183,14 +195,14 @@ export default class GameScene extends Scene {
 
         // lives
         ctx.drawImage(assets[ASSETS.HEART], 0, 0)
-        this.fontPrint(`x${lives}`, 17, 10, FONTS.FONT_SMALL)
+        this.fontPrint(`x${lives}`, 17, 10)(ctx)
 
         // items
         const align = (resolutionX - 60)
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 26)
         items.map((item, index) => {
             if (item && item.properties) {
-                this.fontPrint(item.name, 4, (resolutionY - 20) + index * 9, FONTS.FONT_SMALL)
+                this.fontPrint(item.name, 4, (resolutionY - 20) + index * 9)(ctx)
                 ctx.drawImage(
                     assets[ASSETS.ITEMS],
                     item.animation.x, item.animation.y,

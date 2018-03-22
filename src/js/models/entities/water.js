@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { DIRECTIONS } from '../../lib/constants'
+import {DIRECTIONS, ENTITIES_FAMILY} from '../../lib/constants'
 
 export default class Water extends Entity {
     constructor (obj, scene) {
@@ -12,13 +12,14 @@ export default class Water extends Entity {
 
     draw (ctx) {
         const { assets, camera, world } = this._scene
+        const { canFall, selective } = this.properties
         const { spriteSize } = world
 
         for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
             for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
                 const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
                 const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-                if (this.properties.selective || !this._scene.world.isSolid(PX, PY)) {
+                if (selective || !world.isSolid(PX, PY)) {
                     ctx.drawImage(assets[this.asset],
                         this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,
                         spriteSize, spriteSize,
@@ -28,9 +29,8 @@ export default class Water extends Entity {
                     )
                 }
                 if (
-                    this.properties.canFall &&
-                    y + 1 === Math.round(this.height / spriteSize) &&
-                    !world.isSolid(PX, PY + 1)
+                    canFall && !world.isSolid(PX, PY + 1) &&
+                    y + 1 === Math.round(this.height / spriteSize)
                 ) {
                     this.fall = true
                 }
@@ -38,7 +38,14 @@ export default class Water extends Entity {
         }
         if (this.fall) {
             this.fall = false
-            this.y += 16
+            this.y += spriteSize
+        }
+    }
+
+    collide (element) {
+        // restore the initial position of the object when it hits the water
+        if (element.family === ENTITIES_FAMILY.ITEMS) {
+            element.restore()
         }
     }
 

@@ -8,7 +8,7 @@ export const NON_COLLIDE_INDEX = 256
 export const SPECIAL_TILES_INDEX = 1024
 export const JUMP_THROUGH_TILES = [836, 868, 1088, 1089]
 
-export const STAGES = {
+export const SCENES = {
     INTRO: 'INTRO',
     GAME: 'GAME'
 }
@@ -52,7 +52,8 @@ export const INPUTS = {
     INPUT_RIGHT: 'right',
     INPUT_DOWN: 'down',
     INPUT_LEFT: 'left',
-    INPUT_ACTION: 'fire'
+    INPUT_ACTION: 'fire',
+    INPUT_DEBUG: 'debug'
 }
 
 export const INPUT_KEYS = {
@@ -60,7 +61,8 @@ export const INPUT_KEYS = {
     [INPUTS.INPUT_RIGHT]: ['KeyD', 'ArrowRight'],
     [INPUTS.INPUT_DOWN]: ['KeyS', 'ArrowDown'],
     [INPUTS.INPUT_LEFT]: ['KeyA', 'ArrowLeft'],
-    [INPUTS.INPUT_ACTION]: ['Space']
+    [INPUTS.INPUT_ACTION]: ['Space'],
+    [INPUTS.INPUT_DEBUG]: ['KeyI']
 }
 
 export const ENTITIES_TYPE = {
@@ -119,6 +121,7 @@ export const ASSETS = {
     FRAMES: 'frames',
     HEART: 'heart',
     ITEMS: 'items',
+    LOGO: 'chwat',
     MOUNTAINS: 'bg2',
     PADDLE: 'paddle',
     PLAYER: 'player',

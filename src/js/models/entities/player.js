@@ -1,4 +1,5 @@
 import Entity from '../entity'
+import { playerJump, playerGet } from '../../actions/sounds'
 import { ASSETS, DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Player extends Entity {
@@ -12,11 +13,11 @@ export default class Player extends Entity {
         this.maxSpeed = 2
         this.speed = 0.2
         this.solid = true
-        this.takeTimeout = null
+        this.hintTimeout = null
         this.hurtTimeout = null
+        this.itemTimeout = null
         this.items = [null, null]
         this.hint = null
-        this.hintTimeout = null
         this.respawnTimeout = null
         this.bounds = {
             x: 10,
@@ -70,41 +71,45 @@ export default class Player extends Entity {
         }
     }
 
-    update () {
+    update (dt) {
         const { input, world } = this._scene
-        if (!this.dead) {
-            if (this.canMove()) {
-                if (input[INPUTS.INPUT_LEFT]) {
-                    this.force.x -= this.speed
-                    if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
-                    this.direction = DIRECTIONS.LEFT
-                }
-                if (input[INPUTS.INPUT_RIGHT]) {
-                    this.force.x += this.speed
-                    if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
-                    this.direction = DIRECTIONS.RIGHT
-                }
-                if (input[INPUTS.INPUT_UP] && this.canJump()) {
-                    this.doJump = true
-                }
-                if (input[INPUTS.INPUT_ACTION]) {
-                    this.getItem(null)
-                }
+
+        if (this.canMove()) {
+            if (input[INPUTS.INPUT_LEFT]) {
+                this.force.x -= this.speed
+                if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
+                this.direction = DIRECTIONS.LEFT
             }
-            // slow down
-            if (!input[INPUTS.INPUT_LEFT] && !input[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
-                this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.speed : this.speed
-                if (this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
-                    this.direction === DIRECTIONS.RIGHT && this.force.x < 0) {
-                    this.force.x = 0
-                }
+            if (input[INPUTS.INPUT_RIGHT]) {
+                this.force.x += this.speed
+                if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
+                this.direction = DIRECTIONS.RIGHT
+            }
+            if (input[INPUTS.INPUT_UP] && this.canJump()) {
+                this.doJump = true
+                // todo: better sound dispatching
+                this.playSound(playerJump)
+            }
+            if (input[INPUTS.INPUT_ACTION]) {
+                this.getItem(null)
+            }
+        }
+        // slow down
+        if (!input[INPUTS.INPUT_LEFT] && !input[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
+            this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.speed : this.speed
+            if (this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
+                this.direction === DIRECTIONS.RIGHT && this.force.x < 0) {
+                this.force.x = 0
             }
         }
 
-        this.force.y += world.gravity
-        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
+        this.force.y += this.force.y > 0
+            ? world.gravity * 1.5
+            : world.gravity
 
         this.move()
+
+        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
 
         if (this.onFloor) {
             if (this.fall) {
@@ -216,53 +221,48 @@ export default class Player extends Entity {
     }
 
     canTake () {
-        return !this.takeTimeout
+        return !this.itemTimeout
     }
 
-    canUse (id) {
-        return !this.takeTimeout && (
-            (this.items[0] && this.items[0].properties.id === id) ||
-            (this.items[1] && this.items[1].properties.id === id) ||
-            (id === ENTITIES_TYPE.PLAYER)
-        )
+    canUse (itemId) {
+        const haveItem = this.items.find((item) => item && item.properties.id === itemId)
+        return !this.itemTimeout && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
-    // todo: make it better
-    useItem (item) {
-        let r
-        if (this.items[0] && this.items[0].properties.id === item) {
-            r = this.items[0]
-            this.items[0] = this.items[1]
-            this.items[1] = null
+    useItem (itemId) {
+        const item = this.items.find((item) => item && item.properties.id === itemId)
+        if (item) {
+            [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
+                ? [this.items[1], null]
+                : [this.items[0], null]
+            this.setItemTimeout()
+            return item
         }
-        if (this.items[1] && this.items[1].properties.id === item) {
-            r = this.items[1]
-            this.items[1] = null
-        }
-        return r
     }
 
     getItem (item) {
         if (this.canTake()) {
-            const { elements } = this._scene
             if (this.items[1]) {
-                elements.add(Object.assign(this.items[1], {
-                    dead: false,
-                    x: this.x + 16,
-                    y: this.y
-                }))
+                this.items[1].placeAt(this.x + 16, this.y)
             }
-            this.items[1] = this.items[0]
-            this.items[0] = item
-            if (item) item.kill()
-            this.takeTimeout = setTimeout(() => {
-                this.takeTimeout = null
-            }, 500)
+            [this.items[0], this.items[1]] = [item, this.items[0]]
+
+            if (item) {
+                item.visible = false
+                this.playSound(playerGet)
+            }
+            this.setItemTimeout()
         }
     }
 
+    setItemTimeout () {
+        this.itemTimeout = setTimeout(() => {
+            this.itemTimeout = null
+        }, 500)
+    }
+
     showHint (item) {
-        if (!this.hintTimeout && !this.takeTimeout) {
+        if (!this.hintTimeout && !this.itemTimeout) {
             this.hint = item
             this.hintTimeout = setTimeout(this.hideHint, 2000)
         }
