@@ -23,7 +23,7 @@ export default class IntroScene extends Scene {
         ctx.drawImage(assets[ASSETS.FAR_FOREST], 0, -10)
         ctx.drawImage(assets[ASSETS.FOREST], -100, -300)
         ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 30)
-        this.fontPrint(ctx, 'PRESS SPACE TO BEGIN', Math.ceil(resolutionX / 2) - 50, resolutionY - 70, FONTS.FONT_SMALL)
+        this.fontPrint('PRESS SPACE TO BEGIN', Math.ceil(resolutionX / 2) - 50, resolutionY - 70)(ctx)
         ctx.restore()
     }
 }

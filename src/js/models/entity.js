@@ -136,54 +136,50 @@ export default class Entity {
                     ctx.restore()
                 }
                 else {
-                    outline(ctx, visible ? '#0f0' : '#f0f', {
+                    outline(visible ? '#0f0' : '#f0f', {
                         x: posX,
                         y: posY,
                         width,
                         height
-                    })
+                    })(ctx)
                     if (bounds) {
-                        outline(ctx, '#f00', {
+                        outline('#f00', {
                             x: posX + bounds.x,
                             y: posY + bounds.y,
                             width: bounds.width,
                             height: bounds.height
-                        })
+                        })(ctx)
                     }
                 }
                 if (visible) {
-                    fontPrint(ctx, `${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
+                    fontPrint(`${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
                         posX,
                         posY - 8,
-                        font
-                    )
+                    )(ctx)
                 }
                 // ${String.fromCharCode(26)}
                 if (force.x !== 0) {
                     const forceX = `${force.x.toFixed(2)}`
-                    fontPrint(ctx, forceX,
-                        force.x > 0 ? posX + width + 1 : posX - (forceX.length * font.size) - 1,
+                    fontPrint(forceX,
+                        force.x > 0 ? posX + width + 1 : posX - (forceX.length * 5) - 1,
                         posY + height / 2,
-                        font
-                    )
+                    )(ctx)
                 }
                 if (force.y !== 0) {
                     const forceY = `${force.y.toFixed(2)}`
-                    fontPrint(ctx, forceY,
-                        posX + (width - (forceY.length * font.size)) / 2,
-                        posY + height / 2,
-                        font
-                    )
+                    fontPrint(forceY,
+                        posX + (width - (forceY.length * 5)) / 2,
+                        posY + height / 2
+                    )(ctx)
                 }
             }
         }
         if (this.message) {
             const { text, x, y } = this.message
-            fontPrint(ctx, text,
+            fontPrint(text,
                 Math.floor(x + camera.x),
-                Math.floor(y + camera.y),
-                font
-            )
+                Math.floor(y + camera.y)
+            )(ctx)
         }
     }
 

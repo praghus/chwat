@@ -40,19 +40,21 @@ export default class Scene {
         // draw
     }
 
-    fontPrint (ctx, text, x, y, font = FONTS.FONT_NORMAL) {
+    fontPrint (text, x, y, font = FONTS.FONT_SMALL) {
         const { assets } = this
-        text.split('\n').reverse().map((output, index) => {
-            for (let i = 0; i < output.length; i++) {
-                const chr = output.charCodeAt(i)
-                ctx.drawImage(assets[font.name],
-                    ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
-                    font.size, font.size,
-                    Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
-                    font.size, font.size
-                )
-            }
-        })
+        return (ctx) => {
+            text.split('\n').reverse().map((output, index) => {
+                for (let i = 0; i < output.length; i++) {
+                    const chr = output.charCodeAt(i)
+                    ctx.drawImage(assets[font.name],
+                        ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
+                        font.size, font.size,
+                        Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
+                        font.size, font.size
+                    )
+                }
+            })
+        }
     }
 
     countFPS () {
@@ -64,7 +66,7 @@ export default class Scene {
         this.lastLoop = now
     }
 
-    fetchAction (action){
+    fetchAction (action) {
         return this.input[action] && !this.lastInput[action]
     }
 }
