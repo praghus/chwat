@@ -1,6 +1,6 @@
 import {
-    AirBalloon, Bat, Blob, Bridge, Catapult, Checkpoint, Coin, Crusher, DarkMask, Dust,
-    Item, JumpThrough, Lava, LavaStone, Paddle, Particle, Player, Rock, Slope,
+    AirBalloon, Bat, Blob, Bridge, Catapult, Checkpoint, Crusher, DarkMask, Dust, Item,
+    JumpThrough, Lava, LavaStone, MapPiece, Paddle, Particle, Player, Rock, Slope,
     SpiderTrap, Spikes, Switch, Torch, Trigger, Water, WoodenBridge
 } from '../models/entities'
 
@@ -72,7 +72,7 @@ export const ENTITIES_TYPE = {
     BRIDGE: 'bridge',
     CATAPULT: 'catapult',
     CHECKPOINT: 'checkpoint',
-    COIN: 'coin',
+    MAP_PIECE: 'map_piece',
     CRUSHER: 'crusher',
     DARK_MASK: 'dark_mask',
     DUST: 'dust',
@@ -112,14 +112,14 @@ export const ASSETS = {
     BUBBLE: 'sbubble',
     BRIDGE: 'bridge',
     CATAPULT: 'catapult',
-    COIN: 'coin',
+    MAP_PIECE: 'map_piece',
     CRUSHER: 'crusher',
     DUST: 'dust',
     FAR_FOREST: 'bg3',
     FOG: 'bg5',
     FOREST: 'bg4',
     FRAMES: 'frames',
-    HEART: 'heart',
+    HEARTS: 'hearts',
     ITEMS: 'items',
     LOGO: 'chwat',
     MOUNTAINS: 'bg2',
@@ -141,7 +141,7 @@ export const ENTITIES = [
     { type: ENTITIES_TYPE.BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: Bridge, asset: ASSETS.BRIDGE },
     { type: ENTITIES_TYPE.CATAPULT, family: ENTITIES_FAMILY.MODIFIERS, model: Catapult, asset: ASSETS.CATAPULT },
     { type: ENTITIES_TYPE.CHECKPOINT, family: ENTITIES_FAMILY.MODIFIERS, model: Checkpoint },
-    { type: ENTITIES_TYPE.COIN, family: ENTITIES_FAMILY.ITEMS, model: Coin, asset: ASSETS.COIN },
+    { type: ENTITIES_TYPE.MAP_PIECE, family: ENTITIES_FAMILY.ITEMS, model: MapPiece, asset: ASSETS.MAP_PIECE},
     { type: ENTITIES_TYPE.CRUSHER, family: ENTITIES_FAMILY.TRAPS, model: Crusher, asset: ASSETS.CRUSHER },
     { type: ENTITIES_TYPE.DARK_MASK, family: ENTITIES_FAMILY.MODIFIERS, model: DarkMask },
     { type: ENTITIES_TYPE.DUST, family: ENTITIES_FAMILY.PARTICLES, model: Dust, asset: ASSETS.DUST },

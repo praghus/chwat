@@ -81,9 +81,9 @@ export default class GameScene extends Scene {
             ctx.fillStyle = COLORS.BLUE_SKY
             ctx.fillRect(0, 0, resolutionX, resolutionY)
             if (cameraX < 0) {
-                ctx.drawImage(assets[ASSETS.MOUNTAINS], cameraX / 15, 275 + (this.camera.y / 2))
-                ctx.drawImage(assets[ASSETS.FAR_FOREST], cameraX / 10, 100 + (this.camera.y / 2))
-                ctx.drawImage(assets[ASSETS.FOREST], cameraX / 5, this.camera.y / 2)
+                ctx.drawImage(assets[ASSETS.MOUNTAINS], cameraX / 15, 275 + this.camera.y / 2)
+                ctx.drawImage(assets[ASSETS.FAR_FOREST], cameraX / 10, 100 + this.camera.y / 2)
+                ctx.drawImage(assets[ASSETS.FOREST], cameraX / 5, 270 + this.camera.y / 2)
 
                 if (this.camera.y > -fogBorder) {
                     ctx.save()
@@ -170,7 +170,7 @@ export default class GameScene extends Scene {
     renderHUD (ctx) {
         const { camera, assets, debug, fps, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
-        const { energy, lives, items } = player
+        const { energy, items, lives, maxLives } = player
         const fpsIndicator = `FPS:${Math.round(fps)}`
 
         // FPS meter
@@ -178,24 +178,24 @@ export default class GameScene extends Scene {
 
         // Camera position in debug mode
         if (debug) {
-            this.fontPrint(`camera\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 32)(ctx)
+            this.fontPrint(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 28)(ctx)
         }
 
         // energy
+        const xPos = maxLives * 11
         ctx.save()
-        ctx.fillStyle = COLORS.DARK_GREY
-        ctx.fillRect(17, 4, 52, 5)
         ctx.fillStyle = COLORS.BLACK
-        ctx.fillRect(18, 5, 50, 3)
+        ctx.fillRect(4 + xPos, 5, 50, 3)
         ctx.fillStyle = COLORS.DARK_RED
-        ctx.fillRect(18, 5, energy / 2, 3)
+        ctx.fillRect(4 + xPos, 5, energy / 2, 3)
         ctx.fillStyle = COLORS.LIGHT_RED
-        ctx.fillRect(18, 6, energy / 2, 1)
+        ctx.fillRect(4 + xPos, 6, energy / 2, 2)
         ctx.restore()
 
         // lives
-        ctx.drawImage(assets[ASSETS.HEART], 0, 0)
-        this.fontPrint(`x${lives}`, 17, 10)(ctx)
+        // ctx.drawImage(assets[ASSETS.HEART], 0, 0)
+        ctx.drawImage(assets[ASSETS.HEARTS], 0, 10, xPos, 10, 3, 3, xPos, 10)
+        ctx.drawImage(assets[ASSETS.HEARTS], 0, 0, lives * 11, 10, 3, 3, lives * 11, 10)
 
         // items
         const align = (resolutionX - 60)

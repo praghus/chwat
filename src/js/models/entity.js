@@ -84,8 +84,6 @@ export default class Entity {
             fontPrint
         } = this._scene
 
-        const font = FONTS.FONT_SMALL
-
         if (this.onScreen()) {
             const { animation, animFrame, bounds, width, height, name, type, visible, force } = this
             const [ posX, posY ] = [

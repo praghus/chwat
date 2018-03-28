@@ -3,16 +3,22 @@ import PropTypes from 'prop-types'
 import Canvas from './canvas'
 import { IntroScene, GameScene } from '../models/scenes'
 import { getKeyPressed, SCENES } from '../lib/constants'
+import {
+    assetPropType,
+    inputPropType,
+    tickerPropType,
+    viewportPropType
+} from '../lib/prop-types'
 
 const propTypes = {
-    assets: PropTypes.object.isRequired,
-    input: PropTypes.object.isRequired,
-    onMouse: PropTypes.func.isRequired,
+    assets: assetPropType.isRequired,
+    input: inputPropType.isRequired,
     onKey: PropTypes.func.isRequired,
+    onMouse: PropTypes.func.isRequired,
     playSound: PropTypes.func.isRequired,
     startTicker: PropTypes.func.isRequired,
-    ticker: PropTypes.object.isRequired,
-    viewport: PropTypes.object
+    ticker: tickerPropType.isRequired,
+    viewport: viewportPropType.isRequired
 }
 
 export default class Game extends Component {

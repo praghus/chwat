@@ -8,9 +8,11 @@ export default class Player extends Entity {
         this.direction = DIRECTIONS.RIGHT
         this.inDark = 0
         this.lives = 3
+        this.maxLives = 3
         this.energy = 100
         this.maxEnergy = 100
         this.maxSpeed = 2
+        this.mapPieces = 0
         this.speed = 0.2
         this.solid = true
         this.hintTimeout = null
