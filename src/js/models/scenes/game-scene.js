@@ -118,7 +118,11 @@ export default class GameScene extends Scene {
             while (x < resolutionX) {
                 const tile = world.get(layer, _x, _y)
                 if (tile > 0) {
-                    if (shouldCreateLightmask && tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
+                    // stairs
+                    if (tile === 230 || tile === 233) {
+                        this.addLightmaskElement(tile === 233 ? x : x + 8, y + 8, 8, 8)
+                    }
+                    else if (shouldCreateLightmask && tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
                         this.addLightmaskElement(x, y, spriteSize, spriteSize)
                     }
                     ctx.drawImage(assets[ASSETS.TILES],

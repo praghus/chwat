@@ -1,6 +1,6 @@
 import SAT from 'sat'
 import { outline, overlap, normalize } from '../lib/helpers'
-import {canJumpThrough, DIRECTIONS, FONTS} from '../lib/constants'
+import { canJumpThrough, DIRECTIONS } from '../lib/constants'
 
 export default class Entity {
     constructor (obj, scene) {
@@ -9,10 +9,7 @@ export default class Entity {
         this.y = null
         this.width = null
         this.height = null
-        this.force = {
-            x: 0,
-            y: 0
-        }
+        this.force = { x: 0, y: 0 }
         this.bounds = null
         this.speed = 0
         this.maxSpeed = 1
