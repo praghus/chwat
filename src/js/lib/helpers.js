@@ -12,7 +12,6 @@ export function calculateViewportSize (width, height) {
         height: Math.round(height / y) * y,
         resolutionX: x,
         resolutionY: y,
-        ratio: width / height,
         scale: Math.round(width / x)
     }
 }

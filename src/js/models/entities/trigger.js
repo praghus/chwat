@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import {ENTITIES_TYPE, INPUTS, LAYERS} from '../../lib/constants'
+import { ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Trigger extends Entity {
     constructor (obj, scene) {
@@ -46,7 +46,7 @@ export default class Trigger extends Entity {
     update () {
         if (this.activated) {
             const { camera, elements } = this._scene
-            const { clear, produce, produce_name, shake } = this.properties
+            const { clear, fade, produce, produce_name, shake } = this.properties
             if (produce) {
                 elements.add({
                     type: ENTITIES_TYPE.ITEM,
@@ -62,6 +62,9 @@ export default class Trigger extends Entity {
             }
             if (shake) {
                 camera.shake()
+            }
+            if (fade) {
+                this._scene.blackOverlay = 1
             }
             this.dead = true
         }

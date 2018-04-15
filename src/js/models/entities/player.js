@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { playerJump, playerGet } from '../../actions/sounds'
+// import { playerJump, playerGet } from '../../actions/sounds'
 import { ASSETS, DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Player extends Entity {
@@ -8,9 +8,11 @@ export default class Player extends Entity {
         this.direction = DIRECTIONS.RIGHT
         this.inDark = 0
         this.lives = 3
+        this.maxLives = 3
         this.energy = 100
         this.maxEnergy = 100
         this.maxSpeed = 2
+        this.mapPieces = 0
         this.speed = 0.2
         this.solid = true
         this.hintTimeout = null
@@ -88,7 +90,7 @@ export default class Player extends Entity {
             if (input[INPUTS.INPUT_UP] && this.canJump()) {
                 this.doJump = true
                 // todo: better sound dispatching
-                this.playSound(playerJump)
+                // this.playSound(playerJump)
             }
             if (input[INPUTS.INPUT_ACTION]) {
                 this.getItem(null)
@@ -249,7 +251,7 @@ export default class Player extends Entity {
 
             if (item) {
                 item.visible = false
-                this.playSound(playerGet)
+                // this.playSound(playerGet)
             }
             this.setItemTimeout()
         }

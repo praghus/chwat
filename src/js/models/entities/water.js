@@ -11,10 +11,13 @@ export default class Water extends Entity {
     }
 
     draw (ctx) {
-        const { assets, camera, world } = this._scene
-        const { canFall, selective } = this.properties
-        const { spriteSize } = world
-
+        const {assets, camera, world} = this._scene
+        const {canFall, selective} = this.properties
+        const {spriteSize} = world
+        const [posX, posY] = [
+            Math.floor(this.x + camera.x),
+            Math.floor(this.y + camera.y)
+        ]
         for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
             for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
                 const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
@@ -23,8 +26,8 @@ export default class Water extends Entity {
                     ctx.drawImage(assets[this.asset],
                         this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,
                         spriteSize, spriteSize,
-                        Math.floor(this.x + camera.x) + (x * spriteSize),
-                        Math.floor(this.y + camera.y) + (y * spriteSize),
+                        posX + (x * spriteSize),
+                        posY + (y * spriteSize),
                         spriteSize, spriteSize
                     )
                 }
@@ -36,14 +39,11 @@ export default class Water extends Entity {
                 }
             }
         }
-        if (this.fall) {
-            this.fall = false
-            this.y += spriteSize
-        }
     }
 
     collide (element) {
-        // restore the initial position of the object when it hits the water
+        // restore the initial position of the item
+        // when it falls into the water
         if (element.family === ENTITIES_FAMILY.ITEMS) {
             element.restore()
         }
@@ -60,6 +60,10 @@ export default class Water extends Entity {
             }
             if (this.wave < -2) {
                 this.direction = DIRECTIONS.DOWN
+            }
+            if (this.fall) {
+                this.fall = false
+                this.y += 16
             }
         }
     }

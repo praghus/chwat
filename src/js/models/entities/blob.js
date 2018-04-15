@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { DIRECTIONS, ENTITIES_FAMILY } from '../../lib/constants'
+import { DIRECTIONS } from '../../lib/constants'
 
 export default class Blob extends Entity {
     constructor (obj, scene) {

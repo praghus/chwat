@@ -1,4 +1,4 @@
-import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX } from '../lib/constants'
+import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX, canJumpThrough } from '../lib/constants'
 
 export default class World {
     constructor (data) {
@@ -82,9 +82,9 @@ export default class World {
     }
 
     isSolid (x, y) {
-        if (!this.inRange(x, y)) {
-            return true
-        }
-        return this.data[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX
+        return !this.inRange(x, y) || (
+            this.data[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX ||
+            canJumpThrough(this.data[LAYERS.MAIN][x][y])
+        )
     }
 }

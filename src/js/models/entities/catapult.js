@@ -15,7 +15,6 @@ export default class Catapult extends Entity {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { elements } = this._scene
 
             this.trigger.activated = false
             this.trigger.dead = false
