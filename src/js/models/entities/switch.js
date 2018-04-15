@@ -30,6 +30,10 @@ export default class Switch extends Entity {
                 world.put(LAYERS.MAIN, 227, 25, 130)
                 break
             case 'lift':
+                world.put(LAYERS.BACKGROUND2, 495, 75, 0)
+                world.put(LAYERS.BACKGROUND2, 496, 75, 0)
+                world.put(LAYERS.BACKGROUND2, 497, 75, 0)
+                world.put(LAYERS.BACKGROUND2, 498, 75, 0)
                 world.put(LAYERS.MAIN, 495, 76, 0)
                 world.put(LAYERS.MAIN, 496, 76, 0)
                 world.put(LAYERS.MAIN, 497, 76, 0)
@@ -42,6 +46,10 @@ export default class Switch extends Entity {
                 world.put(LAYERS.FOREGROUND1, 498, 78, 161)
                 world.put(LAYERS.FOREGROUND1, 495, 79, 161)
                 world.put(LAYERS.FOREGROUND1, 498, 79, 161)
+                world.put(LAYERS.BACKGROUND2, 495, 79, 82)
+                world.put(LAYERS.BACKGROUND2, 496, 79, 82)
+                world.put(LAYERS.BACKGROUND2, 497, 79, 82)
+                world.put(LAYERS.BACKGROUND2, 498, 79, 82)
                 world.put(LAYERS.MAIN, 495, 80, 292)
                 world.put(LAYERS.MAIN, 496, 80, 293)
                 world.put(LAYERS.MAIN, 497, 80, 293)

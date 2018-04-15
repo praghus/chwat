@@ -34,7 +34,8 @@ export const LIGHTS = {
 
 export const LAYERS = {
     MAIN: 'ground',
-    BACKGROUND: 'background',
+    BACKGROUND1: 'background1',
+    BACKGROUND2: 'background2',
     FOREGROUND1: 'foreground1',
     FOREGROUND2: 'foreground2',
     OBJECTS: 'objects'
@@ -115,10 +116,12 @@ export const ASSETS = {
     MAP_PIECE: 'map_piece',
     CRUSHER: 'crusher',
     DUST: 'dust',
+    ENERGY: 'energy',
     FAR_FOREST: 'bg3',
     FOG: 'bg5',
     FOREST: 'bg4',
     FRAMES: 'frames',
+    HEAD: 'head',
     HEARTS: 'hearts',
     ITEMS: 'items',
     LOGO: 'chwat',
