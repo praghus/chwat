@@ -143,7 +143,7 @@ export default class GameScene extends Scene {
         const { elements } = this
         const { objects } = elements
         // todo: render elements in order
-        objects.forEach((obj) => obj.draw(ctx))
+        objects.map((obj) => obj.draw(ctx))
         this.player.draw(ctx)
     }
 

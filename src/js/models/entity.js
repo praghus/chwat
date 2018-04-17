@@ -29,8 +29,8 @@ export default class Entity {
         this.messageTimeout = null
         this.messageDuration = 2000
         this.vectorMask = null
+        this.boundingPolygon = null
         this.playSound = scene.playSound
-        // map all object properties
         Object.keys(obj).map((prop) => {
             this[prop] = obj[prop]
         })
@@ -72,15 +72,7 @@ export default class Entity {
     }
 
     draw (ctx) {
-        const {
-            addLightmaskElement,
-            assets,
-            camera,
-            debug,
-            dynamicLights,
-            fontPrint
-        } = this._scene
-
+        const { addLightmaskElement, assets, camera, debug, dynamicLights, fontPrint } = this._scene
         if (this.onScreen()) {
             const { animation, animFrame, bounds, width, height, name, type, visible, force } = this
             const [ posX, posY ] = [
@@ -199,18 +191,22 @@ export default class Entity {
     getVectorMask () {
         const { x, y, width, height } = this.getBounds()
         const vectorMask = this.vectorMask || [
-            new SAT.Vector(x, y),
-            new SAT.Vector(x + width, y),
-            new SAT.Vector(x + width, y + height),
-            new SAT.Vector(x, y + height)
+            {x, y},
+            {x: x + width, y},
+            {x: x + width, y: y + height},
+            {x, y: y + height}
         ]
-        return new SAT.Polygon(new SAT.Vector(this.x, this.y), vectorMask)
+        this.boundingPolygon
+            ? this.boundingPolygon.pos = {x: this.x, y: this.y}
+            : this.boundingPolygon = new SAT.Polygon(new SAT.Vector(this.x, this.y), vectorMask)
+
+        return this.boundingPolygon
     }
 
     overlapTest (obj) {
         if (!this.dead && (this.onScreen() || this.activated || this.awake) &&
             overlap(this.getBoundingRect(), obj.getBoundingRect()) &&
-            SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())
+            this.vectorMask && SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())
         ) {
             this.collide(obj)
             obj.collide(this)
@@ -284,7 +280,7 @@ export default class Entity {
             }
         }
 
-        nearMatrix.forEach((tile) => {
+        nearMatrix.map((tile) => {
             const jumpThrough = canJumpThrough(tile.type)
             if (!jumpThrough && overlap(nextX, tile)) {
                 if (this.force.x < 0) {
@@ -315,9 +311,7 @@ export default class Entity {
         this.onLeftEdge = !world.isSolid(PX, PH)
         this.onRightEdge = !world.isSolid(PW, PH)
 
-        if (this.onFloor) {
-            this.force.y *= -0.4
-        }
+        if (this.onFloor) this.force.y *= -0.4
     }
 
     showMessage (text, x = this.x, y = this.y) {
@@ -332,5 +326,13 @@ export default class Entity {
             this.message = null
             this.messageTimeout = null
         }
+    }
+
+    restore () {
+        this.dead = false
+        this.activated = false
+        this.dead = false
+        this.animFrame = 0
+        this.animCount = 0
     }
 }
