@@ -206,7 +206,7 @@ export default class Entity {
     overlapTest (obj) {
         if (!this.dead && (this.onScreen() || this.activated || this.awake) &&
             overlap(this.getBoundingRect(), obj.getBoundingRect()) &&
-            this.vectorMask && SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask())
+            (!this.vectorMask || SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask()))
         ) {
             this.collide(obj)
             obj.collide(this)

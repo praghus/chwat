@@ -72,5 +72,3 @@ export function outline (color, {x, y, width, height}) {
         ctx.restore()
     }
 }
-
-

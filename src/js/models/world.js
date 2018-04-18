@@ -1,4 +1,7 @@
+import '../lib/illuminated'
 import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX, canJumpThrough } from '../lib/constants'
+
+const { Vec2, RectangleObject } = window.illuminated
 
 export default class World {
     constructor (data) {
@@ -13,16 +16,26 @@ export default class World {
         this.spriteCols = parseInt(tilesets[0].columns)
         this.renderOrder = []
         this.objects = []
+        this.lightmask = []
         this.data = []
 
         layers.map(({name, data, objects}) => {
             this.renderOrder.push(name)
             if (data) {
                 this.data[name] = [...Array(width).keys()].map(() => Array(height))
+                if (name === LAYERS.MAIN) {
+                    this.lightmask = [...Array(width).keys()].map(() => Array(height))
+                }
                 let j = 0
                 for (let y = 0; y < this.height; y++) {
                     for (let x = 0; x < this.width; x++) {
-                        this.data[name][x][y] = data[j]
+                        const tile = data[j]
+                        this.data[name][x][y] = tile
+                        if (name === LAYERS.MAIN && y >= this.surface) {
+                            this.lightmask[x][y] = tile > 0
+                                ? this.createLightmaskRect(x, y)
+                                : null
+                        }
                         j++
                     }
                 }
@@ -86,5 +99,19 @@ export default class World {
             this.data[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX ||
             canJumpThrough(this.data[LAYERS.MAIN][x][y])
         )
+    }
+
+    /**
+     * illuminated.js
+     */
+    createLightmaskRect (x, y) {
+        return new RectangleObject({
+            topleft: new Vec2(x, y),
+            bottomright: new Vec2(x + this.spriteSize, y + this.spriteSize)
+        })
+    }
+
+    getLightmask (x, y) {
+        return this.inRange(x, y) && this.lightmask[x][y]
     }
 }
