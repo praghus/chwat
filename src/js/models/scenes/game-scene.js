@@ -156,8 +156,10 @@ export default class GameScene extends Scene {
                     if (shouldCreateLightmask) {
                         const maskElement = world.getLightmask(_x, _y)
                         // stairs
-                        if (tile === 230 || tile === 233) {
-                            this.addLightmaskElement(maskElement, tile === 233 ? x : x + 8, y + 8, 8, 8)
+                        if (tile === 230 || tile === 233 || tile === 234 || tile === 235) {
+                            this.addLightmaskElement(maskElement,
+                                tile === 233 || tile === 235 ? x : x + 8, y + 8, 8, 8
+                            )
                         }
                         else if (tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
                             this.addLightmaskElement(maskElement, x, y, spriteSize, spriteSize)

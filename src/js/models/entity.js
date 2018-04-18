@@ -20,7 +20,6 @@ export default class Entity {
         this.fall = false
         this.onFloor = false
         this.solid = false
-        this.shadowCaster = false
         this.visible = true
         this.animation = null
         this.animFrame = 0
@@ -83,8 +82,8 @@ export default class Entity {
                 const asset = assets[this.asset]
                 const sprite = asset || assets['no_image']
 
-                if (this.shadowCaster && dynamicLights) {
-                    addLightmaskElement(posX, posY, width, height)
+                if (dynamicLights && this.lightmask) {
+                    addLightmaskElement(this.lightmask, posX, posY, width, height)
                 }
                 if (animation) {
                     ctx.drawImage(sprite,

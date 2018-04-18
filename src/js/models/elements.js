@@ -35,11 +35,9 @@ export default class Elements {
                 }
                 else {
                     obj.update()
-                    if (obj.onScreen()) {
-                        obj.overlapTest(player)
-                        for (let k = index + 1; k < this.objects.length; k++) {
-                            this.objects[index].overlapTest(this.objects[k])
-                        }
+                    obj.overlapTest(player)
+                    for (let k = index + 1; k < this.objects.length; k++) {
+                        this.objects[index].overlapTest(this.objects[k])
                     }
                 }
             }
