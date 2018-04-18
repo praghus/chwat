@@ -8,6 +8,7 @@ export default class Elements {
     constructor (entities, scene) {
         this._scene = scene
         this.objects = []
+        this.objectsPool = {}
         this.lights = {
             [LIGHTS.PLAYER_LIGHT]: new Lamp({
                 position: new Vec2(0, 0),
@@ -17,24 +18,26 @@ export default class Elements {
                 radius: 8
             })
         }
-        for (let i = 0; i < entities.length; i++) {
-            this.add(entities[i])
-        }
+        entities.map((entity) => this.add(entity))
     }
 
     update () {
         const { player } = this._scene
-        this.objects.forEach((obj, i) => {
+        this.objects.map((obj, index) => {
             if (obj) {
                 if (obj.dead) {
-                    this.objects[i] = this.objects[this.objects.length - 1]
-                    this.objects.length--
+                    // create objectsPool to reduce garbage collection and stuttering
+                    if (!this.objectsPool[obj.type]) {
+                        this.objectsPool[obj.type] = []
+                    }
+                    this.objectsPool[obj.type].push(obj)
+                    this.objects.splice(index, 1)
                 }
                 else {
                     obj.update()
                     obj.overlapTest(player)
-                    for (let k = i + 1; k < this.objects.length; k++) {
-                        this.objects[i].overlapTest(this.objects[k])
+                    for (let k = index + 1; k < this.objects.length; k++) {
+                        this.objects[index].overlapTest(this.objects[k])
                     }
                 }
             }
@@ -45,8 +48,19 @@ export default class Elements {
         const { type, family } = obj
         const entity = getEntityByType(type)
         if (entity) {
-            const Model = entity.model
-            return new Model(Object.assign({family}, obj, entity), this._scene)
+            // first check if there are some objects of the same type in objectsPool
+            if (this.objectsPool[obj.type] && this.objectsPool[obj.type].length) {
+                const storedObj = this.objectsPool[obj.type].pop()
+                storedObj.restore()
+                Object.keys(obj).map((prop) => {
+                    storedObj[prop] = obj[prop]
+                })
+                return storedObj
+            }
+            else {
+                const Model = entity.model
+                return new Model(Object.assign({family}, obj, entity), this._scene)
+            }
         }
         return null
     }
