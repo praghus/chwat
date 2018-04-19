@@ -1,7 +1,5 @@
-import '../lib/illuminated'
+import { createRectangleObject } from '../lib/helpers'
 import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX, canJumpThrough } from '../lib/constants'
-
-const { Vec2, RectangleObject } = window.illuminated
 
 export default class World {
     constructor (data) {
@@ -33,7 +31,7 @@ export default class World {
                         this.data[name][x][y] = tile
                         if (name === LAYERS.MAIN && y >= this.surface) {
                             this.lightmask[x][y] = tile > 0
-                                ? this.createLightmaskRect(x, y)
+                                ? createRectangleObject(x, y, this.spriteSize, this.spriteSize)
                                 : null
                         }
                         j++
@@ -99,16 +97,6 @@ export default class World {
             this.data[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX ||
             canJumpThrough(this.data[LAYERS.MAIN][x][y])
         )
-    }
-
-    /**
-     * illuminated.js
-     */
-    createLightmaskRect (x, y) {
-        return new RectangleObject({
-            topleft: new Vec2(x, y),
-            bottomright: new Vec2(x + this.spriteSize, y + this.spriteSize)
-        })
     }
 
     getLightmask (x, y) {
