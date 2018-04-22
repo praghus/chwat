@@ -1,8 +1,5 @@
-import '../lib/illuminated'
 import { COLORS, ENTITIES_TYPE, LIGHTS, getEntityByType } from '../lib/constants'
-import { overlap } from '../lib/helpers'
-
-const { Lamp, Vec2 } = window.illuminated
+import { createLamp, overlap } from '../lib/helpers'
 
 export default class Elements {
     constructor (entities, scene) {
@@ -10,13 +7,7 @@ export default class Elements {
         this.objects = []
         this.objectsPool = {}
         this.lights = {
-            [LIGHTS.PLAYER_LIGHT]: new Lamp({
-                position: new Vec2(0, 0),
-                color: COLORS.PLAYER_LIGHT,
-                distance: 96,
-                samples: 1,
-                radius: 8
-            })
+            [LIGHTS.PLAYER_LIGHT]: createLamp(0, 0, 96, COLORS.PLAYER_LIGHT)
         }
         entities.map((entity) => this.add(entity))
     }
@@ -34,7 +25,7 @@ export default class Elements {
                     this.objects.splice(index, 1)
                 }
                 else {
-                    obj.update()
+                    obj.update && obj.update()
                     obj.overlapTest(player)
                     for (let k = index + 1; k < this.objects.length; k++) {
                         this.objects[index].overlapTest(this.objects[k])
@@ -104,7 +95,9 @@ export default class Elements {
         for (let i = 0; i < particle_count; i++) {
             const props = Object.assign({}, properties)
             props.x = properties.x + Math.random() * 8
-            this.add(Object.assign({}, {type: ENTITIES_TYPE.PARTICLE}, props))
+            this.add(Object.assign({}, {
+                type: ENTITIES_TYPE.PARTICLE
+            }, props))
         }
     }
 }

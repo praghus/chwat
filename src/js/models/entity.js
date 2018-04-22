@@ -1,4 +1,3 @@
-import SAT from 'sat'
 import { outline, overlap, normalize } from '../lib/helpers'
 import { canJumpThrough, DIRECTIONS } from '../lib/constants'
 
@@ -28,7 +27,6 @@ export default class Entity {
         this.messageTimeout = null
         this.messageDuration = 2000
         this.vectorMask = null
-        this.boundingPolygon = null
         this.playSound = scene.playSound
         Object.keys(obj).map((prop) => {
             this[prop] = obj[prop]
@@ -169,10 +167,6 @@ export default class Entity {
         }
     }
 
-    update () {
-        // update
-    }
-
     getBounds () {
         const { width, height } = this
         return this.bounds || {x: 0, y: 0, width, height}
@@ -187,33 +181,13 @@ export default class Entity {
         }
     }
 
-    getVectorMask () {
-        const { x, y, width, height } = this.getBounds()
-        const vectorMask = this.vectorMask || [
-            {x, y},
-            {x: x + width, y},
-            {x: x + width, y: y + height},
-            {x, y: y + height}
-        ]
-        this.boundingPolygon
-            ? this.boundingPolygon.pos = {x: this.x, y: this.y}
-            : this.boundingPolygon = new SAT.Polygon(new SAT.Vector(this.x, this.y), vectorMask)
-
-        return this.boundingPolygon
-    }
-
     overlapTest (obj) {
         if (!this.dead && (this.onScreen() || this.activated || this.awake) &&
-            overlap(this.getBoundingRect(), obj.getBoundingRect()) &&
-            (!this.vectorMask || SAT.testPolygonPolygon(this.getVectorMask(), obj.getVectorMask()))
+            overlap(this.getBoundingRect(), obj.getBoundingRect())
         ) {
-            this.collide(obj)
-            obj.collide(this)
+            this.collide && this.collide(obj)
+            obj.collide && obj.collide(this)
         }
-    }
-
-    collide (element) {
-        // console.log("Object "+element.type+" collide with "+this.type);
     }
 
     hit (damage) {

@@ -1,3 +1,7 @@
+import './illuminated'
+
+const { Lamp, Vec2, RectangleObject } = window.illuminated
+
 export function requireAll (requireContext) {
     return requireContext.keys().map(requireContext)
 }
@@ -71,4 +75,24 @@ export function outline (color, {x, y, width, height}) {
         ctx.stroke()
         ctx.restore()
     }
+}
+
+/**
+ * illuminated.js
+ */
+export function createRectangleObject (x, y, width, height) {
+    return new RectangleObject({
+        topleft: new Vec2(x, y),
+        bottomright: new Vec2(x + width, y + height)
+    })
+}
+
+export function createLamp (x, y, distance, color) {
+    return new Lamp({
+        color,
+        distance,
+        samples: 1,
+        radius: 8,
+        position: new Vec2(x, y)
+    })
 }

@@ -46,11 +46,12 @@ class AppContainer extends Component {
     }
 
     render () {
-        const { assetsLoaded } = this.state
+        const { loadedCount, assetsLoaded } = this.state
+        const percent = Math.round((loadedCount / Object.values(this.assets).length) * 100)
         return (
             assetsLoaded
                 ? <Game {...this.props} assets={this.assets} startTicker={this.startTicker} />
-                : <div>loading assets...</div>
+                : <div className='preloader'>Loading assets {percent}%</div>
         )
     }
 

@@ -1,8 +1,6 @@
-import '../../lib/illuminated'
 import Entity from '../entity'
+import { createRectangleObject } from '../../lib/helpers'
 import { DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
-
-const { Vec2, RectangleObject } = window.illuminated
 
 export default class Crusher extends Entity {
     constructor (obj, scene) {
@@ -12,13 +10,10 @@ export default class Crusher extends Entity {
         this.rise = false
         this.solid = true
         this.fallDelay = parseInt(this.properties.delay) || 1000
+        this.lightmask = createRectangleObject(this.x, this.y, this.width, this.height)
         this.fallTimeout = setTimeout(() => {
             this.fall = true
         }, this.fallDelay)
-        this.lightmask = new RectangleObject({
-            topleft: new Vec2(this.x, this.y),
-            bottomright: new Vec2(this.x + this.width, this.y + this.height)
-        })
     }
 
     update () {

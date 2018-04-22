@@ -17,8 +17,7 @@ export default class Particle extends Entity {
 
     overlapTest (obj) {
         if (!this.dead && overlap(this, obj)) {
-            this.collide(obj)
-            obj.collide(this)
+            obj.collide && obj.collide(this)
         }
     }
 

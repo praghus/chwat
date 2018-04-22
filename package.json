@@ -26,8 +26,7 @@
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-sounds": "^1.1.1",
-    "redux-thunk": "^2.2.0",
-    "sat": "^0.6.0"
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.14.0",

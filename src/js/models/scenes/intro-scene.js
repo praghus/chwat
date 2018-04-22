@@ -1,6 +1,5 @@
-import '../../lib/illuminated'
 import Scene from '../scene'
-import {ASSETS, COLORS, INPUTS, SCENES} from '../../lib/constants'
+import { ASSETS, COLORS, INPUTS, SCENES } from '../../lib/constants'
 
 export default class IntroScene extends Scene {
     constructor (game) {
