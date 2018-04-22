@@ -17,19 +17,19 @@ export default class MapPiece extends Entity {
         this.animation = this.types[this.properties.id]
     }
 
-    draw (ctx) {
-        if (this.onScreen() && this.visible) {
-            const { camera, debug, fontPrint } = this._scene
-            super.draw(ctx)
-            // don't display name in debug mode coz it's already displayed.
-            if (!debug) {
-                fontPrint('fragment\n of map',
-                    this.x + camera.x - 12,
-                    this.y + camera.y - 8,
-                )(ctx)
-            }
-        }
-    }
+    // draw (ctx) {
+    //     if (this.onScreen() && this.visible) {
+    //         const { camera, debug, fontPrint } = this._scene
+    //         super.draw(ctx)
+    //         // don't display name in debug mode coz it's already displayed.
+    //         if (!debug) {
+    //             fontPrint('fragment\n of map',
+    //                 this.x + camera.x - 12,
+    //                 this.y + camera.y - 8,
+    //             )(ctx)
+    //         }
+    //     }
+    // }
 
     collide (element) {
         const { player } = this._scene

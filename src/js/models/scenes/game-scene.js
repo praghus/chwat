@@ -27,8 +27,6 @@ export default class GameScene extends Scene {
         this.light = this.elements.getLight(LIGHTS.PLAYER_LIGHT)
         this.lighting = new Lighting({light: this.light, objects: []})
         this.darkmask = new DarkMask({lights: [this.light]})
-
-        this.rendered = false
     }
 
     update (nextProps) {
@@ -43,10 +41,9 @@ export default class GameScene extends Scene {
     }
 
     draw (ctx) {
-        const { player, viewport, world } = this
+        const { viewport, world } = this
         const { resolutionX, resolutionY, scale } = viewport
         const { renderOrder } = world
-        const castingShadows = this.dynamicLights && (this.camera.underground || player.inDark > 0)
 
         ctx.imageSmoothingEnabled = false
         ctx.save()
@@ -55,16 +52,10 @@ export default class GameScene extends Scene {
 
         this.renderStaticBackground(ctx)
 
-        renderOrder.map((layer) => {
-            if (layer === LAYERS.OBJECTS) {
-                this.renderObjects(ctx)
-            }
-            else {
-                layer === LAYERS.FOREGROUND2 && castingShadows
-                    ? this.renderLightingEffect(ctx)
-                    : this.renderLayer(ctx, layer)
-            }
-        })
+        renderOrder.map((layer) => layer === LAYERS.OBJECTS
+            ? this.renderObjects(ctx)
+            : this.renderLayer(ctx, layer)
+        )
 
         this.renderHUD(ctx)
 
@@ -131,58 +122,60 @@ export default class GameScene extends Scene {
     }
 
     renderLayer (ctx, layer) {
-        const { assets, player, viewport, world } = this
+        const { assets, camera, player, viewport, world } = this
         const { resolutionX, resolutionY } = viewport
         const { spriteCols, spriteSize } = world
+        const castingShadows = this.dynamicLights && (camera.underground || player.inDark > 0)
+        const shouldCreateLightmask = castingShadows && layer === LAYERS.MAIN
 
-        const shouldCreateLightmask = (
-            this.dynamicLights && layer === LAYERS.MAIN &&
-            (this.camera.underground || player.inDark > 0)
-        )
-        let y = Math.floor(this.camera.y % spriteSize)
-        let _y = Math.floor(-this.camera.y / spriteSize)
+        let y = Math.floor(camera.y % spriteSize)
+        let _y = Math.floor(-camera.y / spriteSize)
 
-        if (shouldCreateLightmask) {
-            this.lightmask.splice(0, this.lightmask.length)
+        if (layer === LAYERS.FOREGROUND2 && castingShadows) {
+            this.renderLightingEffect(ctx)
         }
-
-        while (y < resolutionY) {
-            let x = Math.floor(this.camera.x % spriteSize)
-            let _x = Math.floor(-this.camera.x / spriteSize)
-            while (x < resolutionX) {
-                const tile = world.get(layer, _x, _y)
-                if (tile > 0) {
-                    // create light mask
-                    if (shouldCreateLightmask) {
-                        const maskElement = world.getLightmask(_x, _y)
-                        // stairs
-                        if (tile === 230 || tile === 233 || tile === 234 || tile === 235) {
-                            this.addLightmaskElement(maskElement,
-                                tile === 233 || tile === 235 ? x : x + 8, y + 8, 8, 8
-                            )
-                        }
-                        else if (tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
-                            this.addLightmaskElement(maskElement, x, y, spriteSize, spriteSize)
-                        }
-                    }
-                    ctx.drawImage(assets[ASSETS.TILES],
-                        ((tile - 1) % spriteCols) * spriteSize,
-                        (Math.ceil(tile / spriteCols) - 1) * spriteSize,
-                        spriteSize, spriteSize, x, y,
-                        spriteSize, spriteSize)
-                }
-                x += spriteSize
-                _x++
+        else {
+            if (shouldCreateLightmask) {
+                this.lightmask.splice(0, this.lightmask.length)
             }
-            y += spriteSize
-            _y++
+            while (y < resolutionY) {
+                let x = Math.floor(camera.x % spriteSize)
+                let _x = Math.floor(-camera.x / spriteSize)
+                while (x < resolutionX) {
+                    const tile = world.get(layer, _x, _y)
+                    if (tile > 0) {
+                    // create light mask
+                        if (shouldCreateLightmask) {
+                            const maskElement = world.getLightmask(_x, _y)
+                            // stairs
+                            // todo: move it to some method
+                            if (tile === 230 || tile === 233 || tile === 234 || tile === 235) {
+                                this.addLightmaskElement(maskElement,
+                                    tile === 233 || tile === 235 ? x : x + 8, y + 8, 8, 8
+                                )
+                            }
+                            else if (tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
+                                this.addLightmaskElement(maskElement, x, y, spriteSize, spriteSize)
+                            }
+                        }
+                        ctx.drawImage(assets[ASSETS.TILES],
+                            ((tile - 1) % spriteCols) * spriteSize,
+                            (Math.ceil(tile / spriteCols) - 1) * spriteSize,
+                            spriteSize, spriteSize, x, y,
+                            spriteSize, spriteSize)
+                    }
+                    x += spriteSize
+                    _x++
+                }
+                y += spriteSize
+                _y++
+            }
         }
     }
 
     renderObjects (ctx) {
         const { elements } = this
         const { objects } = elements
-        // todo: render elements in order
         objects.map((obj) => obj.draw(ctx))
         this.player.draw(ctx)
     }

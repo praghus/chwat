@@ -49,12 +49,14 @@ export default class World {
     }
 
     getObjects () {
+        // todo: make it better
         const byType = (a, b) => {
             if (
                 a.type === ENTITIES_TYPE.ROCK ||
                 a.type === ENTITIES_TYPE.SWITCH ||
                 a.type === ENTITIES_TYPE.TRIGGER
             ) return 1
+            if (a.type === ENTITIES_TYPE.ITEM) return -1
             if (a.type < b.type) return -1
             if (a.type > b.type) return 1
             return 0
