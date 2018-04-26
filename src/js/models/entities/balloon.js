@@ -1,7 +1,7 @@
 import Entity from '../entity'
 import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
 
-export default class AirBalloon extends Entity {
+export default class Balloon extends Entity {
     constructor (obj, scene) {
         super(obj, scene)
         this.positions = {

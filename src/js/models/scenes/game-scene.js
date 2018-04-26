@@ -2,6 +2,7 @@ import '../../lib/illuminated'
 import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
 import { Camera, Elements, World } from '../index'
+import { setLightmaskElement } from '../../lib/helpers'
 import {
     ASSETS,
     COLORS,
@@ -23,7 +24,6 @@ export default class GameScene extends Scene {
         this.player = this.elements.create(this.world.getPlayer())
         this.camera = new Camera(this)
         this.camera.setFollow(this.player)
-        this.addLightmaskElement = this.addLightmaskElement.bind(this)
         this.light = this.elements.getLight(LIGHTS.PLAYER_LIGHT)
         this.lighting = new Lighting({light: this.light, objects: []})
         this.darkmask = new DarkMask({lights: [this.light]})
@@ -41,7 +41,7 @@ export default class GameScene extends Scene {
     }
 
     draw (ctx) {
-        const { viewport, world } = this
+        const { assets, camera, player, viewport, world } = this
         const { resolutionX, resolutionY, scale } = viewport
         const { renderOrder } = world
 
@@ -59,12 +59,51 @@ export default class GameScene extends Scene {
 
         this.renderHUD(ctx)
 
+        // display hint
+        if (player.hint) {
+            const { animation, animFrame } = player.hint
+            ctx.drawImage(assets[ASSETS.BUBBLE],
+                Math.floor(player.x + camera.x + player.width / 2),
+                Math.floor(player.y + camera.y) - 24
+            )
+            ctx.drawImage(assets[ASSETS.ITEMS],
+                animation.x + animFrame * animation.w, animation.y,
+                animation.w, animation.h,
+                Math.floor(player.x + camera.x + player.width / 2) + 8,
+                Math.floor(player.y + camera.y) - 22,
+                animation.w, animation.h
+            )
+        }
+
+        // display collected map pieces
+        if (player.mapTimeout) {
+            ctx.save()
+            ctx.globalAlpha = 0.8
+            ctx.fillStyle = COLORS.BLACK
+            ctx.fillRect(0, 0, resolutionX, resolutionY)
+            ctx.restore()
+            player.mapPieces.map((piece) => {
+                ctx.drawImage(assets[ASSETS.MAP_PIECE],
+                    piece.x, piece.y,
+                    piece.w, piece.h,
+                    Math.floor((resolutionX / 2) + (piece.x * 2) - 48),
+                    Math.floor((resolutionY / 2) + (piece.y * 2) - 32),
+                    piece.w * 2, piece.h * 2
+                )
+            })
+            this.fontPrint('COLLECTED MAP PIECES',
+                (resolutionX / 2) - 49,
+                (resolutionY / 2) - 42,
+            )(ctx)
+        }
+
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay
             ctx.fillStyle = COLORS.BLACK
             ctx.fillRect(0, 0, resolutionX, resolutionY)
             this.blackOverlay -= 0.01
         }
+
         ctx.restore()
     }
 
@@ -136,6 +175,9 @@ export default class GameScene extends Scene {
         }
         else {
             if (shouldCreateLightmask) {
+                this.lightmask.map((v, k) => {
+                    this.lightmask[k] = null
+                })
                 this.lightmask.splice(0, this.lightmask.length)
             }
             while (y < resolutionY) {
@@ -150,12 +192,14 @@ export default class GameScene extends Scene {
                             // stairs
                             // todo: move it to some method
                             if (tile === 230 || tile === 233 || tile === 234 || tile === 235) {
-                                this.addLightmaskElement(maskElement,
-                                    tile === 233 || tile === 235 ? x : x + 8, y + 8, 8, 8
-                                )
+                                this.lightmask.push(setLightmaskElement(
+                                    maskElement, tile === 233 || tile === 235 ? x : x + 8, y + 8, 8, 8
+                                ))
                             }
                             else if (tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
-                                this.addLightmaskElement(maskElement, x, y, spriteSize, spriteSize)
+                                this.lightmask.push(setLightmaskElement(
+                                    maskElement, x, y, spriteSize, spriteSize
+                                ))
                             }
                         }
                         ctx.drawImage(assets[ASSETS.TILES],
@@ -174,9 +218,7 @@ export default class GameScene extends Scene {
     }
 
     renderObjects (ctx) {
-        const { elements } = this
-        const { objects } = elements
-        objects.map((obj) => obj.draw(ctx))
+        this.elements.objects.map((obj) => obj.draw(ctx))
         this.player.draw(ctx)
     }
 
@@ -197,9 +239,9 @@ export default class GameScene extends Scene {
         // lives and energy
         const indicatorWidth = energy && Math.round(energy / 2) || 1
         ctx.drawImage(assets[ASSETS.HEAD], 3, 2)
-        this.fontPrint(`${lives}`, 12, 8)(ctx)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, 12, 3, 50, 5)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, 12, 3, indicatorWidth, 5)
+        this.fontPrint(`${lives}`, 12, 8)(ctx)
 
         // items
         const align = (resolutionX - 60)
@@ -216,16 +258,5 @@ export default class GameScene extends Scene {
                 )
             }
         })
-    }
-
-    addLightmaskElement (element, x, y, width, height) {
-        if (element) {
-            element.topleft.x = x
-            element.topleft.y = y
-            element.bottomright.x = x + width
-            element.bottomright.y = y + height
-            element.syncFromTopleftBottomright()
-            this.lightmask.push(element)
-        }
     }
 }

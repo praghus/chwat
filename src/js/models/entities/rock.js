@@ -16,7 +16,10 @@ export default class Rock extends Entity {
         const { assets, camera } = this._scene
         const r = Math.PI / 16
         ctx.save()
-        ctx.translate(Math.floor(this.x + camera.x), Math.floor(this.y + camera.y))
+        ctx.translate(
+            Math.floor(this.x + camera.x),
+            Math.floor(this.y + camera.y)
+        )
         ctx.translate(16, 16)
         if (this.force.x !== 0) {
             this.rotation += this.speed / 5

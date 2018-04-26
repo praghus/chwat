@@ -1,5 +1,5 @@
 import { outline, overlap, normalize } from '../lib/helpers'
-import { canJumpThrough, DIRECTIONS } from '../lib/constants'
+import { canJumpThrough, DIRECTIONS, COLORS } from '../lib/constants'
 
 export default class Entity {
     constructor (obj, scene) {
@@ -24,6 +24,7 @@ export default class Entity {
         this.animFrame = 0
         this.animCount = 0
         this.message = null
+        // todo: timeouts pool
         this.messageTimeout = null
         this.messageDuration = 2000
         this.vectorMask = null
@@ -105,7 +106,7 @@ export default class Entity {
             if (debug) {
                 if (this.vectorMask) {
                     ctx.save()
-                    ctx.strokeStyle = '#ff0'
+                    ctx.strokeStyle = COLORS.LIGHT_RED
                     ctx.beginPath()
                     ctx.moveTo(posX, posY)
                     this.vectorMask.map(({x, y}) => ctx.lineTo(
@@ -120,19 +121,18 @@ export default class Entity {
                     ctx.restore()
                 }
                 else {
-                    outline(visible ? '#0f0' : '#f0f', {
-                        x: posX,
-                        y: posY,
-                        width,
-                        height
-                    })(ctx)
+                    outline(
+                        posX, posY, width, height,
+                        visible ? COLORS.GREEN : COLORS.PURPLE
+                    )(ctx)
                     if (bounds) {
-                        outline('#f00', {
-                            x: posX + bounds.x,
-                            y: posY + bounds.y,
-                            width: bounds.width,
-                            height: bounds.height
-                        })(ctx)
+                        outline(
+                            posX + bounds.x,
+                            posY + bounds.y,
+                            bounds.width,
+                            bounds.height,
+                            COLORS.LIGHT_RED
+                        )(ctx)
                     }
                 }
                 if (visible) {
@@ -244,37 +244,34 @@ export default class Entity {
         const PW = Math.floor((this.expectedX + this.width) / spriteSize)
         const PH = Math.floor((this.expectedY + this.height) / spriteSize)
 
-        const nearMatrix = []
-
         for (let y = PY; y <= PH; y++) {
             for (let x = PX; x <= PW; x++) {
-                const data = world.tileData(x, y)
-                if (data.solid) nearMatrix.push(data)
+                const tile = world.tileData(x, y)
+                if (tile.solid) {
+                    const jumpThrough = canJumpThrough(tile.type)
+                    if (!jumpThrough && overlap(nextX, tile)) {
+                        if (this.force.x < 0) {
+                            this.force.x = tile.x + tile.width - offsetX
+                        }
+                        else if (this.force.x > 0) {
+                            this.force.x = tile.x - offsetX - boundsWidth
+                        }
+                    }
+                    if (overlap(nextY, tile)) {
+                        if (this.force.y < 0 && !jumpThrough) {
+                            this.force.y = tile.y + tile.height - offsetY
+                        }
+                        else if (
+                            (this.force.y > 0 && !jumpThrough) || (
+                                jumpThrough && this.y + this.height <= tile.y
+                            )
+                        ) {
+                            this.force.y = tile.y - offsetY - boundsHeight
+                        }
+                    }
+                }
             }
         }
-
-        nearMatrix.map((tile) => {
-            const jumpThrough = canJumpThrough(tile.type)
-            if (!jumpThrough && overlap(nextX, tile)) {
-                if (this.force.x < 0) {
-                    this.force.x = tile.x + tile.width - offsetX
-                }
-                else if (this.force.x > 0) {
-                    this.force.x = tile.x - offsetX - boundsWidth
-                }
-            }
-            if (overlap(nextY, tile)) {
-                if (this.force.y < 0 && !jumpThrough) {
-                    this.force.y = tile.y + tile.height - offsetY
-                }
-                else if (
-                    (this.force.y > 0 && !jumpThrough) ||
-                    (jumpThrough && this.y + this.height <= tile.y)
-                ) {
-                    this.force.y = tile.y - offsetY - boundsHeight
-                }
-            }
-        })
 
         this.x += this.force.x
         this.y += this.force.y

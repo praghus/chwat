@@ -1,12 +1,12 @@
 import {
-    AirBalloon, Bat, Blob, Bridge, Catapult, Checkpoint, Crusher, DarkMask, Dust, Item,
-    JumpThrough, Lava, LavaStone, MapPiece, Paddle, Particle, Player, Rock, Slope,
-    SpiderTrap, Spikes, Switch, Torch, Trigger, Water, WoodenBridge
+    Balloon, Bat, Bridge, Catapult, Checkpoint, Crusher, DarkMask, Dust, Item,
+    JumpThrough, Lava, LavaStone, MapPiece, Paddle, Particle, Player, Rock, Slime,
+    Slope, SpiderTrap, Spikes, Switch, Torch, Trigger, Water, WoodenBridge
 } from '../models/entities'
 
 export const NON_COLLIDE_INDEX = 256
 export const SPECIAL_TILES_INDEX = 1024
-export const JUMP_THROUGH_TILES = [/* 15, 16, 17,*/ 210, 211, 212, 213, 214, 836, 868, 1088, 1089]
+export const JUMP_THROUGH_TILES = [210, 211, 212, 213, 214, 836, 868, 1088, 1089]
 
 export const SCENES = {
     INTRO: 'INTRO',
@@ -20,12 +20,14 @@ export const FONTS = {
 }
 
 export const COLORS = {
-    PLAYER_LIGHT: 'rgba(255,255,255,0.1)',
-    BLUE_SKY: '#73c3ff',
-    DARK_GREY: '#222',
+    BLUE_SKY: '#7CF',
     BLACK: '#000',
-    DARK_RED: '#d00',
-    LIGHT_RED: '#f00'
+    DARK_GREY: '#222',
+    DARK_RED: '#D00',
+    GREEN: '#0F0',
+    PURPLE: '#F0F',
+    LIGHT_RED: '#F00',
+    PLAYER_LIGHT: 'rgba(255,255,255,0.1)'
 }
 
 export const LIGHTS = {
@@ -54,6 +56,7 @@ export const INPUTS = {
     INPUT_DOWN: 'down',
     INPUT_LEFT: 'left',
     INPUT_ACTION: 'fire',
+    INPUT_MAP: 'map',
     INPUT_DEBUG: 'debug'
 }
 
@@ -63,13 +66,14 @@ export const INPUT_KEYS = {
     [INPUTS.INPUT_DOWN]: ['KeyS', 'ArrowDown'],
     [INPUTS.INPUT_LEFT]: ['KeyA', 'ArrowLeft'],
     [INPUTS.INPUT_ACTION]: ['Space'],
+    [INPUTS.INPUT_MAP]: ['KeyM'],
     [INPUTS.INPUT_DEBUG]: ['KeyI']
 }
 
 export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
     BAT: 'bat',
-    BLOB: 'blob',
+    SLIME: 'slime',
     BRIDGE: 'bridge',
     CATAPULT: 'catapult',
     CHECKPOINT: 'checkpoint',
@@ -109,7 +113,7 @@ export const ENTITIES_FAMILY = {
 export const ASSETS = {
     BALLOON: 'air_balloon',
     BAT: 'bat',
-    BLOB: 'blob',
+    SLIME: 'slime',
     BUBBLE: 'sbubble',
     BRIDGE: 'bridge',
     CATAPULT: 'catapult',
@@ -139,9 +143,9 @@ export const ASSETS = {
 }
 
 export const ENTITIES = [
-    { type: ENTITIES_TYPE.BALLOON, family: ENTITIES_FAMILY.MODIFIERS, model: AirBalloon, asset: ASSETS.BALLOON },
+    { type: ENTITIES_TYPE.BALLOON, family: ENTITIES_FAMILY.MODIFIERS, model: Balloon, asset: ASSETS.BALLOON },
     { type: ENTITIES_TYPE.BAT, family: ENTITIES_FAMILY.ENEMIES, model: Bat, asset: ASSETS.BAT },
-    { type: ENTITIES_TYPE.BLOB, family: ENTITIES_FAMILY.ENEMIES, model: Blob, asset: ASSETS.BLOB },
+    { type: ENTITIES_TYPE.SLIME, family: ENTITIES_FAMILY.ENEMIES, model: Slime, asset: ASSETS.SLIME },
     { type: ENTITIES_TYPE.BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: Bridge, asset: ASSETS.BRIDGE },
     { type: ENTITIES_TYPE.CATAPULT, family: ENTITIES_FAMILY.MODIFIERS, model: Catapult, asset: ASSETS.CATAPULT },
     { type: ENTITIES_TYPE.CHECKPOINT, family: ENTITIES_FAMILY.MODIFIERS, model: Checkpoint },

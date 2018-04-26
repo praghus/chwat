@@ -18,6 +18,7 @@ export default class Scene {
         this.blackOverlay = 1
         this.countFPS = this.countFPS.bind(this)
         this.fontPrint = this.fontPrint.bind(this)
+        this.fetchAction = this.fetchAction.bind(this)
     }
 
     update (nextProps) {

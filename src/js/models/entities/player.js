@@ -1,6 +1,6 @@
 import Entity from '../entity'
 // import { playerJump, playerGet } from '../../actions/sounds'
-import { ASSETS, DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
+import { DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
 export default class Player extends Entity {
     constructor (obj, scene) {
@@ -12,13 +12,14 @@ export default class Player extends Entity {
         this.energy = 100
         this.maxEnergy = 100
         this.maxSpeed = 2
-        this.mapPieces = 0
         this.speed = 0.2
         this.solid = true
         this.hintTimeout = null
         this.hurtTimeout = null
         this.itemTimeout = null
+        this.mapTimeout = null
         this.items = [null, null]
+        this.mapPieces = []
         this.hint = null
         this.respawnTimeout = null
         this.bounds = {
@@ -46,6 +47,8 @@ export default class Player extends Entity {
         }
         this.animation = this.animations.STAND_RIGHT
         this.hideHint = this.hideHint.bind(this)
+        this.hideMap = this.hideMap.bind(this)
+        this.showMap = this.showMap.bind(this)
     }
 
     draw (ctx) {
@@ -55,36 +58,24 @@ export default class Player extends Entity {
         }
         super.draw(ctx)
         ctx.restore()
-
-        if (this.hint) {
-            const { assets, camera } = this._scene
-            const { animation, animFrame } = this.hint
-            ctx.drawImage(
-                assets[ASSETS.BUBBLE],
-                Math.floor(this.x + camera.x + this.width / 2), Math.floor(this.y + camera.y) - 24
-            )
-            ctx.drawImage(
-                assets[ASSETS.ITEMS],
-                animation.x + animFrame * animation.w, animation.y,
-                animation.w, animation.h,
-                8 + Math.floor(this.x + camera.x + this.width / 2), Math.floor(this.y + camera.y) - 22,
-                animation.w, animation.h
-            )
-        }
     }
 
-    update (dt) {
+    update () {
         const { input, world } = this._scene
 
         if (this.canMove()) {
             if (input[INPUTS.INPUT_LEFT]) {
+                if (this.direction === DIRECTIONS.RIGHT) {
+                    this.addDust(DIRECTIONS.LEFT)
+                }
                 this.force.x -= this.speed
-                if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
                 this.direction = DIRECTIONS.LEFT
             }
             if (input[INPUTS.INPUT_RIGHT]) {
+                if (this.direction === DIRECTIONS.LEFT) {
+                    this.addDust(DIRECTIONS.RIGHT)
+                }
                 this.force.x += this.speed
-                if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
                 this.direction = DIRECTIONS.RIGHT
             }
             if (input[INPUTS.INPUT_UP] && this.canJump()) {
@@ -94,6 +85,9 @@ export default class Player extends Entity {
             }
             if (input[INPUTS.INPUT_ACTION]) {
                 this.getItem(null)
+            }
+            if (input[INPUTS.INPUT_MAP] && this.mapPieces.length) {
+                this.showMap()
             }
         }
         // slow down
@@ -121,6 +115,7 @@ export default class Player extends Entity {
             this.fall = false
             this.jump = false
         }
+
         if (this.maxEnergy <= 0) {
             if (this.onFloor) {
                 this.animate(this.animations.DEAD)
@@ -185,12 +180,10 @@ export default class Player extends Entity {
 
     hit (s) {
         this.maxEnergy -= s
-        if (this.maxEnergy <= 0) {
-            this.maxEnergy = 0
-        }
-        else {
-            this.force.y -= 3
-        }
+        this.maxEnergy <= 0
+            ? this.maxEnergy = 0
+            : this.force.y -= 3
+
         this.hurtTimeout = setTimeout(() => {
             this.hurtTimeout = null
         }, 3000)
@@ -229,6 +222,11 @@ export default class Player extends Entity {
     canUse (itemId) {
         const haveItem = this.items.find((item) => item && item.properties.id === itemId)
         return !this.itemTimeout && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
+    }
+
+    collectMapPiece (piece) {
+        this.mapPieces.push(piece.animation)
+        this.showMap()
     }
 
     useItem (itemId) {
@@ -275,6 +273,16 @@ export default class Player extends Entity {
         this.hintTimeout = null
     }
 
+    showMap () {
+        if (!this.mapTimeout) {
+            this.mapTimeout = setTimeout(this.hideMap, 2000)
+        }
+    }
+
+    hideMap () {
+        this.mapTimeout = null
+    }
+
     checkpoint () {
         this.lastPosition = {
             x: this.x,
@@ -286,12 +294,8 @@ export default class Player extends Entity {
         if (!this.respawnTimeout) {
             this.lives -= 1
             this.force = { x: 0, y: 0 }
-            // if (this.lives === 0) {
-            //     // game over
-            // }
-            // else {
+            // this.lives === 0 ? gameOver() :
             this.restoreCheckpoint()
-            // }
         }
     }
 

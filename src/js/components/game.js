@@ -45,7 +45,6 @@ export default class Game extends Component {
             [SCENES.INTRO]: new IntroScene(this),
             [SCENES.GAME]: new GameScene(this)
         }
-        // this.wrapper.addEventListener('click', onMouse, false)
         document.addEventListener('keydown', ({code}) => onKey(getKeyPressed(code), true))
         document.addEventListener('keyup', ({code}) => onKey(getKeyPressed(code), false))
         this.setScene(SCENES.INTRO)

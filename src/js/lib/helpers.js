@@ -62,7 +62,7 @@ export function randomChoice (choices) {
     return choices[randomInt(0, choices.length - 1)]
 }
 
-export function outline (color, {x, y, width, height}) {
+export function outline (x, y, width, height, color) {
     return (ctx) => {
         ctx.save()
         ctx.strokeStyle = color
@@ -95,4 +95,15 @@ export function createLamp (x, y, distance, color) {
         radius: 8,
         position: new Vec2(x, y)
     })
+}
+
+export function setLightmaskElement (element, x, y, width, height) {
+    if (element) {
+        element.topleft.x = x
+        element.topleft.y = y
+        element.bottomright.x = x + width
+        element.bottomright.y = y + height
+        element.syncFromTopleftBottomright()
+        return element
+    }
 }
