@@ -2,14 +2,15 @@ import '../../lib/illuminated'
 import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
 import { Camera, Elements, World } from '../index'
-import { setLightmaskElement } from '../../lib/helpers'
+import { getMiniTile, isMiniTile, setLightmaskElement } from '../../lib/helpers'
 import {
     ASSETS,
     COLORS,
     LAYERS,
     LIGHTS,
     NON_COLLIDE_INDEX,
-    SPECIAL_TILES_INDEX
+    SPECIAL_TILES_INDEX,
+    TIMEOUTS
 } from '../../lib/constants'
 
 const { DarkMask, Lighting } = window.illuminated
@@ -18,15 +19,19 @@ export default class GameScene extends Scene {
     constructor (game) {
         super(game)
         this.dynamicLights = true
-        this.lightmask = []
         this.world = new World(levelData)
         this.elements = new Elements(this.world.getObjects(), this)
         this.player = this.elements.create(this.world.getPlayer())
+
         this.camera = new Camera(this)
         this.camera.setFollow(this.player)
+
+        this.lightmask = []
         this.light = this.elements.getLight(LIGHTS.PLAYER_LIGHT)
         this.lighting = new Lighting({light: this.light, objects: []})
         this.darkmask = new DarkMask({lights: [this.light]})
+
+        this.overlays.fadeIn()
     }
 
     update (nextProps) {
@@ -40,8 +45,8 @@ export default class GameScene extends Scene {
         }
     }
 
-    draw (ctx) {
-        const { assets, camera, player, viewport, world } = this
+    draw () {
+        const { ctx, player, viewport, world } = this
         const { resolutionX, resolutionY, scale } = viewport
         const { renderOrder } = world
 
@@ -50,65 +55,28 @@ export default class GameScene extends Scene {
         ctx.scale(scale, scale)
         ctx.clearRect(0, 0, resolutionX, resolutionY)
 
-        this.renderStaticBackground(ctx)
+        this.renderStaticBackground()
 
         renderOrder.map((layer) => layer === LAYERS.OBJECTS
-            ? this.renderObjects(ctx)
-            : this.renderLayer(ctx, layer)
+            ? this.renderObjects()
+            : this.renderLayer(layer)
         )
 
-        this.renderHUD(ctx)
+        this.overlays.displayHUD()
 
         // display hint
-        if (player.hint) {
-            const { animation, animFrame } = player.hint
-            ctx.drawImage(assets[ASSETS.BUBBLE],
-                Math.floor(player.x + camera.x + player.width / 2),
-                Math.floor(player.y + camera.y) - 24
-            )
-            ctx.drawImage(assets[ASSETS.ITEMS],
-                animation.x + animFrame * animation.w, animation.y,
-                animation.w, animation.h,
-                Math.floor(player.x + camera.x + player.width / 2) + 8,
-                Math.floor(player.y + camera.y) - 22,
-                animation.w, animation.h
-            )
-        }
+        player.hint && this.overlays.displayHint()
 
         // display collected map pieces
-        if (player.mapTimeout) {
-            ctx.save()
-            ctx.globalAlpha = 0.8
-            ctx.fillStyle = COLORS.BLACK
-            ctx.fillRect(0, 0, resolutionX, resolutionY)
-            ctx.restore()
-            player.mapPieces.map((piece) => {
-                ctx.drawImage(assets[ASSETS.MAP_PIECE],
-                    piece.x, piece.y,
-                    piece.w, piece.h,
-                    Math.floor((resolutionX / 2) + (piece.x * 2) - 48),
-                    Math.floor((resolutionY / 2) + (piece.y * 2) - 32),
-                    piece.w * 2, piece.h * 2
-                )
-            })
-            this.fontPrint('COLLECTED MAP PIECES',
-                (resolutionX / 2) - 49,
-                (resolutionY / 2) - 42,
-            )(ctx)
-        }
+        player.checkTimeout(TIMEOUTS.PLAYER_MAP) && this.overlays.displayMap()
 
-        if (this.blackOverlay > 0) {
-            ctx.globalAlpha = this.blackOverlay
-            ctx.fillStyle = COLORS.BLACK
-            ctx.fillRect(0, 0, resolutionX, resolutionY)
-            this.blackOverlay -= 0.01
-        }
+        this.overlays.update()
 
         ctx.restore()
     }
 
-    renderLightingEffect (ctx) {
-        const { player, viewport } = this
+    renderLightingEffect () {
+        const { ctx, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
 
         this.light.position = Object.assign(this.light.position, {
@@ -131,8 +99,13 @@ export default class GameScene extends Scene {
         ctx.restore()
     }
 
-    renderStaticBackground (ctx) {
-        const { assets, player, viewport } = this
+    renderObjects () {
+        this.elements.objects.map((obj) => obj.draw())
+        this.player.draw()
+    }
+
+    renderStaticBackground () {
+        const { ctx, assets, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
 
         if (!this.camera.underground && player.inDark === 0) {
@@ -160,8 +133,8 @@ export default class GameScene extends Scene {
         }
     }
 
-    renderLayer (ctx, layer) {
-        const { assets, camera, player, viewport, world } = this
+    renderLayer (layer) {
+        const { ctx, assets, camera, player, viewport, world } = this
         const { resolutionX, resolutionY } = viewport
         const { spriteCols, spriteSize } = world
         const castingShadows = this.dynamicLights && (camera.underground || player.inDark > 0)
@@ -171,7 +144,7 @@ export default class GameScene extends Scene {
         let _y = Math.floor(-camera.y / spriteSize)
 
         if (layer === LAYERS.FOREGROUND2 && castingShadows) {
-            this.renderLightingEffect(ctx)
+            this.renderLightingEffect()
         }
         else {
             if (shouldCreateLightmask) {
@@ -186,20 +159,17 @@ export default class GameScene extends Scene {
                 while (x < resolutionX) {
                     const tile = world.get(layer, _x, _y)
                     if (tile > 0) {
-                    // create light mask
                         if (shouldCreateLightmask) {
                             const maskElement = world.getLightmask(_x, _y)
-                            // stairs
-                            // todo: move it to some method
-                            if (tile === 230 || tile === 233 || tile === 234 || tile === 235) {
-                                this.lightmask.push(setLightmaskElement(
-                                    maskElement, tile === 233 || tile === 235 ? x : x + 8, y + 8, 8, 8
-                                ))
+                            if (isMiniTile(tile)) {
+                                this.lightmask.push(
+                                    setLightmaskElement(maskElement, getMiniTile(tile, x, y))
+                                )
                             }
                             else if (tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
-                                this.lightmask.push(setLightmaskElement(
-                                    maskElement, x, y, spriteSize, spriteSize
-                                ))
+                                this.lightmask.push(setLightmaskElement(maskElement, {
+                                    x, y, width: spriteSize, height: spriteSize
+                                }))
                             }
                         }
                         ctx.drawImage(assets[ASSETS.TILES],
@@ -215,48 +185,5 @@ export default class GameScene extends Scene {
                 _y++
             }
         }
-    }
-
-    renderObjects (ctx) {
-        this.elements.objects.map((obj) => obj.draw(ctx))
-        this.player.draw(ctx)
-    }
-
-    renderHUD (ctx) {
-        const { camera, assets, debug, fps, player, viewport } = this
-        const { resolutionX, resolutionY } = viewport
-        const { energy, items, lives } = player
-        const fpsIndicator = `FPS:${Math.round(fps)}`
-
-        // FPS meter
-        this.fontPrint(fpsIndicator, resolutionX - (3 + fpsIndicator.length * 5), 3)(ctx)
-
-        // Camera position in debug mode
-        if (debug) {
-            this.fontPrint(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 28)(ctx)
-        }
-
-        // lives and energy
-        const indicatorWidth = energy && Math.round(energy / 2) || 1
-        ctx.drawImage(assets[ASSETS.HEAD], 3, 2)
-        ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, 12, 3, 50, 5)
-        ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, 12, 3, indicatorWidth, 5)
-        this.fontPrint(`${lives}`, 12, 8)(ctx)
-
-        // items
-        const align = (resolutionX - 60)
-        ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 26)
-        items.map((item, index) => {
-            if (item && item.properties) {
-                this.fontPrint(item.name, 4, (resolutionY - 20) + index * 9)(ctx)
-                ctx.drawImage(
-                    assets[ASSETS.ITEMS],
-                    item.animation.x, item.animation.y,
-                    item.width, item.height,
-                    align + 12 + (index * 25), resolutionY - 22,
-                    item.width, item.height
-                )
-            }
-        })
     }
 }

@@ -12,8 +12,8 @@ export default class Rock extends Entity {
         this.solid = true
         this.rotation = 0
     }
-    draw (ctx) {
-        const { assets, camera } = this._scene
+    draw () {
+        const { assets, ctx, camera } = this._scene
         const r = Math.PI / 16
         ctx.save()
         ctx.translate(

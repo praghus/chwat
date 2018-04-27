@@ -1,5 +1,5 @@
-import { createRectangleObject } from '../lib/helpers'
-import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX, canJumpThrough } from '../lib/constants'
+import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX } from '../lib/constants'
+import { canJumpThrough, createRectangleObject } from '../lib/helpers'
 
 export default class World {
     constructor (data) {
@@ -78,13 +78,15 @@ export default class World {
     }
 
     tileData (x, y) {
+        const type = this.get(LAYERS.MAIN, x, y)
         return {
+            type,
             x: this.spriteSize * x,
             y: this.spriteSize * y,
             width: this.spriteSize,
             height: this.spriteSize,
-            type: this.get(LAYERS.MAIN, x, y),
-            solid: this.isSolid(x, y)
+            solid: this.isSolid(x, y),
+            jumpThrough: canJumpThrough(type)
         }
     }
 

@@ -8,6 +8,13 @@ export const NON_COLLIDE_INDEX = 256
 export const SPECIAL_TILES_INDEX = 1024
 export const JUMP_THROUGH_TILES = [210, 211, 212, 213, 214, 836, 868, 1088, 1089]
 
+export const MINI_TILES = {
+    '230': {offsetX: 8, offsetY: 8, width: 8, height: 8},
+    '233': {offsetX: 0, offsetY: 8, width: 8, height: 8},
+    '234': {offsetX: 8, offsetY: 8, width: 8, height: 8},
+    '235': {offsetX: 0, offsetY: 8, width: 8, height: 8}
+}
+
 export const SCENES = {
     INTRO: 'INTRO',
     GAME: 'GAME'
@@ -68,6 +75,15 @@ export const INPUT_KEYS = {
     [INPUTS.INPUT_ACTION]: ['Space'],
     [INPUTS.INPUT_MAP]: ['KeyM'],
     [INPUTS.INPUT_DEBUG]: ['KeyI']
+}
+
+export const TIMEOUTS = {
+    'MESSAGE': { name: 'message', duration: 2000 },
+    'PLAYER_HINT': { name: 'player_hint', duration: 2000 },
+    'PLAYER_HURT': { name: 'player_hurt', duration: 3000 },
+    'PLAYER_MAP': { name: 'player_map', duration: 3000 },
+    'PLAYER_RESPAWN': { name: 'player_respawn', duration: 1000 },
+    'PLAYER_TAKE': { name: 'player_take', duration: 500 }
 }
 
 export const ENTITIES_TYPE = {
@@ -172,15 +188,3 @@ export const ENTITIES = [
     { type: ENTITIES_TYPE.WATER, family: ENTITIES_FAMILY.TRAPS, model: Water, asset: ASSETS.WATER },
     { type: ENTITIES_TYPE.WOODEN_BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: WoodenBridge }
 ]
-
-export function getEntityByType (entityType) {
-    return ENTITIES.filter(({type}) => entityType === type)[0] || null
-}
-
-export function getKeyPressed (key) {
-    return Object.keys(INPUT_KEYS).find((input) => INPUT_KEYS[input].indexOf(key) !== -1)
-}
-
-export function canJumpThrough (tile) {
-    return JUMP_THROUGH_TILES.indexOf(tile) !== -1
-}

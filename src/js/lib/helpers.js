@@ -1,6 +1,7 @@
 import './illuminated'
+import { ENTITIES, JUMP_THROUGH_TILES, INPUT_KEYS, MINI_TILES } from './constants'
 
-const { Lamp, Vec2, RectangleObject } = window.illuminated
+export const noop = () => {}
 
 export function requireAll (requireContext) {
     return requireContext.keys().map(requireContext)
@@ -62,24 +63,36 @@ export function randomChoice (choices) {
     return choices[randomInt(0, choices.length - 1)]
 }
 
-export function outline (x, y, width, height, color) {
-    return (ctx) => {
-        ctx.save()
-        ctx.strokeStyle = color
-        ctx.beginPath()
-        ctx.moveTo(x, y)
-        ctx.lineTo(x + width, y)
-        ctx.lineTo(x + width, y + height)
-        ctx.lineTo(x, y + height)
-        ctx.lineTo(x, y)
-        ctx.stroke()
-        ctx.restore()
+export function getEntityByType (entityType) {
+    return ENTITIES.filter(({type}) => entityType === type)[0] || null
+}
+
+export function getKeyPressed (key) {
+    return Object.keys(INPUT_KEYS).find((input) => INPUT_KEYS[input].indexOf(key) !== -1)
+}
+
+export function getMiniTile (id, x, y) {
+    const tile = MINI_TILES[`${id}`] || null
+    if (tile) {
+        tile.x = tile.offsetX + x
+        tile.y = tile.offsetY + y
     }
+    return tile
+}
+
+export function isMiniTile (id) {
+    return Object.keys(MINI_TILES).indexOf(`${id}`) !== -1
+}
+
+export function canJumpThrough (id) {
+    return JUMP_THROUGH_TILES.indexOf(id) !== -1
 }
 
 /**
  * illuminated.js
  */
+const { Lamp, Vec2, RectangleObject } = window.illuminated
+
 export function createRectangleObject (x, y, width, height) {
     return new RectangleObject({
         topleft: new Vec2(x, y),
@@ -97,7 +110,7 @@ export function createLamp (x, y, distance, color) {
     })
 }
 
-export function setLightmaskElement (element, x, y, width, height) {
+export function setLightmaskElement (element, {x, y, width, height}) {
     if (element) {
         element.topleft.x = x
         element.topleft.y = y

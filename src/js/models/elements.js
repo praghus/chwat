@@ -1,5 +1,5 @@
-import { COLORS, ENTITIES_TYPE, LIGHTS, getEntityByType } from '../lib/constants'
-import { createLamp, overlap } from '../lib/helpers'
+import { COLORS, ENTITIES_TYPE, LIGHTS } from '../lib/constants'
+import { createLamp, getEntityByType, overlap } from '../lib/helpers'
 
 export default class Elements {
     constructor (entities, scene) {

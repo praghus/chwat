@@ -1,6 +1,6 @@
 import Entity from '../entity'
 // import { playerJump, playerGet } from '../../actions/sounds'
-import { DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
+import { DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS, TIMEOUTS } from '../../lib/constants'
 
 export default class Player extends Entity {
     constructor (obj, scene) {
@@ -14,23 +14,17 @@ export default class Player extends Entity {
         this.maxSpeed = 2
         this.speed = 0.2
         this.solid = true
-        this.hintTimeout = null
-        this.hurtTimeout = null
-        this.itemTimeout = null
-        this.mapTimeout = null
         this.items = [null, null]
         this.mapPieces = []
         this.hint = null
-        this.respawnTimeout = null
         this.bounds = {
             x: 10,
             y: 8,
             width: this.width - 20,
             height: this.height - 8
         }
-        this.lastPosition = {
-            x: this.x,
-            y: this.y
+        this.hideHint = () => {
+            this.hint = null
         }
         this.animations = {
             LEFT: {x: 704, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
@@ -46,17 +40,15 @@ export default class Player extends Entity {
             DEAD_RIGHT: {x: 448, y: 144, w: 32, h: 48, frames: 1, fps: 0, loop: false}
         }
         this.animation = this.animations.STAND_RIGHT
-        this.hideHint = this.hideHint.bind(this)
-        this.hideMap = this.hideMap.bind(this)
-        this.showMap = this.showMap.bind(this)
     }
 
-    draw (ctx) {
+    draw () {
+        const { ctx } = this._scene
         ctx.save()
         if (!this.canHurt() && this.canMove()) {
             ctx.globalAlpha = 0.2
         }
-        super.draw(ctx)
+        super.draw()
         ctx.restore()
     }
 
@@ -183,10 +175,7 @@ export default class Player extends Entity {
         this.maxEnergy <= 0
             ? this.maxEnergy = 0
             : this.force.y -= 3
-
-        this.hurtTimeout = setTimeout(() => {
-            this.hurtTimeout = null
-        }, 3000)
+        this.startTimeout(TIMEOUTS.PLAYER_HURT)
     }
 
     // todo: move to parent
@@ -212,21 +201,16 @@ export default class Player extends Entity {
     }
 
     canHurt () {
-        return !this.hurtTimeout
+        return !this.checkTimeout(TIMEOUTS.PLAYER_HURT)
     }
 
     canTake () {
-        return !this.itemTimeout
+        return !this.checkTimeout(TIMEOUTS.PLAYER_TAKE)
     }
 
     canUse (itemId) {
         const haveItem = this.items.find((item) => item && item.properties.id === itemId)
-        return !this.itemTimeout && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
-    }
-
-    collectMapPiece (piece) {
-        this.mapPieces.push(piece.animation)
-        this.showMap()
+        return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
     useItem (itemId) {
@@ -235,7 +219,7 @@ export default class Player extends Entity {
             [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
                 ? [this.items[1], null]
                 : [this.items[0], null]
-            this.setItemTimeout()
+            this.startTimeout(TIMEOUTS.PLAYER_TAKE)
             return item
         }
     }
@@ -251,43 +235,24 @@ export default class Player extends Entity {
                 item.visible = false
                 // this.playSound(playerGet)
             }
-            this.setItemTimeout()
+            this.startTimeout(TIMEOUTS.PLAYER_TAKE)
         }
-    }
-
-    setItemTimeout () {
-        this.itemTimeout = setTimeout(() => {
-            this.itemTimeout = null
-        }, 500)
     }
 
     showHint (item) {
-        if (!this.hintTimeout && !this.itemTimeout) {
+        if (!this.checkTimeout(TIMEOUTS.PLAYER_TAKE)) {
             this.hint = item
-            this.hintTimeout = setTimeout(this.hideHint, 2000)
+            this.startTimeout(TIMEOUTS.PLAYER_HINT, this.hideHint)
         }
-    }
-
-    hideHint () {
-        this.hint = null
-        this.hintTimeout = null
     }
 
     showMap () {
-        if (!this.mapTimeout) {
-            this.mapTimeout = setTimeout(this.hideMap, 2000)
-        }
+        this.startTimeout(TIMEOUTS.PLAYER_MAP)
     }
 
-    hideMap () {
-        this.mapTimeout = null
-    }
-
-    checkpoint () {
-        this.lastPosition = {
-            x: this.x,
-            y: this.y
-        }
+    collectMapPiece (piece) {
+        this.mapPieces.push(piece.animation)
+        this.showMap()
     }
 
     lifeLoss () {
@@ -295,25 +260,23 @@ export default class Player extends Entity {
             this.lives -= 1
             this.force = { x: 0, y: 0 }
             // this.lives === 0 ? gameOver() :
-            this.restoreCheckpoint()
+            this.restore()
         }
     }
 
-    restoreCheckpoint () {
-        if (!this.respawnTimeout) {
-            const { camera } = this._scene
-            const { x, y } = this.lastPosition
-            this.respawnTimeout = setTimeout(() => {
-                this.x = x
-                this.y = y
-                this.inDark = 0
-                this.energy = 100
-                this.maxEnergy = 100
-                this.hurtTimeout = null
-                this.respawnTimeout = null
-                this._scene.blackOverlay = 1
-                camera.center()
-            }, 1000)
-        }
+    restore () {
+        const { camera, overlays } = this._scene
+        const { x, y } = this.lastPosition
+        this.startTimeout(TIMEOUTS.PLAYER_RESPAWN, () => {
+            this.x = x
+            this.y = y
+            this.inDark = 0
+            this.energy = 100
+            this.maxEnergy = 100
+            this.hurtTimeout = null
+            this.respawnTimeout = null
+            overlays.fadeIn()
+            camera.center()
+        })
     }
 }

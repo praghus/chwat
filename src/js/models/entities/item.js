@@ -45,20 +45,6 @@ export default class Item extends Entity {
         this.animation = this.types[this.properties.id] || this.types.undefined
     }
 
-    // draw (ctx) {
-    //     if (this.onScreen() && this.visible) {
-    //         const { camera, debug, fontPrint } = this._scene
-    //         super.draw(ctx)
-    //         // don't display name in debug mode coz it's already displayed.
-    //         if (!debug) {
-    //             fontPrint(this.name,
-    //                 this.x + camera.x + 8 - ((this.name.length / 2) * 5),
-    //                 this.y + camera.y - 8,
-    //             )(ctx)
-    //         }
-    //     }
-    // }
-
     collide (element) {
         const { input, player } = this._scene
         if (input[INPUTS.INPUT_ACTION] && element.type === ENTITIES_TYPE.PLAYER && this.visible) {

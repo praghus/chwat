@@ -9,8 +9,8 @@ export default class Paddle extends Entity {
         this.maxSpeed = 1
         this.activated = false
     }
-    draw (ctx) {
-        const { assets, camera, world } = this._scene
+    draw () {
+        const { assets, ctx, camera, world } = this._scene
         const { spriteSize } = world
         for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
             ctx.drawImage(

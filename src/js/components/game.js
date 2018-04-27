@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Canvas from './canvas'
 import { IntroScene, GameScene } from '../models/scenes'
-import { getKeyPressed, SCENES } from '../lib/constants'
+import { SCENES } from '../lib/constants'
+import { getKeyPressed } from '../lib/helpers'
 import {
     assetPropType,
     inputPropType,
@@ -59,12 +60,11 @@ export default class Game extends Component {
 
     componentDidUpdate () {
         if (this.ctx && this.scene) {
-            this.scene.draw(this.ctx)
+            this.scene.draw()
         }
     }
 
     componentWillUnmount () {
-        // this.wrapper.removeEventListener('click', this.updateMousePos, false)
         document.removeEventListener('keydown', ({code}) => this.onKey(code, true))
         document.removeEventListener('keyup', ({code}) => this.onKey(code, false))
     }

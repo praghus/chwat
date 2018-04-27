@@ -1,13 +1,9 @@
-import { outline, overlap, normalize } from '../lib/helpers'
-import { canJumpThrough, DIRECTIONS, COLORS } from '../lib/constants'
+import { DIRECTIONS, TIMEOUTS } from '../lib/constants'
+import { noop, overlap, normalize } from '../lib/helpers'
 
 export default class Entity {
     constructor (obj, scene) {
         this._scene = scene
-        this.x = null
-        this.y = null
-        this.width = null
-        this.height = null
         this.force = { x: 0, y: 0 }
         this.bounds = null
         this.speed = 0
@@ -24,15 +20,22 @@ export default class Entity {
         this.animFrame = 0
         this.animCount = 0
         this.message = null
-        // todo: timeouts pool
-        this.messageTimeout = null
-        this.messageDuration = 2000
+        this.timeoutsPool = {}
         this.vectorMask = null
         this.playSound = scene.playSound
         Object.keys(obj).map((prop) => {
             this[prop] = obj[prop]
         })
-        this.hideMessage = this.hideMessage.bind(this)
+        this.lastPosition = {
+            x: this.x,
+            y: this.y
+        }
+        this.checkTimeout = this.checkTimeout.bind(this)
+        this.startTimeout = this.startTimeout.bind(this)
+        this.stopTimeout = this.stopTimeout.bind(this)
+        this.hideMessage = () => {
+            this.message = null
+        }
     }
 
     onScreen () {
@@ -69,10 +72,10 @@ export default class Entity {
         }
     }
 
-    draw (ctx) {
-        const { addLightmaskElement, assets, camera, debug, dynamicLights, fontPrint } = this._scene
+    draw () {
+        const { ctx, addLightmaskElement, assets, camera, debug, dynamicLights, overlays } = this._scene
         if (this.onScreen()) {
-            const { animation, animFrame, bounds, width, height, name, type, visible, force } = this
+            const { animation, animFrame, width, height, visible } = this
             const [ posX, posY ] = [
                 Math.floor(this.x + camera.x),
                 Math.floor(this.y + camera.y)
@@ -102,68 +105,14 @@ export default class Entity {
                     )
                 }
             }
-
-            if (debug) {
-                if (this.vectorMask) {
-                    ctx.save()
-                    ctx.strokeStyle = COLORS.LIGHT_RED
-                    ctx.beginPath()
-                    ctx.moveTo(posX, posY)
-                    this.vectorMask.map(({x, y}) => ctx.lineTo(
-                        posX + x,
-                        posY + y
-                    ))
-                    ctx.lineTo(
-                        this.vectorMask[0].x + posX,
-                        this.vectorMask[0].y + posY
-                    )
-                    ctx.stroke()
-                    ctx.restore()
-                }
-                else {
-                    outline(
-                        posX, posY, width, height,
-                        visible ? COLORS.GREEN : COLORS.PURPLE
-                    )(ctx)
-                    if (bounds) {
-                        outline(
-                            posX + bounds.x,
-                            posY + bounds.y,
-                            bounds.width,
-                            bounds.height,
-                            COLORS.LIGHT_RED
-                        )(ctx)
-                    }
-                }
-                if (visible) {
-                    fontPrint(`${name || type}\nx:${Math.floor(this.x)}\ny:${Math.floor(this.y)}`,
-                        posX,
-                        posY - 8,
-                    )(ctx)
-                }
-                // ${String.fromCharCode(26)}
-                if (force.x !== 0) {
-                    const forceX = `${force.x.toFixed(2)}`
-                    fontPrint(forceX,
-                        force.x > 0 ? posX + width + 1 : posX - (forceX.length * 5) - 1,
-                        posY + height / 2,
-                    )(ctx)
-                }
-                if (force.y !== 0) {
-                    const forceY = `${force.y.toFixed(2)}`
-                    fontPrint(forceY,
-                        posX + (width - (forceY.length * 5)) / 2,
-                        posY + height / 2
-                    )(ctx)
-                }
-            }
+            debug && overlays.displayDebug(this)
         }
         if (this.message) {
             const { text, x, y } = this.message
-            fontPrint(text,
+            overlays.displayText(text,
                 Math.floor(x + camera.x),
                 Math.floor(y + camera.y)
-            )(ctx)
+            )
         }
     }
 
@@ -248,8 +197,7 @@ export default class Entity {
             for (let x = PX; x <= PW; x++) {
                 const tile = world.tileData(x, y)
                 if (tile.solid) {
-                    const jumpThrough = canJumpThrough(tile.type)
-                    if (!jumpThrough && overlap(nextX, tile)) {
+                    if (!tile.jumpThrough && overlap(nextX, tile)) {
                         if (this.force.x < 0) {
                             this.force.x = tile.x + tile.width - offsetX
                         }
@@ -258,12 +206,12 @@ export default class Entity {
                         }
                     }
                     if (overlap(nextY, tile)) {
-                        if (this.force.y < 0 && !jumpThrough) {
+                        if (this.force.y < 0 && !tile.jumpThrough) {
                             this.force.y = tile.y + tile.height - offsetY
                         }
                         else if (
-                            (this.force.y > 0 && !jumpThrough) || (
-                                jumpThrough && this.y + this.height <= tile.y
+                            (this.force.y > 0 && !tile.jumpThrough) || (
+                                tile.jumpThrough && this.y + this.height <= tile.y
                             )
                         ) {
                             this.force.y = tile.y - offsetY - boundsHeight
@@ -284,17 +232,37 @@ export default class Entity {
         if (this.onFloor) this.force.y *= -0.4
     }
 
-    showMessage (text, x = this.x, y = this.y) {
-        if (!this.messageTimeout) {
-            this.message = { text, x, y }
-            this.messageTimeout = setTimeout(this.hideMessage, this.messageDuration)
+    checkTimeout ({name}) {
+        return this.timeoutsPool[name] || null
+    }
+
+    startTimeout ({name, duration}, callback = noop) {
+        if (!this.timeoutsPool[name]) {
+            this.timeoutsPool[name] = setTimeout(() => {
+                this.stopTimeout(name)
+                callback()
+            }, duration)
         }
     }
 
-    hideMessage () {
-        if (this.messageTimeout) {
-            this.message = null
-            this.messageTimeout = null
+    stopTimeout (name) {
+        if (this.timeoutsPool[name] !== null) {
+            clearTimeout(this.timeoutsPool[name])
+            this.timeoutsPool[name] = null
+        }
+    }
+
+    showMessage (text, x = this.x, y = this.y) {
+        if (!this.checkTimeout(TIMEOUTS.MESSAGE)) {
+            this.message = { text, x, y }
+            this.startTimeout(TIMEOUTS.MESSAGE, this.hideMessage)
+        }
+    }
+
+    checkpoint () {
+        this.lastPosition = {
+            x: this.x,
+            y: this.y
         }
     }
 

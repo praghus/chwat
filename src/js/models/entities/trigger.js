@@ -45,7 +45,7 @@ export default class Trigger extends Entity {
 
     update () {
         if (this.activated) {
-            const { camera, elements } = this._scene
+            const { camera, elements, overlays } = this._scene
             const { clear, fade, produce, produce_name, shake } = this.properties
             if (produce) {
                 elements.add({
@@ -60,12 +60,8 @@ export default class Trigger extends Entity {
                 elements.clearInRange(this)
                 this.clearTiles(clear)
             }
-            if (shake) {
-                camera.shake()
-            }
-            if (fade) {
-                this._scene.blackOverlay = 1
-            }
+            shake && camera.shake()
+            fade && overlays.fadeIn()
             this.dead = true
         }
     }

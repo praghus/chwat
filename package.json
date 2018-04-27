@@ -1,7 +1,7 @@
 {
   "name": "chwat",
   "version": "0.1.0",
-  "description": "Canvas zombie shooter made with React and Redux",
+  "description": "Remake of a Commodore 64 adventure platformer",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
