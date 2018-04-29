@@ -62,7 +62,7 @@ export const INPUTS = {
     INPUT_RIGHT: 'right',
     INPUT_DOWN: 'down',
     INPUT_LEFT: 'left',
-    INPUT_ACTION: 'fire',
+    INPUT_ACTION: 'action',
     INPUT_MAP: 'map',
     INPUT_DEBUG: 'debug'
 }
@@ -81,7 +81,7 @@ export const TIMEOUTS = {
     'MESSAGE': { name: 'message', duration: 2000 },
     'PLAYER_HINT': { name: 'player_hint', duration: 2000 },
     'PLAYER_HURT': { name: 'player_hurt', duration: 3000 },
-    'PLAYER_MAP': { name: 'player_map', duration: 3000 },
+    'PLAYER_MAP': { name: 'player_map', duration: 2000 },
     'PLAYER_RESPAWN': { name: 'player_respawn', duration: 1000 },
     'PLAYER_TAKE': { name: 'player_take', duration: 500 }
 }
@@ -145,6 +145,7 @@ export const ASSETS = {
     HEARTS: 'hearts',
     ITEMS: 'items',
     LAVA: 'lava',
+    LIGHTING: 'lighting',
     LOGO: 'chwat',
     MOUNTAINS: 'bg2',
     PADDLE: 'paddle',

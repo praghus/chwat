@@ -85,7 +85,7 @@ export default class Entity {
                 const sprite = asset || assets['no_image']
 
                 if (dynamicLights && this.lightmask) {
-                    addLightmaskElement(this.lightmask, posX, posY, width, height)
+                    addLightmaskElement(this.lightmask, {x: posX, y: posY, width, height})
                 }
                 if (animation) {
                     ctx.drawImage(sprite,

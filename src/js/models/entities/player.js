@@ -1,5 +1,5 @@
 import Entity from '../entity'
-// import { playerJump, playerGet } from '../../actions/sounds'
+import { playerJump, playerGet } from '../../actions/sounds'
 import { DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS, TIMEOUTS } from '../../lib/constants'
 
 export default class Player extends Entity {
@@ -29,12 +29,12 @@ export default class Player extends Entity {
         this.animations = {
             LEFT: {x: 704, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
             RIGHT: {x: 0, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
-            JUMP_LEFT: {x: 512, y: 16, w: 32, h: 48, frames: 4, fps: 15, loop: false},
-            JUMP_RIGHT: {x: 256, y: 16, w: 32, h: 48, frames: 4, fps: 15, loop: false},
-            STAND_LEFT: {x: 480, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-            STAND_RIGHT: {x: 448, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-            FALL_LEFT: {x: 672, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-            FALL_RIGHT: {x: 416, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
+            JUMP_LEFT: {x: 512, y: 16, w: 32, h: 48, frames: 4, fps: 24, loop: false},
+            JUMP_RIGHT: {x: 256, y: 16, w: 32, h: 48, frames: 4, fps: 24, loop: false},
+            STAND_LEFT: {x: 480, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
+            STAND_RIGHT: {x: 448, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
+            FALL_LEFT: {x: 672, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
+            FALL_RIGHT: {x: 416, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
             DEAD: {x: 0, y: 144, w: 32, h: 48, frames: 7, fps: 24, loop: false},
             DEAD_LEFT: {x: 480, y: 144, w: 32, h: 48, frames: 1, fps: 0, loop: false},
             DEAD_RIGHT: {x: 448, y: 144, w: 32, h: 48, frames: 1, fps: 0, loop: false}
@@ -72,8 +72,6 @@ export default class Player extends Entity {
             }
             if (input[INPUTS.INPUT_UP] && this.canJump()) {
                 this.doJump = true
-                // todo: better sound dispatching
-                // this.playSound(playerJump)
             }
             if (input[INPUTS.INPUT_ACTION]) {
                 this.getItem(null)
@@ -133,6 +131,8 @@ export default class Player extends Entity {
                     if (this.force.x !== 0) {
                         this.addDust(this.direction)
                     }
+                    // todo: better sound dispatching
+                    this.playSound(playerJump)
                     this.force.y = -8.3
                     this.jump = true
                     this.doJump = false
@@ -233,7 +233,7 @@ export default class Player extends Entity {
 
             if (item) {
                 item.visible = false
-                // this.playSound(playerGet)
+                this.playSound(playerGet)
             }
             this.startTimeout(TIMEOUTS.PLAYER_TAKE)
         }
@@ -256,7 +256,7 @@ export default class Player extends Entity {
     }
 
     lifeLoss () {
-        if (!this.respawnTimeout) {
+        if (!this.checkTimeout(TIMEOUTS.PLAYER_RESPAWN)) {
             this.lives -= 1
             this.force = { x: 0, y: 0 }
             // this.lives === 0 ? gameOver() :
@@ -273,8 +273,8 @@ export default class Player extends Entity {
             this.inDark = 0
             this.energy = 100
             this.maxEnergy = 100
-            this.hurtTimeout = null
-            this.respawnTimeout = null
+            this.stopTimeout(TIMEOUTS.PLAYER_RESPAWN)
+            this.stopTimeout(TIMEOUTS.PLAYER_HURT)
             overlays.fadeIn()
             camera.center()
         })

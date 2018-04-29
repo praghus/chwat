@@ -2,7 +2,11 @@ import '../../lib/illuminated'
 import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
 import { Camera, Elements, World } from '../index'
-import { getMiniTile, isMiniTile, setLightmaskElement } from '../../lib/helpers'
+import {
+    getMiniTile,
+    isMiniTile,
+    setLightmaskElement
+} from '../../lib/helpers'
 import {
     ASSETS,
     COLORS,
@@ -18,7 +22,6 @@ const { DarkMask, Lighting } = window.illuminated
 export default class GameScene extends Scene {
     constructor (game) {
         super(game)
-        this.dynamicLights = true
         this.world = new World(levelData)
         this.elements = new Elements(this.world.getObjects(), this)
         this.player = this.elements.create(this.world.getPlayer())
@@ -26,12 +29,14 @@ export default class GameScene extends Scene {
         this.camera = new Camera(this)
         this.camera.setFollow(this.player)
 
-        this.lightmask = []
+        this.dynamicLights = this.world.shouldCreateLightmask
         this.light = this.elements.getLight(LIGHTS.PLAYER_LIGHT)
         this.lighting = new Lighting({light: this.light, objects: []})
         this.darkmask = new DarkMask({lights: [this.light]})
+        this.lightmask = []
 
         this.overlays.fadeIn()
+        this.addLightmaskElement = this.addLightmaskElement.bind(this)
     }
 
     update (nextProps) {
@@ -76,27 +81,35 @@ export default class GameScene extends Scene {
     }
 
     renderLightingEffect () {
-        const { ctx, player, viewport } = this
+        const { ctx, assets, camera, player, viewport } = this
         const { resolutionX, resolutionY } = viewport
 
-        this.light.position = Object.assign(this.light.position, {
-            x: player.x + (player.width / 2) + this.camera.x,
-            y: player.y + (player.height / 2) + this.camera.y
-        })
+        if (this.dynamicLights) {
+            this.light.position = Object.assign(this.light.position, {
+                x: player.x + (player.width / 2) + this.camera.x,
+                y: player.y + (player.height / 2) + this.camera.y
+            })
 
-        this.darkmask.lights = [this.light]
-        this.lighting.light = this.light
-        this.lighting.objects = this.lightmask
+            this.darkmask.lights = [this.light]
+            this.lighting.light = this.light
+            this.lighting.objects = this.lightmask
 
-        this.lighting.compute(resolutionX, resolutionY)
-        this.darkmask.compute(resolutionX, resolutionY)
+            this.lighting.compute(resolutionX, resolutionY)
+            this.darkmask.compute(resolutionX, resolutionY)
 
-        ctx.save()
-        ctx.globalCompositeOperation = 'lighter'
-        this.lighting.render(ctx)
-        ctx.globalCompositeOperation = 'source-over'
-        this.darkmask.render(ctx)
-        ctx.restore()
+            ctx.save()
+            ctx.globalCompositeOperation = 'lighter'
+            this.lighting.render(ctx)
+            ctx.globalCompositeOperation = 'source-over'
+            this.darkmask.render(ctx)
+            ctx.restore()
+        }
+        else {
+            ctx.drawImage(assets[ASSETS.LIGHTING],
+                -400 + (player.x + camera.x + player.width / 2),
+                -400 + (player.y + camera.y + player.height / 2)
+            )
+        }
     }
 
     renderObjects () {
@@ -137,8 +150,8 @@ export default class GameScene extends Scene {
         const { ctx, assets, camera, player, viewport, world } = this
         const { resolutionX, resolutionY } = viewport
         const { spriteCols, spriteSize } = world
-        const castingShadows = this.dynamicLights && (camera.underground || player.inDark > 0)
-        const shouldCreateLightmask = castingShadows && layer === LAYERS.MAIN
+        const castingShadows = camera.underground || player.inDark > 0
+        const shouldCreateLightmask = this.dynamicLights && castingShadows && layer === LAYERS.MAIN
 
         let y = Math.floor(camera.y % spriteSize)
         let _y = Math.floor(-camera.y / spriteSize)
@@ -162,14 +175,10 @@ export default class GameScene extends Scene {
                         if (shouldCreateLightmask) {
                             const maskElement = world.getLightmask(_x, _y)
                             if (isMiniTile(tile)) {
-                                this.lightmask.push(
-                                    setLightmaskElement(maskElement, getMiniTile(tile, x, y))
-                                )
+                                this.addLightmaskElement(maskElement, getMiniTile(tile, x, y))
                             }
                             else if (tile > NON_COLLIDE_INDEX && tile < SPECIAL_TILES_INDEX) {
-                                this.lightmask.push(setLightmaskElement(maskElement, {
-                                    x, y, width: spriteSize, height: spriteSize
-                                }))
+                                this.addLightmaskElement(maskElement, {x, y})
                             }
                         }
                         ctx.drawImage(assets[ASSETS.TILES],
@@ -185,5 +194,12 @@ export default class GameScene extends Scene {
                 _y++
             }
         }
+    }
+
+    addLightmaskElement (maskElement, {x, y, width, height}) {
+        const { spriteSize } = this.world
+        this.lightmask.push(setLightmaskElement(maskElement, {
+            x, y, width: width || spriteSize, height: height || spriteSize
+        }))
     }
 }

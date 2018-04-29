@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Canvas from './canvas'
+import Inputs from './inputs'
 import { IntroScene, GameScene } from '../models/scenes'
 import { SCENES } from '../lib/constants'
-import { getKeyPressed } from '../lib/helpers'
 import {
     assetPropType,
     inputPropType,
@@ -30,8 +30,6 @@ export default class Game extends Component {
         this.assets = props.assets
         this.playSound = props.playSound.bind(this)
         this.wrapper = null
-        this.loadedCount = 0
-        this.input = null
         this.assetsLoaded = false
         this.scene = null
         this.scenes = null
@@ -40,14 +38,12 @@ export default class Game extends Component {
     }
 
     componentDidMount () {
-        const { onKey, startTicker } = this.props
+        const { startTicker } = this.props
         this.ctx = this.canvas.context
         this.scenes = {
             [SCENES.INTRO]: new IntroScene(this),
             [SCENES.GAME]: new GameScene(this)
         }
-        document.addEventListener('keydown', ({code}) => onKey(getKeyPressed(code), true))
-        document.addEventListener('keyup', ({code}) => onKey(getKeyPressed(code), false))
         this.setScene(SCENES.INTRO)
         startTicker()
     }
@@ -64,16 +60,13 @@ export default class Game extends Component {
         }
     }
 
-    componentWillUnmount () {
-        document.removeEventListener('keydown', ({code}) => this.onKey(code, true))
-        document.removeEventListener('keyup', ({code}) => this.onKey(code, false))
-    }
-
     render () {
-        const { width, height } = this.props.viewport
+        const { onKey, viewport } = this.props
+        const { width, height } = viewport
         return (
             <div ref={(ref) => { this.wrapper = ref }}>
                 <Canvas ref={(ref) => { this.canvas = ref }} {...{ width, height }} />
+                <Inputs {...{ onKey }} />
             </div>
         )
     }

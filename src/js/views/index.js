@@ -8,7 +8,7 @@ import { startTicker, tickTime, updateKeyPressed, updateMousePos } from '../acti
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(
     (state, image) => ({
-        ...state, [image.split('/')[2].split('-')[0]]: image
+        ...state, [image.split('/')[1].split('-')[0]]: image.split('/')[1]
     }), {}
 )
 
@@ -71,8 +71,6 @@ class AppContainer extends Component {
             requestAnimationFrame(tick)
         }
         if (!ticker.tickerStarted) {
-            /*eslint no-console: ["error", { allow: ["info"] }] */
-            console.info('Starting ticker')
             tickerStart()
             tick()
         }

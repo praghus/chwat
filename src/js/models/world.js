@@ -1,5 +1,5 @@
 import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX } from '../lib/constants'
-import { canJumpThrough, createRectangleObject } from '../lib/helpers'
+import { canJumpThrough, createRectangleObject, isMobileDevice } from '../lib/helpers'
 
 export default class World {
     constructor (data) {
@@ -12,6 +12,7 @@ export default class World {
         this.surface = parseInt(surfaceLevel)
         this.spriteSize = parseInt(tilewidth)
         this.spriteCols = parseInt(tilesets[0].columns)
+        this.shouldCreateLightmask = !isMobileDevice()
         this.renderOrder = []
         this.objects = []
         this.lightmask = []
@@ -21,7 +22,7 @@ export default class World {
             this.renderOrder.push(name)
             if (data) {
                 this.data[name] = [...Array(width).keys()].map(() => Array(height))
-                if (name === LAYERS.MAIN) {
+                if (this.shouldCreateLightmask && name === LAYERS.MAIN) {
                     this.lightmask = [...Array(width).keys()].map(() => Array(height))
                 }
                 let j = 0
@@ -29,7 +30,7 @@ export default class World {
                     for (let x = 0; x < this.width; x++) {
                         const tile = data[j]
                         this.data[name][x][y] = tile
-                        if (name === LAYERS.MAIN && y >= this.surface) {
+                        if (this.shouldCreateLightmask && name === LAYERS.MAIN) {
                             this.lightmask[x][y] = tile > 0
                                 ? createRectangleObject(x, y, this.spriteSize, this.spriteSize)
                                 : null

@@ -41,6 +41,10 @@ export function overlap (a, b) {
     return a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y
 }
 
+export function isMobileDevice () {
+    return (typeof window.orientation !== 'undefined') || (navigator.userAgent.indexOf('IEMobile') !== -1)
+};
+
 export function normalize (n, min, max) {
     while (n < min) {
         n += (max - min)
@@ -112,10 +116,8 @@ export function createLamp (x, y, distance, color) {
 
 export function setLightmaskElement (element, {x, y, width, height}) {
     if (element) {
-        element.topleft.x = x
-        element.topleft.y = y
-        element.bottomright.x = x + width
-        element.bottomright.y = y + height
+        element.topleft = Object.assign(element.topleft, {x, y})
+        element.bottomright = Object.assign(element.bottomright, {x: x + width, y: y + height})
         element.syncFromTopleftBottomright()
         return element
     }

@@ -1,4 +1,5 @@
 import Scene from '../scene'
+import { isMobileDevice } from '../../lib/helpers'
 import { ASSETS, COLORS, INPUTS, SCENES } from '../../lib/constants'
 
 export default class IntroScene extends Scene {
@@ -9,7 +10,7 @@ export default class IntroScene extends Scene {
 
     update (nextProps) {
         super.update(nextProps)
-        if (this.fetchAction(INPUTS.INPUT_ACTION)) {
+        if (this.fetchAction(INPUTS.INPUT_ACTION) || this.fetchAction(INPUTS.INPUT_UP)) {
             this.setScene(SCENES.GAME)
         }
     }
@@ -26,7 +27,10 @@ export default class IntroScene extends Scene {
         ctx.drawImage(assets['bg6'], 0, 0)
         ctx.drawImage(assets[ASSETS.MOUNTAINS], -490, 0)
         ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 30)
-        overlays.displayText('PRESS SPACE TO BEGIN', Math.ceil(resolutionX / 2) - 50, resolutionY - 10)
+        overlays.displayText(isMobileDevice()
+            ? '    TAP TO BEGIN    '
+            : 'PRESS SPACE TO BEGIN',
+        Math.ceil(resolutionX / 2) - 50, resolutionY - 10)
         ctx.restore()
     }
 
