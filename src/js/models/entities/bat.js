@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import { DIRECTIONS, ENTITIES_FAMILY } from '../../lib/constants'
+import { ENTITIES_FAMILY } from '../../lib/entities'
+import { DIRECTIONS } from '../../lib/constants'
 
 export default class Bat extends Entity {
     constructor (obj, scene) {
@@ -19,8 +20,8 @@ export default class Bat extends Entity {
         this.bounds = {
             x: 5,
             y: 0,
-            width: this.width-10,
-            height: this.height-8
+            width: this.width - 10,
+            height: this.height - 8
         }
     }
 

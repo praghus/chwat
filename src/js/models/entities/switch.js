@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import {ENTITIES_TYPE, INPUTS, LAYERS} from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
+import { INPUTS, LAYERS } from '../../lib/constants'
 
 export default class Switch extends Entity {
     constructor (obj, scene) {

@@ -1,4 +1,5 @@
-import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX } from '../lib/constants'
+import { ENTITIES_TYPE } from '../lib/entities'
+import { LAYERS, NON_COLLIDE_INDEX } from '../lib/constants'
 import { canJumpThrough, createRectangleObject, isMobileDevice } from '../lib/helpers'
 
 export default class World {

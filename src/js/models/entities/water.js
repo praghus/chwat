@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import {DIRECTIONS, ENTITIES_FAMILY} from '../../lib/constants'
+import { DIRECTIONS } from '../../lib/constants'
+import { ENTITIES_FAMILY } from '../../lib/entities'
 
 export default class Water extends Entity {
     constructor (obj, scene) {

@@ -1,27 +1,27 @@
 import Entity from '../entity'
-import { DIRECTIONS } from '../../lib/constants'
+import { DIRECTIONS, TIMEOUTS } from '../../lib/constants'
 
 export default class Slime extends Entity {
     constructor (obj, scene) {
         super(obj, scene)
         this.direction = DIRECTIONS.LEFT
-        this.maxSpeed = 0.5
+        this.maxSpeed = 0
         this.speed = 0.2
         this.damage = 25
         this.solid = true
         this.bounds = {
-            x: 2,
-            y: 4,
-            width: this.width - 4,
-            height: this.height - 4
+            x: 16,
+            y: 32,
+            width: this.width - 32,
+            height: this.height - 32
         }
         this.animations = {
-            DOWN_RIGHT: {x: 0, y: 0, w: 16, h: 16, frames: 11, fps: 16, loop: true},
-            DOWN_LEFT: {x: 0, y: 16, w: 16, h: 16, frames: 11, fps: 16, loop: true}
-            // UP_RIGHT: {x: 0, y: 60, w: 32, h: 32, frames: 11, fps: 12, loop: true},
-            // UP_LEFT: {x: 0, y: 40, w: 32, h: 32, frames: 11, fps: 12, loop: true},
-            // JUMP: {x: 0, y: 80, w: 32, h: 32, frames: 2, fps: 6, loop: false}
+            BOUNCE: {x: 0, y: 0, w: 48, h: 48, frames: 9, fps: 12, loop: true},
+            RUN_LEFT: {x: 0, y: 48, w: 48, h: 48, frames: 14, fps: 12, loop: true},
+            RUN_RIGHT: {x: 0, y: 96, w: 48, h: 48, frames: 14, fps: 12, loop: true}
         }
+        this.running = false
+        this.wait()
     }
 
     update () {
@@ -29,10 +29,30 @@ export default class Slime extends Entity {
             this.awake = true
         }
         if (this.awake && !this.dead) {
-            const { gravity } = this._scene.world
+            const { player, world } = this._scene
+            const { gravity } = world
+
+            if (this.running) {
+                switch (this.animFrame) {
+                case 2:
+                    this.maxSpeed = 1.4
+                    break
+                case 12:
+                    this.maxSpeed = 0
+                    break
+                case 13:
+                    this.wait()
+                    break
+                }
+            }
+            else {
+                this.direction = this.x < player.x
+                    ? DIRECTIONS.RIGHT
+                    : DIRECTIONS.LEFT
+            }
+
             this.force.y += this.jump ? -0.2 : gravity
             this.force.x += this.direction === DIRECTIONS.RIGHT ? this.speed : -this.speed
-
             this.move()
 
             if (this.expectedX < this.x || this.onLeftEdge) {
@@ -43,21 +63,25 @@ export default class Slime extends Entity {
                 this.direction = DIRECTIONS.LEFT
                 this.force.x *= -0.6
             }
-
-            this.animate(this.direction === DIRECTIONS.RIGHT
-                ? this.animations.DOWN_RIGHT
-                : this.animations.DOWN_LEFT
-            )
-            // }
-            // else if (this.onCeiling) {
-            //     this.animate(this.direction === DIRECTIONS.RIGHT
-            //         ? this.animations.UP_RIGHT
-            //         : this.animations.UP_LEFT
-            //     )
-            // }
-            // else {
-            //     this.animate(this.animations.JUMP)
-            // }
+            if (this.direction === DIRECTIONS.RIGHT) {
+                this.animate(this.running
+                    ? this.animations.RUN_RIGHT
+                    : this.animations.BOUNCE
+                )
+            }
+            else {
+                this.animate(this.running
+                    ? this.animations.RUN_LEFT
+                    : this.animations.BOUNCE
+                )
+            }
         }
+    }
+
+    wait () {
+        this.running = false
+        this.startTimeout(TIMEOUTS.SLIME_WAIT, () => {
+            this.running = true
+        })
     }
 }

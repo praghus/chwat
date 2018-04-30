@@ -1,6 +1,7 @@
 import Entity from '../entity'
 import { playerJump, playerGet } from '../../actions/sounds'
-import { DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS, TIMEOUTS } from '../../lib/constants'
+import { DIRECTIONS, INPUTS, TIMEOUTS } from '../../lib/constants'
+import { ENTITIES_FAMILY, ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Player extends Entity {
     constructor (obj, scene) {
@@ -63,7 +64,7 @@ export default class Player extends Entity {
                 this.force.x -= this.speed
                 this.direction = DIRECTIONS.LEFT
             }
-            if (input[INPUTS.INPUT_RIGHT]) {
+            else if (input[INPUTS.INPUT_RIGHT]) {
                 if (this.direction === DIRECTIONS.LEFT) {
                     this.addDust(DIRECTIONS.RIGHT)
                 }

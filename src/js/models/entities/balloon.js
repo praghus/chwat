@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
+import { ASSETS } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Balloon extends Entity {
     constructor (obj, scene) {

@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { ENTITIES_TYPE } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class MapPiece extends Entity {
     constructor (obj, scene) {

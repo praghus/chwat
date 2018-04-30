@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import { ENTITIES_TYPE, INPUTS } from '../../lib/constants'
+import { INPUTS } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Trigger extends Entity {
     constructor (obj, scene) {

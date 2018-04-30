@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import { ENTITIES_TYPE, INPUTS } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
+import { INPUTS } from '../../lib/constants'
 
 export default class JumpThrough extends Entity {
     constructor (obj, scene) {

@@ -1,4 +1,5 @@
-import { COLORS, ENTITIES_TYPE, LIGHTS } from '../lib/constants'
+import { ENTITIES_TYPE } from '../lib/entities'
+import { COLORS, LIGHTS } from '../lib/constants'
 import { createLamp, getEntityByType, overlap } from '../lib/helpers'
 
 export default class Elements {

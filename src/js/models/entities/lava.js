@@ -1,6 +1,7 @@
 import Entity from '../entity'
 import { randomChoice, randomInt } from '../../lib/helpers'
-import { DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
+import { DIRECTIONS } from '../../lib/constants'
 
 export default class Lava extends Entity {
     constructor (obj, scene) {

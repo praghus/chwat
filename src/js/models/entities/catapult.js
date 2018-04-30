@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { ENTITIES_TYPE } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Catapult extends Entity {
     constructor (obj, scene) {
@@ -15,7 +15,6 @@ export default class Catapult extends Entity {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-
             this.trigger.activated = false
             this.trigger.dead = false
 

@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import {ENTITIES_TYPE, LAYERS} from '../../lib/constants'
+import { LAYERS } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class WoodenBridge extends Entity {
     constructor (obj, scene) {

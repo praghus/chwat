@@ -1,6 +1,7 @@
 import Entity from '../entity'
+import { ENTITIES_TYPE } from '../../lib/entities'
+import { DIRECTIONS } from '../../lib/constants'
 import { createRectangleObject } from '../../lib/helpers'
-import { DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Crusher extends Entity {
     constructor (obj, scene) {
