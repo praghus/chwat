@@ -6,7 +6,7 @@ export default class Entity {
         this._scene = scene
         this.force = { x: 0, y: 0 }
         this.bounds = null
-        this.speed = 0
+        this.acceleration = 0
         this.maxSpeed = 1
         this.awake = false
         this.activated = false
@@ -228,8 +228,6 @@ export default class Entity {
         this.onFloor = this.expectedY > this.y
         this.onLeftEdge = !world.isSolid(PX, PH)
         this.onRightEdge = !world.isSolid(PW, PH)
-
-        if (this.onFloor) this.force.y *= -0.4
     }
 
     checkTimeout ({name}) {

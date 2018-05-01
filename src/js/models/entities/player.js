@@ -13,7 +13,7 @@ export default class Player extends Entity {
         this.energy = 100
         this.maxEnergy = 100
         this.maxSpeed = 2
-        this.speed = 0.2
+        this.acceleration = 0.2
         this.solid = true
         this.items = [null, null]
         this.mapPieces = []
@@ -61,14 +61,14 @@ export default class Player extends Entity {
                 if (this.direction === DIRECTIONS.RIGHT) {
                     this.addDust(DIRECTIONS.LEFT)
                 }
-                this.force.x -= this.speed
+                this.force.x -= this.acceleration
                 this.direction = DIRECTIONS.LEFT
             }
             else if (input[INPUTS.INPUT_RIGHT]) {
                 if (this.direction === DIRECTIONS.LEFT) {
                     this.addDust(DIRECTIONS.RIGHT)
                 }
-                this.force.x += this.speed
+                this.force.x += this.acceleration
                 this.direction = DIRECTIONS.RIGHT
             }
             if (input[INPUTS.INPUT_UP] && this.canJump()) {
@@ -83,7 +83,7 @@ export default class Player extends Entity {
         }
         // slow down
         if (!input[INPUTS.INPUT_LEFT] && !input[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
-            this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.speed : this.speed
+            this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.acceleration : this.acceleration
             if (this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
                 this.direction === DIRECTIONS.RIGHT && this.force.x < 0) {
                 this.force.x = 0
@@ -92,7 +92,7 @@ export default class Player extends Entity {
 
         this.force.y += this.force.y > 0
             ? world.gravity * 1.5
-            : world.gravity
+            : world.gravity / 2
 
         this.move()
 
@@ -124,21 +124,21 @@ export default class Player extends Entity {
                 ? this.animations.JUMP_RIGHT
                 : this.animations.JUMP_LEFT
             )
-            if (this.animFrame === 0 && this.force.x !== 0) {
-                this.animFrame = 2
-            }
-            if (this.animFrame === 2) {
-                if (!this.jump) {
-                    if (this.force.x !== 0) {
-                        this.addDust(this.direction)
-                    }
-                    // todo: better sound dispatching
-                    this.playSound(playerJump)
-                    this.force.y = -8.3
-                    this.jump = true
-                    this.doJump = false
+            // if (this.animFrame === 0 && this.force.x !== 0) {
+            //     this.animFrame = 2
+            // }
+            // if (this.animFrame === 2) {
+            if (!this.jump) {
+                if (this.force.x !== 0) {
+                    this.addDust(this.direction)
                 }
+                // todo: better sound dispatching
+                this.playSound(playerJump)
+                this.force.y = -6
+                this.jump = true
+                this.doJump = false
             }
+            // }
             if (this.force.y > 0) {
                 this.jump = false
                 this.fall = true

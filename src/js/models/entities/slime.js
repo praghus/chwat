@@ -6,14 +6,14 @@ export default class Slime extends Entity {
         super(obj, scene)
         this.direction = DIRECTIONS.LEFT
         this.maxSpeed = 0
-        this.speed = 0.2
+        this.acceleration = 0.2
         this.damage = 25
         this.solid = true
         this.bounds = {
-            x: 16,
-            y: 32,
-            width: this.width - 32,
-            height: this.height - 32
+            x: 18,
+            y: 40,
+            width: this.width - 36,
+            height: this.height - 40
         }
         this.animations = {
             BOUNCE: {x: 0, y: 0, w: 48, h: 48, frames: 9, fps: 12, loop: true},
@@ -52,7 +52,7 @@ export default class Slime extends Entity {
             }
 
             this.force.y += this.jump ? -0.2 : gravity
-            this.force.x += this.direction === DIRECTIONS.RIGHT ? this.speed : -this.speed
+            this.force.x += this.direction === DIRECTIONS.RIGHT ? this.acceleration : -this.acceleration
             this.move()
 
             if (this.expectedX < this.x || this.onLeftEdge) {

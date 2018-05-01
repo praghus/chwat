@@ -7,7 +7,7 @@ export default class Bat extends Entity {
         super(obj, scene)
         this.direction = DIRECTIONS.LEFT
         this.maxSpeed = 1
-        this.speed = 0.2
+        this.acceleration = 0.2
         this.energy = 20
         this.maxEnergy = 20
         this.damage = 10
@@ -40,8 +40,8 @@ export default class Bat extends Entity {
             const flyingRight = this.direction === DIRECTIONS.RIGHT
             this.force.y = 0
             this.force.x += flyingRight
-                ? this.speed
-                : -this.speed
+                ? this.acceleration
+                : -this.acceleration
 
             this.move()
 

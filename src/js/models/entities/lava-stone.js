@@ -7,7 +7,7 @@ export default class LavaStone extends Entity {
         this.damage = 100
         this.width = 4
         this.height = 4
-        this.speed = 0.5
+        this.acceleration = 0.5
         this.maxSpeed = 1
         this.damage = 20
         this.color = 'rgb(200,100,0)'
@@ -29,8 +29,8 @@ export default class LavaStone extends Entity {
         if (!this.dead) {
             this.force.y += this.force.y < 0 ? 0.2 : 0.4
             this.force.x += this.direction === DIRECTIONS.RIGHT
-                ? this.speed
-                : -this.speed
+                ? this.acceleration
+                : -this.acceleration
 
             this.move()
 

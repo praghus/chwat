@@ -6,7 +6,7 @@ export default class Paddle extends Entity {
     constructor (obj, scene) {
         super(obj, scene)
         this.solid = true
-        this.speed = 0.1
+        this.acceleration = 0.1
         this.maxSpeed = 1
         this.activated = false
     }
@@ -49,7 +49,7 @@ export default class Paddle extends Entity {
             const { spriteSize } = this._scene.world
             const { destY } = this.properties
             if (this.y > destY * spriteSize) {
-                this.force.y -= this.speed
+                this.force.y -= this.acceleration
                 this.move()
             }
         }

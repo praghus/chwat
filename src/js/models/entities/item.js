@@ -56,6 +56,7 @@ export default class Item extends Entity {
     update () {
         const { gravity } = this._scene.world
         if (this.onScreen()) {
+            if (this.onFloor) this.force.y *= -0.5
             this.force.y += gravity
             this.move()
         }

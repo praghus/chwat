@@ -99,7 +99,7 @@ export default class Overlays {
         const { ctx, assets, player, viewport } = this._scene
         const { resolutionX, resolutionY } = viewport
         ctx.save()
-        ctx.globalAlpha = 0.8
+        ctx.globalAlpha = 0.5
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.restore()
