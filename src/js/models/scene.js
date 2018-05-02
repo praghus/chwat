@@ -25,11 +25,11 @@ export default class Scene {
     update (nextProps) {
         const { assets, input, ticker, viewport } = nextProps
 
-        this.lastInput = Object.assign({}, this.input)
+        this.lastInput = {...this.input}
         this.assets = assets
         this.ticker = ticker
         this.viewport = viewport
-        this.input = Object.assign({}, input.keyPressed)
+        this.input = {...input.keyPressed}
         this.frameStart = performance.now()
         this.delta = this.frameStart - this.then
 

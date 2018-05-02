@@ -4,11 +4,11 @@ import { DIRECTIONS, TIMEOUTS } from '../../lib/constants'
 export default class Slime extends Entity {
     constructor (obj, scene) {
         super(obj, scene)
-        this.direction = DIRECTIONS.LEFT
+        this.distance = 0
         this.maxSpeed = 0
-        this.acceleration = 0.2
         this.damage = 25
-        this.solid = true
+        this.acceleration = 0.2
+        this.running = false
         this.bounds = {
             x: 18,
             y: 40,
@@ -20,16 +20,16 @@ export default class Slime extends Entity {
             RUN_LEFT: {x: 0, y: 48, w: 48, h: 48, frames: 14, fps: 12, loop: true},
             RUN_RIGHT: {x: 0, y: 96, w: 48, h: 48, frames: 14, fps: 12, loop: true}
         }
-        this.running = false
+        this.direction = this.properties && this.properties.direction || DIRECTIONS.LEFT
+        this.range = this.properties && parseInt(this.properties.range) || 0
         this.wait()
     }
 
     update () {
+        this.width = 48
+        this.height = 48
         if (this.onScreen()) {
-            this.awake = true
-        }
-        if (this.awake && !this.dead) {
-            const { player, world } = this._scene
+            const { world } = this._scene
             const { gravity } = world
 
             if (this.running) {
@@ -45,24 +45,29 @@ export default class Slime extends Entity {
                     break
                 }
             }
-            else {
-                this.direction = this.x < player.x
-                    ? DIRECTIONS.RIGHT
-                    : DIRECTIONS.LEFT
-            }
 
             this.force.y += this.jump ? -0.2 : gravity
-            this.force.x += this.direction === DIRECTIONS.RIGHT ? this.acceleration : -this.acceleration
+            this.force.x += this.direction === DIRECTIONS.RIGHT
+                ? this.acceleration
+                : -this.acceleration
+
             this.move()
 
-            if (this.expectedX < this.x || this.onLeftEdge) {
-                this.direction = DIRECTIONS.RIGHT
-                this.force.x *= -0.6
+            const newPosX = Math.round(this.x + this.width / 2)
+            const startPosX = Math.round(this.lastPosition.x + this.width / 2)
+
+            this.distance = newPosX > startPosX
+                ? newPosX - startPosX
+                : startPosX - newPosX
+
+            if (
+                this.expectedX < this.x || this.expectedX > this.x ||
+                this.onRightEdge || this.onLeftEdge ||
+                this.distance >= this.range
+            ) {
+                this.turn()
             }
-            if (this.expectedX > this.x || this.onRightEdge) {
-                this.direction = DIRECTIONS.LEFT
-                this.force.x *= -0.6
-            }
+
             if (this.direction === DIRECTIONS.RIGHT) {
                 this.animate(this.running
                     ? this.animations.RUN_RIGHT
@@ -78,8 +83,16 @@ export default class Slime extends Entity {
         }
     }
 
+    turn () {
+        this.direction = this.direction === DIRECTIONS.RIGHT
+            ? DIRECTIONS.LEFT
+            : DIRECTIONS.RIGHT
+        this.force.x *= -0.6
+    }
+
     wait () {
         this.running = false
+        this.maxSpeed = 0
         this.startTimeout(TIMEOUTS.SLIME_WAIT, () => {
             this.running = true
         })

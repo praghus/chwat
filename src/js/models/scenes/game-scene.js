@@ -85,10 +85,8 @@ export default class GameScene extends Scene {
         const { resolutionX, resolutionY } = viewport
 
         if (this.dynamicLights) {
-            this.light.position = Object.assign(this.light.position, {
-                x: player.x + (player.width / 2) + this.camera.x,
-                y: player.y + (player.height / 2) + this.camera.y
-            })
+            this.light.position.x = player.x + (player.width / 2) + this.camera.x
+            this.light.position.y = player.y + (player.height / 2) + this.camera.y
 
             this.darkmask.lights = [this.light]
             this.lighting.light = this.light

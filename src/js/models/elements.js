@@ -37,8 +37,7 @@ export default class Elements {
     }
 
     create (obj) {
-        const { type, family } = obj
-        const entity = getEntityByType(type)
+        const entity = getEntityByType(obj.type)
         if (entity) {
             // first check if there are some objects of the same type in objectsPool
             if (this.objectsPool[obj.type] && this.objectsPool[obj.type].length) {
@@ -51,7 +50,10 @@ export default class Elements {
             }
             else {
                 const Model = entity.model
-                return new Model(Object.assign({family}, obj, entity), this._scene)
+                return new Model({
+                    ...obj,
+                    ...entity
+                }, this._scene)
             }
         }
         return null
@@ -94,11 +96,9 @@ export default class Elements {
     emitParticles (count, properties) {
         const particle_count = count || 1
         for (let i = 0; i < particle_count; i++) {
-            const props = Object.assign({}, properties)
+            const props = {...properties}
             props.x = properties.x + Math.random() * 8
-            this.add(Object.assign({}, {
-                type: ENTITIES_TYPE.PARTICLE
-            }, props))
+            this.add({type: ENTITIES_TYPE.PARTICLE}, props)
         }
     }
 }

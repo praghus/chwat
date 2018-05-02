@@ -19,6 +19,7 @@ export default class Entity {
         this.animation = null
         this.animFrame = 0
         this.animCount = 0
+        this.range = 0
         this.message = null
         this.timeoutsPool = {}
         this.vectorMask = null
