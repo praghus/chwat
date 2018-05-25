@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { playerJump, playerGet } from '../../actions/sounds'
+// import { playerJump, playerGet } from '../../actions/sounds'
 import { DIRECTIONS, INPUTS, TIMEOUTS } from '../../lib/constants'
 import { ENTITIES_FAMILY, ENTITIES_TYPE } from '../../lib/entities'
 
@@ -17,15 +17,11 @@ export default class Player extends Entity {
         this.solid = true
         this.items = [null, null]
         this.mapPieces = []
-        this.hint = null
         this.bounds = {
             x: 10,
             y: 8,
             width: this.width - 20,
             height: this.height - 8
-        }
-        this.hideHint = () => {
-            this.hint = null
         }
         this.animations = {
             LEFT: {x: 704, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
@@ -72,7 +68,9 @@ export default class Player extends Entity {
                 this.direction = DIRECTIONS.RIGHT
             }
             if (input[INPUTS.INPUT_UP] && this.canJump()) {
-                this.doJump = true
+                // todo: better sound dispatching
+                // this.playSound(playerJump)
+                this.force.y = -6
             }
             if (input[INPUTS.INPUT_ACTION]) {
                 this.getItem(null)
@@ -89,14 +87,11 @@ export default class Player extends Entity {
                 this.force.x = 0
             }
         }
-
         this.force.y += this.force.y > 0
             ? world.gravity * 1.5
             : world.gravity / 2
 
         this.move()
-
-        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
 
         if (this.onFloor) {
             if (this.fall) {
@@ -106,6 +101,16 @@ export default class Player extends Entity {
             this.fall = false
             this.jump = false
         }
+        else if (this.force.y > 0 && this.jump) {
+            this.jump = false
+            this.fall = true
+        }
+        else if (this.force.y < 0) {
+            this.jump = true
+            this.fall = false
+        }
+
+        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
 
         if (this.maxEnergy <= 0) {
             if (this.onFloor) {
@@ -119,31 +124,11 @@ export default class Player extends Entity {
             }
             this.lifeLoss()
         }
-        else if (this.doJump || this.jump) {
+        else if (this.jump) {
             this.animate(this.direction === DIRECTIONS.RIGHT
                 ? this.animations.JUMP_RIGHT
                 : this.animations.JUMP_LEFT
             )
-            // if (this.animFrame === 0 && this.force.x !== 0) {
-            //     this.animFrame = 2
-            // }
-            // if (this.animFrame === 2) {
-            if (!this.jump) {
-                if (this.force.x !== 0) {
-                    this.addDust(this.direction)
-                }
-                // todo: better sound dispatching
-                this.playSound(playerJump)
-                this.force.y = -6
-                this.jump = true
-                this.doJump = false
-            }
-            // }
-            if (this.force.y > 0) {
-                this.jump = false
-                this.fall = true
-                this.doJump = false
-            }
         }
         else if (this.fall) {
             this.animate(this.direction === DIRECTIONS.RIGHT
@@ -198,7 +183,7 @@ export default class Player extends Entity {
     }
 
     canJump () {
-        return this.onFloor && !this.doJump && !this.jump
+        return this.onFloor && !this.jump
     }
 
     canHurt () {
@@ -234,16 +219,9 @@ export default class Player extends Entity {
 
             if (item) {
                 item.visible = false
-                this.playSound(playerGet)
+                // this.playSound(playerGet)
             }
             this.startTimeout(TIMEOUTS.PLAYER_TAKE)
-        }
-    }
-
-    showHint (item) {
-        if (!this.checkTimeout(TIMEOUTS.PLAYER_TAKE)) {
-            this.hint = item
-            this.startTimeout(TIMEOUTS.PLAYER_HINT, this.hideHint)
         }
     }
 

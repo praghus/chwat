@@ -9,7 +9,7 @@ export function requireAll (requireContext) {
 }
 
 export function calculateViewportSize (width, height) {
-    const pixelScale = height / 130
+    const pixelScale = height / 132
     const x = Math.round(width / pixelScale)
     const y = Math.round(height / pixelScale)
 
@@ -91,6 +91,10 @@ export function isMiniTile (id) {
 
 export function canJumpThrough (id) {
     return JUMP_THROUGH_TILES.indexOf(id) !== -1
+}
+
+export function getElementProperties ({id, name, properties, type, visible, width, height, x, y}) {
+    return { id, name, properties, type, visible, width, height, x, y }
 }
 
 /**

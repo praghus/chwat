@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Canvas from './canvas'
 import Inputs from './inputs'
+import { getElementProperties } from '../lib/helpers'
 import { IntroScene, GameScene } from '../models/scenes'
 import { SCENES } from '../lib/constants'
 import {
@@ -62,11 +63,13 @@ export default class Game extends Component {
 
     render () {
         const { onKey, viewport } = this.props
-        const { width, height } = viewport
+        const { width, height, scale } = viewport
+        const style = {transform: `scale(${scale}) translate(-50%, 50%) translateZ(0)`}
         return (
             <div ref={(ref) => { this.wrapper = ref }}>
                 <Canvas ref={(ref) => { this.canvas = ref }} {...{ width, height }} />
                 <Inputs {...{ onKey }} />
+                <div {...{style}} className='save-button' onClick={() => this.saveGame()} />
             </div>
         )
     }
@@ -77,6 +80,29 @@ export default class Game extends Component {
 
     getScene (scene) {
         return this.scenes[scene]
+    }
+
+    saveGame () {
+        const { world, elements, player } = this.scene
+        const playerObj = getElementProperties(player)
+        playerObj.items = []
+        playerObj.mapPieces = []
+        player.items.map((item) => {
+            item && playerObj.items.push(getElementProperties(item))
+        })
+        player.mapPieces.map((piece) => {
+            playerObj.mapPieces.push(piece)
+        })
+        const objects = [playerObj]
+        elements.objects.map((element) => {
+            objects.push(getElementProperties(element))
+        })
+        // console.info(objects)
+        const savedData = JSON.stringify({ map: world.layers, objects })
+        localStorage.setItem('savedData', btoa(savedData))
+
+        // const loadedData = atob(localStorage.getItem('savedData'))
+        // console.info(JSON.parse(loadedData))
     }
 }
 

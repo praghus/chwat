@@ -26,11 +26,11 @@ export default class Elements {
                     this.objects.splice(index, 1)
                 }
                 else {
-                    obj.update && obj.update()
                     obj.overlapTest(player)
                     for (let k = index + 1; k < this.objects.length; k++) {
                         this.objects[index].overlapTest(this.objects[k])
                     }
+                    obj.update && obj.update()
                 }
             }
         })
@@ -84,6 +84,7 @@ export default class Elements {
             if (
                 overlap(obj, rect) && !obj.dead &&
                 obj.type !== ENTITIES_TYPE.BALLOON &&
+                obj.type !== ENTITIES_TYPE.DARK_MASK &&
                 obj.type !== ENTITIES_TYPE.TRIGGER &&
                 obj.type !== ENTITIES_TYPE.WATER &&
                 obj.type !== ENTITIES_TYPE.ITEM

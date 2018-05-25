@@ -13,6 +13,11 @@ body {
     overflow: hidden;
     background: #000;
     color: #fff;
+    image-rendering: -moz-crisp-edges;         /* Firefox */
+    image-rendering:   -o-crisp-edges;         /* Opera */
+    image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
 }
 
 #root {
@@ -39,6 +44,16 @@ canvas {
     padding: 20px;
 }
 
+.save-button {
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 100;
+    background-image:url("../assets/images/fd.png");
+    background-size: contain;
+}
 
 .hammer-controls {
     display: flex;

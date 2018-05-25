@@ -1,5 +1,4 @@
 import Entity from '../entity'
-import { INPUTS } from '../../lib/constants'
 import { ENTITIES_FAMILY, ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Slope extends Entity {
@@ -29,7 +28,6 @@ export default class Slope extends Entity {
                 element.bounce()
                 return
             }
-            const { input } = this._scene
             const { x, width } = element.getBounds()
             const [ calculatedX, calculatedY ] = [element.x + x, this.y - element.height]
             const delta = this.height / this.width
@@ -47,10 +45,6 @@ export default class Slope extends Entity {
 
             else if (element.force.y === 0) {
                 element.force.y += 1
-            }
-
-            if (element.type === ENTITIES_TYPE.PLAYER && input[INPUTS.INPUT_UP]) {
-                element.doJump = true
             }
         }
     }

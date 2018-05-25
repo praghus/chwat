@@ -17,12 +17,12 @@ export default class World {
         this.renderOrder = []
         this.objects = []
         this.lightmask = []
-        this.data = []
+        this.layers = {}
 
         layers.map(({name, data, objects}) => {
             this.renderOrder.push(name)
             if (data) {
-                this.data[name] = [...Array(width).keys()].map(() => Array(height))
+                this.layers[name] = [...Array(width).keys()].map(() => Array(height))
                 if (this.shouldCreateLightmask && name === LAYERS.MAIN) {
                     this.lightmask = [...Array(width).keys()].map(() => Array(height))
                 }
@@ -30,7 +30,7 @@ export default class World {
                 for (let y = 0; y < this.height; y++) {
                     for (let x = 0; x < this.width; x++) {
                         const tile = data[j]
-                        this.data[name][x][y] = tile
+                        this.layers[name][x][y] = tile
                         if (this.shouldCreateLightmask && name === LAYERS.MAIN) {
                             this.lightmask[x][y] = tile > 0
                                 ? createRectangleObject(x, y, this.spriteSize, this.spriteSize)
@@ -70,13 +70,16 @@ export default class World {
         return x >= 0 && y >= 0 && x < this.width && y < this.height
     }
 
-    get (l, x, y) {
-        return this.inRange(x, y) && this.data[l][x][y]
+    get (layer, x, y) {
+        return this.inRange(x, y) && this.layers[layer][x][y]
     }
 
-    put (l, x, y, value) {
+    put (layer, x, y, value) {
         if (!this.inRange(x, y)) return false
-        this.data[l][x][y] = value
+        this.layers[layer][x][y] = value
+        if (layer === LAYERS.MAIN && value > 0) {
+            this.lightmask[x][y] = createRectangleObject(x, y, this.spriteSize, this.spriteSize)
+        }
     }
 
     tileData (x, y) {
@@ -94,14 +97,14 @@ export default class World {
 
     clearTile (x, y, layer) {
         if (this.inRange(x, y)) {
-            this.data[layer][x][y] = null
+            this.layers[layer][x][y] = null
         }
     }
 
     isSolid (x, y) {
         return !this.inRange(x, y) || (
-            this.data[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX ||
-            canJumpThrough(this.data[LAYERS.MAIN][x][y])
+            this.layers[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX ||
+            canJumpThrough(this.layers[LAYERS.MAIN][x][y])
         )
     }
 

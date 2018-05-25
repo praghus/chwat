@@ -69,9 +69,6 @@ export default class GameScene extends Scene {
 
         this.overlays.displayHUD()
 
-        // display hint
-        player.hint && this.overlays.displayHint()
-
         // display collected map pieces
         player.checkTimeout(TIMEOUTS.PLAYER_MAP) && this.overlays.displayMap()
 
@@ -127,8 +124,8 @@ export default class GameScene extends Scene {
             ctx.fillRect(0, 0, resolutionX, resolutionY)
 
             if (cameraX < 0) {
-                ctx.drawImage(assets[ASSETS.MOUNTAINS], cameraX / 15, 275 + this.camera.y / 2)
-                ctx.drawImage(assets[ASSETS.FAR_FOREST], cameraX / 10, 100 + this.camera.y / 2)
+                ctx.drawImage(assets[ASSETS.MOUNTAINS], cameraX / 15, 278 + this.camera.y / 2)
+                ctx.drawImage(assets[ASSETS.FAR_FOREST], cameraX / 10, 112 + this.camera.y / 2)
                 ctx.drawImage(assets[ASSETS.FOREST], cameraX / 5, 270 + this.camera.y / 2)
 
                 if (this.camera.y > -fogBorder) {

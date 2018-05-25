@@ -1,14 +1,16 @@
-import {
-    ASSETS, COLORS, FONTS
-} from '../lib/constants'
+import { ASSETS, COLORS, FONTS } from '../lib/constants'
 
 export default class Overlays {
     constructor (scene) {
         this._scene = scene
         this.blackOverlay = 0
+        this.hints = []
         this.fade = {
             in: false,
             out: false
+        }
+        this.addHint = ({x, y, width, hint}) => {
+            this.hints.push({x, y, width, hint})
         }
         this.fadeIn = () => {
             if (!this.fade.in) {
@@ -27,6 +29,12 @@ export default class Overlays {
     }
 
     update () {
+        if (this.hints.length) {
+            this.hints.map((element, index) => {
+                this.displayHint(element)
+                this.hints.splice(index, 1)
+            })
+        }
         if (this.blackOverlay > 0) {
             const { ctx, viewport } = this._scene
             const { resolutionX, resolutionY } = viewport
@@ -37,9 +45,17 @@ export default class Overlays {
         }
         if (this.fade.in) {
             this.blackOverlay -= 0.01
+            if (this.blackOverlay < 0) {
+                this.blackOverlay = 0
+                this.fade.in = false
+            }
         }
         if (this.fade.out) {
             this.blackOverlay += 0.01
+            if (this.blackOverlay > 1) {
+                this.blackOverlay = 1
+                this.fade.out = false
+            }
         }
     }
 
@@ -57,41 +73,46 @@ export default class Overlays {
 
         // lives and energy
         const indicatorWidth = energy && Math.round(energy / 2) || 1
-        ctx.drawImage(assets[ASSETS.HEAD], 3, 2)
-        ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, 12, 3, 50, 5)
-        ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, 12, 3, indicatorWidth, 5)
-        this.displayText(`${lives}`, 12, 8)
+        ctx.drawImage(assets[ASSETS.HEAD], 2, 1)
+        ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, -25 + resolutionX / 2, 3, 50, 5)
+        ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, -25 + resolutionX / 2, 3, indicatorWidth, 5)
+        this.displayText(`${lives}`, 11, 5)
+
+        // buttons
+        // ctx.drawImage(assets[ASSETS.BUTTONS], 0, 0, 18, 18, 6, resolutionY - 20, 18, 18)
+        // ctx.drawImage(assets[ASSETS.BUTTONS], 19, 0, 18, 18, 30, resolutionY - 20, 18, 18)
+        ctx.drawImage(assets[ASSETS.BUTTONS], 57, 0, 18, 18, resolutionX - 22, resolutionY - 20, 18, 18)
+        ctx.drawImage(assets[ASSETS.BUTTONS], 38, 0, 18, 18, resolutionX - 44, resolutionY - 20, 18, 18)
 
         // items
-        const align = (resolutionX - 60)
-        ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 26)
+        const align = 3 // -19 + resolutionX / 2
+        ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
             if (item && item.properties) {
-                this.displayText(item.name, 4, (resolutionY - 20) + index * 9)
+                // this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
                 ctx.drawImage(
                     assets[ASSETS.ITEMS],
                     item.animation.x, item.animation.y,
                     item.width, item.height,
-                    align + 12 + (index * 25), resolutionY - 22,
+                    align + 1 + (index * 20), resolutionY - 19,
                     item.width, item.height
                 )
             }
         })
     }
 
-    displayHint () {
-        const { ctx, assets, camera, player } = this._scene
-        const { animation, animFrame } = player.hint
+    displayHint ({x, y, width, hint}) {
+        const { ctx, assets, camera } = this._scene
         ctx.drawImage(assets[ASSETS.BUBBLE],
-            Math.floor(player.x + camera.x + player.width / 2),
-            Math.floor(player.y + camera.y) - 24
+            Math.floor(x + camera.x + width / 2),
+            Math.floor(y + camera.y) - 20
         )
         ctx.drawImage(assets[ASSETS.ITEMS],
-            animation.x + animFrame * animation.w, animation.y,
-            animation.w, animation.h,
-            Math.floor(player.x + camera.x + player.width / 2) + 8,
-            Math.floor(player.y + camera.y) - 22,
-            animation.w, animation.h
+            hint.x, hint.y,
+            hint.w, hint.h,
+            Math.floor(x + camera.x + width / 2) + 8,
+            Math.floor(y + camera.y) - 18,
+            hint.w, hint.h
         )
     }
 

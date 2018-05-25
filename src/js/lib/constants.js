@@ -1,6 +1,6 @@
 export const NON_COLLIDE_INDEX = 256
 export const SPECIAL_TILES_INDEX = 1024
-export const JUMP_THROUGH_TILES = [210, 211, 212, 213, 214, 836, 868, 1088, 1089]
+export const JUMP_THROUGH_TILES = [210, 211, 212, 213, 214, 243, 836, 868, 1088, 1089]
 
 export const MINI_TILES = {
     '230': {offsetX: 8, offsetY: 8, width: 8, height: 8},
@@ -72,18 +72,19 @@ export const INPUT_KEYS = {
 }
 
 export const TIMEOUTS = {
-    'MESSAGE': { name: 'message', duration: 2000 },
-    'PLAYER_HINT': { name: 'player_hint', duration: 2000 },
+    'MESSAGE': { name: 'message', duration: 3000 },
+    'HINT': { name: 'hint', duration: 2000 },
     'PLAYER_HURT': { name: 'player_hurt', duration: 3000 },
     'PLAYER_MAP': { name: 'player_map', duration: 2000 },
     'PLAYER_RESPAWN': { name: 'player_respawn', duration: 1000 },
-    'PLAYER_TAKE': { name: 'player_take', duration: 500 },
-    'SLIME_WAIT': { name: 'slime_run', duration: 2300 }
+    'PLAYER_TAKE': { name: 'player_take', duration: 500 }
 }
 
 export const ASSETS = {
     BALLOON: 'air_balloon',
     BAT: 'bat',
+    BUTTONS: 'buttons',
+    COOK: 'cook',
     SLIME: 'slime',
     BUBBLE: 'sbubble',
     BRIDGE: 'bridge',
@@ -91,11 +92,14 @@ export const ASSETS = {
     MAP_PIECE: 'map_piece',
     CRUSHER: 'crusher',
     DUST: 'dust',
+    DRAGON: 'dragon',
     ENERGY: 'energy',
     FAR_FOREST: 'bg3',
+    FLAG: 'flag',
     FOG: 'bg5',
     FOREST: 'bg4',
     FRAMES: 'frames',
+    GRASS: 'grass',
     HEAD: 'head',
     HEARTS: 'hearts',
     ITEMS: 'items',
@@ -111,5 +115,6 @@ export const ASSETS = {
     SWITCH: 'switch',
     TORCH: 'torches',
     TILES: 'tiles',
-    WATER: 'water'
+    WATER: 'water',
+    WITCH: 'witch'
 }

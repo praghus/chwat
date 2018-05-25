@@ -20,6 +20,7 @@ export default class Entity {
         this.animFrame = 0
         this.animCount = 0
         this.range = 0
+        this.hint = null
         this.message = null
         this.timeoutsPool = {}
         this.vectorMask = null
@@ -31,11 +32,15 @@ export default class Entity {
             x: this.x,
             y: this.y
         }
+        this.changeMessage = this.changeMessage.bind(this)
         this.checkTimeout = this.checkTimeout.bind(this)
         this.startTimeout = this.startTimeout.bind(this)
         this.stopTimeout = this.stopTimeout.bind(this)
         this.hideMessage = () => {
             this.message = null
+        }
+        this.hideHint = () => {
+            this.hint = null
         }
     }
 
@@ -115,6 +120,7 @@ export default class Entity {
                 Math.floor(y + camera.y)
             )
         }
+        this.hint && overlays.addHint(this)
     }
 
     getBounds () {
@@ -156,17 +162,17 @@ export default class Entity {
     }
 
     bounce () {
-        if (this.force.x !== 0) {
-            this.force.x *= -1.5
-            this.direction = this.direction === DIRECTIONS.RIGHT
-                ? DIRECTIONS.LEFT
-                : DIRECTIONS.RIGHT
-        }
+        this.direction = this.direction === DIRECTIONS.RIGHT
+            ? DIRECTIONS.LEFT
+            : DIRECTIONS.RIGHT
+        this.force.x *= -1
     }
 
     move () {
         const { world } = this._scene
         const { spriteSize } = world
+
+        const reducedForceY = this.force.y < spriteSize && this.force.y || spriteSize
 
         if (this.force.x > this.maxSpeed) this.force.x = this.maxSpeed
         if (this.force.x < -this.maxSpeed) this.force.x = -this.maxSpeed
@@ -187,12 +193,12 @@ export default class Entity {
         const offsetY = this.y + boundsY
 
         const nextX = { x: offsetX + this.force.x, y: offsetY, ...boundsSize }
-        const nextY = { x: offsetX, y: offsetY + this.force.y, ...boundsSize }
+        const nextY = { x: offsetX, y: offsetY + reducedForceY, ...boundsSize }
 
-        const PX = Math.floor(this.expectedX / spriteSize)
-        const PY = Math.floor(this.expectedY / spriteSize)
-        const PW = Math.floor((this.expectedX + this.width) / spriteSize)
-        const PH = Math.floor((this.expectedY + this.height) / spriteSize)
+        const PX = Math.floor((this.expectedX + boundsX) / spriteSize)
+        const PY = Math.floor((this.expectedY + boundsY) / spriteSize)
+        const PW = Math.floor((this.expectedX + boundsX + boundsWidth) / spriteSize)
+        const PH = Math.floor((this.expectedY + boundsY + boundsHeight) / spriteSize)
 
         for (let y = PY; y <= PH; y++) {
             for (let x = PX; x <= PW; x++) {
@@ -211,9 +217,8 @@ export default class Entity {
                             this.force.y = tile.y + tile.height - offsetY
                         }
                         else if (
-                            (this.force.y > 0 && !tile.jumpThrough) || (
-                                tile.jumpThrough && this.y + this.height <= tile.y
-                            )
+                            (this.force.y > 0 && !tile.jumpThrough) ||
+                            (tile.jumpThrough && this.y + this.height <= tile.y)
                         ) {
                             this.force.y = tile.y - offsetY - boundsHeight
                         }
@@ -255,6 +260,19 @@ export default class Entity {
         if (!this.checkTimeout(TIMEOUTS.MESSAGE)) {
             this.message = { text, x, y }
             this.startTimeout(TIMEOUTS.MESSAGE, this.hideMessage)
+        }
+    }
+
+    changeMessage (text, x = this.x, y = this.y) {
+        this.stopTimeout(TIMEOUTS.MESSAGE)
+        this.message = { text, x, y }
+        this.startTimeout(TIMEOUTS.MESSAGE, this.hideMessage)
+    }
+
+    showHint (item) {
+        if (!this.checkTimeout(TIMEOUTS.PLAYER_TAKE)) {
+            this.hint = item.animation
+            this.startTimeout(TIMEOUTS.HINT, this.hideHint)
         }
     }
 

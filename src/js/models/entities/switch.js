@@ -23,6 +23,7 @@ export default class Switch extends Entity {
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
                 if (player.canUse(activator)) {
+                    player.useItem(activator)
                     const { message, offsetX, offsetY, produce } = this.properties
                     this.activated = true
                     this.animation = this.animations.ON

@@ -1,6 +1,5 @@
 import Entity from '../entity'
 import { ENTITIES_TYPE } from '../../lib/entities'
-import { INPUTS } from '../../lib/constants'
 
 export default class Bridge extends Entity {
     constructor (obj, scene) {
@@ -15,7 +14,6 @@ export default class Bridge extends Entity {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { input } = this._scene
             const expectedY = (this.y - element.height) + (this.height - 16)
 
             if (element.y >= expectedY && !element.jump) {
@@ -26,10 +24,6 @@ export default class Bridge extends Entity {
             }
             else if (element.force.y === 0) {
                 element.force.y += 1
-            }
-
-            if (element.type === ENTITIES_TYPE.PLAYER && element.canMove() && input[INPUTS.INPUT_UP]) {
-                element.doJump = true
             }
         }
     }

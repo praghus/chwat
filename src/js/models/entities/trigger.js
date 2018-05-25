@@ -1,5 +1,5 @@
 import Entity from '../entity'
-import { INPUTS } from '../../lib/constants'
+import { INPUTS, LAYERS } from '../../lib/constants'
 import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Trigger extends Entity {
@@ -12,7 +12,7 @@ export default class Trigger extends Entity {
 
     collide (element) {
         const { elements, input, player, world } = this._scene
-        const { activator, hint, offsetX, offsetY, related } = this.properties
+        const { activator, hint, offsetX, offsetY, related, anchor_hint } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
@@ -30,7 +30,9 @@ export default class Trigger extends Entity {
                 }
                 else {
                     const item = elements.getByProperties('id', activator)
-                    player.showHint(item)
+                    anchor_hint
+                        ? this.showHint(item)
+                        : player.showHint(item)
                     this.hideMessage()
                 }
             }
@@ -46,8 +48,8 @@ export default class Trigger extends Entity {
 
     update () {
         if (this.activated) {
-            const { camera, elements, overlays } = this._scene
-            const { clear, fade, produce, produce_name, shake } = this.properties
+            const { camera, elements, overlays, world } = this._scene
+            const { clear, fade, modify, produce, produce_name, shake } = this.properties
             if (produce) {
                 elements.add({
                     type: ENTITIES_TYPE.ITEM,
@@ -56,6 +58,14 @@ export default class Trigger extends Entity {
                     x: this.x + 16,
                     y: this.y
                 })
+            }
+            if (modify) {
+                const matrix = JSON.parse(modify)
+                if (matrix.length) {
+                    matrix.map(
+                        ([x, y, id]) => world.put(LAYERS.MAIN, x, y, id)
+                    )
+                }
             }
             if (clear) {
                 elements.clearInRange(this)
