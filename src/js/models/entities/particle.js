@@ -36,8 +36,8 @@ export default class Particle extends Entity {
         }
     }
 
-    draw (ctx) {
-        const { camera } = this._scene
+    draw () {
+        const { ctx, camera } = this._scene
         ctx.save()
         ctx.fillStyle = this.color
         ctx.beginPath()

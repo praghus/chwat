@@ -1,7 +1,9 @@
-import {FONTS, INPUTS} from '../lib/constants'
+import Overlays from './overlays'
+import { INPUTS } from '../lib/constants'
 
 export default class Scene {
     constructor (game) {
+        this.ctx = game.ctx
         this.assets = game.assets
         this.viewport = game.viewport
         this.ticker = game.ticker
@@ -15,19 +17,19 @@ export default class Scene {
         this.frameTime = null
         this.frameStart = performance.now()
         this.then = performance.now()
-        this.blackOverlay = 1
         this.countFPS = this.countFPS.bind(this)
-        this.fontPrint = this.fontPrint.bind(this)
+        this.fetchAction = this.fetchAction.bind(this)
+        this.overlays = new Overlays(this)
     }
 
     update (nextProps) {
         const { assets, input, ticker, viewport } = nextProps
 
-        this.lastInput = Object.assign({}, this.input)
+        this.lastInput = {...this.input}
         this.assets = assets
         this.ticker = ticker
         this.viewport = viewport
-        this.input = Object.assign({}, input.keyPressed)
+        this.input = {...input.keyPressed}
         this.frameStart = performance.now()
         this.delta = this.frameStart - this.then
 
@@ -36,25 +38,8 @@ export default class Scene {
         }
     }
 
-    draw (ctx) {
+    draw () {
         // draw
-    }
-
-    fontPrint (text, x, y, font = FONTS.FONT_SMALL) {
-        const { assets } = this
-        return (ctx) => {
-            text.split('\n').reverse().map((output, index) => {
-                for (let i = 0; i < output.length; i++) {
-                    const chr = output.charCodeAt(i)
-                    ctx.drawImage(assets[font.name],
-                        ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
-                        font.size, font.size,
-                        Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
-                        font.size, font.size
-                    )
-                }
-            })
-        }
     }
 
     countFPS () {

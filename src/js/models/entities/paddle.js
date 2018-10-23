@@ -1,16 +1,16 @@
 import Entity from '../entity'
-import {ENTITIES_TYPE, INPUTS} from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Paddle extends Entity {
     constructor (obj, scene) {
         super(obj, scene)
         this.solid = true
-        this.speed = 0.1
+        this.acceleration = 0.1
         this.maxSpeed = 1
         this.activated = false
     }
-    draw (ctx) {
-        const { assets, camera, world } = this._scene
+    draw () {
+        const { assets, ctx, camera, world } = this._scene
         const { spriteSize } = world
         for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
             ctx.drawImage(
@@ -24,7 +24,6 @@ export default class Paddle extends Entity {
 
     collide (element) {
         if (!this.dead && element.solid && element.type !== ENTITIES_TYPE.BLOB) {
-            const { input } = this._scene
             const expectedY = (this.y - element.height) + (this.height - 16)
 
             if (element.y >= expectedY && !element.jump) {
@@ -36,10 +35,6 @@ export default class Paddle extends Entity {
             else if (element.force.y === 0) {
                 element.force.y += 1
             }
-
-            if (element.type === ENTITIES_TYPE.PLAYER && element.canMove() && input[INPUTS.INPUT_UP]) {
-                element.doJump = true
-            }
         }
     }
 
@@ -48,7 +43,7 @@ export default class Paddle extends Entity {
             const { spriteSize } = this._scene.world
             const { destY } = this.properties
             if (this.y > destY * spriteSize) {
-                this.force.y -= this.speed
+                this.force.y -= this.acceleration
                 this.move()
             }
         }

@@ -1,5 +1,6 @@
-import { COLORS, ENTITIES_TYPE, LIGHTS, getEntityByType } from '../lib/constants'
-import { createLamp, overlap } from '../lib/helpers'
+import { ENTITIES_TYPE } from '../lib/entities'
+import { COLORS, LIGHTS } from '../lib/constants'
+import { createLamp, getEntityByType, overlap } from '../lib/helpers'
 
 export default class Elements {
     constructor (entities, scene) {
@@ -25,19 +26,18 @@ export default class Elements {
                     this.objects.splice(index, 1)
                 }
                 else {
-                    obj.update && obj.update()
                     obj.overlapTest(player)
                     for (let k = index + 1; k < this.objects.length; k++) {
                         this.objects[index].overlapTest(this.objects[k])
                     }
+                    obj.update && obj.update()
                 }
             }
         })
     }
 
     create (obj) {
-        const { type, family } = obj
-        const entity = getEntityByType(type)
+        const entity = getEntityByType(obj.type)
         if (entity) {
             // first check if there are some objects of the same type in objectsPool
             if (this.objectsPool[obj.type] && this.objectsPool[obj.type].length) {
@@ -50,7 +50,10 @@ export default class Elements {
             }
             else {
                 const Model = entity.model
-                return new Model(Object.assign({family}, obj, entity), this._scene)
+                return new Model({
+                    ...obj,
+                    ...entity
+                }, this._scene)
             }
         }
         return null
@@ -81,6 +84,7 @@ export default class Elements {
             if (
                 overlap(obj, rect) && !obj.dead &&
                 obj.type !== ENTITIES_TYPE.BALLOON &&
+                obj.type !== ENTITIES_TYPE.DARK_MASK &&
                 obj.type !== ENTITIES_TYPE.TRIGGER &&
                 obj.type !== ENTITIES_TYPE.WATER &&
                 obj.type !== ENTITIES_TYPE.ITEM
@@ -93,11 +97,9 @@ export default class Elements {
     emitParticles (count, properties) {
         const particle_count = count || 1
         for (let i = 0; i < particle_count; i++) {
-            const props = Object.assign({}, properties)
+            const props = {...properties}
             props.x = properties.x + Math.random() * 8
-            this.add(Object.assign({}, {
-                type: ENTITIES_TYPE.PARTICLE
-            }, props))
+            this.add({type: ENTITIES_TYPE.PARTICLE}, props)
         }
     }
 }

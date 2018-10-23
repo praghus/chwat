@@ -3,24 +3,24 @@ import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import { Game } from '../components'
 import { requireAll } from '../lib/helpers'
+import { inputPropType, tickerPropType, viewportPropType } from '../lib/prop-types'
 import { startTicker, tickTime, updateKeyPressed, updateMousePos } from '../actions'
-
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(
     (state, image) => ({
-        ...state, [image.split('/')[2].split('-')[0]]: image
+        ...state, [image.split('/')[1].split('-')[0]]: image.split('/')[1]
     }), {}
 )
 
 const propTypes = {
-    input: PropTypes.object.isRequired,
+    input: inputPropType.isRequired,
     onKey: PropTypes.func.isRequired,
     onMouse: PropTypes.func.isRequired,
     playSound: PropTypes.func.isRequired,
-    ticker: PropTypes.object.isRequired,
+    ticker: tickerPropType.isRequired,
     tickerStart: PropTypes.func.isRequired,
     tickerTick: PropTypes.func.isRequired,
-    viewport: PropTypes.object
+    viewport: viewportPropType
 }
 
 class AppContainer extends Component {
@@ -71,8 +71,6 @@ class AppContainer extends Component {
             requestAnimationFrame(tick)
         }
         if (!ticker.tickerStarted) {
-            /*eslint no-console: ["error", { allow: ["info"] }] */
-            console.info('Starting ticker')
             tickerStart()
             tick()
         }

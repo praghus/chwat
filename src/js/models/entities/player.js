@@ -1,6 +1,7 @@
 import Entity from '../entity'
 // import { playerJump, playerGet } from '../../actions/sounds'
-import { ASSETS, DIRECTIONS, ENTITIES_FAMILY, ENTITIES_TYPE, INPUTS } from '../../lib/constants'
+import { DIRECTIONS, INPUTS, TIMEOUTS } from '../../lib/constants'
+import { ENTITIES_FAMILY, ENTITIES_TYPE } from '../../lib/entities'
 
 export default class Player extends Entity {
     constructor (obj, scene) {
@@ -12,106 +13,85 @@ export default class Player extends Entity {
         this.energy = 100
         this.maxEnergy = 100
         this.maxSpeed = 2
-        this.mapPieces = 0
-        this.speed = 0.2
+        this.acceleration = 0.2
         this.solid = true
-        this.hintTimeout = null
-        this.hurtTimeout = null
-        this.itemTimeout = null
         this.items = [null, null]
-        this.hint = null
-        this.respawnTimeout = null
+        this.mapPieces = []
         this.bounds = {
             x: 10,
             y: 8,
             width: this.width - 20,
             height: this.height - 8
         }
-        this.lastPosition = {
-            x: this.x,
-            y: this.y
-        }
         this.animations = {
             LEFT: {x: 704, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
             RIGHT: {x: 0, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
-            JUMP_LEFT: {x: 512, y: 16, w: 32, h: 48, frames: 4, fps: 15, loop: false},
-            JUMP_RIGHT: {x: 256, y: 16, w: 32, h: 48, frames: 4, fps: 15, loop: false},
-            STAND_LEFT: {x: 480, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-            STAND_RIGHT: {x: 448, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-            FALL_LEFT: {x: 672, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
-            FALL_RIGHT: {x: 416, y: 16, w: 32, h: 48, frames: 1, fps: 15, loop: false},
+            JUMP_LEFT: {x: 512, y: 16, w: 32, h: 48, frames: 4, fps: 24, loop: false},
+            JUMP_RIGHT: {x: 256, y: 16, w: 32, h: 48, frames: 4, fps: 24, loop: false},
+            STAND_LEFT: {x: 480, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
+            STAND_RIGHT: {x: 448, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
+            FALL_LEFT: {x: 672, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
+            FALL_RIGHT: {x: 416, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
             DEAD: {x: 0, y: 144, w: 32, h: 48, frames: 7, fps: 24, loop: false},
             DEAD_LEFT: {x: 480, y: 144, w: 32, h: 48, frames: 1, fps: 0, loop: false},
             DEAD_RIGHT: {x: 448, y: 144, w: 32, h: 48, frames: 1, fps: 0, loop: false}
         }
         this.animation = this.animations.STAND_RIGHT
-        this.hideHint = this.hideHint.bind(this)
     }
 
-    draw (ctx) {
+    draw () {
+        const { ctx } = this._scene
         ctx.save()
         if (!this.canHurt() && this.canMove()) {
             ctx.globalAlpha = 0.2
         }
-        super.draw(ctx)
+        super.draw()
         ctx.restore()
-
-        if (this.hint) {
-            const { assets, camera } = this._scene
-            const { animation, animFrame } = this.hint
-            ctx.drawImage(
-                assets[ASSETS.BUBBLE],
-                Math.floor(this.x + camera.x + this.width / 2), Math.floor(this.y + camera.y) - 24
-            )
-            ctx.drawImage(
-                assets[ASSETS.ITEMS],
-                animation.x + animFrame * animation.w, animation.y,
-                animation.w, animation.h,
-                8 + Math.floor(this.x + camera.x + this.width / 2), Math.floor(this.y + camera.y) - 22,
-                animation.w, animation.h
-            )
-        }
     }
 
-    update (dt) {
+    update () {
         const { input, world } = this._scene
 
         if (this.canMove()) {
             if (input[INPUTS.INPUT_LEFT]) {
-                this.force.x -= this.speed
-                if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
+                if (this.direction === DIRECTIONS.RIGHT) {
+                    this.addDust(DIRECTIONS.LEFT)
+                }
+                this.force.x -= this.acceleration
                 this.direction = DIRECTIONS.LEFT
             }
-            if (input[INPUTS.INPUT_RIGHT]) {
-                this.force.x += this.speed
-                if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
+            else if (input[INPUTS.INPUT_RIGHT]) {
+                if (this.direction === DIRECTIONS.LEFT) {
+                    this.addDust(DIRECTIONS.RIGHT)
+                }
+                this.force.x += this.acceleration
                 this.direction = DIRECTIONS.RIGHT
             }
             if (input[INPUTS.INPUT_UP] && this.canJump()) {
-                this.doJump = true
                 // todo: better sound dispatching
                 // this.playSound(playerJump)
+                this.force.y = -6
             }
             if (input[INPUTS.INPUT_ACTION]) {
                 this.getItem(null)
             }
+            if (input[INPUTS.INPUT_MAP] && this.mapPieces.length) {
+                this.showMap()
+            }
         }
         // slow down
         if (!input[INPUTS.INPUT_LEFT] && !input[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
-            this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.speed : this.speed
+            this.force.x += this.direction === DIRECTIONS.RIGHT ? -this.acceleration : this.acceleration
             if (this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
                 this.direction === DIRECTIONS.RIGHT && this.force.x < 0) {
                 this.force.x = 0
             }
         }
-
         this.force.y += this.force.y > 0
             ? world.gravity * 1.5
-            : world.gravity
+            : world.gravity / 2
 
         this.move()
-
-        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
 
         if (this.onFloor) {
             if (this.fall) {
@@ -121,6 +101,17 @@ export default class Player extends Entity {
             this.fall = false
             this.jump = false
         }
+        else if (this.force.y > 0 && this.jump) {
+            this.jump = false
+            this.fall = true
+        }
+        else if (this.force.y < 0) {
+            this.jump = true
+            this.fall = false
+        }
+
+        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
+
         if (this.maxEnergy <= 0) {
             if (this.onFloor) {
                 this.animate(this.animations.DEAD)
@@ -133,29 +124,11 @@ export default class Player extends Entity {
             }
             this.lifeLoss()
         }
-        else if (this.doJump || this.jump) {
+        else if (this.jump) {
             this.animate(this.direction === DIRECTIONS.RIGHT
                 ? this.animations.JUMP_RIGHT
                 : this.animations.JUMP_LEFT
             )
-            if (this.animFrame === 0 && this.force.x !== 0) {
-                this.animFrame = 2
-            }
-            if (this.animFrame === 2) {
-                if (!this.jump) {
-                    if (this.force.x !== 0) {
-                        this.addDust(this.direction)
-                    }
-                    this.force.y = -8.3
-                    this.jump = true
-                    this.doJump = false
-                }
-            }
-            if (this.force.y > 0) {
-                this.jump = false
-                this.fall = true
-                this.doJump = false
-            }
         }
         else if (this.fall) {
             this.animate(this.direction === DIRECTIONS.RIGHT
@@ -185,15 +158,10 @@ export default class Player extends Entity {
 
     hit (s) {
         this.maxEnergy -= s
-        if (this.maxEnergy <= 0) {
-            this.maxEnergy = 0
-        }
-        else {
-            this.force.y -= 3
-        }
-        this.hurtTimeout = setTimeout(() => {
-            this.hurtTimeout = null
-        }, 3000)
+        this.maxEnergy <= 0
+            ? this.maxEnergy = 0
+            : this.force.y -= 3
+        this.startTimeout(TIMEOUTS.PLAYER_HURT)
     }
 
     // todo: move to parent
@@ -215,20 +183,20 @@ export default class Player extends Entity {
     }
 
     canJump () {
-        return this.onFloor && !this.doJump && !this.jump
+        return this.onFloor && !this.jump
     }
 
     canHurt () {
-        return !this.hurtTimeout
+        return !this.checkTimeout(TIMEOUTS.PLAYER_HURT)
     }
 
     canTake () {
-        return !this.itemTimeout
+        return !this.checkTimeout(TIMEOUTS.PLAYER_TAKE)
     }
 
     canUse (itemId) {
         const haveItem = this.items.find((item) => item && item.properties.id === itemId)
-        return !this.itemTimeout && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
+        return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
     useItem (itemId) {
@@ -237,7 +205,7 @@ export default class Player extends Entity {
             [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
                 ? [this.items[1], null]
                 : [this.items[0], null]
-            this.setItemTimeout()
+            this.startTimeout(TIMEOUTS.PLAYER_TAKE)
             return item
         }
     }
@@ -253,63 +221,41 @@ export default class Player extends Entity {
                 item.visible = false
                 // this.playSound(playerGet)
             }
-            this.setItemTimeout()
+            this.startTimeout(TIMEOUTS.PLAYER_TAKE)
         }
     }
 
-    setItemTimeout () {
-        this.itemTimeout = setTimeout(() => {
-            this.itemTimeout = null
-        }, 500)
+    showMap () {
+        this.startTimeout(TIMEOUTS.PLAYER_MAP)
     }
 
-    showHint (item) {
-        if (!this.hintTimeout && !this.itemTimeout) {
-            this.hint = item
-            this.hintTimeout = setTimeout(this.hideHint, 2000)
-        }
-    }
-
-    hideHint () {
-        this.hint = null
-        this.hintTimeout = null
-    }
-
-    checkpoint () {
-        this.lastPosition = {
-            x: this.x,
-            y: this.y
-        }
+    collectMapPiece (piece) {
+        this.mapPieces.push(piece.animation)
+        this.showMap()
     }
 
     lifeLoss () {
-        if (!this.respawnTimeout) {
+        if (!this.checkTimeout(TIMEOUTS.PLAYER_RESPAWN)) {
             this.lives -= 1
             this.force = { x: 0, y: 0 }
-            // if (this.lives === 0) {
-            //     // game over
-            // }
-            // else {
-            this.restoreCheckpoint()
-            // }
+            // this.lives === 0 ? gameOver() :
+            this.restore()
         }
     }
 
-    restoreCheckpoint () {
-        if (!this.respawnTimeout) {
-            const { camera } = this._scene
-            const { x, y } = this.lastPosition
-            this.respawnTimeout = setTimeout(() => {
-                this.x = x
-                this.y = y
-                this.inDark = 0
-                this.energy = 100
-                this.maxEnergy = 100
-                this.hurtTimeout = null
-                this.respawnTimeout = null
-                this._scene.blackOverlay = 1
-                camera.center()
-            }, 1000)
-        }
+    restore () {
+        const { camera, overlays } = this._scene
+        const { x, y } = this.lastPosition
+        this.startTimeout(TIMEOUTS.PLAYER_RESPAWN, () => {
+            this.x = x
+            this.y = y
+            this.inDark = 0
+            this.energy = 100
+            this.maxEnergy = 100
+            this.stopTimeout(TIMEOUTS.PLAYER_RESPAWN)
+            this.stopTimeout(TIMEOUTS.PLAYER_HURT)
+            overlays.fadeIn()
+            camera.center()
+        })
     }
 }

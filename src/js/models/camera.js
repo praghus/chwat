@@ -19,17 +19,17 @@ export default class Camera {
         const { resolutionX, resolutionY } = viewport
         const { spriteSize, surface } = world
 
-        if ((this.follow.x + (this.follow.width / 2)) + this.x > resolutionX / 2) {
+        this.y = -((this.follow.y + this.follow.height / 2) - (resolutionY / 2))
+
+        if ((this.follow.x + this.follow.width / 2) + this.x > resolutionX / 2) {
             this.x -= this.follow.force.x > 0 ? this.follow.force.x : 0.5
         }
-        if ((this.follow.x + (this.follow.width / 2)) + this.x < resolutionX / 2) {
+        if ((this.follow.x + this.follow.width / 2) + this.x < resolutionX / 2) {
             this.x -= this.follow.force.x < 0 ? this.follow.force.x : -0.5
         }
         if (this.x - resolutionX < -world.width * spriteSize) {
             this.x = (-world.width * spriteSize) + resolutionX
         }
-
-        this.y = -((this.follow.y + this.follow.height) - (resolutionY / 2))
         if (this.y - resolutionY < -world.height * spriteSize) {
             this.y = (-world.height * spriteSize) + resolutionY
         }

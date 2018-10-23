@@ -4,7 +4,6 @@ const path = require('path')
 const DashboardPlugin = require('webpack-dashboard/plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const SpritePlugin = require('svg-sprite-loader/plugin')
 const autoprefixer = require('autoprefixer')
 
 const nodeEnv = process.env.NODE_ENV || 'development'
@@ -13,11 +12,10 @@ const isProduction = nodeEnv === 'production'
 const jsSourcePath = path.join(__dirname, './src/js')
 const distPath = path.join(__dirname, './dist')
 const imgPath = path.join(__dirname, './src/assets/images')
-const iconPath = path.join(__dirname, './src/assets/icons')
+const audioPath = path.join(__dirname, './src/assets/sounds')
 const sourcePath = path.join(__dirname, './src')
 
 const plugins = [
-    new SpritePlugin(),
     new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor',
         filename: 'vendor-[hash].js',
@@ -56,28 +54,17 @@ const rules = [
     {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        use: [
-            'babel-loader'
-        ]
-    },
-    {
-        test: /\.svg$/,
-        use: [
-            {
-                loader: 'svg-sprite-loader',
-                options: {
-                    extract: true,
-                    spriteFilename: 'icons-sprite.svg'
-                }
-            },
-            'svgo-loader'
-        ],
-        include: iconPath
+        use: 'babel-loader'
     },
     {
         test: /\.(png|gif|jpg|svg)$/,
         include: imgPath,
-        use: 'url-loader?limit=100&name=assets/[name]-[hash].[ext]'
+        use: 'url-loader?limit=100&name=[name]-[hash].[ext]'
+    },
+    {
+        test: /\.(mp3|wav)$/,
+        include: audioPath,
+        loader: 'file-loader?name=[name]-[hash].[ext]'
     },
     {
         test: /\.json$/,
@@ -160,7 +147,7 @@ module.exports = {
     devServer: {
         contentBase: isProduction ? distPath : sourcePath,
         historyApiFallback: true,
-        port: 3000,
+        port: process.env.port || 3000,
         compress: isProduction,
         inline: !isProduction,
         hot: !isProduction,

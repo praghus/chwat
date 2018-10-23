@@ -1,7 +1,8 @@
 import Entity from '../entity'
-import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
+import { ASSETS } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
 
-export default class AirBalloon extends Entity {
+export default class Balloon extends Entity {
     constructor (obj, scene) {
         super(obj, scene)
         this.positions = {
@@ -11,9 +12,9 @@ export default class AirBalloon extends Entity {
         this.position = this.positions.CASTLE
         this.solid = true
     }
-    draw (ctx) {
+    draw () {
         if (this.visible) {
-            const {assets, camera} = this._scene
+            const { assets, ctx, camera } = this._scene
             ctx.drawImage(
                 assets[ASSETS.BALLOON],
                 Math.floor(this.x + camera.x) - 72,
@@ -24,7 +25,7 @@ export default class AirBalloon extends Entity {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { camera, player } = this._scene
+            const { camera, player, overlays } = this._scene
             this.position = this.position === this.positions.CASTLE
                 ? this.positions.ISLE
                 : this.positions.CASTLE
@@ -34,7 +35,7 @@ export default class AirBalloon extends Entity {
             player.x = this.position.player.x
             player.y = this.position.player.y
             player.checkpoint()
-            this._scene.blackOverlay = 1
+            overlays.fadeIn()
             camera.center()
         }
     }

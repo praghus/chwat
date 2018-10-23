@@ -1,5 +1,6 @@
-import { createRectangleObject } from '../lib/helpers'
-import { ENTITIES_TYPE, LAYERS, NON_COLLIDE_INDEX, canJumpThrough } from '../lib/constants'
+import { ENTITIES_TYPE } from '../lib/entities'
+import { LAYERS, NON_COLLIDE_INDEX } from '../lib/constants'
+import { canJumpThrough, createRectangleObject, isMobileDevice } from '../lib/helpers'
 
 export default class World {
     constructor (data) {
@@ -12,24 +13,25 @@ export default class World {
         this.surface = parseInt(surfaceLevel)
         this.spriteSize = parseInt(tilewidth)
         this.spriteCols = parseInt(tilesets[0].columns)
+        this.shouldCreateLightmask = !isMobileDevice()
         this.renderOrder = []
         this.objects = []
         this.lightmask = []
-        this.data = []
+        this.layers = {}
 
         layers.map(({name, data, objects}) => {
             this.renderOrder.push(name)
             if (data) {
-                this.data[name] = [...Array(width).keys()].map(() => Array(height))
-                if (name === LAYERS.MAIN) {
+                this.layers[name] = [...Array(width).keys()].map(() => Array(height))
+                if (this.shouldCreateLightmask && name === LAYERS.MAIN) {
                     this.lightmask = [...Array(width).keys()].map(() => Array(height))
                 }
                 let j = 0
                 for (let y = 0; y < this.height; y++) {
                     for (let x = 0; x < this.width; x++) {
                         const tile = data[j]
-                        this.data[name][x][y] = tile
-                        if (name === LAYERS.MAIN && y >= this.surface) {
+                        this.layers[name][x][y] = tile
+                        if (this.shouldCreateLightmask && name === LAYERS.MAIN) {
                             this.lightmask[x][y] = tile > 0
                                 ? createRectangleObject(x, y, this.spriteSize, this.spriteSize)
                                 : null
@@ -68,36 +70,41 @@ export default class World {
         return x >= 0 && y >= 0 && x < this.width && y < this.height
     }
 
-    get (l, x, y) {
-        return this.inRange(x, y) && this.data[l][x][y]
+    get (layer, x, y) {
+        return this.inRange(x, y) && this.layers[layer][x][y]
     }
 
-    put (l, x, y, value) {
+    put (layer, x, y, value) {
         if (!this.inRange(x, y)) return false
-        this.data[l][x][y] = value
+        this.layers[layer][x][y] = value
+        if (layer === LAYERS.MAIN && value > 0) {
+            this.lightmask[x][y] = createRectangleObject(x, y, this.spriteSize, this.spriteSize)
+        }
     }
 
     tileData (x, y) {
+        const type = this.get(LAYERS.MAIN, x, y)
         return {
+            type,
             x: this.spriteSize * x,
             y: this.spriteSize * y,
             width: this.spriteSize,
             height: this.spriteSize,
-            type: this.get(LAYERS.MAIN, x, y),
-            solid: this.isSolid(x, y)
+            solid: this.isSolid(x, y),
+            jumpThrough: canJumpThrough(type)
         }
     }
 
     clearTile (x, y, layer) {
         if (this.inRange(x, y)) {
-            this.data[layer][x][y] = null
+            this.layers[layer][x][y] = null
         }
     }
 
     isSolid (x, y) {
         return !this.inRange(x, y) || (
-            this.data[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX ||
-            canJumpThrough(this.data[LAYERS.MAIN][x][y])
+            this.layers[LAYERS.MAIN][x][y] > NON_COLLIDE_INDEX ||
+            canJumpThrough(this.layers[LAYERS.MAIN][x][y])
         )
     }
 

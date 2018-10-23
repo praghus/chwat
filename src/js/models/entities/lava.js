@@ -1,6 +1,7 @@
 import Entity from '../entity'
 import { randomChoice, randomInt } from '../../lib/helpers'
-import { DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
+import { ENTITIES_TYPE } from '../../lib/entities'
+import { DIRECTIONS } from '../../lib/constants'
 
 export default class Lava extends Entity {
     constructor (obj, scene) {
@@ -12,8 +13,8 @@ export default class Lava extends Entity {
         this.animation = {x: 0, y: 0, w: 32, h: 48, frames: 4, fps: 4, loop: true}
     }
 
-    draw (ctx) {
-        const { assets, camera, world } = this._scene
+    draw () {
+        const { assets, ctx, camera, world } = this._scene
         const { spriteSize } = world
         const y = 0
         for (let x = 0; x < Math.round((this.width / 2) / spriteSize); x++) {

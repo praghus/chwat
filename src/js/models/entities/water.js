@@ -1,5 +1,6 @@
 import Entity from '../entity'
-import {DIRECTIONS, ENTITIES_FAMILY} from '../../lib/constants'
+import { DIRECTIONS } from '../../lib/constants'
+import { ENTITIES_FAMILY } from '../../lib/entities'
 
 export default class Water extends Entity {
     constructor (obj, scene) {
@@ -10,10 +11,10 @@ export default class Water extends Entity {
         this.direction = DIRECTIONS.DOWN
     }
 
-    draw (ctx) {
-        const {assets, camera, world} = this._scene
-        const {canFall, selective} = this.properties
-        const {spriteSize} = world
+    draw () {
+        const { assets, ctx, camera, world } = this._scene
+        const { canFall, selective } = this.properties
+        const { spriteSize } = world
         const [posX, posY] = [
             Math.floor(this.x + camera.x),
             Math.floor(this.y + camera.y)

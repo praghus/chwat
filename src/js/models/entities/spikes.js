@@ -11,8 +11,8 @@ export default class Spikes extends Entity {
         this.animation = {x: 0, y: 0, w: 8, h: 8, frames: 5, fps: 30, loop: false}
     }
 
-    draw (ctx) {
-        const { assets, camera } = this._scene
+    draw () {
+        const { assets, ctx, camera } = this._scene
         ctx.drawImage(assets.shine,
             this.animation.x + this.animFrame * this.animation.w, this.animation.y,
             this.animation.w, this.animation.h,

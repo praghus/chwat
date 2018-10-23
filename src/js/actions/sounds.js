@@ -1,6 +1,6 @@
-export const SOUND_MAIN_LOOP = 'SOUND_MAIN_LOOP'
-export const SOUND_PLAYER_JUMP = 'SOUND_PLAYER_JUMP'
-export const SOUND_PLAYER_GET = 'SOUND_PLAYER_GET'
+export const SOUND_MAIN_LOOP = 'loop'
+export const SOUND_PLAYER_JUMP = 'jump'
+export const SOUND_PLAYER_GET = 'get'
 
 export function playMusic () {
     return {

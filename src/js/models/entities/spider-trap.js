@@ -16,8 +16,8 @@ export default class SpiderTrap extends Entity {
         this.animation = {x: 0, y: 0, w: 16, h: 23, frames: 2, fps: 4, loop: true}
     }
 
-    draw (ctx) {
-        const { camera, assets } = this._scene
+    draw () {
+        const { camera, ctx, assets } = this._scene
         if (this.onScreen()) {
             ctx.beginPath()
             ctx.moveTo(this.startX + camera.x, this.startY + camera.y)
