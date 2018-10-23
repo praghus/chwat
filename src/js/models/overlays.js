@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { ASSETS, COLORS, FONTS } from '../lib/constants'
 
 export default class Overlays {
@@ -60,13 +61,20 @@ export default class Overlays {
     }
 
     displayHUD () {
-        const { ctx, camera, assets, debug, fps, player, viewport } = this._scene
+        const { ctx, camera, assets, debug, fps, player, viewport, timer } = this._scene
         const { resolutionX, resolutionY } = viewport
         const { energy, items, lives } = player
         const fpsIndicator = `FPS:${Math.round(fps)}`
+        const ms = moment().diff(moment(timer))
+        const d = moment.duration(ms)
+        const time = d.asHours() >= 1
+            ? Math.floor(d.asHours()) + moment.utc(ms).format(':mm:ss')
+            : moment.utc(ms).format('mm:ss')
+
+        this.displayText(time, resolutionX - (3 + time.length * 5), 3)
 
         // FPS meter
-        this.displayText(fpsIndicator, resolutionX - (3 + fpsIndicator.length * 5), 3)
+        debug && this.displayText(fpsIndicator, resolutionX - (3 + fpsIndicator.length * 5), 9)
 
         // Camera position in debug mode
         debug && this.displayText(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 28)
@@ -76,13 +84,13 @@ export default class Overlays {
         ctx.drawImage(assets[ASSETS.HEAD], 2, 1)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, -25 + resolutionX / 2, 3, 50, 5)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, -25 + resolutionX / 2, 3, indicatorWidth, 5)
-        this.displayText(`${lives}`, 11, 5)
+        this.displayText(`${lives}`, 12, 3)
 
         // buttons
         // ctx.drawImage(assets[ASSETS.BUTTONS], 0, 0, 18, 18, 6, resolutionY - 20, 18, 18)
         // ctx.drawImage(assets[ASSETS.BUTTONS], 19, 0, 18, 18, 30, resolutionY - 20, 18, 18)
-        ctx.drawImage(assets[ASSETS.BUTTONS], 57, 0, 18, 18, resolutionX - 22, resolutionY - 20, 18, 18)
-        ctx.drawImage(assets[ASSETS.BUTTONS], 38, 0, 18, 18, resolutionX - 44, resolutionY - 20, 18, 18)
+        // ctx.drawImage(assets[ASSETS.BUTTONS], 57, 0, 18, 18, resolutionX - 22, resolutionY - 20, 18, 18)
+        // ctx.drawImage(assets[ASSETS.BUTTONS], 38, 0, 18, 18, resolutionX - 44, resolutionY - 20, 18, 18)
 
         // items
         const align = 3 // -19 + resolutionX / 2

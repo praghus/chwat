@@ -1,4 +1,5 @@
 import '../../lib/illuminated'
+import moment from 'moment'
 import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
 import { Camera, Elements, World } from '../index'
@@ -25,6 +26,7 @@ export default class GameScene extends Scene {
         this.world = new World(levelData)
         this.elements = new Elements(this.world.getObjects(), this)
         this.player = this.elements.create(this.world.getPlayer())
+        this.timer = null
 
         this.camera = new Camera(this)
         this.camera.setFollow(this.player)
@@ -42,6 +44,8 @@ export default class GameScene extends Scene {
     update (nextProps) {
         super.update(nextProps)
         const { delta, ticker } = this
+        if (!this.timer) this.timer = moment()
+
         if (delta > ticker.interval) {
             this.elements.update()
             this.player.update()

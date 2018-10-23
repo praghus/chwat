@@ -25,8 +25,8 @@ export default class IntroScene extends Scene {
         ctx.fillStyle = COLORS.BLUE_SKY
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.drawImage(assets['bg6'], 0, 0)
-        ctx.drawImage(assets[ASSETS.MOUNTAINS], -490, 0)
-        ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 30)
+        ctx.drawImage(assets[ASSETS.MOUNTAINS], -495, -30)
+        ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 45)
         overlays.displayText(isMobileDevice()
             ? '    TAP TO BEGIN    '
             : 'PRESS SPACE TO BEGIN',

@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Canvas from './canvas'
 import Inputs from './inputs'
+import { SCENES } from '../lib/constants'
 import { getElementProperties } from '../lib/helpers'
 import { IntroScene, GameScene } from '../models/scenes'
-import { SCENES } from '../lib/constants'
 import {
     assetPropType,
     inputPropType,
@@ -34,7 +34,6 @@ export default class Game extends Component {
         this.assetsLoaded = false
         this.scene = null
         this.scenes = null
-        this.getScene = this.getScene.bind(this)
         this.setScene = this.setScene.bind(this)
     }
 
@@ -64,7 +63,7 @@ export default class Game extends Component {
     render () {
         const { onKey, viewport } = this.props
         const { width, height, scale } = viewport
-        const style = {transform: `scale(${scale}) translate(-50%, 50%) translateZ(0)`}
+        const style = {transform: `scale(${scale}) translate(-50%, -50%) translateZ(0)`}
         return (
             <div ref={(ref) => { this.wrapper = ref }}>
                 <Canvas ref={(ref) => { this.canvas = ref }} {...{ width, height }} />
@@ -75,11 +74,11 @@ export default class Game extends Component {
     }
 
     setScene (scene) {
-        this.scene = this.getScene(scene)
+        this.scene = this.scenes[scene] || null
     }
 
-    getScene (scene) {
-        return this.scenes[scene]
+    loadGame () {
+
     }
 
     saveGame () {
