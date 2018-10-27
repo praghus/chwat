@@ -14,6 +14,7 @@ export default class World {
         this.spriteSize = parseInt(tilewidth)
         this.spriteCols = parseInt(tilesets[0].columns)
         this.shouldCreateLightmask = !isMobileDevice()
+        this.modifiers = []
         this.renderOrder = []
         this.objects = []
         this.lightmask = []
@@ -50,6 +51,10 @@ export default class World {
         return this.objects.find(({type}) => type === ENTITIES_TYPE.PLAYER)
     }
 
+    setObjects (objects) {
+        this.objects = objects
+    }
+
     getObjects () {
         // todo: make it better
         const byType = (a, b) => {
@@ -76,6 +81,7 @@ export default class World {
 
     put (layer, x, y, value) {
         if (!this.inRange(x, y)) return false
+        this.modifiers.push({layer, x, y, value})
         this.layers[layer][x][y] = value
         if (layer === LAYERS.MAIN && value > 0) {
             this.lightmask[x][y] = createRectangleObject(x, y, this.spriteSize, this.spriteSize)

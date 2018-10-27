@@ -2,6 +2,7 @@ import '../../lib/illuminated'
 import moment from 'moment'
 import Scene from '../scene'
 import levelData from '../../../assets/levels/map.json'
+import { getElementProperties } from '../../lib/helpers'
 import { Camera, Elements, World } from '../index'
 import {
     getMiniTile,
@@ -39,6 +40,8 @@ export default class GameScene extends Scene {
 
         this.overlays.fadeIn()
         this.addLightmaskElement = this.addLightmaskElement.bind(this)
+        this.saveGame = this.saveGame.bind(this)
+        this.loadGame = this.loadGame.bind(this)
     }
 
     update (nextProps) {
@@ -82,12 +85,12 @@ export default class GameScene extends Scene {
     }
 
     renderLightingEffect () {
-        const { ctx, assets, camera, player, viewport } = this
+        const { ctx, assets, camera: {follow, x, y}, viewport } = this
         const { resolutionX, resolutionY } = viewport
 
         if (this.dynamicLights) {
-            this.light.position.x = player.x + (player.width / 2) + this.camera.x
-            this.light.position.y = player.y + (player.height / 2) + this.camera.y
+            this.light.position.x = follow.x + (follow.width / 2) + x
+            this.light.position.y = follow.y + (follow.height / 2) + y
 
             this.darkmask.lights = [this.light]
             this.lighting.light = this.light
@@ -105,8 +108,8 @@ export default class GameScene extends Scene {
         }
         else {
             ctx.drawImage(assets[ASSETS.LIGHTING],
-                -400 + (player.x + camera.x + player.width / 2),
-                -400 + (player.y + camera.y + player.height / 2)
+                -400 + (follow.x + x + follow.width / 2),
+                -400 + (follow.y + y + follow.height / 2)
             )
         }
     }
@@ -149,7 +152,7 @@ export default class GameScene extends Scene {
         const { ctx, assets, camera, player, viewport, world } = this
         const { resolutionX, resolutionY } = viewport
         const { spriteCols, spriteSize } = world
-        const castingShadows = camera.underground || player.inDark > 0
+        const castingShadows = camera.underground || player.underground || player.inDark > 0
         const shouldCreateLightmask = this.dynamicLights && castingShadows && layer === LAYERS.MAIN
 
         let y = Math.floor(camera.y % spriteSize)
@@ -200,5 +203,33 @@ export default class GameScene extends Scene {
         this.lightmask.push(setLightmaskElement(maskElement, {
             x, y, width: width || spriteSize, height: height || spriteSize
         }))
+    }
+
+    loadGame () {
+        const loadedData = atob(localStorage.getItem('savedData'))
+        const { objects, player } = JSON.parse(loadedData)
+        this.world.setObjects(objects)
+        this.elements = new Elements(this.world.getObjects(), this)
+        this.player = this.elements.create(player)
+        this.player.items = player.items
+        this.player.mapPieces = player.mapPieces
+        this.camera.setFollow(this.player)
+    }
+
+    saveGame () {
+        const { world: {modifiers}, elements, player: {items, mapPieces} } = this
+        const playerObj = getElementProperties(this.player)
+        const objects = elements.objects.map((element) => getElementProperties(element))
+
+        playerObj.items = items.map((item) => item && getElementProperties(item))
+        playerObj.mapPieces = [...mapPieces]
+
+        // objects.push(playerObj)
+
+        // console.info(objects)
+        // @todo: saving only objects and map modifiers
+        const savedData = JSON.stringify({ modifiers, objects, player: playerObj })
+        // console.info(savedData)
+        localStorage.setItem('savedData', btoa(savedData))
     }
 }

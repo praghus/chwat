@@ -58,7 +58,8 @@ export const INPUTS = {
     INPUT_LEFT: 'left',
     INPUT_ACTION: 'action',
     INPUT_MAP: 'map',
-    INPUT_DEBUG: 'debug'
+    INPUT_DEBUG: 'debug',
+    INPUT_RESTORE: 'restore'
 }
 
 export const INPUT_KEYS = {
@@ -68,7 +69,8 @@ export const INPUT_KEYS = {
     [INPUTS.INPUT_LEFT]: ['KeyA', 'ArrowLeft'],
     [INPUTS.INPUT_ACTION]: ['Space'],
     [INPUTS.INPUT_MAP]: ['KeyM'],
-    [INPUTS.INPUT_DEBUG]: ['KeyI']
+    [INPUTS.INPUT_DEBUG]: ['KeyI'],
+    [INPUTS.INPUT_RESTORE]: ['KeyL']
 }
 
 export const TIMEOUTS = {
