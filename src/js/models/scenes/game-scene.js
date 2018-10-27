@@ -27,6 +27,7 @@ export default class GameScene extends Scene {
         this.world = new World(levelData)
         this.elements = new Elements(this.world.getObjects(), this)
         this.player = this.elements.create(this.world.getPlayer())
+        this.lastCheckpointId = null
         this.timer = null
 
         this.camera = new Camera(this)
@@ -207,29 +208,31 @@ export default class GameScene extends Scene {
 
     loadGame () {
         const loadedData = atob(localStorage.getItem('savedData'))
-        const { objects, player } = JSON.parse(loadedData)
+        const { objects, modifiers, player, lastCheckpointId } = JSON.parse(loadedData)
         this.world.setObjects(objects)
+        this.lastCheckpointId = lastCheckpointId
         this.elements = new Elements(this.world.getObjects(), this)
         this.player = this.elements.create(player)
-        this.player.items = player.items
+        this.player.items = player.items.map((id) => this.elements.getById(id))
         this.player.mapPieces = player.mapPieces
         this.camera.setFollow(this.player)
+
+        // restore map and set modifiers
+        this.world = new World(levelData)
+        modifiers.map(({layer, x, y, value}) => this.world.put(layer, x, y, value))
     }
 
-    saveGame () {
+    saveGame (lastCheckpointId) {
+        this.lastCheckpointId = lastCheckpointId
         const { world: {modifiers}, elements, player: {items, mapPieces} } = this
         const playerObj = getElementProperties(this.player)
         const objects = elements.objects.map((element) => getElementProperties(element))
 
-        playerObj.items = items.map((item) => item && getElementProperties(item))
-        playerObj.mapPieces = [...mapPieces]
+        playerObj.items = items.map((item) => item && item.id)
+        playerObj.mapPieces = mapPieces.map((mapPiece) => mapPiece && getElementProperties(mapPiece))
 
-        // objects.push(playerObj)
+        const savedData = JSON.stringify({ modifiers, objects, player: playerObj, lastCheckpointId })
 
-        // console.info(objects)
-        // @todo: saving only objects and map modifiers
-        const savedData = JSON.stringify({ modifiers, objects, player: playerObj })
-        // console.info(savedData)
         localStorage.setItem('savedData', btoa(savedData))
     }
 }

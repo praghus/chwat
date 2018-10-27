@@ -104,6 +104,7 @@ export default class World {
     clearTile (x, y, layer) {
         if (this.inRange(x, y)) {
             this.layers[layer][x][y] = null
+            this.modifiers.push({layer, x, y, value: null})
         }
     }
 
