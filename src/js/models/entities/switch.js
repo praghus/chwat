@@ -15,8 +15,18 @@ export default class Switch extends Entity {
         this.messageDuration = 4000
     }
 
+    showMessage (message) {
+        const { offsetX, offsetY } = this.properties
+        const { world } = this._scene
+        const [x, y] = [
+            offsetX ? this.x + offsetX * world.spriteSize : this.x,
+            offsetY ? this.y + offsetY * world.spriteSize : this.y
+        ]
+        super.showMessage(message, x, y)
+    }
+
     collide (element) {
-        const { camera, input, player, world } = this._scene
+        const { camera, overlays, input, player, world } = this._scene
         const { activator, hint, offsetX, offsetY } = this.properties
         const triggered = !this.activated && input[INPUTS.INPUT_ACTION]
 
@@ -24,55 +34,93 @@ export default class Switch extends Entity {
             if (triggered) {
                 if (player.canUse(activator)) {
                     player.useItem(activator)
-                    const { message, offsetX, offsetY, produce } = this.properties
+                    const { message, produce } = this.properties
                     this.activated = true
                     this.animation = this.animations.ON
                     switch (produce) {
                     case 'platform':
-                        world.put(LAYERS.BACKGROUND2, 225, 23, 196)
-                        world.put(LAYERS.BACKGROUND2, 226, 23, 229)
-                        world.put(LAYERS.MAIN, 225, 24, 258)
-                        world.put(LAYERS.MAIN, 226, 24, 259)
-                        world.put(LAYERS.MAIN, 227, 24, 101)
-                        world.put(LAYERS.MAIN, 225, 25, 129)
-                        world.put(LAYERS.MAIN, 226, 25, 132)
-                        world.put(LAYERS.MAIN, 227, 25, 130)
+                        camera.setFollow({
+                            x: 3600,
+                            y: 384,
+                            width: 32,
+                            height: 16,
+                            force: {
+                                x: 0, y: 0
+                            }
+                        })
+                        this.startTimeout({
+                            name: 'wait_for_camera',
+                            duration: 500
+                        }, () => {
+                            world.put(LAYERS.BACKGROUND2, 225, 23, 196)
+                            world.put(LAYERS.BACKGROUND2, 226, 23, 229)
+                            world.put(LAYERS.MAIN, 225, 24, 258)
+                            world.put(LAYERS.MAIN, 226, 24, 259)
+                            world.put(LAYERS.MAIN, 227, 24, 101)
+                            world.put(LAYERS.MAIN, 225, 25, 129)
+                            world.put(LAYERS.MAIN, 226, 25, 132)
+                            world.put(LAYERS.MAIN, 227, 25, 130)
+                            camera.shake()
+                            this.startTimeout({
+                                name: 'wait_for_player',
+                                duration: 500
+                            }, () => {
+                                overlays.fadeIn()
+                                camera.setFollow(player)
+                                message && this.showMessage(message)
+                            })
+                        })
+
                         break
                     case 'lift':
-                        world.put(LAYERS.BACKGROUND2, 495, 75, 0)
-                        world.put(LAYERS.BACKGROUND2, 496, 75, 0)
-                        world.put(LAYERS.BACKGROUND2, 497, 75, 0)
-                        world.put(LAYERS.BACKGROUND2, 498, 75, 0)
-                        world.put(LAYERS.MAIN, 495, 76, 0)
-                        world.put(LAYERS.MAIN, 496, 76, 0)
-                        world.put(LAYERS.MAIN, 497, 76, 0)
-                        world.put(LAYERS.MAIN, 498, 76, 0)
-                        world.put(LAYERS.FOREGROUND1, 495, 76, 161)
-                        world.put(LAYERS.FOREGROUND1, 498, 76, 161)
-                        world.put(LAYERS.FOREGROUND1, 495, 77, 161)
-                        world.put(LAYERS.FOREGROUND1, 498, 77, 161)
-                        world.put(LAYERS.FOREGROUND1, 495, 78, 161)
-                        world.put(LAYERS.FOREGROUND1, 498, 78, 161)
-                        world.put(LAYERS.FOREGROUND1, 495, 79, 161)
-                        world.put(LAYERS.FOREGROUND1, 498, 79, 161)
-                        world.put(LAYERS.BACKGROUND2, 495, 79, 82)
-                        world.put(LAYERS.BACKGROUND2, 496, 79, 82)
-                        world.put(LAYERS.BACKGROUND2, 497, 79, 82)
-                        world.put(LAYERS.BACKGROUND2, 498, 79, 82)
-                        world.put(LAYERS.MAIN, 495, 80, 292)
-                        world.put(LAYERS.MAIN, 496, 80, 293)
-                        world.put(LAYERS.MAIN, 497, 80, 293)
-                        world.put(LAYERS.MAIN, 498, 80, 294)
-                        break
+                        camera.setFollow({
+                            x: 7860,
+                            y: 1210,
+                            width: 64,
+                            height: 64,
+                            force: {
+                                x: 0, y: 0
+                            }
+                        })
+                        this.startTimeout({
+                            name: 'wait_for_camera',
+                            duration: 500
+                        }, () => {
+                            world.put(LAYERS.BACKGROUND2, 495, 75, 0)
+                            world.put(LAYERS.BACKGROUND2, 496, 75, 0)
+                            world.put(LAYERS.BACKGROUND2, 497, 75, 0)
+                            world.put(LAYERS.BACKGROUND2, 498, 75, 0)
+                            world.put(LAYERS.MAIN, 495, 76, 0)
+                            world.put(LAYERS.MAIN, 496, 76, 0)
+                            world.put(LAYERS.MAIN, 497, 76, 0)
+                            world.put(LAYERS.MAIN, 498, 76, 0)
+                            world.put(LAYERS.FOREGROUND1, 495, 76, 161)
+                            world.put(LAYERS.FOREGROUND1, 498, 76, 161)
+                            world.put(LAYERS.FOREGROUND1, 495, 77, 161)
+                            world.put(LAYERS.FOREGROUND1, 498, 77, 161)
+                            world.put(LAYERS.FOREGROUND1, 495, 78, 161)
+                            world.put(LAYERS.FOREGROUND1, 498, 78, 161)
+                            world.put(LAYERS.FOREGROUND1, 495, 79, 161)
+                            world.put(LAYERS.FOREGROUND1, 498, 79, 161)
+                            world.put(LAYERS.BACKGROUND2, 495, 79, 82)
+                            world.put(LAYERS.BACKGROUND2, 496, 79, 82)
+                            world.put(LAYERS.BACKGROUND2, 497, 79, 82)
+                            world.put(LAYERS.BACKGROUND2, 498, 79, 82)
+                            world.put(LAYERS.MAIN, 495, 80, 292)
+                            world.put(LAYERS.MAIN, 496, 80, 293)
+                            world.put(LAYERS.MAIN, 497, 80, 293)
+                            world.put(LAYERS.MAIN, 498, 80, 294)
+                            camera.shake()
+                            this.startTimeout({
+                                name: 'wait_for_player',
+                                duration: 800
+                            }, () => {
+                                overlays.fadeIn()
+                                camera.setFollow(player)
+                                message && this.showMessage(message)
+                            })
+                        })
                     }
-                    if (message) {
-                        const [x, y] = [
-                            offsetX ? this.x + offsetX * world.spriteSize : this.x,
-                            offsetY ? this.y + offsetY * world.spriteSize : this.y
-                        ]
-                        this.showMessage(message, x, y)
-                    }
-                    camera.shake()
                 }
                 else if (hint && !player.hintTimeout) {
                     const [x, y] = [

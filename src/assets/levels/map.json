@@ -630,6 +630,7 @@
                  "properties":
                     {
                      "activator":"stick",
+                     "follow":true,
                      "hint":"If only I had a stick\nI could pull this plug",
                      "offsetX":-1,
                      "offsetY":-0.5,
@@ -639,6 +640,7 @@
                  "propertytypes":
                     {
                      "activator":"string",
+                     "follow":"bool",
                      "hint":"string",
                      "offsetX":"float",
                      "offsetY":"float",
@@ -853,12 +855,14 @@
                  "properties":
                     {
                      "activator":"crank",
+                     "follow":true,
                      "related":98,
                      "shake":true
                     },
                  "propertytypes":
                     {
                      "activator":"string",
+                     "follow":"bool",
                      "related":"int",
                      "shake":"bool"
                     },
@@ -1418,7 +1422,7 @@
                  "type":"checkpoint",
                  "visible":true,
                  "width":32,
-                 "x":5776,
+                 "x":5744,
                  "y":720
                 }, 
                 {
@@ -2649,17 +2653,6 @@
                  "y":608
                 }, 
                 {
-                 "height":48,
-                 "id":334,
-                 "name":"Player",
-                 "rotation":0,
-                 "type":"player",
-                 "visible":true,
-                 "width":32,
-                 "x":4976,
-                 "y":720
-                }, 
-                {
                  "height":16,
                  "id":345,
                  "name":"Tools",
@@ -3137,61 +3130,15 @@
                  "y":624
                 }, 
                 {
-                 "height":16,
-                 "id":434,
-                 "name":"Map #6",
-                 "properties":
-                    {
-                     "id":"piece6"
-                    },
-                 "propertytypes":
-                    {
-                     "id":"string"
-                    },
+                 "height":48,
+                 "id":457,
+                 "name":"Player",
                  "rotation":0,
-                 "type":"map_piece",
+                 "type":"player",
                  "visible":true,
-                 "width":16,
-                 "x":5184,
-                 "y":752
-                }, 
-                {
-                 "height":16,
-                 "id":435,
-                 "name":"Map #1",
-                 "properties":
-                    {
-                     "id":"piece1"
-                    },
-                 "propertytypes":
-                    {
-                     "id":"string"
-                    },
-                 "rotation":0,
-                 "type":"map_piece",
-                 "visible":true,
-                 "width":16,
-                 "x":5216,
-                 "y":752
-                }, 
-                {
-                 "height":16,
-                 "id":436,
-                 "name":"Map #2",
-                 "properties":
-                    {
-                     "id":"piece2"
-                    },
-                 "propertytypes":
-                    {
-                     "id":"string"
-                    },
-                 "rotation":0,
-                 "type":"map_piece",
-                 "visible":true,
-                 "width":16,
-                 "x":5144,
-                 "y":752
+                 "width":32,
+                 "x":4944,
+                 "y":720
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3221,7 +3168,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":437,
+ "nextobjectid":459,
  "orientation":"orthogonal",
  "properties":
     {
@@ -3236,7 +3183,7 @@
      "title":"string"
     },
  "renderorder":"right-down",
- "tiledversion":"1.1.5",
+ "tiledversion":"1.1.6",
  "tileheight":16,
  "tilesets":[
         {

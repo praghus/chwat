@@ -11,8 +11,8 @@ export default class Trigger extends Entity {
     }
 
     collide (element) {
-        const { elements, input, player, world } = this._scene
-        const { activator, hint, offsetX, offsetY, related, anchor_hint } = this.properties
+        const { camera, elements, input, player, overlays, world } = this._scene
+        const { activator, follow, hint, offsetX, offsetY, related, anchor_hint } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
@@ -23,9 +23,29 @@ export default class Trigger extends Entity {
                     player.hideHint()
                     if (related) {
                         const rel = elements.getById(related)
-                        rel.activated = true
-                        rel.trigger = this
-                        rel.activator = item
+                        if (follow) {
+                            camera.setFollow(rel)
+                            this.startTimeout({
+                                name: 'wait_for_camera',
+                                duration: 300
+                            }, () => {
+                                rel.activated = true
+                                rel.trigger = this
+                                rel.activator = item
+                                this.startTimeout({
+                                    name: 'wait_for_player',
+                                    duration: 500
+                                }, () => {
+                                    overlays.fadeIn()
+                                    camera.setFollow(player)
+                                })
+                            })
+                        }
+                        else {
+                            rel.activated = true
+                            rel.trigger = this
+                            rel.activator = item
+                        }
                     }
                 }
                 else {

@@ -9,9 +9,9 @@ export default class Camera {
         this.shake = this.shake.bind(this)
     }
 
-    setFollow (follow) {
+    setFollow (follow, center = true) {
         this.follow = follow
-        this.center()
+        center && this.center()
     }
 
     update () {
@@ -66,15 +66,6 @@ export default class Camera {
             const {resolutionX, resolutionY} = viewport
             this.x = -((this.follow.x + (this.follow.width / 2)) - (resolutionX / 2))
             this.y = -((this.follow.y + this.follow.height) - (resolutionY / 2))
-        }
-    }
-
-    moveTo ({x, y}) {
-        const { viewport } = this._scene
-        if (viewport) {
-            const {resolutionX, resolutionY} = viewport
-            this.x = -(x - (resolutionX / 2))
-            this.y = -(y - (resolutionY / 2))
         }
     }
 

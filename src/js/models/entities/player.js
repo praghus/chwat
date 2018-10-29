@@ -7,7 +7,6 @@ export default class Player extends Entity {
     constructor (obj, scene) {
         super(obj, scene)
         this.direction = DIRECTIONS.RIGHT
-        this.inDark = 0
         this.lives = 3
         this.maxLives = 3
         this.energy = 100
@@ -77,6 +76,9 @@ export default class Player extends Entity {
             }
             if (input[INPUTS.INPUT_MAP] && this.mapPieces.length) {
                 this.showMap()
+            }
+            if (input[INPUTS.INPUT_RESTORE]) {
+                this.restore()
             }
         }
         // slow down
@@ -178,6 +180,11 @@ export default class Player extends Entity {
         })
     }
 
+    checkpoint () {
+        const { saveGame } = this._scene
+        saveGame()
+    }
+
     canMove () {
         return this.maxEnergy > 0
     }
@@ -244,18 +251,10 @@ export default class Player extends Entity {
     }
 
     restore () {
-        const { camera, overlays } = this._scene
-        const { x, y } = this.lastPosition
+        const { overlays, loadGame } = this._scene
         this.startTimeout(TIMEOUTS.PLAYER_RESPAWN, () => {
-            this.x = x
-            this.y = y
-            this.inDark = 0
-            this.energy = 100
-            this.maxEnergy = 100
-            this.stopTimeout(TIMEOUTS.PLAYER_RESPAWN)
-            this.stopTimeout(TIMEOUTS.PLAYER_HURT)
             overlays.fadeIn()
-            camera.center()
+            loadGame()
         })
     }
 }

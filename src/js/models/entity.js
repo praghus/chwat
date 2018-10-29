@@ -6,6 +6,7 @@ export default class Entity {
         this._scene = scene
         this.force = { x: 0, y: 0 }
         this.bounds = null
+        this.inDark = 0
         this.acceleration = 0
         this.maxSpeed = 1
         this.awake = false
@@ -24,11 +25,13 @@ export default class Entity {
         this.message = null
         this.timeoutsPool = {}
         this.vectorMask = null
+        this.underground = false
         this.playSound = scene.playSound
         Object.keys(obj).map((prop) => {
             this[prop] = obj[prop]
         })
         this.lastPosition = {
+            inDark: this.inDark,
             x: this.x,
             y: this.y
         }
@@ -170,7 +173,7 @@ export default class Entity {
 
     move () {
         const { world } = this._scene
-        const { spriteSize } = world
+        const { spriteSize, surface } = world
 
         const reducedForceY = this.force.y < spriteSize && this.force.y || spriteSize
 
@@ -230,6 +233,7 @@ export default class Entity {
         this.x += this.force.x
         this.y += this.force.y
 
+        this.underground = this.y + this.height >= surface * spriteSize
         this.onCeiling = this.expectedY < this.y
         this.onFloor = this.expectedY > this.y
         this.onLeftEdge = !world.isSolid(PX, PH)
@@ -273,13 +277,6 @@ export default class Entity {
         if (!this.checkTimeout(TIMEOUTS.PLAYER_TAKE)) {
             this.hint = item.animation
             this.startTimeout(TIMEOUTS.HINT, this.hideHint)
-        }
-    }
-
-    checkpoint () {
-        this.lastPosition = {
-            x: this.x,
-            y: this.y
         }
     }
 
