@@ -93,8 +93,20 @@ export function canJumpThrough (id) {
     return JUMP_THROUGH_TILES.indexOf(id) !== -1
 }
 
-export function getElementProperties ({id, name, properties, type, visible, width, height, x, y, animation}) {
-    return { id, name, properties, type, visible, width, height, x, y, animation }
+export function getElementProperties ({
+    id,
+    name,
+    properties,
+    type,
+    visible,
+    width,
+    height,
+    x,
+    y,
+    activated,
+    animation
+}) {
+    return { id, name, properties, type, visible, width, height, x, y, activated, animation }
 }
 
 /**

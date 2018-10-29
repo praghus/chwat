@@ -34,7 +34,6 @@ export default class Balloon extends Entity {
             this.y = this.position.y
             player.x = this.position.player.x
             player.y = this.position.player.y
-            player.checkpoint()
             overlays.fadeIn()
             camera.center()
         }

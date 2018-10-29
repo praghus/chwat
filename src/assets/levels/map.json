@@ -788,12 +788,10 @@
                  "name":"Line",
                  "properties":
                     {
-                     "frame":"5",
                      "id":"line"
                     },
                  "propertytypes":
                     {
-                     "frame":"string",
                      "id":"string"
                     },
                  "rotation":0,
@@ -1437,26 +1435,26 @@
                  "y":720
                 }, 
                 {
-                 "height":16,
+                 "height":48,
                  "id":157,
                  "name":"checkpoint",
                  "rotation":0,
                  "type":"checkpoint",
                  "visible":true,
-                 "width":64,
-                 "x":4400,
-                 "y":960
+                 "width":32,
+                 "x":4352,
+                 "y":896
                 }, 
                 {
-                 "height":16,
+                 "height":48,
                  "id":158,
                  "name":"checkpoint",
                  "rotation":0,
                  "type":"checkpoint",
                  "visible":true,
                  "width":48,
-                 "x":3616,
-                 "y":1136
+                 "x":3712,
+                 "y":1056
                 }, 
                 {
                  "height":48,
@@ -1838,12 +1836,10 @@
                  "name":"Heavy stone",
                  "properties":
                     {
-                     "frame":"1",
                      "id":"stone"
                     },
                  "propertytypes":
                     {
-                     "frame":"string",
                      "id":"string"
                     },
                  "rotation":0,
@@ -3137,8 +3133,85 @@
                  "type":"player",
                  "visible":true,
                  "width":32,
-                 "x":4944,
+                 "x":4976,
                  "y":720
+                }, 
+                {
+                 "height":48,
+                 "id":460,
+                 "name":"checkpoint",
+                 "rotation":0,
+                 "type":"checkpoint",
+                 "visible":true,
+                 "width":48,
+                 "x":4896,
+                 "y":896
+                }, 
+                {
+                 "height":48,
+                 "id":461,
+                 "name":"checkpoint",
+                 "rotation":0,
+                 "type":"checkpoint",
+                 "visible":true,
+                 "width":32,
+                 "x":5360,
+                 "y":1056
+                }, 
+                {
+                 "height":48,
+                 "id":462,
+                 "name":"checkpoint",
+                 "rotation":0,
+                 "type":"checkpoint",
+                 "visible":true,
+                 "width":32,
+                 "x":6256,
+                 "y":1408
+                }, 
+                {
+                 "height":48,
+                 "id":463,
+                 "name":"checkpoint",
+                 "rotation":0,
+                 "type":"checkpoint",
+                 "visible":true,
+                 "width":32,
+                 "x":6512,
+                 "y":1408
+                }, 
+                {
+                 "height":48,
+                 "id":464,
+                 "name":"checkpoint",
+                 "rotation":0,
+                 "type":"checkpoint",
+                 "visible":true,
+                 "width":32,
+                 "x":3824,
+                 "y":496
+                }, 
+                {
+                 "height":48,
+                 "id":472,
+                 "name":"checkpoint",
+                 "rotation":0,
+                 "type":"checkpoint",
+                 "visible":true,
+                 "width":32,
+                 "x":5248,
+                 "y":64
+                }, 
+                {
+                 "height":48,
+                 "id":473,
+                 "name":"checkpoint",
+                 "rotation":0,
+                 "type":"checkpoint",
+                 "visible":true,
+                 "width":32,
+                 "x":7520,
+                 "y":160
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3168,7 +3241,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":459,
+ "nextobjectid":474,
  "orientation":"orthogonal",
  "properties":
     {

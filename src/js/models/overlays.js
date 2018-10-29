@@ -1,4 +1,3 @@
-import moment from 'moment'
 import { ASSETS, COLORS, FONTS } from '../lib/constants'
 
 export default class Overlays {
@@ -61,16 +60,11 @@ export default class Overlays {
     }
 
     displayHUD () {
-        const { ctx, camera, assets, debug, fps, player, viewport, timer } = this._scene
+        const { ctx, camera, assets, debug, fps, player, viewport, countTime } = this._scene
         const { resolutionX, resolutionY } = viewport
         const { energy, items, lives } = player
         const fpsIndicator = `FPS:${Math.round(fps)}`
-        const ms = moment().diff(moment(timer))
-        const d = moment.duration(ms)
-        const time = d.asHours() >= 1
-            ? Math.floor(d.asHours()) + moment.utc(ms).format(':mm:ss')
-            : moment.utc(ms).format('mm:ss')
-
+        const time = countTime()
         this.displayText(time, resolutionX - (3 + time.length * 5), 3)
 
         // FPS meter
