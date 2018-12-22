@@ -9,9 +9,9 @@ export default class Checkpoint extends Entity {
     }
 
     collide (element) {
-        const { player } = this._scene
-        if (element.type === ENTITIES_TYPE.PLAYER) {
-            player.checkpoint()
+        const { saveGame, lastCheckpointId } = this._scene
+        if (element.type === ENTITIES_TYPE.PLAYER && this.id !== lastCheckpointId) {
+            saveGame(this.id)
         }
     }
 }

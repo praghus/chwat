@@ -27,6 +27,7 @@ export default class GameScene extends Scene {
         this.world = new World(levelData)
         this.elements = new Elements(this.world.getObjects(), this)
         this.player = this.elements.create(this.world.getPlayer())
+        this.lastCheckpointId = null
         this.timer = null
 
         this.camera = new Camera(this)
@@ -80,7 +81,6 @@ export default class GameScene extends Scene {
         player.checkTimeout(TIMEOUTS.PLAYER_MAP) && this.overlays.displayMap()
 
         this.overlays.update()
-
         ctx.restore()
     }
 
@@ -207,29 +207,38 @@ export default class GameScene extends Scene {
 
     loadGame () {
         const loadedData = atob(localStorage.getItem('savedData'))
-        const { objects, player } = JSON.parse(loadedData)
+        const { objects, modifiers, player, lastCheckpointId, time } = JSON.parse(loadedData)
+        this.timer = moment().subtract(time)
         this.world.setObjects(objects)
+        this.lastCheckpointId = lastCheckpointId
         this.elements = new Elements(this.world.getObjects(), this)
         this.player = this.elements.create(player)
-        this.player.items = player.items
+        this.player.items = player.items.map((id) => this.elements.getByProperties('id', id))
         this.player.mapPieces = player.mapPieces
         this.camera.setFollow(this.player)
+        // restore map and set modifiers
+        this.world = new World(levelData)
+        modifiers.map(({layer, x, y, value}) => this.world.put(layer, x, y, value))
     }
 
-    saveGame () {
+    saveGame (lastCheckpointId) {
+        this.lastCheckpointId = lastCheckpointId
         const { world: {modifiers}, elements, player: {items, mapPieces} } = this
-        const playerObj = getElementProperties(this.player)
         const objects = elements.objects.map((element) => getElementProperties(element))
+        const player = getElementProperties(this.player)
+        const time = moment().diff(moment(this.timer))
 
-        playerObj.items = items.map((item) => item && getElementProperties(item))
-        playerObj.mapPieces = [...mapPieces]
+        player.items = items.map((item) => item && item.properties.id)
+        player.mapPieces = mapPieces.map((mapPiece) => getElementProperties(mapPiece))
 
-        // objects.push(playerObj)
+        const savedData = JSON.stringify({
+            lastCheckpointId,
+            modifiers,
+            objects,
+            player,
+            time
+        })
 
-        // console.info(objects)
-        // @todo: saving only objects and map modifiers
-        const savedData = JSON.stringify({ modifiers, objects, player: playerObj })
-        // console.info(savedData)
         localStorage.setItem('savedData', btoa(savedData))
     }
 }

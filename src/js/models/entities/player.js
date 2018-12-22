@@ -180,11 +180,6 @@ export default class Player extends Entity {
         })
     }
 
-    checkpoint () {
-        const { saveGame } = this._scene
-        saveGame()
-    }
-
     canMove () {
         return this.maxEnergy > 0
     }

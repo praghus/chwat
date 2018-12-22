@@ -1,3 +1,4 @@
+import moment from 'moment'
 import Overlays from './overlays'
 import { INPUTS } from '../lib/constants'
 
@@ -14,10 +15,12 @@ export default class Scene {
         this.lastInput = null
         this.delta = null
         this.lastLoop = null
+        this.timer = null
         this.frameTime = null
         this.frameStart = performance.now()
         this.then = performance.now()
         this.countFPS = this.countFPS.bind(this)
+        this.countTime = this.countTime.bind(this)
         this.fetchAction = this.fetchAction.bind(this)
         this.overlays = new Overlays(this)
     }
@@ -49,6 +52,14 @@ export default class Scene {
         this.frameTime += (currentFrameTime - this.frameTime) / 100
         this.fps = 1000 / this.frameTime
         this.lastLoop = now
+    }
+
+    countTime () {
+        const ms = moment().diff(moment(this.timer))
+        const d = moment.duration(ms)
+        return d.asHours() >= 1
+            ? Math.floor(d.asHours()) + moment.utc(ms).format(':mm:ss')
+            : moment.utc(ms).format('mm:ss')
     }
 
     fetchAction (action) {
