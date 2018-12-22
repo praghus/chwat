@@ -93,20 +93,16 @@ export function canJumpThrough (id) {
     return JUMP_THROUGH_TILES.indexOf(id) !== -1
 }
 
-export function getElementProperties ({
-    id,
-    name,
-    properties,
-    type,
-    visible,
-    width,
-    height,
-    x,
-    y,
-    activated,
-    animation
-}) {
-    return { id, name, properties, type, visible, width, height, x, y, activated, animation }
+export function getElementProperties (element) {
+    const { force, properties } = element
+    const filteredElement = { force, properties }
+    Object.getOwnPropertyNames(element).filter((prop) =>
+        typeof element[prop] !== 'object' && typeof element[prop] !== 'function'
+    ).map((prop) => {
+        filteredElement[prop] = element[prop]
+    })
+
+    return filteredElement
 }
 
 /**

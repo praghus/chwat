@@ -6,8 +6,7 @@ export default class Witch extends Entity {
         super(obj, scene)
         this.solid = false
         this.visible = false
-        this.haveInitialElement = false
-        this.activated = false
+        this.haveInitialElement = obj.haveInitialElement || false
         this.activators = []
     }
 

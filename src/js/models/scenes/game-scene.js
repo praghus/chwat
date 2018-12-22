@@ -81,7 +81,6 @@ export default class GameScene extends Scene {
         player.checkTimeout(TIMEOUTS.PLAYER_MAP) && this.overlays.displayMap()
 
         this.overlays.update()
-
         ctx.restore()
     }
 

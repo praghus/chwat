@@ -715,6 +715,7 @@
                     {
                      "activator":"chopper",
                      "clear":"ground",
+                     "follow":true,
                      "hint":"I need something\nto cut this rope",
                      "offsetX":-3,
                      "offsetY":1,
@@ -724,6 +725,7 @@
                     {
                      "activator":"string",
                      "clear":"string",
+                     "follow":"bool",
                      "hint":"string",
                      "offsetX":"int",
                      "offsetY":"int",
@@ -3097,7 +3099,7 @@
                      "clear":"bool"
                     },
                  "rotation":0,
-                 "type":"witch",
+                 "type":"pirate",
                  "visible":true,
                  "width":160,
                  "x":1808,
@@ -3212,6 +3214,25 @@
                  "width":32,
                  "x":7520,
                  "y":160
+                }, 
+                {
+                 "height":16,
+                 "id":475,
+                 "name":"Key",
+                 "properties":
+                    {
+                     "id":"key"
+                    },
+                 "propertytypes":
+                    {
+                     "id":"string"
+                    },
+                 "rotation":0,
+                 "type":"item",
+                 "visible":true,
+                 "width":16,
+                 "x":4192,
+                 "y":208
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3241,7 +3262,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":474,
+ "nextobjectid":476,
  "orientation":"orthogonal",
  "properties":
     {
