@@ -13,7 +13,10 @@
   "keywords": [],
   "author": "Piotr Praga",
   "license": "ISC",
-  "engines" : { "node" : ">=8.12" },
+  "engines" : { 
+      "node": ">=10.0.0",
+      "npm": ">=6.0.0"
+  },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "eslint-plugin-mocha": "^5.0.0",
