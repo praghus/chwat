@@ -14,7 +14,7 @@
   "author": "Piotr Praga",
   "license": "ISC",
   "engines" : { 
-      "node": "8.12.0",
+      "node": "8.9.4",
       "npm": "6.x",
       "yarn": "1.x"
   },
