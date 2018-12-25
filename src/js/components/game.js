@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import Canvas from './canvas'
 import Inputs from './inputs'
 import { SCENES } from '../lib/constants'
-import { IntroScene, GameScene } from '../models/scenes'
+import { IntroScene, GameScene } from '../lib/scenes'
+
 import {
     assetPropType,
     inputPropType,

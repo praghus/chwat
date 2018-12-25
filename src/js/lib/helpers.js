@@ -1,5 +1,5 @@
 import './illuminated'
-import { ENTITIES } from './entities'
+import { ENTITIES, ENTITIES_TYPE } from './entities'
 import { JUMP_THROUGH_TILES, INPUT_KEYS, MINI_TILES } from './constants'
 
 export const noop = () => {}
@@ -93,18 +93,59 @@ export function canJumpThrough (id) {
     return JUMP_THROUGH_TILES.indexOf(id) !== -1
 }
 
+export function getProperties (data) {
+    if (data && data.length) {
+        const properties = {}
+        data.map(({name, value}) => {
+            properties[name] = value
+        })
+        return properties
+    }
+}
+
 export function getElementProperties (element) {
     const { force, properties } = element
     const filteredElement = { force, properties }
     Object.getOwnPropertyNames(element).filter((prop) =>
-        typeof element[prop] !== 'object' && typeof element[prop] !== 'function'
+        typeof element[prop] !== 'object' &&
+        typeof element[prop] !== 'function' &&
+        prop !== 'properties'
     ).map((prop) => {
         filteredElement[prop] = element[prop]
     })
-
     return filteredElement
 }
 
+export function gameElementsOrdered (objects) {
+    const byType = (a, b) => {
+        if (
+            a.type === ENTITIES_TYPE.ROCK ||
+            a.type === ENTITIES_TYPE.SWITCH ||
+            a.type === ENTITIES_TYPE.TRIGGER
+        ) return 1
+        if (a.type === ENTITIES_TYPE.ITEM) return -1
+        if (a.type < b.type) return -1
+        if (a.type > b.type) return 1
+        return 0
+    }
+    return objects.sort(byType).filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
+}
+
+
+export function clearInRange (objects, rect) {
+    objects.map((obj) => {
+        if (
+            overlap(obj, rect) && !obj.dead &&
+            obj.type !== ENTITIES_TYPE.BALLOON &&
+            obj.type !== ENTITIES_TYPE.DARK_MASK &&
+            obj.type !== ENTITIES_TYPE.TRIGGER &&
+            obj.type !== ENTITIES_TYPE.WATER &&
+            obj.type !== ENTITIES_TYPE.ITEM
+        ) {
+            obj.kill()
+        }
+    })
+}
 /**
  * illuminated.js
  */
