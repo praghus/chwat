@@ -9,11 +9,19 @@ const autoprefixer = require('autoprefixer')
 const nodeEnv = process.env.NODE_ENV || 'development'
 const isProduction = nodeEnv === 'production'
 
-const jsSourcePath = path.join(__dirname, './src/js')
+const inArray = (haystack) => (needle) => haystack.some((item) => needle.includes(item))
+const dependencyPath = (...folders) => path.join('node_modules', ...folders)
+
 const distPath = path.join(__dirname, './dist')
 const imgPath = path.join(__dirname, './src/assets/images')
 const audioPath = path.join(__dirname, './src/assets/sounds')
 const sourcePath = path.join(__dirname, './src')
+const jsSourcePath = path.join(__dirname, './src/js')
+
+const jsEs6Source = inArray([
+    jsSourcePath,
+    dependencyPath('tmx-platformer-lib', 'lib'),
+])
 
 const plugins = [
     new webpack.optimize.CommonsChunkPlugin({
@@ -53,7 +61,8 @@ const plugins = [
 const rules = [
     {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        //exclude: /node_modules/,
+        include: jsEs6Source,
         use: 'babel-loader'
     },
     {

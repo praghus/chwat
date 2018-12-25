@@ -8572,6 +8572,10 @@ tmp@^0.0.33:
   dependencies:
     os-tmpdir "~1.0.2"
 
+tmx-platformer-lib@praghus/tmx-platformer-lib:
+  version "0.1.1"
+  resolved "https://codeload.github.com/praghus/tmx-platformer-lib/tar.gz/ef0dfc7b1140de7bd3db3b2d04682aa9dad3b91f"
+
 to-absolute-glob@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/to-absolute-glob/-/to-absolute-glob-0.1.1.tgz#1cdfa472a9ef50c239ee66999b662ca0eb39937f"
