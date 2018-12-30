@@ -1,7 +1,15 @@
-export const NON_COLLIDE_INDEX = 256
-export const SPECIAL_TILES_INDEX = 1024
-export const JUMP_THROUGH_TILES = [210, 211, 212, 213, 214, 243, 836, 868, 1088, 1089]
-
+// export const NON_COLLIDE_INDEX = 256
+// export const SPECIAL_TILES_INDEX = 1024
+export const JUMP_THROUGH_TILES = [
+    210, 211, 212, 213, 214, 243, 836, 868, 1088, 1089
+]
+export const NON_COLLIDE_TILES = [
+    7, 15, 16, 17, 18, 19, 47, 48, 49, 50,
+    51, 22, 38, 39, 54, 69, 71, 97, 101, 115, 
+    116, 129, 130, 131, 132, 133, 141, 142, 145, 146,
+    177, 178, 179, 180, 181, 182, 230, 233, 234, 235,
+    245
+]
 export const MINI_TILES = {
     '230': {offsetX: 8, offsetY: 8, width: 8, height: 8},
     '233': {offsetX: 0, offsetY: 8, width: 8, height: 8},
@@ -28,20 +36,17 @@ export const COLORS = {
     GREEN: '#0F0',
     PURPLE: '#F0F',
     LIGHT_RED: '#F00',
-    PLAYER_LIGHT: 'rgba(255,255,255,0.1)'
-}
-
-export const LIGHTS = {
-    PLAYER_LIGHT: 'player_light'
+    SPIDER_WEB: 'rgba(255,255,255,0.5)',
+    TRANS_WHITE: 'rgba(255,255,255,0.1)'
 }
 
 export const LAYERS = {
-    MAIN: 'ground',
-    BACKGROUND1: 'background1',
-    BACKGROUND2: 'background2',
-    FOREGROUND1: 'foreground1',
-    FOREGROUND2: 'foreground2',
-    OBJECTS: 'objects'
+    MAIN: 3,
+    BACKGROUND1: 1,
+    BACKGROUND2: 2,
+    FOREGROUND1: 5,
+    FOREGROUND2: 6,
+    OBJECTS: 4
 }
 
 export const DIRECTIONS = {

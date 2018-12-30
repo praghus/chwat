@@ -1,5 +1,6 @@
 import ActiveElement from '../models/active-element'
 import { ENTITIES_TYPE } from '../../lib/entities'
+import { COLORS } from '../../lib/constants'
 
 export default class Torch extends ActiveElement {
     constructor (obj, scene) {
@@ -14,6 +15,7 @@ export default class Torch extends ActiveElement {
             ? this.animations.BIG
             : this.animations.SMALL
         this.animFrame = Math.round(Math.random() * 8)
+        this.light = { distance: 24, color: COLORS.TRANS_WHITE }
     }
 
     update () {

@@ -3223,17 +3223,6 @@
                 }, 
                 {
                  "height":48,
-                 "id":457,
-                 "name":"Player",
-                 "rotation":0,
-                 "type":"player",
-                 "visible":true,
-                 "width":32,
-                 "x":4976,
-                 "y":720
-                }, 
-                {
-                 "height":48,
                  "id":460,
                  "name":"checkpoint",
                  "rotation":0,
@@ -3325,6 +3314,17 @@
                  "width":16,
                  "x":4192,
                  "y":208
+                }, 
+                {
+                 "height":48,
+                 "id":479,
+                 "name":"Player",
+                 "rotation":0,
+                 "type":"player",
+                 "visible":true,
+                 "width":32,
+                 "x":4976,
+                 "y":720
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -3357,7 +3357,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":478,
+ "nextobjectid":480,
  "orientation":"orthogonal",
  "properties":[
         {

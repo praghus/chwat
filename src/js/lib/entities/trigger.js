@@ -11,16 +11,10 @@ export default class Trigger extends ActiveElement {
     }
 
     collide (element) {
-        const { camera, elements, input, player, overlay, world } = this._scene
-        const activator = this.getProperty('activator')
-        const follow = this.getProperty('follow')
-        const hint = this.getProperty('hint')
-        const offsetX = this.getProperty('offsetX')
-        const offsetY = this.getProperty('offsetY')
-        const related = this.getProperty('related')
-        const anchor_hint = this.getProperty('anchor_hint')
-
+        const { camera, input, player, overlay, world } = this._scene
+        const { activator, follow, hint, offsetX, offsetY, related, anchor_hint } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
+        
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
                 if (player.canUse(activator)) {
@@ -29,7 +23,7 @@ export default class Trigger extends ActiveElement {
                     this.hideMessage()
                     player.hideHint()
                     if (related) {
-                        const rel = elements.getById(related)
+                        const rel = world.getObjectById(related, LAYERS.OBJECTS)
                         if (follow) {
                             camera.setFollow(rel)
                             this._scene.startTimeout({
@@ -56,7 +50,7 @@ export default class Trigger extends ActiveElement {
                     }
                 }
                 else {
-                    const item = elements.getByProperties('id', activator)
+                    const item = world.getObjectByProperty('id', activator, LAYERS.OBJECTS)
                     if (item) {
                         anchor_hint
                             ? this.showHint(item)
@@ -78,12 +72,7 @@ export default class Trigger extends ActiveElement {
     update () {
         if (this.activated) {
             const { camera, elements, overlay, world } = this._scene
-            const clear = this.getProperty('clear')
-            const fade = this.getProperty('fade')
-            const modify = this.getProperty('modify')
-            const produce = this.getProperty('produce')
-            const produce_name = this.getProperty('produce_name')
-            const shake = this.getProperty('shake')
+            const { clear, fade, modify, produce, produce_name, shake } = this.properties
 
             if (produce) {
                 this.addItem(produce, produce_name, this.x + 16, this.y)
@@ -97,7 +86,7 @@ export default class Trigger extends ActiveElement {
                 }
             }
             if (clear) {
-                clearInRange(elements, this)
+                clearInRange(elements.getAll(), this)
                 this.clearTiles(clear)
             }
             shake && camera.shake()

@@ -25,7 +25,6 @@ export default class Paddle extends ActiveElement {
     collide (element) {
         if (!this.dead && element.solid && element.type !== ENTITIES_TYPE.BLOB) {
             const expectedY = (this.y - element.height) + (this.height - 16)
-
             if (element.y >= expectedY && !element.jump) {
                 element.y = expectedY
                 element.force.y = 0
@@ -41,7 +40,7 @@ export default class Paddle extends ActiveElement {
     update () {
         if (this.activated && !this.dead) {
             const { spriteSize } = this._scene.world
-            const destY = this.getProperty('destY')
+            const { destY } = this.properties
             if (this.y > destY * spriteSize) {
                 this.force.y -= this.acceleration
                 this.move()

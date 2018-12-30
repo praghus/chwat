@@ -23,7 +23,8 @@ export default class Water extends ActiveElement {
             for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
                 const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
                 const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-                if (selective || !world.isSolid(PX, PY)) {
+            
+                if (selective || !world.isSolidArea(PX, PY)) {
                     ctx.drawImage(assets[this.asset],
                         this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,
                         spriteSize, spriteSize,
@@ -33,7 +34,7 @@ export default class Water extends ActiveElement {
                     )
                 }
                 if (
-                    canFall && !world.isSolid(PX, PY + 1) &&
+                    canFall && !world.isSolidArea(PX, PY + 1) &&
                     y + 1 === Math.round(this.height / spriteSize)
                 ) {
                     this.fall = true

@@ -6,27 +6,17 @@ export default class Slope extends ActiveElement {
         super(obj, scene)
         this.solid = false
         this.visible = false
-        if (this.type === ENTITIES_TYPE.SLOPE_RIGHT) {
-            this.vectorMask = [
-                {x: 0, y: this.height},
-                {x: 0, y: 0},
-                {x: this.width, y: 0}
-            ]
-        }
-        else {
-            this.vectorMask = [
-                {x: 0, y: 0},
-                {x: this.width, y: 0},
-                {x: this.width, y: this.height}
-            ]
+        if (!this.points) {
+            this.points = this.type === ENTITIES_TYPE.SLOPE_RIGHT
+                ? [[0, this.height], [this.width, this.height], [this.width, 0]]
+                : [[0, 0], [0, this.height], [this.width, this.height]]
         }
     }
 
     collide (element) {
         if (!this.dead && element.solid) {
             if (element.family === ENTITIES_FAMILY.ENEMIES) {
-                element.bounce()
-                return
+                return element.bounce()
             }
             const { x, width } = element.getBounds()
             const [ calculatedX, calculatedY ] = [element.x + x, this.y - element.height]

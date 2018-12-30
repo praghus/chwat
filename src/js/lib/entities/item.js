@@ -5,8 +5,7 @@ import { INPUTS } from '../../lib/constants'
 export default class Item extends ActiveElement {
     constructor (obj, scene) {
         super(obj, scene)
-        this.width = 16
-        this.height = 16
+        this.y = this.y - this.height
         this.initialPosition = {
             x: this.x,
             y: this.y
@@ -51,7 +50,7 @@ export default class Item extends ActiveElement {
             undefined: {x: 0, y: 0}
         }
         this.animation = Object.assign(
-            this.types[this.getProperty('id')] || this.types.undefined, {
+            this.types[this.properties.id] || this.types.undefined, {
                 w: 16, h: 16, frames: 1, fps: 0, loop: false
             }
         )

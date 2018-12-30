@@ -128,14 +128,14 @@ export function gameElementsOrdered (objects) {
         if (a.type > b.type) return 1
         return 0
     }
-    return objects.sort(byType).filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
+    return objects.sort(byType)// .filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
 }
-
 
 export function clearInRange (objects, rect) {
     objects.map((obj) => {
         if (
             overlap(obj, rect) && !obj.dead &&
+            obj.type !== ENTITIES_TYPE.PLAYER &&
             obj.type !== ENTITIES_TYPE.BALLOON &&
             obj.type !== ENTITIES_TYPE.DARK_MASK &&
             obj.type !== ENTITIES_TYPE.TRIGGER &&

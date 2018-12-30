@@ -163,18 +163,21 @@ export default class Overlay {
             Math.floor(entity.x + camera.x),
             Math.floor(entity.y + camera.y)
         ]
-        if (entity.vectorMask) {
+        if (entity.points) {
             ctx.save()
             ctx.strokeStyle = COLORS.LIGHT_RED
             ctx.beginPath()
-            ctx.moveTo(posX, posY)
-            entity.vectorMask.map(({x, y}) => ctx.lineTo(
+            ctx.moveTo(
+                entity.points[0][0] + posX,
+                entity.points[0][1] + posY
+            )
+            entity.points.map(([x, y]) => ctx.lineTo(
                 posX + x,
                 posY + y
             ))
             ctx.lineTo(
-                entity.vectorMask[0].x + posX,
-                entity.vectorMask[0].y + posY
+                entity.points[0][0] + posX,
+                entity.points[0][1] + posY
             )
             ctx.stroke()
             ctx.restore()
@@ -200,6 +203,12 @@ export default class Overlay {
                 posY - 8,
             )
         }
+        // else {
+        //     this.displayText(`${String.fromCharCode(26)}`,
+        //         posX,
+        //         posY,
+        //     )
+        // }
         // ${String.fromCharCode(26)}
         if (force.x !== 0) {
             const forceX = `${force.x.toFixed(2)}`

@@ -20,7 +20,7 @@ export default class Lava extends ActiveElement {
         for (let x = 0; x < Math.round((this.width / 2) / spriteSize); x++) {
             const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
             const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-            if (!this._scene.world.isSolid(PX, PY)) {
+            if (!world.isSolidArea(PX, PY)) {
                 ctx.drawImage(assets[this.asset],
                     this.animation.x + this.animFrame * this.animation.w, this.animation.y,
                     this.animation.w, this.animation.h,
@@ -41,20 +41,20 @@ export default class Lava extends ActiveElement {
 
     shoot () {
         const { elements } = this._scene
-        elements.add({
-            type: ENTITIES_TYPE.LAVA_STONE,
-            visible: true,
-            direction: randomChoice([
-                DIRECTIONS.LEFT,
-                DIRECTIONS.RIGHT
-            ]),
-            force: {
-                x: 0,
-                y: -randomInt(4, 6)
-            },
-            x: this.x + randomInt(1, 8) * 16,
-            y: this.y - 16
-        })
+        // elements.add({
+        //     type: ENTITIES_TYPE.LAVA_STONE,
+        //     visible: true,
+        //     direction: randomChoice([
+        //         DIRECTIONS.LEFT,
+        //         DIRECTIONS.RIGHT
+        //     ]),
+        //     force: {
+        //         x: 0,
+        //         y: -randomInt(4, 6)
+        //     },
+        //     x: this.x + randomInt(1, 8) * 16,
+        //     y: this.y - 16
+        // })
         this.shootTimeout = setTimeout(() => {
             this.canShoot = true
         }, this.shootDelay)

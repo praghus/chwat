@@ -12,7 +12,7 @@ export default class MapPiece extends ActiveElement {
             piece5: {x: 16, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             piece6: {x: 32, y: 16, w: 16, h: 16, frames: 1, fps: 0, loop: false}
         }
-        this.animation = this.types[this.getProperty('id')]
+        this.animation = this.types[this.properties.id]
     }
 
     collide (element) {

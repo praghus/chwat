@@ -6,6 +6,7 @@ export default class Switch extends ActiveElement {
     constructor (obj, scene) {
         super(obj, scene)
         this.solid = true
+        this.activated = false
         this.animations = {
             OFF: {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false},
             ON: {x: 16, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false}
@@ -14,20 +15,15 @@ export default class Switch extends ActiveElement {
     }
 
     collide (element) {
-        const { camera, overlay, input, player, world } = this._scene
-        const activator = this.getProperty('activator')
-        const hint = this.getProperty('hint')
-        const offsetX = this.getProperty('offsetX')
-        const offsetY = this.getProperty('offsetY')
-
+        const { camera, input, player, overlay, world } = this._scene
+        const { activator, message, produce, hint, offsetX, offsetY } = this.properties
         const triggered = !this.activated && input[INPUTS.INPUT_ACTION]
 
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
                 if (player.canUse(activator)) {
                     player.useItem(activator)
-                    const message = this.getProperty('message')
-                    const produce = this.getProperty('produce')
+                    // const { message, produce } = this.properties
                     this.activated = true
                     this.animation = this.animations.ON
                     switch (produce) {

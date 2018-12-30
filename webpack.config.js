@@ -10,7 +10,8 @@ const nodeEnv = process.env.NODE_ENV || 'development'
 const isProduction = nodeEnv === 'production'
 
 const inArray = (haystack) => (needle) => haystack.some((item) => needle.includes(item))
-const dependencyPath = (...folders) => path.join('node_modules', ...folders)
+// const dependencyPath = (...folders) => path.join('node_modules', ...folders)
+const localLink = (...folders) => path.join('C:/Users/praga/Workspace', ...folders)
 
 const distPath = path.join(__dirname, './dist')
 const imgPath = path.join(__dirname, './src/assets/images')
@@ -20,7 +21,7 @@ const jsSourcePath = path.join(__dirname, './src/js')
 
 const jsEs6Source = inArray([
     jsSourcePath,
-    dependencyPath('tmx-platformer-lib', 'lib'),
+    localLink('tmx-platformer-lib', 'lib')
 ])
 
 const plugins = [
@@ -61,7 +62,6 @@ const plugins = [
 const rules = [
     {
         test: /\.(js|jsx)$/,
-        //exclude: /node_modules/,
         include: jsEs6Source,
         use: 'babel-loader'
     },
@@ -74,6 +74,10 @@ const rules = [
         test: /\.(mp3|wav)$/,
         include: audioPath,
         loader: 'file-loader?name=[name]-[hash].[ext]'
+    },
+    {
+        test: /\.tmx$/,
+        loader: 'xml-loader?explicitChildren=true&preserveChildrenOrder=true'
     },
     {
         test: /\.json$/,

@@ -185,12 +185,12 @@ export default class Player extends Character {
     }
 
     canUse (itemId) {
-        const haveItem = this.items.find((item) => item && item.getProperty('id') === itemId)
+        const haveItem = this.items.find((item) => item && item.properties.id === itemId)
         return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
     useItem (itemId) {
-        const item = this.items.find((item) => item && item.getProperty('id') === itemId)
+        const item = this.items.find((item) => item && item.properties.id === itemId)
         if (item) {
             [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
                 ? [this.items[1], null]
