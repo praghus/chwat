@@ -51,9 +51,9 @@ export default class Slime extends Character {
 
             
             if (
-                this.expectedX !== this.x //||
-                // this.onRightEdge ||
-                // this.onLeftEdge
+                this.expectedX !== this.x ||
+                this.onRightEdge ||
+                this.onLeftEdge
             ) {
                 this.bounce()
             }

@@ -50,7 +50,7 @@ export default class Player extends Character {
 
     update () {
         const { input, world } = this._scene
-
+        // @todo: consider player states
         if (this.canMove()) {
             if (input[INPUTS.INPUT_LEFT]) {
                 if (this.direction === DIRECTIONS.RIGHT) {

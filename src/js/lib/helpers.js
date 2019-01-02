@@ -116,20 +116,20 @@ export function getElementProperties (element) {
     return filteredElement
 }
 
-export function gameElementsOrdered (objects) {
-    const byType = (a, b) => {
-        if (
-            a.type === ENTITIES_TYPE.ROCK ||
-            a.type === ENTITIES_TYPE.SWITCH ||
-            a.type === ENTITIES_TYPE.TRIGGER
-        ) return 1
-        if (a.type === ENTITIES_TYPE.ITEM) return -1
-        if (a.type < b.type) return -1
-        if (a.type > b.type) return 1
-        return 0
-    }
-    return objects.sort(byType)// .filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
-}
+// export function gameElementsOrdered (objects) {
+//     const byType = (a, b) => {
+//         if (
+//             a.type === ENTITIES_TYPE.ROCK ||
+//             a.type === ENTITIES_TYPE.SWITCH ||
+//             a.type === ENTITIES_TYPE.TRIGGER
+//         ) return 1
+//         if (a.type === ENTITIES_TYPE.ITEM) return -1
+//         if (a.type < b.type) return -1
+//         if (a.type > b.type) return 1
+//         return 0
+//     }
+//     return objects.sort(byType)// .filter(({type}) => type !== ENTITIES_TYPE.PLAYER)
+// }
 
 export function clearInRange (objects, rect) {
     objects.map((obj) => {

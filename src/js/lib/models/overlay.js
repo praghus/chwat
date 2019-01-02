@@ -60,7 +60,7 @@ export default class Overlay {
     }
 
     displayHUD () {
-        const { ctx, camera, assets, debug, fps, player, viewport, countTime } = this._scene
+        const { ctx, camera, assets, debug, fps, player, viewport, countTime, world } = this._scene
         const { resolutionX, resolutionY } = viewport
         const { energy, items, lives } = player
         const fpsIndicator = `FPS:${Math.round(fps)}`
@@ -90,8 +90,16 @@ export default class Overlay {
         const align = 3 // -19 + resolutionX / 2
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
-            if (item && item.properties) {
+            if (item) {
                 // this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
+                // const {columns, name, firstgid} = world.getAssetForTile(item.gid)
+                // ctx.drawImage(assets[name],
+                //     ((item.gid - firstgid) % columns) * world.spriteSize,
+                //     (Math.ceil(((item.gid - firstgid) + 1) / columns) - 1) * world.spriteSize,
+                //     world.spriteSize, world.spriteSize,
+                //     align + 1 + (index * 20), resolutionY - 19,
+                //     world.spriteSize, world.spriteSize)
+
                 ctx.drawImage(
                     assets[ASSETS.ITEMS],
                     item.animation.x, item.animation.y,
@@ -171,16 +179,51 @@ export default class Overlay {
                 entity.points[0][0] + posX,
                 entity.points[0][1] + posY
             )
-            entity.points.map(([x, y]) => ctx.lineTo(
-                posX + x,
-                posY + y
-            ))
+            entity.points.map(([x, y]) => {
+                ctx.lineTo(
+                    posX + x,
+                    posY + y
+                )
+                // this.displayText(`${entity.x + x},${entity.x + y}`, posX + x, posY + y)
+            })
             ctx.lineTo(
                 entity.points[0][0] + posX,
                 entity.points[0][1] + posY
             )
             ctx.stroke()
             ctx.restore()
+
+            if (entity.triangle.length > 0) {
+                ctx.save()
+                ctx.strokeStyle = COLORS.GREEN
+                ctx.beginPath()
+                ctx.moveTo(
+                    entity.triangle[0][0] + camera.x,
+                    entity.triangle[0][1] + camera.Y
+                )
+                entity.triangle.map(([x, y]) => {
+                    ctx.lineTo(
+                        x + camera.x,
+                        y + camera.y
+                    )
+                })
+                ctx.lineTo(
+                    entity.triangle[0][0] + camera.x,
+                    entity.triangle[0][1] + camera.y
+                )
+                ctx.stroke()
+                ctx.restore()
+            }
+
+            // if (bounds) {
+            //     this.outline(
+            //         posX + bounds.x,
+            //         posY + bounds.y,
+            //         bounds.width,
+            //         bounds.height,
+            //         COLORS.SPIDER_WEB
+            //     )
+            // }
         }
         else {
             this.outline(

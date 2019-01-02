@@ -82,7 +82,8 @@ export default class GameScene extends Scene {
             this.dynamicLights && this.calculateShadows()
             this.renderLightingEffect()
             world.hideLayer(LAYERS.FOREGROUND2)
-        } else {
+        }
+        else {
             world.showLayer(LAYERS.FOREGROUND2)
         }
         overlay.displayHUD()

@@ -14,7 +14,7 @@ export default class Trigger extends ActiveElement {
         const { camera, input, player, overlay, world } = this._scene
         const { activator, follow, hint, offsetX, offsetY, related, anchor_hint } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
-        
+
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
                 if (player.canUse(activator)) {
@@ -71,11 +71,11 @@ export default class Trigger extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { camera, elements, overlay, world } = this._scene
-            const { clear, fade, modify, produce, produce_name, shake } = this.properties
+            const { camera, overlay, world } = this._scene
+            const { clear, fade, modify, produce, shake } = this.properties
 
             if (produce) {
-                this.addItem(produce, produce_name, this.x + 16, this.y)
+                this.addItem(this.properties, this.x + 16, this.y + 16)
             }
             if (modify) {
                 const matrix = JSON.parse(modify)
@@ -86,7 +86,7 @@ export default class Trigger extends ActiveElement {
                 }
             }
             if (clear) {
-                clearInRange(elements.getAll(), this)
+                clearInRange(world.getObjects(LAYERS.OBJECTS), this)
                 this.clearTiles(clear)
             }
             shake && camera.shake()
