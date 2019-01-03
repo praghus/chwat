@@ -10,8 +10,7 @@ const nodeEnv = process.env.NODE_ENV || 'development'
 const isProduction = nodeEnv === 'production'
 
 const inArray = (haystack) => (needle) => haystack.some((item) => needle.includes(item))
-// const dependencyPath = (...folders) => path.join('node_modules', ...folders)
-const localLink = (...folders) => path.join('C:/Users/praga/Workspace', ...folders)
+const dependencyPath = (...folders) => path.join('node_modules', ...folders)
 
 const distPath = path.join(__dirname, './dist')
 const imgPath = path.join(__dirname, './src/assets/images')
@@ -21,7 +20,7 @@ const jsSourcePath = path.join(__dirname, './src/js')
 
 const jsEs6Source = inArray([
     jsSourcePath,
-    localLink('tmx-platformer-lib', 'lib')
+    dependencyPath('tmx-platformer-lib', 'lib')
 ])
 
 const plugins = [
