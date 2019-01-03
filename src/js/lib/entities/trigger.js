@@ -1,5 +1,5 @@
 import ActiveElement from '../models/active-element'
-import { clearInRange } from '../../lib/helpers'
+// import { clearInRange } from '../../lib/helpers'
 import { ENTITIES_TYPE } from '../../lib/entities'
 import { INPUTS, LAYERS } from '../../lib/constants'
 
@@ -12,7 +12,7 @@ export default class Trigger extends ActiveElement {
 
     collide (element) {
         const { camera, input, player, overlay, world } = this._scene
-        const { activator, follow, hint, offsetX, offsetY, related, anchor_hint } = this.properties
+        const { activator, follow, hint, offsetX, offsetY, related, kill, anchor_hint } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
 
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
@@ -22,6 +22,9 @@ export default class Trigger extends ActiveElement {
                     this.activated = true
                     this.hideMessage()
                     player.hideHint()
+                    if (kill) {
+                        world.getObjectById(kill, LAYERS.OBJECTS).kill()
+                    }
                     if (related) {
                         const rel = world.getObjectById(related, LAYERS.OBJECTS)
                         if (follow) {
@@ -71,7 +74,7 @@ export default class Trigger extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { camera, overlay, world } = this._scene
+            const { camera, overlay } = this._scene
             const { clear, fade, modify, produce, shake } = this.properties
 
             if (produce) {
@@ -88,7 +91,7 @@ export default class Trigger extends ActiveElement {
                 }
             }
             if (clear) {
-                clearInRange(world.getObjects(LAYERS.OBJECTS), this)
+                // clearInRange(world.getObjects(LAYERS.OBJECTS), this)
                 this.clearTiles(clear)
             }
             shake && camera.shake()

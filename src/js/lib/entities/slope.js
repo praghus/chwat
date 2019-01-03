@@ -18,8 +18,6 @@ export default class Slope extends ActiveElement {
             width: maxX - minX,
             height: maxY - minY
         }
-        // this.width = this.bounds.width
-        // this.height = this.bounds.height
     }
 
     collide (element) {

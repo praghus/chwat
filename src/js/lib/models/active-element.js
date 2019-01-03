@@ -66,7 +66,8 @@ export default class ActiveElement extends Entity {
     }
 
     showMessage (text) {
-        const { offsetX, offsetY } = this.properties
+        const offsetX = this.properties && this.properties.offsetX || 0
+        const offsetY = this.properties && this.properties.offsetY || 0
         const { world } = this._scene
         const [x, y] = [
             offsetX ? this.x + offsetX * world.spriteSize : this.x,

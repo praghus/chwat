@@ -1,7 +1,7 @@
-import Character from '../models/character'
 import { ENTITIES_TYPE } from '../../lib/entities'
+import ActiveElement from '../models/active-element'
 
-export default class Witch extends Character {
+export default class Witch extends ActiveElement {
     constructor (obj, scene) {
         super(obj, scene)
         this.solid = false
