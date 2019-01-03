@@ -81,7 +81,9 @@ export default class Trigger extends ActiveElement {
                 const matrix = JSON.parse(modify)
                 if (matrix.length) {
                     matrix.map(
-                        ([x, y, id]) => world.put(LAYERS.MAIN, x, y, id)
+                        ([x, y, id]) => {
+                            this._scene.addTile(x, y, id, LAYERS.MAIN)
+                        }
                     )
                 }
             }

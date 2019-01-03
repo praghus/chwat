@@ -1,7 +1,7 @@
 import ActiveElement from '../models/active-element'
 import { randomChoice, randomInt } from '../../lib/helpers'
 import { ENTITIES_TYPE } from '../../lib/entities'
-import { DIRECTIONS } from '../../lib/constants'
+import { DIRECTIONS, LAYERS } from '../../lib/constants'
 
 export default class Lava extends ActiveElement {
     constructor (obj, scene) {
@@ -40,21 +40,23 @@ export default class Lava extends ActiveElement {
     }
 
     shoot () {
-        const { elements } = this._scene
-        // elements.add({
-        //     type: ENTITIES_TYPE.LAVA_STONE,
-        //     visible: true,
-        //     direction: randomChoice([
-        //         DIRECTIONS.LEFT,
-        //         DIRECTIONS.RIGHT
-        //     ]),
-        //     force: {
-        //         x: 0,
-        //         y: -randomInt(4, 6)
-        //     },
-        //     x: this.x + randomInt(1, 8) * 16,
-        //     y: this.y - 16
-        // })
+        const { world } = this._scene
+
+        world.addObject({
+            type: ENTITIES_TYPE.LAVA_STONE,
+            visible: true,
+            direction: randomChoice([
+                DIRECTIONS.LEFT,
+                DIRECTIONS.RIGHT
+            ]),
+            force: {
+                x: 0,
+                y: -randomInt(4, 6)
+            },
+            x: this.x + randomInt(1, 8) * 16,
+            y: this.y - 16
+        }, LAYERS.OBJECTS)
+
         this.shootTimeout = setTimeout(() => {
             this.canShoot = true
         }, this.shootDelay)

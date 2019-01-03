@@ -149,6 +149,7 @@ export default class Player extends Character {
                 ? this.animations.STAND_RIGHT
                 : this.animations.STAND_LEFT)
         }
+        this.underground = this.y >= world.surface * world.spriteSize
     }
 
     collide (element) {
@@ -161,6 +162,9 @@ export default class Player extends Character {
     }
 
     hit (s) {
+        // im immortal in debug mode
+        if (!!this._scene.debug) return
+
         this.maxEnergy -= s
         this.maxEnergy <= 0
             ? this.maxEnergy = 0
@@ -185,6 +189,7 @@ export default class Player extends Character {
     }
 
     canUse (itemId) {
+        if (!!this._scene.debug) return true
         const haveItem = this.items.find((item) => item && item.properties.id === itemId)
         return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }

@@ -1,9 +1,4 @@
 import { ASSETS } from './constants'
-// import {
-//     Balloon, Bat, Bridge, Catapult, Checkpoint, Cook, Crusher, DarkMask, Dust, Dragon, Flag,
-//     Grass, Item, Lava, LavaStone, MapPiece, Paddle, Particle, Player, Rock, Slime, Slope,
-//     SpiderTrap, Spikes, Switch, Torch, Trigger, Water, Witch, WoodenBridge
-// } from '../models/entities'
 
 import Balloon from './entities/balloon'
 import Bat from './entities/bat'
@@ -44,7 +39,6 @@ export const ENTITIES_FAMILY = {
     PARTICLES: 'particles',
     TRAPS: 'traps'
 }
-
 export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
     BAT: 'bat',
@@ -78,7 +72,6 @@ export const ENTITIES_TYPE = {
     WITCH: 'witch',
     WOODEN_BRIDGE: 'wooden_bridge'
 }
-
 export const ENTITIES = [
     { type: ENTITIES_TYPE.PLAYER, model: Player, asset: ASSETS.PLAYER},
     { type: ENTITIES_TYPE.BALLOON, family: ENTITIES_FAMILY.MODIFIERS, model: Balloon, asset: ASSETS.BALLOON },

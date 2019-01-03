@@ -1,6 +1,6 @@
 import ActiveElement from '../models/active-element'
 import { ENTITIES_TYPE } from '../../lib/entities'
-import { INPUTS, LAYERS } from '../../lib/constants'
+import { DIRECTIONS, INPUTS, LAYERS } from '../../lib/constants'
 
 export default class Switch extends ActiveElement {
     constructor (obj, scene) {
@@ -23,7 +23,6 @@ export default class Switch extends ActiveElement {
             if (triggered) {
                 if (player.canUse(activator)) {
                     player.useItem(activator)
-                    // const { message, produce } = this.properties
                     this.activated = true
                     this.animation = this.animations.ON
                     switch (produce) {
@@ -41,14 +40,14 @@ export default class Switch extends ActiveElement {
                             name: 'wait_for_camera',
                             duration: 500
                         }, () => {
-                            world.putTile(225, 23, 196, LAYERS.BACKGROUND2)
-                            world.putTile(226, 23, 229, LAYERS.BACKGROUND2)
-                            world.putTile(225, 24, 258, LAYERS.MAIN)
-                            world.putTile(226, 24, 259, LAYERS.MAIN)
-                            world.putTile(227, 24, 101, LAYERS.MAIN)
-                            world.putTile(225, 25, 129, LAYERS.MAIN)
-                            world.putTile(226, 25, 132, LAYERS.MAIN)
-                            world.putTile(227, 25, 130, LAYERS.MAIN)
+                            this._scene.addTile(225, 23, 196, LAYERS.BACKGROUND2)
+                            this._scene.addTile(226, 23, 229, LAYERS.BACKGROUND2)
+                            this._scene.addTile(225, 24, 258, LAYERS.MAIN)
+                            this._scene.addTile(226, 24, 259, LAYERS.MAIN)
+                            this._scene.addTile(227, 24, 101, LAYERS.MAIN)
+                            this._scene.addTile(225, 25, 129, LAYERS.MAIN)
+                            this._scene.addTile(226, 25, 132, LAYERS.MAIN)
+                            this._scene.addTile(227, 25, 130, LAYERS.MAIN)
                             camera.shake()
                             this._scene.startTimeout({
                                 name: 'wait_for_player',
@@ -75,30 +74,37 @@ export default class Switch extends ActiveElement {
                             name: 'wait_for_camera',
                             duration: 500
                         }, () => {
-                            world.putTile(495, 75, 0, LAYERS.BACKGROUND2)
-                            world.putTile(496, 75, 0, LAYERS.BACKGROUND2)
-                            world.putTile(497, 75, 0, LAYERS.BACKGROUND2)
-                            world.putTile(498, 75, 0, LAYERS.BACKGROUND2)
-                            world.putTile(495, 76, 0, LAYERS.MAIN)
-                            world.putTile(496, 76, 0, LAYERS.MAIN)
-                            world.putTile(497, 76, 0, LAYERS.MAIN)
-                            world.putTile(498, 76, 0, LAYERS.MAIN)
-                            world.putTile(495, 76, 161, LAYERS.FOREGROUND1)
-                            world.putTile(498, 76, 161, LAYERS.FOREGROUND1)
-                            world.putTile(495, 77, 161, LAYERS.FOREGROUND1)
-                            world.putTile(498, 77, 161, LAYERS.FOREGROUND1)
-                            world.putTile(495, 78, 161, LAYERS.FOREGROUND1)
-                            world.putTile(498, 78, 161, LAYERS.FOREGROUND1)
-                            world.putTile(495, 79, 161, LAYERS.FOREGROUND1)
-                            world.putTile(498, 79, 161, LAYERS.FOREGROUND1)
-                            world.putTile(495, 79, 82, LAYERS.BACKGROUND2)
-                            world.putTile(496, 79, 82, LAYERS.BACKGROUND2)
-                            world.putTile(497, 79, 82, LAYERS.BACKGROUND2)
-                            world.putTile(498, 79, 82, LAYERS.BACKGROUND2)
-                            world.putTile(495, 80, 292, LAYERS.MAIN)
-                            world.putTile(496, 80, 293, LAYERS.MAIN)
-                            world.putTile(497, 80, 293, LAYERS.MAIN)
-                            world.putTile(498, 80, 294, LAYERS.MAIN)
+                            this._scene.addTile(495, 75, 0, LAYERS.BACKGROUND2)
+                            this._scene.addTile(496, 75, 0, LAYERS.BACKGROUND2)
+                            this._scene.addTile(497, 75, 0, LAYERS.BACKGROUND2)
+                            this._scene.addTile(498, 75, 0, LAYERS.BACKGROUND2)
+                            this._scene.addTile(495, 76, 0, LAYERS.MAIN)
+                            this._scene.addTile(496, 76, 0, LAYERS.MAIN)
+                            this._scene.addTile(497, 76, 0, LAYERS.MAIN)
+                            this._scene.addTile(498, 76, 0, LAYERS.MAIN)
+                            this._scene.addTile(495, 76, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(498, 76, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(495, 77, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(498, 77, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(495, 78, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(498, 78, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(495, 79, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(498, 79, 161, LAYERS.FOREGROUND1)
+                            this._scene.addTile(495, 79, 82, LAYERS.BACKGROUND2)
+                            this._scene.addTile(496, 79, 82, LAYERS.BACKGROUND2)
+                            this._scene.addTile(497, 79, 82, LAYERS.BACKGROUND2)
+                            this._scene.addTile(498, 79, 82, LAYERS.BACKGROUND2)
+                            this._scene.addTile(495, 80, 292, LAYERS.MAIN)
+                            this._scene.addTile(496, 80, 293, LAYERS.MAIN)
+                            this._scene.addTile(497, 80, 293, LAYERS.MAIN)
+                            this._scene.addTile(498, 80, 294, LAYERS.MAIN)
+                            world.addObject({
+                                type: ENTITIES_TYPE.DUST,
+                                x: 7904,
+                                y: 1276,
+                                direction: DIRECTIONS.RIGHT
+                            }, LAYERS.OBJECTS)
+
                             camera.shake()
                             this._scene.startTimeout({
                                 name: 'wait_for_player',

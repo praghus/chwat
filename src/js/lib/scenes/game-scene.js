@@ -57,7 +57,7 @@ export default class GameScene extends Scene {
             this.darkmask = new DarkMask({lights: [this.light]})
             this.lightmask = []
             this.lights = []
-            this.createShadowCasters()
+            this.generateShadowCasters()
         }
         this.overlay.fadeIn()
     }
@@ -93,7 +93,7 @@ export default class GameScene extends Scene {
 
     renderBackground () {
         const { ctx, assets, player, viewport: { resolutionX, resolutionY } } = this
-        if (!this.camera.underground && player.inDark === 0) {
+        if (!this.camera.underground && !player.inDark) {
             const cameraX = this.camera.x + 3300
             const fogBorder = 600
             ctx.fillStyle = COLORS.BLUE_SKY
@@ -173,7 +173,7 @@ export default class GameScene extends Scene {
         }
     }
 
-    createShadowCasters () {
+    generateShadowCasters () {
         const { width, height, spriteSize } = this.world
         this.shadowCasters = [...Array(width).keys()].map(() => Array(height))
         for (let y = 0; y < height; y++) {
@@ -183,6 +183,11 @@ export default class GameScene extends Scene {
                     : null
             }
         }
+    }
+
+    addShadowCaster (x, y) {
+        const { spriteSize } = this.world
+        this.shadowCasters[x][y] = createRectangleObject(x, y, spriteSize, spriteSize)
     }
 
     getShadowCaster (x, y) {
@@ -209,6 +214,14 @@ export default class GameScene extends Scene {
 
     addLightElement (x, y, distance, color) {
         this.lights.push(createLamp(x, y, distance, color))
+    }
+
+    addTile (x, y, tile, layer) {
+        const { world } = this
+        world.putTile(x, y, tile, layer)
+        if (world.isSolidTile(tile) && layer === LAYERS.MAIN) {
+            this.addShadowCaster(x, y)
+        }
     }
 
     loadGame () {

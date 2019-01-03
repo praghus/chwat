@@ -1,15 +1,16 @@
-// export const NON_COLLIDE_INDEX = 256
-// export const SPECIAL_TILES_INDEX = 1024
 export const JUMP_THROUGH_TILES = [
-    210, 211, 212, 213, 214, 243, 836, 868, 1088, 1089
+    87, 88, 210, 211, 212, 213, 214, 215, 243, 836,
+    868, 1088, 1089, 917, 918, 1077, 1078
 ]
 export const NON_COLLIDE_TILES = [
-    1, 2, 7, 15, 16, 17, 18, 19, 44, 47,
-    48, 49, 50, 51, 22, 38, 39, 54, 69, 71,
-    79, 80, 81, 97, 101, 111, 112, 115, 116, 129,
-    130, 131, 132, 133, 140, 141, 142, 143, 144, 145,
-    146, 147, 148, 149, 177, 178, 179, 180, 181, 182,
-    230, 233, 234, 235, 245
+    1, 2, 7, 15, 16, 17, 18, 19, 40, 42,
+    44, 47, 48, 49, 50, 51, 22, 38, 39, 54,
+    58, 59, 60, 61, 69, 71, 79, 80, 81, 119,
+    120, 90, 91, 92, 93, 97, 101, 110, 111, 112,
+    115, 116, 121, 122, 125, 153, 129, 130, 131, 132,
+    133, 140, 141, 142, 143, 144, 145, 146, 147, 148,
+    149, 177, 178, 179, 180, 181, 182, 230, 233, 234,
+    235, 245, 1045, 1046
 ]
 export const MINI_TILES = {
     '230': {offsetX: 8, offsetY: 8, width: 8, height: 8},
@@ -17,18 +18,15 @@ export const MINI_TILES = {
     '234': {offsetX: 8, offsetY: 8, width: 8, height: 8},
     '235': {offsetX: 0, offsetY: 8, width: 8, height: 8}
 }
-
 export const SCENES = {
     INTRO: 'INTRO',
     GAME: 'GAME'
 }
-
 export const FONTS = {
     FONT_SMALL: { name: 'font_small', size: 5},
     FONT_NORMAL: { name: 'font_normal', size: 8},
     FONT_BIG: { name: 'font_big', size: 16}
 }
-
 export const COLORS = {
     BLUE_SKY: '#7CF',
     BLACK: '#000',
@@ -40,7 +38,6 @@ export const COLORS = {
     SPIDER_WEB: 'rgba(255,255,255,0.5)',
     TRANS_WHITE: 'rgba(255,255,255,0.1)'
 }
-
 export const LAYERS = {
     MAIN: 3,
     BACKGROUND1: 1,
@@ -49,14 +46,12 @@ export const LAYERS = {
     FOREGROUND2: 6,
     OBJECTS: 4
 }
-
 export const DIRECTIONS = {
     UP: 'up',
     RIGHT: 'right',
     DOWN: 'down',
     LEFT: 'left'
 }
-
 export const INPUTS = {
     INPUT_UP: 'up',
     INPUT_RIGHT: 'right',
@@ -67,7 +62,6 @@ export const INPUTS = {
     INPUT_DEBUG: 'debug',
     INPUT_RESTORE: 'restore'
 }
-
 export const INPUT_KEYS = {
     [INPUTS.INPUT_UP]: ['KeyW', 'ArrowUp'],
     [INPUTS.INPUT_RIGHT]: ['KeyD', 'ArrowRight'],
@@ -78,7 +72,6 @@ export const INPUT_KEYS = {
     [INPUTS.INPUT_DEBUG]: ['KeyI'],
     [INPUTS.INPUT_RESTORE]: ['KeyL']
 }
-
 export const TIMEOUTS = {
     'MESSAGE': { name: 'message', duration: 3000 },
     'HINT': { name: 'hint', duration: 2000 },
@@ -87,7 +80,6 @@ export const TIMEOUTS = {
     'PLAYER_RESPAWN': { name: 'player_respawn', duration: 1000 },
     'PLAYER_TAKE': { name: 'player_take', duration: 500 }
 }
-
 export const ASSETS = {
     BALLOON: 'air_balloon',
     BAT: 'bat',

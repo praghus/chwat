@@ -49,7 +49,6 @@ export default class Slime extends Character {
 
             this.move()
 
-            
             if (
                 this.expectedX !== this.x ||
                 this.onRightEdge ||

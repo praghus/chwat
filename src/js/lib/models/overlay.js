@@ -60,7 +60,7 @@ export default class Overlay {
     }
 
     displayHUD () {
-        const { ctx, camera, assets, debug, fps, player, viewport, countTime, world } = this._scene
+        const { ctx, camera, assets, debug, fps, player, viewport, countTime } = this._scene
         const { resolutionX, resolutionY } = viewport
         const { energy, items, lives } = player
         const fpsIndicator = `FPS:${Math.round(fps)}`
@@ -193,27 +193,27 @@ export default class Overlay {
             ctx.stroke()
             ctx.restore()
 
-            if (entity.triangle.length > 0) {
-                ctx.save()
-                ctx.strokeStyle = COLORS.GREEN
-                ctx.beginPath()
-                ctx.moveTo(
-                    entity.triangle[0][0] + camera.x,
-                    entity.triangle[0][1] + camera.Y
-                )
-                entity.triangle.map(([x, y]) => {
-                    ctx.lineTo(
-                        x + camera.x,
-                        y + camera.y
-                    )
-                })
-                ctx.lineTo(
-                    entity.triangle[0][0] + camera.x,
-                    entity.triangle[0][1] + camera.y
-                )
-                ctx.stroke()
-                ctx.restore()
-            }
+            // if (entity.triangle.length > 0) {
+            //     ctx.save()
+            //     ctx.strokeStyle = COLORS.GREEN
+            //     ctx.beginPath()
+            //     ctx.moveTo(
+            //         entity.triangle[0][0] + camera.x,
+            //         entity.triangle[0][1] + camera.Y
+            //     )
+            //     entity.triangle.map(([x, y]) => {
+            //         ctx.lineTo(
+            //             x + camera.x,
+            //             y + camera.y
+            //         )
+            //     })
+            //     ctx.lineTo(
+            //         entity.triangle[0][0] + camera.x,
+            //         entity.triangle[0][1] + camera.y
+            //     )
+            //     ctx.stroke()
+            //     ctx.restore()
+            // }
 
             // if (bounds) {
             //     this.outline(
