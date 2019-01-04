@@ -90,8 +90,16 @@ export default class Overlay {
         const align = 3 // -19 + resolutionX / 2
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
-            if (item && item.properties) {
+            if (item) {
                 // this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
+                // const {columns, name, firstgid} = world.getAssetForTile(item.gid)
+                // ctx.drawImage(assets[name],
+                //     ((item.gid - firstgid) % columns) * world.spriteSize,
+                //     (Math.ceil(((item.gid - firstgid) + 1) / columns) - 1) * world.spriteSize,
+                //     world.spriteSize, world.spriteSize,
+                //     align + 1 + (index * 20), resolutionY - 19,
+                //     world.spriteSize, world.spriteSize)
+
                 ctx.drawImage(
                     assets[ASSETS.ITEMS],
                     item.animation.x, item.animation.y,
@@ -163,21 +171,59 @@ export default class Overlay {
             Math.floor(entity.x + camera.x),
             Math.floor(entity.y + camera.y)
         ]
-        if (entity.vectorMask) {
+        if (entity.points) {
             ctx.save()
             ctx.strokeStyle = COLORS.LIGHT_RED
             ctx.beginPath()
-            ctx.moveTo(posX, posY)
-            entity.vectorMask.map(({x, y}) => ctx.lineTo(
-                posX + x,
-                posY + y
-            ))
+            ctx.moveTo(
+                entity.points[0][0] + posX,
+                entity.points[0][1] + posY
+            )
+            entity.points.map(([x, y]) => {
+                ctx.lineTo(
+                    posX + x,
+                    posY + y
+                )
+                // this.displayText(`${entity.x + x},${entity.x + y}`, posX + x, posY + y)
+            })
             ctx.lineTo(
-                entity.vectorMask[0].x + posX,
-                entity.vectorMask[0].y + posY
+                entity.points[0][0] + posX,
+                entity.points[0][1] + posY
             )
             ctx.stroke()
             ctx.restore()
+
+            // if (entity.triangle.length > 0) {
+            //     ctx.save()
+            //     ctx.strokeStyle = COLORS.GREEN
+            //     ctx.beginPath()
+            //     ctx.moveTo(
+            //         entity.triangle[0][0] + camera.x,
+            //         entity.triangle[0][1] + camera.Y
+            //     )
+            //     entity.triangle.map(([x, y]) => {
+            //         ctx.lineTo(
+            //             x + camera.x,
+            //             y + camera.y
+            //         )
+            //     })
+            //     ctx.lineTo(
+            //         entity.triangle[0][0] + camera.x,
+            //         entity.triangle[0][1] + camera.y
+            //     )
+            //     ctx.stroke()
+            //     ctx.restore()
+            // }
+
+            // if (bounds) {
+            //     this.outline(
+            //         posX + bounds.x,
+            //         posY + bounds.y,
+            //         bounds.width,
+            //         bounds.height,
+            //         COLORS.SPIDER_WEB
+            //     )
+            // }
         }
         else {
             this.outline(
@@ -200,6 +246,12 @@ export default class Overlay {
                 posY - 8,
             )
         }
+        // else {
+        //     this.displayText(`${String.fromCharCode(26)}`,
+        //         posX,
+        //         posY,
+        //     )
+        // }
         // ${String.fromCharCode(26)}
         if (force.x !== 0) {
             const forceX = `${force.x.toFixed(2)}`

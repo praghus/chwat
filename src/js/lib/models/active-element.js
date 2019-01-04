@@ -1,6 +1,6 @@
 import { Entity } from 'tmx-platformer-lib'
 import { randomInt } from '../../lib/helpers'
-import { TIMEOUTS } from '../../lib/constants'
+import { TIMEOUTS, LAYERS } from '../../lib/constants'
 import { ENTITIES_TYPE } from '../../lib/entities'
 
 export default class ActiveElement extends Entity {
@@ -21,20 +21,28 @@ export default class ActiveElement extends Entity {
 
     draw () {
         const {
-            addLightmaskElement, camera, debug, dynamicLights, overlay
+            addLightElement, addLightmaskElement, camera, debug, dynamicLights, overlay
         } = this._scene
 
-        if (this.visible && dynamicLights && this.lightmask) {
+        if (dynamicLights && this.visible && this.onScreen()) {
             const [ posX, posY ] = [
                 Math.floor(this.x + camera.x),
                 Math.floor(this.y + camera.y)
             ]
-            addLightmaskElement(this.lightmask, {
+
+            this.lightmask && addLightmaskElement(this.lightmask, {
                 x: posX,
                 y: posY,
                 width: this.width,
                 height: this.height
             })
+
+            this.light && addLightElement(
+                posX + (this.width / 2),
+                posY + (this.height / 2),
+                this.light.distance,
+                this.light.color
+            )
         }
 
         super.draw()
@@ -46,7 +54,6 @@ export default class ActiveElement extends Entity {
                 Math.floor(y + camera.y)
             )
         }
-
         this.hint && overlay.addHint(this)
         this.onScreen() && debug && overlay.displayDebug(this)
     }
@@ -59,7 +66,8 @@ export default class ActiveElement extends Entity {
     }
 
     showMessage (text) {
-        const { offsetX, offsetY } = this.properties
+        const offsetX = this.properties && this.properties.offsetX || 0
+        const offsetY = this.properties && this.properties.offsetY || 0
         const { world } = this._scene
         const [x, y] = [
             offsetX ? this.x + offsetX * world.spriteSize : this.x,
@@ -77,18 +85,17 @@ export default class ActiveElement extends Entity {
         this._scene.startTimeout(TIMEOUTS.MESSAGE, this.hideMessage)
     }
 
-    addItem (id, name, x, y) {
-        this._scene.elements.add({
+    addItem (properties, x, y) {
+        const { produce, produce_name, produce_gid } = properties
+        this._scene.world.addObject({
             type: ENTITIES_TYPE.ITEM,
-            name: name || '',
+            visible: true,
+            gid: produce_gid || null,
+            name: produce_name || '',
             x: x || this.x,
             y: y || this.y,
-            properties: [{
-                name: 'id',
-                type: 'string',
-                value: id
-            }]
-        })
+            properties: { id: produce }
+        }, LAYERS.OBJECTS)
     }
 
     emitParticles (count, properties) {
@@ -96,7 +103,10 @@ export default class ActiveElement extends Entity {
         for (let i = 0; i < particle_count; i++) {
             const props = {...properties}
             props.x = properties.x + randomInt(0, 8)
-            this._scene.elements.add({type: ENTITIES_TYPE.PARTICLE, ...props})
+            this._scene.world.addObject({
+                type: ENTITIES_TYPE.PARTICLE,
+                ...props
+            }, LAYERS.OBJECTS)
         }
     }
 }

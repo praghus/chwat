@@ -2,6 +2,7 @@ import ActiveElement from '../models/active-element'
 import { randomInt } from '../../lib/helpers'
 import { DIRECTIONS } from '../../lib/constants'
 
+// change name to color rectangle
 export default class LavaStone extends ActiveElement {
     constructor (obj, scene) {
         super(obj, scene)
@@ -12,10 +13,6 @@ export default class LavaStone extends ActiveElement {
         this.maxSpeed = 1
         this.damage = 20
         this.color = 'rgb(200,100,0)'
-    }
-
-    collide () {
-
     }
 
     draw () {

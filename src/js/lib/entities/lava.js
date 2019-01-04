@@ -1,7 +1,7 @@
 import ActiveElement from '../models/active-element'
 import { randomChoice, randomInt } from '../../lib/helpers'
 import { ENTITIES_TYPE } from '../../lib/entities'
-import { DIRECTIONS } from '../../lib/constants'
+import { DIRECTIONS, LAYERS } from '../../lib/constants'
 
 export default class Lava extends ActiveElement {
     constructor (obj, scene) {
@@ -20,7 +20,7 @@ export default class Lava extends ActiveElement {
         for (let x = 0; x < Math.round((this.width / 2) / spriteSize); x++) {
             const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
             const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-            if (!this._scene.world.isSolid(PX, PY)) {
+            if (!world.isSolidArea(PX, PY)) {
                 ctx.drawImage(assets[this.asset],
                     this.animation.x + this.animFrame * this.animation.w, this.animation.y,
                     this.animation.w, this.animation.h,
@@ -40,8 +40,9 @@ export default class Lava extends ActiveElement {
     }
 
     shoot () {
-        const { elements } = this._scene
-        elements.add({
+        const { world } = this._scene
+
+        world.addObject({
             type: ENTITIES_TYPE.LAVA_STONE,
             visible: true,
             direction: randomChoice([
@@ -54,7 +55,8 @@ export default class Lava extends ActiveElement {
             },
             x: this.x + randomInt(1, 8) * 16,
             y: this.y - 16
-        })
+        }, LAYERS.OBJECTS)
+
         this.shootTimeout = setTimeout(() => {
             this.canShoot = true
         }, this.shootDelay)

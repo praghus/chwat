@@ -19,7 +19,7 @@ export default class Slime extends Character {
             RUN_LEFT: {x: 0, y: 48, w: 48, h: 48, frames: 14, fps: 12, loop: true},
             RUN_RIGHT: {x: 0, y: 96, w: 48, h: 48, frames: 14, fps: 12, loop: true}
         }
-        this.direction = this.getProperty('direction') || DIRECTIONS.LEFT
+        this.direction = this.properties && this.properties.direction || DIRECTIONS.LEFT
         this.wait()
     }
 

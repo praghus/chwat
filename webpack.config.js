@@ -20,7 +20,7 @@ const jsSourcePath = path.join(__dirname, './src/js')
 
 const jsEs6Source = inArray([
     jsSourcePath,
-    dependencyPath('tmx-platformer-lib', 'lib'),
+    dependencyPath('tmx-platformer-lib', 'lib')
 ])
 
 const plugins = [
@@ -61,7 +61,6 @@ const plugins = [
 const rules = [
     {
         test: /\.(js|jsx)$/,
-        //exclude: /node_modules/,
         include: jsEs6Source,
         use: 'babel-loader'
     },
@@ -74,6 +73,10 @@ const rules = [
         test: /\.(mp3|wav)$/,
         include: audioPath,
         loader: 'file-loader?name=[name]-[hash].[ext]'
+    },
+    {
+        test: /\.tmx$/,
+        loader: 'xml-loader?explicitChildren=true&preserveChildrenOrder=true'
     },
     {
         test: /\.json$/,

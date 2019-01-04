@@ -1,6 +1,6 @@
 import ActiveElement from '../models/active-element'
 import { ENTITIES_TYPE } from '../../lib/entities'
-import { DIRECTIONS } from '../../lib/constants'
+import { DIRECTIONS, LAYERS } from '../../lib/constants'
 import { createRectangleObject } from '../../lib/helpers'
 
 export default class Crusher extends ActiveElement {
@@ -10,7 +10,7 @@ export default class Crusher extends ActiveElement {
         this.fall = false
         this.rise = false
         this.solid = true
-        this.fallDelay = parseInt(this.getProperty('delay')) || 1000
+        this.fallDelay = parseInt(this.properties.delay) || 1000
         this.lightmask = createRectangleObject(this.x, this.y, this.width, this.height)
         this.fallTimeout = setTimeout(() => {
             this.fall = true
@@ -19,7 +19,7 @@ export default class Crusher extends ActiveElement {
 
     update () {
         if (this.onScreen()) {
-            const { camera, elements, world } = this._scene
+            const { camera, world } = this._scene
 
             if (this.rise) {
                 this.force.y -= 0.005
@@ -37,18 +37,18 @@ export default class Crusher extends ActiveElement {
                 this.force.y = 0
                 this.fall = false
                 this.rise = true
-                elements.add({
+                world.addObject({
                     type: ENTITIES_TYPE.DUST,
                     x: this.x - 16,
                     y: this.y + this.height - 16,
                     direction: DIRECTIONS.RIGHT
-                })
-                elements.add({
+                }, LAYERS.OBJECTS)
+                world.addObject({
                     type: ENTITIES_TYPE.DUST,
                     x: this.x + this.width,
                     y: this.y + this.height - 16,
                     direction: DIRECTIONS.LEFT
-                })
+                }, LAYERS.OBJECTS)
                 camera.shake()
             }
             if (this.onCeiling) {
