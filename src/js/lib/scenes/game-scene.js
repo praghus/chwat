@@ -81,11 +81,11 @@ export default class GameScene extends Scene {
         if (camera.underground || player.underground || player.inDark > 0) {
             this.dynamicLights && this.calculateShadows()
             this.renderLightingEffect()
-            world.hideLayer(LAYERS.FOREGROUND2)
+            // world.hideLayer(LAYERS.FOREGROUND2)
         }
-        else {
-            world.showLayer(LAYERS.FOREGROUND2)
-        }
+        // else {
+        //     world.showLayer(LAYERS.FOREGROUND2)
+        // }
         overlay.displayHUD()
         this.checkTimeout(TIMEOUTS.PLAYER_MAP) && overlay.displayMap()
         overlay.update()

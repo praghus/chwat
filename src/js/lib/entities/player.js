@@ -149,7 +149,7 @@ export default class Player extends Character {
                 ? this.animations.STAND_RIGHT
                 : this.animations.STAND_LEFT)
         }
-        this.underground = this.y >= world.surface * world.spriteSize
+        // this.underground = this.y >= world.surface * world.spriteSize
     }
 
     collide (element) {

@@ -38,7 +38,7 @@ export default class Trigger extends ActiveElement {
                                 rel.activator = item
                                 this._scene.startTimeout({
                                     name: 'wait_for_player',
-                                    duration: 500
+                                    duration: 2500
                                 }, () => {
                                     overlay.fadeIn()
                                     camera.setFollow(player)

@@ -1,5 +1,5 @@
 import './illuminated'
-import { ENTITIES, ENTITIES_TYPE } from './entities'
+import { ENTITIES } from './entities'
 import { JUMP_THROUGH_TILES, INPUT_KEYS, MINI_TILES } from './constants'
 
 export const noop = () => {}
