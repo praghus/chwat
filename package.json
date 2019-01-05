@@ -5,9 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --mode development --hot --inline",
-    "build": "cross-env NODE_ENV=\"production\" && rimraf ./dist && webpack --mode production",
-    "preview": "cross-env NODE_ENV=\"production\" && webpack-dev-server --mode production"
+    "start": "webpack-dev-server --open --config webpack.dev.js",
+    "build": "webpack --config webpack.prod.js"
   },
   "keywords": [],
   "author": "Piotr Praga",
@@ -48,6 +47,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.14.0",
     "babel-runtime": "^6.25.0",
+    "clean-webpack-plugin": "^1.0.0",
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.0",
     "eslint": "^4.3.0",
@@ -70,6 +70,7 @@
     "webpack": "^4.28.3",
     "webpack-cli": "^3.2.0",
     "webpack-dev-server": "^3.1.14",
+    "webpack-merge": "^4.2.1",
     "xml-loader": "^1.2.1"
   }
 }
