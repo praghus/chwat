@@ -50,7 +50,7 @@ export default class Player extends Character {
 
     update () {
         const { input, world } = this._scene
-
+        // @todo: consider player states
         if (this.canMove()) {
             if (input[INPUTS.INPUT_LEFT]) {
                 if (this.direction === DIRECTIONS.RIGHT) {
@@ -149,6 +149,7 @@ export default class Player extends Character {
                 ? this.animations.STAND_RIGHT
                 : this.animations.STAND_LEFT)
         }
+        // this.underground = this.y >= world.surface * world.spriteSize
     }
 
     collide (element) {
@@ -161,6 +162,9 @@ export default class Player extends Character {
     }
 
     hit (s) {
+        // im immortal in debug mode
+        if (!!this._scene.debug) return
+
         this.maxEnergy -= s
         this.maxEnergy <= 0
             ? this.maxEnergy = 0
@@ -185,12 +189,13 @@ export default class Player extends Character {
     }
 
     canUse (itemId) {
-        const haveItem = this.items.find((item) => item && item.getProperty('id') === itemId)
+        if (!!this._scene.debug) return true
+        const haveItem = this.items.find((item) => item && item.properties.id === itemId)
         return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
     useItem (itemId) {
-        const item = this.items.find((item) => item && item.getProperty('id') === itemId)
+        const item = this.items.find((item) => item && item.properties.id === itemId)
         if (item) {
             [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
                 ? [this.items[1], null]

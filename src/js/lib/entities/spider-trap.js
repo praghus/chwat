@@ -1,4 +1,5 @@
 import ActiveElement from '../models/active-element'
+import { COLORS } from '../constants'
 
 export default class SpiderTrap extends ActiveElement {
     constructor (obj, scene) {
@@ -9,7 +10,7 @@ export default class SpiderTrap extends ActiveElement {
         this.solid = true
         this.startX = this.x + (this.width / 2)
         this.startY = this.y
-        this.fallDelay = parseInt(this.getProperty('delay')) || 1000
+        this.fallDelay = parseInt(this.properties.delay) || 1000
         this.fallTimeout = setTimeout(() => {
             this.fall = true
         }, this.fallDelay)
@@ -20,6 +21,7 @@ export default class SpiderTrap extends ActiveElement {
         const { camera, ctx, assets } = this._scene
         if (this.onScreen()) {
             ctx.beginPath()
+            ctx.strokeStyle = COLORS.SPIDER_WEB
             ctx.moveTo(this.startX + camera.x, this.startY + camera.y)
             ctx.lineTo(this.startX + camera.x, this.y + camera.y)
             ctx.stroke()

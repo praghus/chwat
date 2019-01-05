@@ -7,31 +7,28 @@ export default class IntroScene extends Scene {
     constructor (game) {
         super(game)
         this.overlay = new Overlay(this)
+        this.loaded = true
     }
 
-    update (nextProps) {
-        super.update(nextProps)
+    onUpdate () {
         if (this.fetchInput(INPUTS.INPUT_ACTION) || this.fetchInput(INPUTS.INPUT_UP)) {
             this.setScene(SCENES.GAME)
         }
     }
 
-    draw () {
+    render () {
         const { assets, ctx, overlay, viewport } = this
-        const { resolutionX, resolutionY, scale } = viewport
+        const { resolutionX, resolutionY } = viewport
 
-        ctx.imageSmoothingEnabled = false
-        ctx.save()
-        ctx.scale(scale, scale)
         ctx.fillStyle = COLORS.BLUE_SKY
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.drawImage(assets['bg6'], 0, 0)
         ctx.drawImage(assets[ASSETS.MOUNTAINS], -495, -30)
         ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 45)
+
         overlay.displayText(isMobileDevice()
             ? '    TAP TO BEGIN    '
             : 'PRESS SPACE TO BEGIN',
         Math.ceil(resolutionX / 2) - 50, resolutionY - 10)
-        ctx.restore()
     }
 }

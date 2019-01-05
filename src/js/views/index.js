@@ -7,9 +7,7 @@ import { inputPropType, tickerPropType, viewportPropType } from '../lib/prop-typ
 import { startTicker, tickTime, updateKeyPressed, updateMousePos } from '../actions'
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(
-    (state, image) => ({
-        ...state, [image.split('/')[1].split('-')[0]]: image.split('/')[1]
-    }), {}
+    (state, image) => ({...state, [image.split('-')[0]]: image}), {}
 )
 
 const propTypes = {

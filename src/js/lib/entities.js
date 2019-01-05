@@ -1,9 +1,4 @@
 import { ASSETS } from './constants'
-// import {
-//     Balloon, Bat, Bridge, Catapult, Checkpoint, Cook, Crusher, DarkMask, Dust, Dragon, Flag,
-//     Grass, Item, Lava, LavaStone, MapPiece, Paddle, Particle, Player, Rock, Slime, Slope,
-//     SpiderTrap, Spikes, Switch, Torch, Trigger, Water, Witch, WoodenBridge
-// } from '../models/entities'
 
 import Balloon from './entities/balloon'
 import Bat from './entities/bat'
@@ -44,7 +39,6 @@ export const ENTITIES_FAMILY = {
     PARTICLES: 'particles',
     TRAPS: 'traps'
 }
-
 export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
     BAT: 'bat',
@@ -68,19 +62,16 @@ export const ENTITIES_TYPE = {
     PARTICLE: 'particle',
     PLAYER: 'player',
     ROCK: 'rock',
-    SLOPE_LEFT: 'slope_left',
-    SLOPE_RIGHT: 'slope_right',
+    SLOPE: 'slope',
     SPIDER_TRAP: 'spider_trap',
     SPIKES: 'spikes',
     SWITCH: 'switch',
-    TORCH_BIG: 'torch_big',
-    TORCH_SMALL: 'torch_small',
+    TORCH: 'torch',
     TRIGGER: 'trigger',
     WATER: 'water',
     WITCH: 'witch',
     WOODEN_BRIDGE: 'wooden_bridge'
 }
-
 export const ENTITIES = [
     { type: ENTITIES_TYPE.PLAYER, model: Player, asset: ASSETS.PLAYER},
     { type: ENTITIES_TYPE.BALLOON, family: ENTITIES_FAMILY.MODIFIERS, model: Balloon, asset: ASSETS.BALLOON },
@@ -105,11 +96,9 @@ export const ENTITIES = [
     { type: ENTITIES_TYPE.SLIME, family: ENTITIES_FAMILY.ENEMIES, model: Slime, asset: ASSETS.SLIME },
     { type: ENTITIES_TYPE.SPIDER_TRAP, family: ENTITIES_FAMILY.TRAPS, model: SpiderTrap, asset: ASSETS.SPIDER_TRAP },
     { type: ENTITIES_TYPE.SPIKES, family: ENTITIES_FAMILY.TRAPS, model: Spikes },
-    { type: ENTITIES_TYPE.SLOPE_LEFT, family: ENTITIES_FAMILY.MODIFIERS, model: Slope },
-    { type: ENTITIES_TYPE.SLOPE_RIGHT, family: ENTITIES_FAMILY.MODIFIERS, model: Slope },
+    { type: ENTITIES_TYPE.SLOPE, family: ENTITIES_FAMILY.MODIFIERS, model: Slope },
     { type: ENTITIES_TYPE.SWITCH, family: ENTITIES_FAMILY.MODIFIERS, model: Switch, asset: ASSETS.SWITCH },
-    { type: ENTITIES_TYPE.TORCH_BIG, family: ENTITIES_FAMILY.MODIFIERS, model: Torch, asset: ASSETS.TORCH },
-    { type: ENTITIES_TYPE.TORCH_SMALL, family: ENTITIES_FAMILY.MODIFIERS, model: Torch, asset: ASSETS.TORCH },
+    { type: ENTITIES_TYPE.TORCH, family: ENTITIES_FAMILY.MODIFIERS, model: Torch, asset: ASSETS.TORCH },
     { type: ENTITIES_TYPE.TRIGGER, family: ENTITIES_FAMILY.MODIFIERS, model: Trigger },
     { type: ENTITIES_TYPE.WATER, family: ENTITIES_FAMILY.TRAPS, model: Water, asset: ASSETS.WATER },
     { type: ENTITIES_TYPE.WITCH, family: ENTITIES_FAMILY.MODIFIERS, model: Witch },

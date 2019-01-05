@@ -7,55 +7,77 @@ export default class Item extends ActiveElement {
         super(obj, scene)
         this.width = 16
         this.height = 16
+        this.solid = true
+        this.y -= this.height
         this.initialPosition = {
             x: this.x,
             y: this.y
         }
         this.types = {
-            axe: {x: 64, y: 0},
-            ball: {x: 64, y: 32},
-            chopper: {x: 112, y: 32},
-            cure: {x: 128, y: 0},
-            coconuts: {x: 80, y: 48},
-            coin: {x: 0, y: 48},
-            crank: {x: 80, y: 32},
-            crowbar: {x: 32, y: 0},
-            flag: {x: 48, y: 16},
-            flour: {x: 48, y: 48},
-            glove: {x: 64, y: 48},
-            hammer: {x: 16, y: 48},
-            handle: {x: 144, y: 0},
-            hay: {x: 96, y: 48},
-            heavy_key: {x: 128, y: 16},
-            key: {x: 16, y: 16},
-            key_1: {x: 0, y: 0},
-            knocker: {x: 32, y: 16},
-            line: {x: 80, y: 0},
-            medicine: {x: 128, y: 0},
-            nails: {x: 96, y: 32},
-            oiler: {x: 96, y: 16},
-            pipe: {x: 112, y: 16},
-            plank: {x: 48, y: 32},
-            saw: {x: 96, y: 0},
-            scissors: {x: 128, y: 32},
-            scythe: {x: 16, y: 32},
-            sheep: {x: 144, y: 32},
-            spade: {x: 48, y: 0},
-            stick: {x: 0, y: 16},
-            stone: {x: 80, y: 16},
-            sulfur: {x: 0, y: 32},
-            tar: {x: 144, y: 16},
-            tnt: {x: 16, y: 0},
-            tools: {x: 32, y: 48},
-            weight: {x: 112, y: 0},
-            undefined: {x: 0, y: 0}
+            axe: {name: 'Axe', sprite: [64, 0]},
+            ball: {name: 'Crystal ballBall', sprite: [64, 32]},
+            chopper: {name: 'Chopper', sprite: [112, 32]},
+            coconuts: {name: '', sprite: [80, 48]},
+            coin: {name: 'Coin', sprite: [0, 48]},
+            crank: {name: 'Crank', sprite: [80, 32]},
+            crowbar: {name: 'Crowbar', sprite: [32, 0]},
+            flag: {name: 'Flag', sprite: [48, 16]},
+            flour: {name: 'Flour', sprite: [48, 48]},
+            glove: {name: 'Glove', sprite: [64, 48]},
+            hammer: {name: 'Hammer', sprite: [16, 48]},
+            handle: {name: 'Handle', sprite: [144, 0]},
+            hay: {name: 'Hay', sprite: [96, 48]},
+            heavy_key: {name: 'Heavy key', sprite: [128, 16]},
+            key: {name: 'Key', sprite: [16, 16]},
+            knocker: {name: 'Knocker', sprite: [32, 16]},
+            line: {name: 'Line', sprite: [80, 0]},
+            medicine: {name: 'Medicine', sprite: [128, 0]},
+            nails: {name: 'Nails', sprite: [96, 32]},
+            oiler: {name: 'Oiler', sprite: [96, 16]},
+            pipe: {name: 'Pipe', sprite: [112, 16]},
+            plank: {name: 'Plank', sprite: [48, 32]},
+            saw: {name: 'Saw', sprite: [96, 0]},
+            scissors: {name: 'Scissors', sprite: [128, 32]},
+            scythe: {name: 'Scythe', sprite: [16, 32]},
+            sheep: {name: 'Sheep', sprite: [144, 32]},
+            spade: {name: 'Spade', sprite: [48, 0]},
+            stick: {name: 'Stick', sprite: [0, 16]},
+            stone: {name: 'Stone', sprite: [80, 16]},
+            sulfur: {name: 'Sulfur', sprite: [0, 32]},
+            tar: {name: 'Tar', sprite: [144, 16]},
+            tnt: {name: 'Dynamite', sprite: [16, 0]},
+            tools: {name: 'Tools', sprite: [32, 48]},
+            weight: {name: 'Weight', sprite: [112, 0]},
+            undefined: {name: 'undefined', sprite: [0, 0]}
         }
-        this.animation = Object.assign(
-            this.types[this.getProperty('id')] || this.types.undefined, {
-                w: 16, h: 16, frames: 1, fps: 0, loop: false
-            }
-        )
+        if (this.types[this.properties.id]) {
+            const { name, sprite } = this.types[this.properties.id]
+            const [x, y] = sprite
+            this.name = name
+            this.animation = {x, y, w: 16, h: 16, frames: 1, fps: 0, loop: false}
+        }
+        else {
+            this.animation = {x: 0, y: 0, w: 16, h: 16, frames: 1, fps: 0, loop: false}
+        }
     }
+
+    // draw () {
+    //     const { assets, ctx, camera, world } = this._scene
+    //     if (this.onScreen() && this.visible) {
+    //         if (this.gid) {
+    //             const {columns, name, firstgid} = world.getAssetForTile(this.gid)
+    //             ctx.drawImage(assets[name],
+    //                 ((this.gid - firstgid) % columns) * world.spriteSize,
+    //                 (Math.ceil(((this.gid - firstgid) + 1) / columns) - 1) * world.spriteSize,
+    //                 world.spriteSize, world.spriteSize,
+    //                 Math.floor(this.x + camera.x), Math.floor(this.y + camera.y),
+    //                 world.spriteSize, world.spriteSize)
+    //         }
+    //         else {
+    //             ctx.drawImage(assets.items, 0, 0, 16, 16, this.x + camera.x, this.y + camera.y, 16, 16)
+    //         }
+    //     }
+    // }
 
     collide (element) {
         const { input, player } = this._scene

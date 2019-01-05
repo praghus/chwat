@@ -19,7 +19,7 @@ export default class Catapult extends ActiveElement {
             this.trigger.dead = false
 
             element.fall = false
-            element.force.y = -28
+            element.force.y = -25
 
             if (!this.timeout) {
                 this.timeout = setTimeout(() => {

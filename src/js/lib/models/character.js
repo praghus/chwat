@@ -1,6 +1,6 @@
 import { Entity } from 'tmx-platformer-lib'
 import { ENTITIES_TYPE } from '../../lib/entities'
-import { DIRECTIONS, TIMEOUTS } from '../../lib/constants'
+import { DIRECTIONS, LAYERS, TIMEOUTS } from '../../lib/constants'
 
 export default class Character extends Entity {
     constructor (obj, scene) {
@@ -35,8 +35,8 @@ export default class Character extends Entity {
 
     addDust (direction) {
         if (!this.onFloor) return
-        const { elements } = this._scene
-        elements.add({
+        const { world } = this._scene
+        world.addObject({
             type: ENTITIES_TYPE.DUST,
             visible: true,
             x: direction === DIRECTIONS.RIGHT
@@ -44,6 +44,6 @@ export default class Character extends Entity {
                 : this.x + this.width - 8,
             y: this.y + this.height - 16,
             direction
-        })
+        }, LAYERS.OBJECTS)
     }
 }

@@ -1,5 +1,5 @@
 import ActiveElement from '../models/active-element'
-import { clearInRange } from '../../lib/helpers'
+// import { clearInRange } from '../../lib/helpers'
 import { ENTITIES_TYPE } from '../../lib/entities'
 import { INPUTS, LAYERS } from '../../lib/constants'
 
@@ -11,16 +11,10 @@ export default class Trigger extends ActiveElement {
     }
 
     collide (element) {
-        const { camera, elements, input, player, overlay, world } = this._scene
-        const activator = this.getProperty('activator')
-        const follow = this.getProperty('follow')
-        const hint = this.getProperty('hint')
-        const offsetX = this.getProperty('offsetX')
-        const offsetY = this.getProperty('offsetY')
-        const related = this.getProperty('related')
-        const anchor_hint = this.getProperty('anchor_hint')
-
+        const { camera, input, player, overlay, world } = this._scene
+        const { activator, follow, hint, offsetX, offsetY, related, kill, anchor_hint } = this.properties
         const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
+
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
                 if (player.canUse(activator)) {
@@ -28,8 +22,11 @@ export default class Trigger extends ActiveElement {
                     this.activated = true
                     this.hideMessage()
                     player.hideHint()
+                    if (kill) {
+                        world.getObjectById(kill, LAYERS.OBJECTS).kill()
+                    }
                     if (related) {
-                        const rel = elements.getById(related)
+                        const rel = world.getObjectById(related, LAYERS.OBJECTS)
                         if (follow) {
                             camera.setFollow(rel)
                             this._scene.startTimeout({
@@ -41,7 +38,7 @@ export default class Trigger extends ActiveElement {
                                 rel.activator = item
                                 this._scene.startTimeout({
                                     name: 'wait_for_player',
-                                    duration: 500
+                                    duration: 2500
                                 }, () => {
                                     overlay.fadeIn()
                                     camera.setFollow(player)
@@ -56,7 +53,7 @@ export default class Trigger extends ActiveElement {
                     }
                 }
                 else {
-                    const item = elements.getByProperties('id', activator)
+                    const item = world.getObjectByProperty('id', activator, LAYERS.OBJECTS)
                     if (item) {
                         anchor_hint
                             ? this.showHint(item)
@@ -77,27 +74,24 @@ export default class Trigger extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { camera, elements, overlay, world } = this._scene
-            const clear = this.getProperty('clear')
-            const fade = this.getProperty('fade')
-            const modify = this.getProperty('modify')
-            const produce = this.getProperty('produce')
-            const produce_name = this.getProperty('produce_name')
-            const shake = this.getProperty('shake')
+            const { camera, overlay } = this._scene
+            const { clear, fade, modify, produce, shake } = this.properties
 
             if (produce) {
-                this.addItem(produce, produce_name, this.x + 16, this.y)
+                this.addItem(this.properties, this.x + 16, this.y + 16)
             }
             if (modify) {
                 const matrix = JSON.parse(modify)
                 if (matrix.length) {
                     matrix.map(
-                        ([x, y, id]) => world.put(LAYERS.MAIN, x, y, id)
+                        ([x, y, id]) => {
+                            this._scene.addTile(x, y, id, LAYERS.MAIN)
+                        }
                     )
                 }
             }
             if (clear) {
-                clearInRange(elements, this)
+                // clearInRange(world.getObjects(LAYERS.OBJECTS), this)
                 this.clearTiles(clear)
             }
             shake && camera.shake()

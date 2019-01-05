@@ -1,13 +1,13 @@
-export const SOUND_MAIN_LOOP = 'loop'
+// export const SOUND_MAIN_LOOP = 'loop'
 export const SOUND_PLAYER_JUMP = 'jump'
 export const SOUND_PLAYER_GET = 'get'
 
-export function playMusic () {
-    return {
-        type: SOUND_MAIN_LOOP,
-        meta: { sound: SOUND_MAIN_LOOP }
-    }
-}
+// export function playMusic () {
+//     return {
+//         type: SOUND_MAIN_LOOP,
+//         meta: { sound: SOUND_MAIN_LOOP }
+//     }
+// }
 
 export function playerJump () {
     return {
