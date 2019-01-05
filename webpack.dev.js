@@ -1,9 +1,7 @@
-
 const path = require('path')
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const common = require('./webpack.common.js')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
@@ -21,9 +19,9 @@ module.exports = merge(common, {
         }),
         new webpack.DefinePlugin({
             'process.env': {
-              NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-            },
-          })
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+            }
+        })
     ],
     output: {
         filename: '[name].js',
@@ -40,6 +38,7 @@ module.exports = merge(common, {
     },
     devServer: {
         contentBase: path.join(process.cwd(), 'dist'),
-        port: process.env.PORT || 3000
+        port: process.env.PORT || 3000,
+        host: '0.0.0.0'
     }
 })
