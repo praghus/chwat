@@ -26,6 +26,7 @@ export default class Slope extends ActiveElement {
                 return element.bounce()
             }
             const posX = Math.ceil(element.x + (element.width / 2))
+            // @todo: array.reduce instead of regular iteration
             for (let p = 0; p < this.points.length - 1; p++) {
                 if (
                     (this.points[p][0] + this.x < posX && this.points[p + 1][0] + this.x >= posX) ||

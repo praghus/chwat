@@ -7,9 +7,7 @@ import {
 
 const allSounds = require.context('../../assets/sounds', true, /.*\.(mp3|wav)$/)
 const sounds = requireAll(allSounds).reduce(
-    (state, sound) => ({
-        ...state, [sound.split('/')[1].split('-')[0]]: sound.split('/')[1]
-    }), {}
+    (state, sound) => ({...state, [sound.split('-')[0]]: sound}), {}
 )
 
 export const soundsData = {
