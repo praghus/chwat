@@ -1,9 +1,9 @@
 import ActiveElement from '../models/active-element'
-import { ENTITIES_TYPE } from '../../lib/entities'
+import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class MapPiece extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.width = 16
         this.height = 16
         this.y -= this.height
@@ -20,7 +20,7 @@ export default class MapPiece extends ActiveElement {
     }
 
     collide (element) {
-        const { player } = this._scene
+        const { player } = this.game
         if (element.type === ENTITIES_TYPE.PLAYER) {
             this.dead = true
             player.collectMapPiece(this)
@@ -28,7 +28,7 @@ export default class MapPiece extends ActiveElement {
     }
 
     update () {
-        const { gravity } = this._scene.world
+        const { gravity } = this.game.world
         if (this.onScreen()) {
             this.force.y += gravity
             this.move()

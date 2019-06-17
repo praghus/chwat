@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-up" width="500" height="92" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="679">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-up" width="500" height="92" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="685">
  <properties>
   <property name="gravity" value="0.5"/>
   <property name="surfaceLevel" value="50"/>
@@ -242,6 +242,8 @@ to cut this rope</property>
     <property name="clear" type="int" value="3"/>
     <property name="kill" type="int" value="385"/>
     <property name="produce" value="chopper"/>
+    <property name="produce_gid" type="int" value="1148"/>
+    <property name="produce_name" value="Chopper"/>
     <property name="related" type="int" value="385"/>
    </properties>
   </object>
@@ -301,9 +303,11 @@ against each other</property>
     <property name="hint">Hmm.Nice handle.
 I need some tools
 to get it out...</property>
-    <property name="offsetX" type="float" value="1.5"/>
+    <property name="offsetX" type="float" value="2.5"/>
     <property name="offsetY" type="float" value="-0.5"/>
     <property name="produce" value="handle"/>
+    <property name="produce_gid" type="int" value="1143"/>
+    <property name="produce_name" value="Handle"/>
    </properties>
   </object>
   <object id="198" name="trigger" type="trigger" x="5168" y="1056" width="32" height="48">
@@ -680,7 +684,6 @@ I need some elevation.</property>
     <property name="id" value="coconuts"/>
    </properties>
   </object>
-  <object id="652" name="Player" type="player" x="4976" y="720" width="32" height="48"/>
   <object id="653" type="slope" x="7258" y="1456">
    <polygon points="0,0 16,-16 32,-16 32,0"/>
   </object>
@@ -689,6 +692,7 @@ I need some elevation.</property>
     <property name="direction" value="right"/>
    </properties>
   </object>
+  <object id="684" name="Player" type="player" x="4976" y="720" width="32" height="48"/>
  </objectgroup>
  <layer id="5" name="foreground1" width="500" height="92">
   <properties>

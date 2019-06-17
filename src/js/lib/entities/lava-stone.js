@@ -1,11 +1,11 @@
 import ActiveElement from '../models/active-element'
-import { randomInt } from '../../lib/helpers'
+import { randomInt } from '../../lib/utils/helpers'
 import { DIRECTIONS } from '../../lib/constants'
 
 // change name to color rectangle
 export default class LavaStone extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.damage = 100
         this.width = 4
         this.height = 4
@@ -16,7 +16,7 @@ export default class LavaStone extends ActiveElement {
     }
 
     draw () {
-        const { ctx, camera } = this._scene
+        const { ctx, camera } = this.game
         ctx.save()
         ctx.fillStyle = this.color
         ctx.fillRect(this.x + camera.x, this.y + camera.y, this.width, this.height)

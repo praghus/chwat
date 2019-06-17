@@ -1,10 +1,9 @@
 import ActiveElement from '../models/active-element'
-import { DIRECTIONS } from '../../lib/constants'
-import { ENTITIES_FAMILY } from '../../lib/entities'
+import { DIRECTIONS, ENTITIES_FAMILY } from '../../lib/constants'
 
 export default class Water extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.damage = 100
         this.wave = 0
         this.animation = {x: 0, y: 0, w: 16, h: 16, frames: 7, fps: 20, loop: true}
@@ -12,7 +11,7 @@ export default class Water extends ActiveElement {
     }
 
     draw () {
-        const { assets, ctx, camera, world } = this._scene
+        const { ctx, camera, world, props: { assets } } = this.game
         const { canFall, selective } = this.properties
         const { spriteSize } = world
         const [posX, posY] = [
@@ -23,7 +22,7 @@ export default class Water extends ActiveElement {
             for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
                 const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
                 const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-            
+
                 if (selective || !world.isSolidArea(PX, PY)) {
                     ctx.drawImage(assets[this.asset],
                         this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,

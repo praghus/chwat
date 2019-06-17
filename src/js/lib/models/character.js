@@ -1,10 +1,9 @@
-import { Entity } from 'tmx-platformer-lib'
-import { ENTITIES_TYPE } from '../../lib/entities'
-import { DIRECTIONS, LAYERS, TIMEOUTS } from '../../lib/constants'
+import { Entity } from 'tiled-platformer-lib'
+import { DIRECTIONS, ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../../lib/constants'
 
 export default class Character extends Entity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = true
         this.visible = true
         this.hideHint = () => {
@@ -14,15 +13,15 @@ export default class Character extends Entity {
 
     draw () {
         super.draw()
-        const { debug, overlay } = this._scene
+        const { debug, overlay } = this.game
         this.hint && overlay.addHint(this)
         this.onScreen() && debug && overlay.displayDebug(this)
     }
 
     showHint (item) {
-        if (!this._scene.checkTimeout(TIMEOUTS.HINT)) {
-            this.hint = item.animation
-            this._scene.startTimeout(TIMEOUTS.HINT, this.hideHint)
+        if (!this.game.checkTimeout(TIMEOUTS.HINT)) {
+            this.hint = item.gid
+            this.game.startTimeout(TIMEOUTS.HINT, this.hideHint)
         }
     }
 
@@ -35,7 +34,7 @@ export default class Character extends Entity {
 
     addDust (direction) {
         if (!this.onFloor) return
-        const { world } = this._scene
+        const { world } = this.game
         world.addObject({
             type: ENTITIES_TYPE.DUST,
             visible: true,

@@ -2,8 +2,8 @@ import ActiveElement from '../models/active-element'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class Rock extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.doShake = false
         this.acceleration = 0.2
         this.maxSpeed = 2
@@ -13,7 +13,7 @@ export default class Rock extends ActiveElement {
         this.rotation = 0
     }
     draw () {
-        const { assets, ctx, camera } = this._scene
+        const { ctx, camera, props: { assets } } = this.game
         const r = Math.PI / 16
         ctx.save()
         ctx.translate(
@@ -31,7 +31,7 @@ export default class Rock extends ActiveElement {
 
     update () {
         if (this.activated && !this.dead) {
-            const { camera, world } = this._scene
+            const { camera, world } = this.game
 
             this.force.y += world.gravity
 

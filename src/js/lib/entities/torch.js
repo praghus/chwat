@@ -2,8 +2,8 @@ import ActiveElement from '../models/active-element'
 import { COLORS } from '../../lib/constants'
 
 export default class Torch extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.width = 32
         this.height = 32
         this.y = this.y - 32

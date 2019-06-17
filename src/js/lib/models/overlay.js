@@ -1,8 +1,8 @@
 import { ASSETS, COLORS, FONTS } from '../constants'
 
 export default class Overlay {
-    constructor (scene) {
-        this._scene = scene
+    constructor (game) {
+        this.game = game
         this.blackOverlay = 0
         this.hints = []
         this.fade = {
@@ -36,8 +36,15 @@ export default class Overlay {
             })
         }
         if (this.blackOverlay > 0) {
-            const { ctx, viewport } = this._scene
-            const { resolutionX, resolutionY } = viewport
+            const {
+                ctx,
+                props: {
+                    viewport: {
+                        resolutionX,
+                        resolutionY
+                    }
+                }
+            } = this.game
 
             ctx.globalAlpha = this.blackOverlay
             ctx.fillStyle = COLORS.BLACK
@@ -60,8 +67,17 @@ export default class Overlay {
     }
 
     displayHUD () {
-        const { ctx, camera, assets, debug, fps, player, viewport, countTime } = this._scene
-        const { resolutionX, resolutionY } = viewport
+        const {
+            ctx,
+            camera,
+            countTime,
+            debug,
+            fps,
+            player,
+            props
+        } = this.game
+
+        const { assets, viewport: {resolutionX, resolutionY } } = props
         const { energy, items, lives } = player
         const fpsIndicator = `FPS:${Math.round(fps)}`
         const time = countTime()
@@ -91,49 +107,50 @@ export default class Overlay {
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
             if (item) {
-                // this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
-                // const {columns, name, firstgid} = world.getAssetForTile(item.gid)
-                // ctx.drawImage(assets[name],
-                //     ((item.gid - firstgid) % columns) * world.spriteSize,
-                //     (Math.ceil(((item.gid - firstgid) + 1) / columns) - 1) * world.spriteSize,
-                //     world.spriteSize, world.spriteSize,
-                //     align + 1 + (index * 20), resolutionY - 19,
-                //     world.spriteSize, world.spriteSize)
-
-                ctx.drawImage(
-                    assets[ASSETS.ITEMS],
-                    item.animation.x, item.animation.y,
-                    item.width, item.height,
-                    align + 1 + (index * 20), resolutionY - 19,
-                    item.width, item.height
-                )
+                this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
+                this.drawItem(item.gid, align + 1 + (index * 20), resolutionY - 19)
             }
         })
     }
 
     displayHint ({x, y, width, hint}) {
-        const { ctx, assets, camera } = this._scene
+        const {
+            ctx,
+            camera,
+            props: { assets }
+        } = this.game
+
         ctx.drawImage(assets[ASSETS.BUBBLE],
             Math.floor(x + camera.x + width / 2),
             Math.floor(y + camera.y) - 20
         )
-        ctx.drawImage(assets[ASSETS.ITEMS],
-            hint.x, hint.y,
-            hint.w, hint.h,
-            Math.floor(x + camera.x + width / 2) + 8,
-            Math.floor(y + camera.y) - 18,
-            hint.w, hint.h
-        )
+
+        this.drawItem(hint, x + 8 + camera.x + width / 2, y + camera.y - 18)
+    }
+
+    drawItem (gid, x, y) {
+        if (!gid) return
+        const { ctx, world } = this.game
+        const item = world.createTile(gid)
+        item.draw(x, y, ctx)
     }
 
     displayMap () {
-        const { ctx, assets, player, viewport } = this._scene
-        const { resolutionX, resolutionY } = viewport
+        const {
+            ctx,
+            player,
+            props: {
+                assets,
+                viewport: { resolutionX, resolutionY }
+            }
+        } = this.game
+
         ctx.save()
         ctx.globalAlpha = 0.5
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.restore()
+
         player.mapPieces.map((piece) => {
             ctx.drawImage(assets[ASSETS.MAP_PIECE],
                 piece.x, piece.y,
@@ -143,6 +160,7 @@ export default class Overlay {
                 piece.w * 2, piece.h * 2
             )
         })
+
         this.displayText('COLLECTED MAP PIECES',
             (resolutionX / 2) - 49,
             (resolutionY / 2) - 42,
@@ -150,7 +168,11 @@ export default class Overlay {
     }
 
     displayText (text, x, y, font = FONTS.FONT_SMALL) {
-        const { assets, ctx } = this._scene
+        const {
+            ctx,
+            props: { assets }
+        } = this.game
+
         text.split('\n').reverse().map((output, index) => {
             for (let i = 0; i < output.length; i++) {
                 const chr = output.charCodeAt(i)
@@ -165,7 +187,7 @@ export default class Overlay {
     }
 
     displayDebug (entity) {
-        const { ctx, camera } = this._scene
+        const { ctx, camera } = this.game
         const { bounds, width, height, name, type, visible, force } = entity
         const [ posX, posY ] = [
             Math.floor(entity.x + camera.x),
@@ -270,7 +292,7 @@ export default class Overlay {
     }
 
     outline (x, y, width, height, color) {
-        const { ctx } = this._scene
+        const { ctx } = this.game
         ctx.save()
         ctx.strokeStyle = color
         ctx.beginPath()

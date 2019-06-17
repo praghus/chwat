@@ -1,9 +1,9 @@
 import ActiveElement from '../models/active-element'
-import { ENTITIES_FAMILY } from '../../lib/entities'
+import { ENTITIES_FAMILY } from '../../lib/constants'
 
 export default class Slope extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = false
         this.visible = false
         const [minX, minY, maxX, maxY] = [

@@ -1,15 +1,17 @@
 import ActiveElement from '../models/active-element'
 
 export default class Grass extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = true
-        this.animation = {x: 0, y: 0, w: 64, h: 64, frames: 64, fps: 25, loop: true}
+        this.animations = {
+            wave: {x: 0, y: 0, w: 64, h: 64, frames: 64, fps: 25, loop: true}
+        }
     }
 
     update () {
         if (this.onScreen()) {
-            this.animate()
+            this.animate(this.animations.wave)
         }
     }
 }

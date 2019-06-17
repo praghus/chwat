@@ -1,10 +1,9 @@
 import ActiveElement from '../models/active-element'
-import { LAYERS } from '../../lib/constants'
-import { ENTITIES_TYPE } from '../../lib/entities'
+import { ENTITIES_TYPE, LAYERS } from '../../lib/constants'
 
 export default class WoodenBridge extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = false
         this.visible = false
         this.activated = false
@@ -12,7 +11,7 @@ export default class WoodenBridge extends ActiveElement {
     }
 
     collide (element) {
-        const { world } = this._scene
+        const { world } = this.game
         const { hint, offsetX, offsetY } = this.properties
 
         if (!this.dead) {
@@ -38,14 +37,14 @@ export default class WoodenBridge extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { overlay } = this._scene
+            const { overlay } = this.game
             this.activators.map((item) => item.kill())
-            this._scene.addTile(443, 14, 209, LAYERS.BACKGROUND2)
-            this._scene.addTile(444, 14, 209, LAYERS.BACKGROUND2)
-            this._scene.addTile(445, 14, 209, LAYERS.BACKGROUND2)
-            this._scene.addTile(443, 15, 868, LAYERS.MAIN)
-            this._scene.addTile(444, 15, 868, LAYERS.MAIN)
-            this._scene.addTile(445, 15, 868, LAYERS.MAIN)
+            this.game.addTile(443, 14, 209, LAYERS.BACKGROUND2)
+            this.game.addTile(444, 14, 209, LAYERS.BACKGROUND2)
+            this.game.addTile(445, 14, 209, LAYERS.BACKGROUND2)
+            this.game.addTile(443, 15, 868, LAYERS.MAIN)
+            this.game.addTile(444, 15, 868, LAYERS.MAIN)
+            this.game.addTile(445, 15, 868, LAYERS.MAIN)
             overlay.fadeIn()
             this.dead = true
         }

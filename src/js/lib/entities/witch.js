@@ -1,9 +1,9 @@
-import { ENTITIES_TYPE } from '../../lib/entities'
 import ActiveElement from '../models/active-element'
+import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Witch extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = false
         this.visible = false
         this.haveInitialElement = obj.haveInitialElement || false
@@ -40,7 +40,7 @@ export default class Witch extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { elements, overlay } = this._scene
+            const { elements, overlay } = this.game
             this.activators.map((item) => item.kill())
             const sheep = elements.getByProperties('id', 'sheep')
             sheep.x = this.x + 16

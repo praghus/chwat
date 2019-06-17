@@ -8,16 +8,12 @@ html, body {
 }
 
 body {
-    height: 100%;
     margin: 0;
     overflow: hidden;
     background: #000;
     color: #fff;
-    image-rendering: -moz-crisp-edges;         /* Firefox */
-    image-rendering:   -o-crisp-edges;         /* Opera */
-    image-rendering: -webkit-optimize-contrast;/* Webkit (non-standard naming) */
     image-rendering: crisp-edges;
-    -ms-interpolation-mode: nearest-neighbor;  /* IE (non-standard property) */
+    -ms-interpolation-mode: nearest-neighbor; 
 }
 
 #root {
@@ -44,17 +40,6 @@ canvas {
     padding: 20px;
 }
 
-.save-button {
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    z-index: 100;
-    background-image:url("../assets/images/fd.png");
-    background-size: contain;
-}
-
 .hammer-controls {
     display: flex;
     position: absolute;
@@ -66,5 +51,35 @@ canvas {
     
     div {
         width: 50%;
+    }
+}
+
+.debug {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    bottom: 0;
+    right: 0;
+    margin: 10px 20px;
+
+    label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    input {
+        width: 20px;
+        height: 20px;
+        margin: 10px 10px 10px 20px;
+    }
+
+    .fpsmeter {
+        width: 80px;
+        font-weight: bold;
+        overflow: hidden;
+        text-align: right; 
     }
 }

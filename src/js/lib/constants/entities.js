@@ -1,35 +1,10 @@
-import { ASSETS } from './constants'
-
-import Balloon from './entities/balloon'
-import Bat from './entities/bat'
-import Bridge from './entities/bridge'
-import Catapult from './entities/catapult'
-import Checkpoint from './entities/checkpoint'
-import Cook from './entities/cook'
-import Crusher from './entities/crusher'
-import DarkMask from './entities/dark-mask'
-import Dragon from './entities/dragon'
-import Dust from './entities/dust'
-import Flag from './entities/flag'
-import Grass from './entities/grass'
-import Item from './entities/item'
-import Lava from './entities/lava'
-import LavaStone from './entities/lava-stone'
-import MapPiece from './entities/map-piece'
-import Paddle from './entities/paddle'
-import Particle from './entities/particle'
-import Player from './entities/player'
-import Rock from './entities/rock'
-import Slime from './entities/slime'
-import Slope from './entities/slope'
-import SpiderTrap from './entities/spider-trap'
-import Spikes from './entities/spikes'
-import Switch from './entities/switch'
-import Torch from './entities/torch'
-import Trigger from './entities/trigger'
-import Water from './entities/water'
-import Witch from './entities/witch'
-import WoodenBridge from './entities/wooden-bridge'
+import { ASSETS } from './assets'
+import {
+    Balloon, Bat, Bridge, Catapult, Checkpoint, Cook, Crusher, DarkMask,
+    Dragon, Dust, Flag, Grass, Item, Lava, LavaStone, MapPiece, Paddle,
+    Particle, Player, Rock, Slime, Slope, SpiderTrap, Spikes, Switch,
+    Torch, Trigger, Water, Witch, WoodenBridge
+} from '../entities'
 
 export const ENTITIES_FAMILY = {
     BULLETS: 'bullets',
@@ -39,6 +14,7 @@ export const ENTITIES_FAMILY = {
     PARTICLES: 'particles',
     TRAPS: 'traps'
 }
+
 export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
     BAT: 'bat',
