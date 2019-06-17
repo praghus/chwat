@@ -54,12 +54,16 @@ export default class Player extends Character {
     }
 
     update () {
-        const { props: { input }, world } = this.game
+        const { props: { input, viewport }, camera, world } = this.game
         // @todo: consider player states
         if (this.canMove()) {
             if (input.keyPressed[INPUTS.INPUT_LEFT]) {
                 if (this.direction === DIRECTIONS.RIGHT) {
                     this.addDust(DIRECTIONS.LEFT)
+                    camera.setMiddlePoint(
+                        viewport.resolutionX - viewport.resolutionX / 3,
+                        this.height
+                    )
                 }
                 this.force.x -= this.acceleration
                 this.direction = DIRECTIONS.LEFT
@@ -67,6 +71,10 @@ export default class Player extends Character {
             else if (input.keyPressed[INPUTS.INPUT_RIGHT]) {
                 if (this.direction === DIRECTIONS.LEFT) {
                     this.addDust(DIRECTIONS.RIGHT)
+                    camera.setMiddlePoint(
+                        viewport.resolutionX / 3,
+                        this.height
+                    )
                 }
                 this.force.x += this.acceleration
                 this.direction = DIRECTIONS.RIGHT

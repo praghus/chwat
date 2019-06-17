@@ -129,6 +129,7 @@ export default class Overlay {
     }
 
     drawItem (gid, x, y) {
+        if (!gid) return
         const { ctx, world } = this.game
         const item = world.createTile(gid)
         item.draw(x, y, ctx)
