@@ -1,10 +1,9 @@
 import ActiveElement from '../models/active-element'
-import { ASSETS } from '../../lib/constants'
-import { ENTITIES_TYPE } from '../../lib/entities'
+import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Balloon extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.positions = {
             CASTLE: { x: 5056, y: 90, player: { x: 5152, y: 48}},
             ISLE: { x: 128, y: 720, player: { x: 230, y: 720}}
@@ -15,7 +14,7 @@ export default class Balloon extends ActiveElement {
 
     draw () {
         if (this.visible) {
-            const { assets, ctx, camera } = this._scene
+            const { ctx, camera, props: { assets } } = this.game
             ctx.drawImage(
                 assets[ASSETS.BALLOON],
                 Math.floor(this.x + camera.x) - 72,
@@ -26,7 +25,7 @@ export default class Balloon extends ActiveElement {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { camera, player, overlay } = this._scene
+            const { camera, player, overlay } = this.game
             this.position = this.position === this.positions.CASTLE
                 ? this.positions.ISLE
                 : this.positions.CASTLE

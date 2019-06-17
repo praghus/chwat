@@ -1,25 +1,12 @@
-// export const SOUND_MAIN_LOOP = 'loop'
-export const SOUND_PLAYER_JUMP = 'jump'
-export const SOUND_PLAYER_GET = 'get'
+export const PLAY_SOUND = 'PLAY_SOUND'
 
-// export function playMusic () {
-//     return {
-//         type: SOUND_MAIN_LOOP,
-//         meta: { sound: SOUND_MAIN_LOOP }
-//     }
-// }
-
-export function playerJump () {
+export function playSound (sound) {
     return {
-        type: SOUND_PLAYER_JUMP,
-        meta: { sound: SOUND_PLAYER_JUMP }
+        type: PLAY_SOUND,
+        meta: {
+            sound: {
+                play: sound
+            }
+        }
     }
 }
-
-export function playerGet () {
-    return {
-        type: SOUND_PLAYER_GET,
-        meta: { sound: SOUND_PLAYER_GET }
-    }
-}
-

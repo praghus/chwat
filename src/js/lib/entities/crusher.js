@@ -1,11 +1,10 @@
 import ActiveElement from '../models/active-element'
-import { ENTITIES_TYPE } from '../../lib/entities'
-import { DIRECTIONS, LAYERS } from '../../lib/constants'
-import { createRectangleObject } from '../../lib/helpers'
+import { createRectangleObject } from '../../lib/utils/helpers'
+import { DIRECTIONS, LAYERS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Crusher extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.damage = 1000
         this.fall = false
         this.rise = false
@@ -19,7 +18,7 @@ export default class Crusher extends ActiveElement {
 
     update () {
         if (this.onScreen()) {
-            const { camera, world } = this._scene
+            const { camera, world } = this.game
 
             if (this.rise) {
                 this.force.y -= 0.005

@@ -2,8 +2,8 @@ import ActiveElement from '../models/active-element'
 import { COLORS } from '../constants'
 
 export default class SpiderTrap extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.damage = 1000
         this.fall = false
         this.rise = false
@@ -18,7 +18,7 @@ export default class SpiderTrap extends ActiveElement {
     }
 
     draw () {
-        const { camera, ctx, assets } = this._scene
+        const { camera, ctx, assets } = this.game
         if (this.onScreen()) {
             ctx.beginPath()
             ctx.strokeStyle = COLORS.SPIDER_WEB
@@ -40,7 +40,7 @@ export default class SpiderTrap extends ActiveElement {
                 this.force.y -= 0.005
             }
             else if (this.fall) {
-                this.force.y += this._scene.world.gravity
+                this.force.y += this.game.world.gravity
             }
             else {
                 this.force.y = 0

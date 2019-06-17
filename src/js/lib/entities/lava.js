@@ -1,11 +1,10 @@
 import ActiveElement from '../models/active-element'
-import { randomChoice, randomInt } from '../../lib/helpers'
-import { ENTITIES_TYPE } from '../../lib/entities'
-import { DIRECTIONS, LAYERS } from '../../lib/constants'
+import { randomChoice, randomInt } from '../../lib/utils/helpers'
+import { DIRECTIONS, ENTITIES_TYPE, LAYERS } from '../../lib/constants'
 
 export default class Lava extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.damage = 1000
         this.canShoot = true
         this.shootDelay = 1000
@@ -14,7 +13,7 @@ export default class Lava extends ActiveElement {
     }
 
     draw () {
-        const { assets, ctx, camera, world } = this._scene
+        const { ctx, camera, world, props: { assets } } = this.game
         const { spriteSize } = world
         const y = 0
         for (let x = 0; x < Math.round((this.width / 2) / spriteSize); x++) {
@@ -40,7 +39,7 @@ export default class Lava extends ActiveElement {
     }
 
     shoot () {
-        const { world } = this._scene
+        const { world } = this.game
 
         world.addObject({
             type: ENTITIES_TYPE.LAVA_STONE,

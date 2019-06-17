@@ -2,8 +2,8 @@ import Character from '../models/character'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class Bat extends Character {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.direction = DIRECTIONS.LEFT
         this.maxSpeed = 1
         this.acceleration = 0.2

@@ -1,24 +1,40 @@
 import Overlay from '../models/overlay'
-import { Scene } from 'tmx-platformer-lib'
-import { isMobileDevice } from '../../lib/helpers'
+import { Game } from 'tiled-platformer-lib'
+import { isMobileDevice } from '../../lib/utils/helpers'
 import { ASSETS, COLORS, INPUTS, SCENES } from '../../lib/constants'
 
-export default class IntroScene extends Scene {
-    constructor (game) {
-        super(game)
+export default class IntroScene extends Game {
+    constructor (ctx, props) {
+        super(ctx, props)
         this.overlay = new Overlay(this)
         this.loaded = true
+        this.overlay.fadeIn()
     }
 
     onUpdate () {
-        if (this.fetchInput(INPUTS.INPUT_ACTION) || this.fetchInput(INPUTS.INPUT_UP)) {
-            this.setScene(SCENES.GAME)
+        const {
+            input,
+            onKey,
+            setScene
+        } = this.props
+        if (input.keyPressed[INPUTS.INPUT_ACTION]) {
+            onKey(INPUTS.INPUT_ACTION, false)
+            setScene(SCENES.GAME)
         }
     }
 
     render () {
-        const { assets, ctx, overlay, viewport } = this
-        const { resolutionX, resolutionY } = viewport
+        const {
+            ctx,
+            overlay,
+            props: {
+                assets,
+                viewport: {
+                    resolutionX,
+                    resolutionY
+                }
+            }
+        } = this
 
         ctx.fillStyle = COLORS.BLUE_SKY
         ctx.fillRect(0, 0, resolutionX, resolutionY)

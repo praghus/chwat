@@ -2,8 +2,8 @@ import ActiveElement from '../models/active-element'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class Dust extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.width = 16
         this.height = 16
         this.animations = {

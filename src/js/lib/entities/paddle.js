@@ -1,16 +1,16 @@
 import ActiveElement from '../models/active-element'
-import { ENTITIES_TYPE } from '../../lib/entities'
+import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Paddle extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = true
         this.acceleration = 0.1
         this.maxSpeed = 1
         this.activated = false
     }
     draw () {
-        const { assets, ctx, camera, world } = this._scene
+        const { ctx, camera, world, props: { assets } } = this.game
         const { spriteSize } = world
         for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
             ctx.drawImage(
@@ -39,7 +39,7 @@ export default class Paddle extends ActiveElement {
 
     update () {
         if (this.activated && !this.dead) {
-            const { spriteSize } = this._scene.world
+            const { spriteSize } = this.game.world
             const { destY } = this.properties
             if (this.y > destY * spriteSize) {
                 this.force.y -= this.acceleration

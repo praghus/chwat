@@ -1,19 +1,21 @@
 import ActiveElement from '../models/active-element'
-// import { clearInRange } from '../../lib/helpers'
-import { ENTITIES_TYPE } from '../../lib/entities'
-import { INPUTS, LAYERS } from '../../lib/constants'
+// import { clearInRange } from '../../lib/utils/helpers'
+import { ENTITIES_TYPE, INPUTS, LAYERS } from '../../lib/constants'
 
 export default class Trigger extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = false
         this.visible = false
     }
 
     collide (element) {
-        const { camera, input, player, overlay, world } = this._scene
+        const { camera, props: { input }, player, overlay, world } = this.game
         const { activator, follow, hint, offsetX, offsetY, related, kill, anchor_hint } = this.properties
-        const triggered = !this.activated && (input[INPUTS.INPUT_ACTION] || activator === ENTITIES_TYPE.PLAYER)
+        const triggered = !this.activated && (
+            input.keyPressed[INPUTS.INPUT_ACTION] ||
+            activator === ENTITIES_TYPE.PLAYER
+        )
 
         if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
             if (triggered) {
@@ -29,14 +31,14 @@ export default class Trigger extends ActiveElement {
                         const rel = world.getObjectById(related, LAYERS.OBJECTS)
                         if (follow) {
                             camera.setFollow(rel)
-                            this._scene.startTimeout({
+                            this.game.startTimeout({
                                 name: 'wait_for_camera',
                                 duration: 300
                             }, () => {
                                 rel.activated = true
                                 rel.trigger = this
                                 rel.activator = item
-                                this._scene.startTimeout({
+                                this.game.startTimeout({
                                     name: 'wait_for_player',
                                     duration: 2500
                                 }, () => {
@@ -74,7 +76,7 @@ export default class Trigger extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { camera, overlay } = this._scene
+            const { camera, overlay } = this.game
             const { clear, fade, modify, produce, shake } = this.properties
 
             if (produce) {
@@ -85,7 +87,7 @@ export default class Trigger extends ActiveElement {
                 if (matrix.length) {
                     matrix.map(
                         ([x, y, id]) => {
-                            this._scene.addTile(x, y, id, LAYERS.MAIN)
+                            this.game.addTile(x, y, id, LAYERS.MAIN)
                         }
                     )
                 }
@@ -101,7 +103,7 @@ export default class Trigger extends ActiveElement {
     }
 
     clearTiles (layer) {
-        const { world } = this._scene
+        const { world } = this.game
         const { spriteSize } = world
         for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
             for (let y = 0; y < Math.round(this.height / spriteSize); y++) {

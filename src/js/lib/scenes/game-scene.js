@@ -1,28 +1,31 @@
 import Overlay from '../models/overlay'
 import tmxFile from '../../../assets/levels/map.tmx'
-// import levelData from '../../../assets/levels/map.json'
-import { ENTITIES, ENTITIES_TYPE } from '../../lib/entities'
-import { Camera, Tmx, Scene, World } from 'tmx-platformer-lib'
+import { ENTITIES, ENTITIES_TYPE } from '../../lib/constants'
+import { tmxParser } from 'tmx-tiledmap'
+import { Game, World } from 'tiled-platformer-lib'
 import {
+    noop,
     isMobileDevice,
     createLamp,
     createRectangleObject,
     getMiniTile,
     isMiniTile,
     setLightmaskElement
-} from '../../lib/helpers'
+} from '../../lib/utils/helpers'
 import {
     ASSETS,
     COLORS,
-    INPUTS,
+    CONFIG,
     JUMP_THROUGH_TILES,
     LAYERS,
     NON_COLLIDE_TILES,
-    // SPECIAL_TILES_INDEX,
     TIMEOUTS
 } from '../../lib/constants'
 
-const { DarkMask, Lighting } = window.illuminated
+const {
+    DarkMask,
+    Lighting
+} = window.illuminated
 
 const worldConfig = {
     gravity: 0.5,
@@ -31,9 +34,9 @@ const worldConfig = {
     oneWayTiles: JUMP_THROUGH_TILES
 }
 
-export default class GameScene extends Scene {
-    constructor (game) {
-        super(game)
+export default class GameScene extends Game {
+    constructor (ctx, props) {
+        super(ctx, props)
         this.debug = false
         this.dynamicLights = !isMobileDevice()
         this.onLoad = this.onLoad.bind(this)
@@ -41,16 +44,20 @@ export default class GameScene extends Scene {
         this.addLightmaskElement = this.addLightmaskElement.bind(this)
         this.saveGame = this.saveGame.bind(this)
         this.loadGame = this.loadGame.bind(this)
-        this.map = Tmx(tmxFile).then(this.onLoad)
+        this.map = tmxParser(tmxFile).then(this.onLoad)
     }
 
     onLoad (data) {
         this.loaded = true
         this.world = new World(data, worldConfig, this)
         this.overlay = new Overlay(this)
-        this.camera = new Camera(this)
         this.player = this.world.getObjectByType(ENTITIES_TYPE.PLAYER, LAYERS.OBJECTS)
+        this.camera.setSurfaceLevel(this.world.getProperty('surfaceLevel'))
         this.camera.setFollow(this.player)
+        this.camera.setMiddlePoint(
+            this.props.viewport.resolutionX / 3,
+            this.player.height
+        )
         if (this.dynamicLights) {
             this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
             this.lighting = new Lighting({light: this.light, objects: []})
@@ -63,9 +70,7 @@ export default class GameScene extends Scene {
     }
 
     onUpdate () {
-        if (this.fetchInput(INPUTS.INPUT_DEBUG)) {
-            this.debug = !this.debug
-        }
+        this.debug = this.props.config[CONFIG.DEBUG_MODE]
     }
 
     tick () {
@@ -81,18 +86,21 @@ export default class GameScene extends Scene {
         if (camera.underground || player.underground || player.inDark > 0) {
             this.dynamicLights && this.calculateShadows()
             this.renderLightingEffect()
-            // world.hideLayer(LAYERS.FOREGROUND2)
         }
-        // else {
-        //     world.showLayer(LAYERS.FOREGROUND2)
-        // }
         overlay.displayHUD()
         this.checkTimeout(TIMEOUTS.PLAYER_MAP) && overlay.displayMap()
         overlay.update()
     }
 
     renderBackground () {
-        const { ctx, assets, player, viewport: { resolutionX, resolutionY } } = this
+        const {
+            ctx,
+            player,
+            props: {
+                assets,
+                viewport: { resolutionX, resolutionY }
+            }
+        } = this
         if (!this.camera.underground && !player.inDark) {
             const cameraX = this.camera.x + 3300
             const fogBorder = 600
@@ -116,8 +124,14 @@ export default class GameScene extends Scene {
     }
 
     renderLightingEffect () {
-        const { ctx, assets, camera: {follow, x, y}, viewport } = this
-        const { resolutionX, resolutionY } = viewport
+        const {
+            ctx,
+            camera: { follow, x, y },
+            props: {
+                assets,
+                viewport: { resolutionX, resolutionY }
+            }
+        } = this
 
         if (this.dynamicLights) {
             this.light.position.x = follow.x + (follow.width / 2) + x
@@ -143,17 +157,24 @@ export default class GameScene extends Scene {
     }
 
     calculateShadows () {
-        const { camera, player, viewport: { resolutionX, resolutionY }, world } = this
-        const { spriteSize } = world
+        const {
+            camera,
+            player,
+            world,
+            props: {
+                viewport: { resolutionX, resolutionY }
+            }
+        } = this
+
         const castingShadows = camera.underground || player.underground || player.inDark > 0
         const shouldCreateLightmask = this.dynamicLights && castingShadows
 
-        let y = Math.floor(camera.y % spriteSize)
-        let _y = Math.floor(-camera.y / spriteSize)
+        let y = Math.floor(camera.y % world.spriteSize)
+        let _y = Math.floor(-camera.y / world.spriteSize)
 
         while (y < resolutionY) {
-            let x = Math.floor(camera.x % spriteSize)
-            let _x = Math.floor(-camera.x / spriteSize)
+            let x = Math.floor(camera.x % world.spriteSize)
+            let _x = Math.floor(-camera.x / world.spriteSize)
             while (x < resolutionX) {
                 const tile = world.getTile(_x, _y, LAYERS.MAIN)
                 if (tile > 0 && shouldCreateLightmask) {
@@ -165,10 +186,10 @@ export default class GameScene extends Scene {
                         this.addLightmaskElement(maskElement, {x, y})
                     }
                 }
-                x += spriteSize
+                x += world.spriteSize
                 _x++
             }
-            y += spriteSize
+            y += world.spriteSize
             _y++
         }
     }
@@ -260,5 +281,25 @@ export default class GameScene extends Scene {
         // })
 
         // localStorage.setItem('savedData', btoa(savedData))
+    }
+
+    checkTimeout ({name}) {
+        return this.timeoutsPool[name] || null
+    }
+
+    startTimeout ({name, duration}, callback = noop) {
+        if (!this.timeoutsPool[name]) {
+            this.timeoutsPool[name] = setTimeout(() => {
+                this.stopTimeout(name)
+                callback()
+            }, duration)
+        }
+    }
+
+    stopTimeout (name) {
+        if (this.timeoutsPool[name] !== null) {
+            clearTimeout(this.timeoutsPool[name])
+            this.timeoutsPool[name] = null
+        }
     }
 }

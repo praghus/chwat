@@ -2,8 +2,8 @@ import Character from '../models/character'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class Slime extends Character {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.maxSpeed = 0
         this.damage = 25
         this.acceleration = 0.2
@@ -25,7 +25,7 @@ export default class Slime extends Character {
 
     update () {
         if (this.onScreen()) {
-            const { world } = this._scene
+            const { world } = this.game
             const { gravity } = world
 
             if (this.running) {
@@ -75,7 +75,7 @@ export default class Slime extends Character {
     wait () {
         this.maxSpeed = 0
         this.running = false
-        this._scene.startTimeout({name: `wait_${this.id}`, duration: 2300}, () => {
+        this.game.startTimeout({name: `wait_${this.id}`, duration: 2300}, () => {
             this.running = true
         })
     }

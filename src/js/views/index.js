@@ -1,10 +1,23 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { Game } from '../components'
-import { requireAll } from '../lib/helpers'
-import { inputPropType, tickerPropType, viewportPropType } from '../lib/prop-types'
-import { startTicker, tickTime, updateKeyPressed, updateMousePos } from '../actions'
+import { requireAll } from '../lib/utils/helpers'
+import {
+    inputPropType,
+    tickerPropType,
+    viewportPropType
+} from '../lib/prop-types'
+import {
+    startTicker,
+    tickTime,
+    updateConfig,
+    updateKeyPressed,
+    updateMousePos,
+    playSound
+} from '../actions'
+import { CONFIG } from '../lib/constants'
+
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(
     (state, image) => ({...state, [image.split('-')[0]]: image}), {}
@@ -77,9 +90,10 @@ class AppContainer extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        viewport: state.viewport,
+        config: state.config,
         input: state.input,
-        ticker: state.ticker
+        ticker: state.ticker,
+        viewport: state.viewport
     }
 }
 
@@ -87,9 +101,11 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onKey: (key, pressed) => dispatch(updateKeyPressed(key, pressed)),
         onMouse: (event) => dispatch(updateMousePos(event.x, event.y)),
-        playSound: (sound) => dispatch(sound()),
+        playSound: (type) => dispatch(playSound(type)),
         tickerStart: () => dispatch(startTicker(performance.now())),
-        tickerTick: () => dispatch(tickTime(performance.now()))
+        tickerTick: () => dispatch(tickTime(performance.now())),
+        onConfig: (key, value) => dispatch(updateConfig(key, value)),
+        setScene: (scene) => dispatch(updateConfig(CONFIG.SCENE, scene))
     }
 }
 

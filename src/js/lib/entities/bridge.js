@@ -1,9 +1,9 @@
 import ActiveElement from '../models/active-element'
-import { ENTITIES_TYPE } from '../../lib/entities'
+import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Bridge extends ActiveElement {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.solid = true
         this.animations = {
             UP: {x: 0, y: 0, w: 160, h: 80, frames: 1, fps: 0, loop: false},

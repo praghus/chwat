@@ -3475,6 +3475,10 @@ gifsicle@^4.0.0:
     execa "^1.0.0"
     logalot "^2.0.0"
 
+glfx@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/glfx/-/glfx-0.0.4.tgz#1b776dc748c081994624b0af3b5638403de78f4d"
+
 glob-parent@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/glob-parent/-/glob-parent-3.1.0.tgz#9e6af6299d8d3bd2bd40430832bd113df906c5ae"
@@ -7979,6 +7983,10 @@ thunky@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.0.3.tgz#f5df732453407b09191dae73e2a8cc73f381a826"
 
+tiled-platformer-lib@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/tiled-platformer-lib/-/tiled-platformer-lib-1.2.1.tgz#885f0a7f05c91b130cebaa9dc5d6985e4ec341cc"
+
 timed-out@^4.0.0, timed-out@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/timed-out/-/timed-out-4.0.1.tgz#f32eacac5a175bea25d7fab565ab3ed8741ef56f"
@@ -7999,9 +8007,9 @@ tmp@^0.0.33:
   dependencies:
     os-tmpdir "~1.0.2"
 
-tmx-platformer-lib@praghus/tmx-platformer-lib:
-  version "0.1.2"
-  resolved "https://codeload.github.com/praghus/tmx-platformer-lib/tar.gz/e95da707e234494386eef8f9baba1d9fc1e6571a"
+tmx-tiledmap@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/tmx-tiledmap/-/tmx-tiledmap-1.0.3.tgz#3e9905a17acfae9cc5eed0b9667e30f28f8c0391"
 
 to-arraybuffer@^1.0.0:
   version "1.0.1"

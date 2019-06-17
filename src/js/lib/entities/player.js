@@ -1,11 +1,16 @@
 import Character from '../models/character'
 // import { playerJump, playerGet } from '../../actions/sounds'
-import { DIRECTIONS, INPUTS, TIMEOUTS } from '../../lib/constants'
-import { ENTITIES_FAMILY, ENTITIES_TYPE } from '../../lib/entities'
+import {
+    DIRECTIONS,
+    ENTITIES_FAMILY,
+    ENTITIES_TYPE,
+    INPUTS,
+    TIMEOUTS
+} from '../../lib/constants'
 
 export default class Player extends Character {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, game) {
+        super(obj, game)
         this.direction = DIRECTIONS.RIGHT
         this.lives = 3
         this.maxLives = 3
@@ -39,7 +44,7 @@ export default class Player extends Character {
     }
 
     draw () {
-        const { ctx } = this._scene
+        const { ctx } = this.game
         ctx.save()
         if (!this.canHurt() && this.canMove()) {
             ctx.globalAlpha = 0.2
@@ -49,40 +54,39 @@ export default class Player extends Character {
     }
 
     update () {
-        const { input, world } = this._scene
+        const { props: { input }, world } = this.game
         // @todo: consider player states
         if (this.canMove()) {
-            if (input[INPUTS.INPUT_LEFT]) {
+            if (input.keyPressed[INPUTS.INPUT_LEFT]) {
                 if (this.direction === DIRECTIONS.RIGHT) {
                     this.addDust(DIRECTIONS.LEFT)
                 }
                 this.force.x -= this.acceleration
                 this.direction = DIRECTIONS.LEFT
             }
-            else if (input[INPUTS.INPUT_RIGHT]) {
+            else if (input.keyPressed[INPUTS.INPUT_RIGHT]) {
                 if (this.direction === DIRECTIONS.LEFT) {
                     this.addDust(DIRECTIONS.RIGHT)
                 }
                 this.force.x += this.acceleration
                 this.direction = DIRECTIONS.RIGHT
             }
-            if (input[INPUTS.INPUT_UP] && this.canJump()) {
-                // todo: better sound dispatching
+            if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
                 // this.playSound(playerJump)
                 this.force.y = -6
             }
-            if (input[INPUTS.INPUT_ACTION]) {
+            if (input.keyPressed[INPUTS.INPUT_ACTION]) {
                 this.getItem(null)
             }
-            if (input[INPUTS.INPUT_MAP] && this.mapPieces.length) {
+            if (input.keyPressed[INPUTS.INPUT_MAP] && this.mapPieces.length) {
                 this.showMap()
             }
-            if (input[INPUTS.INPUT_RESTORE]) {
+            if (input.keyPressed[INPUTS.INPUT_RESTORE]) {
                 this.restore()
             }
         }
         // slow down
-        if (!input[INPUTS.INPUT_LEFT] && !input[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
+        if (!input.keyPressed[INPUTS.INPUT_LEFT] && !input.keyPressed[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
             this.force.x += this.direction === DIRECTIONS.RIGHT
                 ? -this.acceleration
                 : this.acceleration
@@ -163,13 +167,13 @@ export default class Player extends Character {
 
     hit (s) {
         // im immortal in debug mode
-        if (!!this._scene.debug) return
+        if (!!this.game.debug) return
 
         this.maxEnergy -= s
         this.maxEnergy <= 0
             ? this.maxEnergy = 0
             : this.force.y -= 3
-        this._scene.startTimeout(TIMEOUTS.PLAYER_HURT)
+        this.game.startTimeout(TIMEOUTS.PLAYER_HURT)
     }
 
     canMove () {
@@ -181,15 +185,15 @@ export default class Player extends Character {
     }
 
     canHurt () {
-        return !this._scene.checkTimeout(TIMEOUTS.PLAYER_HURT)
+        return !this.game.checkTimeout(TIMEOUTS.PLAYER_HURT)
     }
 
     canTake () {
-        return !this._scene.checkTimeout(TIMEOUTS.PLAYER_TAKE)
+        return !this.game.checkTimeout(TIMEOUTS.PLAYER_TAKE)
     }
 
     canUse (itemId) {
-        if (!!this._scene.debug) return true
+        if (!!this.game.debug) return true
         const haveItem = this.items.find((item) => item && item.properties.id === itemId)
         return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
@@ -200,7 +204,7 @@ export default class Player extends Character {
             [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
                 ? [this.items[1], null]
                 : [this.items[0], null]
-            this._scene.startTimeout(TIMEOUTS.PLAYER_TAKE)
+            this.game.startTimeout(TIMEOUTS.PLAYER_TAKE)
             return item
         }
     }
@@ -216,12 +220,12 @@ export default class Player extends Character {
                 item.visible = false
                 // this.playSound(playerGet)
             }
-            this._scene.startTimeout(TIMEOUTS.PLAYER_TAKE)
+            this.game.startTimeout(TIMEOUTS.PLAYER_TAKE)
         }
     }
 
     showMap () {
-        this._scene.startTimeout(TIMEOUTS.PLAYER_MAP)
+        this.game.startTimeout(TIMEOUTS.PLAYER_MAP)
     }
 
     collectMapPiece (piece) {
@@ -230,7 +234,7 @@ export default class Player extends Character {
     }
 
     lifeLoss () {
-        if (!this._scene.checkTimeout(TIMEOUTS.PLAYER_RESPAWN)) {
+        if (!this.game.checkTimeout(TIMEOUTS.PLAYER_RESPAWN)) {
             this.lives -= 1
             this.force = { x: 0, y: 0 }
             // this.lives === 0 ? gameOver() :
@@ -239,8 +243,8 @@ export default class Player extends Character {
     }
 
     restore () {
-        const { overlay, loadGame } = this._scene
-        this._scene.startTimeout(TIMEOUTS.PLAYER_RESPAWN, () => {
+        const { overlay, loadGame } = this.game
+        this.game.startTimeout(TIMEOUTS.PLAYER_RESPAWN, () => {
             overlay.fadeIn()
             loadGame()
         })
