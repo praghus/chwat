@@ -12,13 +12,15 @@ export default class Spikes extends ActiveElement {
     }
 
     draw () {
-        const { ctx, camera, props: { assets } } = this.game
-        ctx.drawImage(assets.shine,
-            this.animation.x + this.animFrame * this.animation.w, this.animation.y,
-            this.animation.w, this.animation.h,
-            this.x + this.shineX + camera.x, this.y + camera.y - 2,
-            this.animation.w, this.animation.h
-        )
+        if (this.onScreen()) {
+            const { ctx, camera, props: { assets } } = this.game
+            ctx.drawImage(assets.shine,
+                this.animation.x + this.animFrame * this.animation.w, this.animation.y,
+                this.animation.w, this.animation.h,
+                this.x + this.shineX + camera.x, this.y + camera.y - 2,
+                this.animation.w, this.animation.h
+            )
+        }
     }
 
     update () {

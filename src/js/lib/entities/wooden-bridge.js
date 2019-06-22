@@ -37,14 +37,14 @@ export default class WoodenBridge extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { overlay } = this.game
+            const { overlay, world } = this.game
             this.activators.map((item) => item.kill())
-            this.game.addTile(443, 14, 209, LAYERS.BACKGROUND2)
-            this.game.addTile(444, 14, 209, LAYERS.BACKGROUND2)
-            this.game.addTile(445, 14, 209, LAYERS.BACKGROUND2)
-            this.game.addTile(443, 15, 868, LAYERS.MAIN)
-            this.game.addTile(444, 15, 868, LAYERS.MAIN)
-            this.game.addTile(445, 15, 868, LAYERS.MAIN)
+            world.putTile(443, 14, 209, LAYERS.BACKGROUND2)
+            world.putTile(444, 14, 209, LAYERS.BACKGROUND2)
+            world.putTile(445, 14, 209, LAYERS.BACKGROUND2)
+            world.putTile(443, 15, 868, LAYERS.MAIN)
+            world.putTile(444, 15, 868, LAYERS.MAIN)
+            world.putTile(445, 15, 868, LAYERS.MAIN)
             overlay.fadeIn()
             this.dead = true
         }

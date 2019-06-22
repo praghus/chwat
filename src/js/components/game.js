@@ -52,7 +52,7 @@ export default class Game extends Component {
         const { startTicker } = this.props
         this.ctx = this.canvas.context
         this.scenes = {
-            [SCENES.INTRO]: new IntroScene(this.ctx, this.props),
+            [SCENES.INTRO]: new IntroScene(this.ctx, this.props), // @todo: move to react component
             [SCENES.GAME]: new GameScene(this.ctx, this.props)
         }
         // this.setOpenGlEffects()

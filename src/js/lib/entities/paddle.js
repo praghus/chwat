@@ -10,15 +10,17 @@ export default class Paddle extends ActiveElement {
         this.activated = false
     }
     draw () {
-        const { ctx, camera, world, props: { assets } } = this.game
-        const { spriteSize } = world
-        for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
-            ctx.drawImage(
-                assets[this.asset],
-                0, 0, spriteSize, spriteSize,
-                Math.floor(this.x + camera.x) + (x * spriteSize), Math.floor(this.y + camera.y),
-                spriteSize, spriteSize
-            )
+        if (this.onScreen()) {
+            const { ctx, camera, world, props: { assets } } = this.game
+            const { spriteSize } = world
+            for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
+                ctx.drawImage(
+                    assets[this.asset],
+                    0, 0, spriteSize, spriteSize,
+                    Math.floor(this.x + camera.x) + (x * spriteSize), Math.floor(this.y + camera.y),
+                    spriteSize, spriteSize
+                )
+            }
         }
     }
 

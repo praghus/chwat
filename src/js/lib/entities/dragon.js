@@ -5,7 +5,9 @@ export default class Cook extends Character {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
-        this.animation = {x: 0, y: 0, w: 256, h: 256, frames: 10, fps: 8, loop: true}
+        this.animations = {
+            hovering: { x: 0, y: 0, w: 256, h: 256, frames: 10, fps: 8, loop: true }
+        }
         this.bounds = {
             x: 60,
             y: 108,
@@ -22,7 +24,7 @@ export default class Cook extends Character {
 
     update () {
         if (this.onScreen()) {
-            this.animate()
+            this.animate(this.animations.hovering)
             if (this.activated) {
                 if (this.y > -128) {
                     this.y -= 1

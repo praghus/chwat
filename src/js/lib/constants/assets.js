@@ -1,6 +1,5 @@
 export const ASSETS = {
     BALLOON: 'air_balloon',
-    BAT: 'bat',
     BUTTONS: 'buttons',
     COOK: 'cook',
     SLIME: 'slime',

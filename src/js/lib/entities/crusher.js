@@ -1,5 +1,4 @@
 import ActiveElement from '../models/active-element'
-import { createRectangleObject } from '../../lib/utils/helpers'
 import { DIRECTIONS, LAYERS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Crusher extends ActiveElement {
@@ -10,7 +9,6 @@ export default class Crusher extends ActiveElement {
         this.rise = false
         this.solid = true
         this.fallDelay = parseInt(this.properties.delay) || 1000
-        this.lightmask = createRectangleObject(this.x, this.y, this.width, this.height)
         this.fallTimeout = setTimeout(() => {
             this.fall = true
         }, this.fallDelay)

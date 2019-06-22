@@ -18,8 +18,8 @@ export default class SpiderTrap extends ActiveElement {
     }
 
     draw () {
-        const { camera, ctx, assets } = this.game
         if (this.onScreen()) {
+            const { camera, ctx, props: { assets } } = this.game
             ctx.beginPath()
             ctx.strokeStyle = COLORS.SPIDER_WEB
             ctx.moveTo(this.startX + camera.x, this.startY + camera.y)

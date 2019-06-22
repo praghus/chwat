@@ -1,70 +1,23 @@
 import ActiveElement from '../models/active-element'
-// import { clearInRange } from '../../lib/utils/helpers'
-import { ENTITIES_TYPE, INPUTS, LAYERS } from '../../lib/constants'
+import { isValidArray } from '../../lib/utils/helpers'
+import { ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../../lib/constants'
 
 export default class Trigger extends ActiveElement {
     constructor (obj, game) {
         super(obj, game)
         this.solid = false
         this.visible = false
+        this.activated = false
     }
 
     collide (element) {
-        const { camera, props: { input }, player, overlay, world } = this.game
-        const { activator, follow, hint, offsetX, offsetY, related, kill, anchor_hint } = this.properties
-        const triggered = !this.activated && (
-            input.keyPressed[INPUTS.INPUT_ACTION] ||
-            activator === ENTITIES_TYPE.PLAYER
-        )
-
-        if (element.type === ENTITIES_TYPE.PLAYER && !this.dead) {
-            if (triggered) {
-                if (player.canUse(activator)) {
-                    const item = player.useItem(activator)
-                    this.activated = true
-                    this.hideMessage()
-                    player.hideHint()
-                    if (kill) {
-                        world.getObjectById(kill, LAYERS.OBJECTS).kill()
-                    }
-                    if (related) {
-                        const rel = world.getObjectById(related, LAYERS.OBJECTS)
-                        if (follow) {
-                            camera.setFollow(rel)
-                            this.game.startTimeout({
-                                name: 'wait_for_camera',
-                                duration: 300
-                            }, () => {
-                                rel.activated = true
-                                rel.trigger = this
-                                rel.activator = item
-                                this.game.startTimeout({
-                                    name: 'wait_for_player',
-                                    duration: 2500
-                                }, () => {
-                                    overlay.fadeIn()
-                                    camera.setFollow(player)
-                                })
-                            })
-                        }
-                        else {
-                            rel.activated = true
-                            rel.trigger = this
-                            rel.activator = item
-                        }
-                    }
-                }
-                else {
-                    const item = world.getObjectByProperty('id', activator, LAYERS.OBJECTS)
-                    if (item) {
-                        anchor_hint
-                            ? this.showHint(item)
-                            : player.showHint(item)
-                    }
-                    this.hideMessage()
-                }
+        const { activator, hint, offsetX, offsetY } = this.properties
+        if (element.type === ENTITIES_TYPE.PLAYER) {
+            if (activator === ENTITIES_TYPE.PLAYER) {
+                this.interact()
             }
-            else if (hint && !player.hintTimeout) {
+            else if (hint && !this.game.checkTimeout(TIMEOUTS.HINT)) {
+                const { world } = this.game
                 const [x, y] = [
                     offsetX ? this.x + parseFloat(offsetX) * world.spriteSize : this.x,
                     offsetY ? this.y + parseFloat(offsetY) * world.spriteSize : this.y
@@ -76,29 +29,65 @@ export default class Trigger extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { camera, overlay } = this.game
-            const { clear, fade, modify, produce, shake } = this.properties
+            const { camera, overlay, player, world } = this.game
+            const { activator, clear, fade, follow, kill, modify, produce, related, shake } = this.properties
 
-            if (produce) {
-                this.addItem(this.properties, this.x + 16, this.y + 16)
+            if (related) {
+                const rel = world.getObjectById(related, LAYERS.OBJECTS)
+                const item = player.useItem(activator)
+
+                if (follow) {
+                    camera.setFollow(rel)
+                    this.game.startTimeout(TIMEOUTS.TRIGGER_WAIT, () => {
+                        rel.activated = true
+                        rel.trigger = this
+                        rel.activator = item
+
+                        this.game.startTimeout(TIMEOUTS.TRIGGER_WAIT_FOR_PLAYER, () => {
+                            overlay.fadeIn()
+                            camera.setFollow(player)
+                        })
+                    })
+                }
+                else {
+                    rel.activated = true
+                    rel.trigger = this
+                    rel.activator = item
+                }
             }
             if (modify) {
                 const matrix = JSON.parse(modify)
-                if (matrix.length) {
-                    matrix.map(
-                        ([x, y, id]) => {
-                            this.game.addTile(x, y, id, LAYERS.MAIN)
-                        }
-                    )
-                }
+                isValidArray(matrix) && matrix.map(
+                    ([x, y, id]) => world.putTile(x, y, id, LAYERS.MAIN)
+                )
             }
-            if (clear) {
-                // clearInRange(world.getObjects(LAYERS.OBJECTS), this)
-                this.clearTiles(clear)
-            }
+            produce && this.addItem(this.properties, this.x + 16, this.y + 16)
+            clear && this.clearTiles(clear)
+            kill && world.getObjectById(kill, LAYERS.OBJECTS).kill()
             shake && camera.shake()
             fade && overlay.fadeIn()
-            this.dead = true
+
+            this.kill()
+        }
+    }
+
+    interact () {
+        const { player, world } = this.game
+        const { activator, anchor_hint } = this.properties
+
+        if (player.canUse(activator)) {
+            player.hideHint()
+            this.hideMessage()
+            this.activated = true
+        }
+        else {
+            const item = world.getObjectByProperty('id', activator, LAYERS.OBJECTS)
+            if (item) {
+                anchor_hint
+                    ? this.showHint(item)
+                    : player.showHint(item)
+            }
+            this.hideMessage()
         }
     }
 

@@ -12,21 +12,24 @@ export default class Rock extends ActiveElement {
         this.solid = true
         this.rotation = 0
     }
+
     draw () {
-        const { ctx, camera, props: { assets } } = this.game
-        const r = Math.PI / 16
-        ctx.save()
-        ctx.translate(
-            Math.floor(this.x + camera.x),
-            Math.floor(this.y + camera.y)
-        )
-        ctx.translate(16, 16)
-        if (this.force.x !== 0) {
-            this.rotation += this.acceleration / 5
+        if (this.onScreen()) {
+            const { ctx, camera, props: { assets } } = this.game
+            const r = Math.PI / 16
+            ctx.save()
+            ctx.translate(
+                Math.floor(this.x + camera.x),
+                Math.floor(this.y + camera.y)
+            )
+            ctx.translate(16, 16)
+            if (this.force.x !== 0) {
+                this.rotation += this.acceleration / 5
+            }
+            ctx.rotate(this.rotation * r)
+            ctx.drawImage(assets[this.asset], -16, -16)
+            ctx.restore()
         }
-        ctx.rotate(this.rotation * r)
-        ctx.drawImage(assets[this.asset], -16, -16)
-        ctx.restore()
     }
 
     update () {

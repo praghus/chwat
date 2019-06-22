@@ -13,20 +13,22 @@ export default class Lava extends ActiveElement {
     }
 
     draw () {
-        const { ctx, camera, world, props: { assets } } = this.game
-        const { spriteSize } = world
-        const y = 0
-        for (let x = 0; x < Math.round((this.width / 2) / spriteSize); x++) {
-            const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
-            const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-            if (!world.isSolidArea(PX, PY)) {
-                ctx.drawImage(assets[this.asset],
-                    this.animation.x + this.animFrame * this.animation.w, this.animation.y,
-                    this.animation.w, this.animation.h,
-                    Math.floor(this.x + camera.x) + (x * this.animation.w),
-                    Math.floor(this.y + camera.y) + (y * this.animation.h),
-                    this.animation.w, this.animation.h
-                )
+        if (this.onScreen()) {
+            const { ctx, camera, world, props: { assets } } = this.game
+            const { spriteSize } = world
+            const y = 0
+            for (let x = 0; x < Math.round((this.width / 2) / spriteSize); x++) {
+                const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
+                const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
+                if (!world.isSolidArea(PX, PY)) {
+                    ctx.drawImage(assets[this.asset],
+                        this.animation.x + this.animFrame * this.animation.w, this.animation.y,
+                        this.animation.w, this.animation.h,
+                        Math.floor(this.x + camera.x) + (x * this.animation.w),
+                        Math.floor(this.y + camera.y) + (y * this.animation.h),
+                        this.animation.w, this.animation.h
+                    )
+                }
             }
         }
     }

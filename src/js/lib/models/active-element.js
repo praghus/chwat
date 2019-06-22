@@ -7,7 +7,6 @@ export default class ActiveElement extends Entity {
         super(obj, game)
         this.activated = false
         this.visible = true
-        this.messageDuration = 4000
 
         this.hideMessage = () => {
             this.message = null
@@ -19,47 +18,49 @@ export default class ActiveElement extends Entity {
     }
 
     draw () {
-        const {
-            addLightElement,
-            addLightmaskElement,
-            camera,
-            debug,
-            dynamicLights,
-            overlay
-        } = this.game
+        if (this.onScreen()) {
+            const {
+                addLightElement,
+                addLightmaskElement,
+                camera,
+                debug,
+                dynamicLights,
+                overlay
+            } = this.game
 
-        if (dynamicLights && this.visible && this.onScreen()) {
-            const [ posX, posY ] = [
-                Math.floor(this.x + camera.x),
-                Math.floor(this.y + camera.y)
-            ]
+            if (dynamicLights && this.visible && this.onScreen()) {
+                const [ posX, posY ] = [
+                    Math.floor(this.x + camera.x),
+                    Math.floor(this.y + camera.y)
+                ]
 
-            this.lightmask && addLightmaskElement(this.lightmask, {
-                x: posX,
-                y: posY,
-                width: this.width,
-                height: this.height
-            })
+                this.lightmask && addLightmaskElement(this.lightmask, {
+                    x: posX,
+                    y: posY,
+                    width: this.width,
+                    height: this.height
+                })
 
-            this.light && addLightElement(
-                posX + (this.width / 2),
-                posY + (this.height / 2),
-                this.light.distance,
-                this.light.color
-            )
+                this.light && addLightElement(
+                    posX + (this.width / 2),
+                    posY + (this.height / 2),
+                    this.light.distance,
+                    this.light.color
+                )
+            }
+
+            super.draw()
+
+            if (this.message) {
+                const { text, x, y } = this.message
+                overlay.displayText(text,
+                    Math.floor(x + camera.x),
+                    Math.floor(y + camera.y)
+                )
+            }
+            this.hint && overlay.addHint(this)
+            debug && overlay.displayDebug(this)
         }
-
-        super.draw()
-
-        if (this.message) {
-            const { text, x, y } = this.message
-            overlay.displayText(text,
-                Math.floor(x + camera.x),
-                Math.floor(y + camera.y)
-            )
-        }
-        this.hint && overlay.addHint(this)
-        this.onScreen() && debug && overlay.displayDebug(this)
     }
 
     showHint (item) {

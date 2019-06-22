@@ -16,11 +16,13 @@ export default class LavaStone extends ActiveElement {
     }
 
     draw () {
-        const { ctx, camera } = this.game
-        ctx.save()
-        ctx.fillStyle = this.color
-        ctx.fillRect(this.x + camera.x, this.y + camera.y, this.width, this.height)
-        ctx.restore()
+        if (this.onScreen()) {
+            const { ctx, camera } = this.game
+            ctx.save()
+            ctx.fillStyle = this.color
+            ctx.fillRect(this.x + camera.x, this.y + camera.y, this.width, this.height)
+            ctx.restore()
+        }
     }
 
     update () {

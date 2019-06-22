@@ -28,14 +28,6 @@ export {
     soundsData
 } from './sounds'
 export {
-    JUMP_THROUGH_TILES,
-    MINI_TILES,
-    NON_COLLIDE_TILES
-} from './tiles'
-export {
-    STATES
-} from './states'
-export {
     TIMEOUTS
 } from './timeouts'
 export {
