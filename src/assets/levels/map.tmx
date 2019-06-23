@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-up" width="500" height="92" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="787">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-up" width="500" height="92" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="789">
  <properties>
   <property name="gravity" value="0.5"/>
   <property name="surfaceLevel" value="50"/>
@@ -7,10 +7,15 @@
  </properties>
  <tileset firstgid="1" name="tiles" tilewidth="16" tileheight="16" tilecount="1120" columns="32">
   <image source="../images/tiles.png" width="512" height="560"/>
+  <tile id="5" type="one_way">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="0" width="16" height="8"/>
+   </objectgroup>
+  </tile>
   <tile id="6" type="no_collide"/>
   <tile id="8" type="one_way">
    <objectgroup draworder="index">
-    <object id="4" x="0" y="0" width="16" height="4"/>
+    <object id="6" x="0" y="0" width="16" height="8"/>
    </objectgroup>
   </tile>
   <tile id="9" type="no_collide">
@@ -1044,7 +1049,7 @@ the elevator down below</property>
     <property name="id" value="stone"/>
    </properties>
   </object>
-  <object id="786" name="Player" type="player" x="256" y="720" width="32" height="48"/>
+  <object id="788" name="Player" type="player" x="3902" y="341" width="32" height="48"/>
  </objectgroup>
  <layer id="5" name="foreground1" width="500" height="92">
   <properties>

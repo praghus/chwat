@@ -84,12 +84,7 @@ export default class Player extends Character {
                 this.animate(this.direction === DIRECTIONS.RIGHT
                     ? this.animations.FALL_RIGHT
                     : this.animations.FALL_LEFT)
-                if (this.onFloor) {
-                    this.addDust(DIRECTIONS.LEFT)
-                    this.addDust(DIRECTIONS.RIGHT)
-                    this.animFrame = 0
-                    this.jump = false
-                }
+                this.falling = true
             }
         }
         else if (this.force.x !== 0) {
@@ -101,6 +96,12 @@ export default class Player extends Character {
             this.animate(this.direction === DIRECTIONS.RIGHT
                 ? this.animations.STAND_RIGHT
                 : this.animations.STAND_LEFT)
+        }
+        // add dust when fell
+        if (this.falling && !this.jump && this.onFloor) {
+            this.addDust(DIRECTIONS.LEFT)
+            this.addDust(DIRECTIONS.RIGHT)
+            this.falling = false
         }
     }
 

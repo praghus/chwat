@@ -19,12 +19,11 @@ export default class Tile {
         this.then = getPerformance()
     }
 
-    collide ({x, y, w, h}) {
+    collide (polygon) {
         if (isValidArray(this.collisionLayer)) {
-            const rect = new Box(new Vector(x, y), w, h).toPolygon()
             const response = new Response()
-            const hasCollision = this.collisionLayer.some(
-                (shape) => testPolygonPolygon(shape, rect, response)
+            const hasCollision = this.collisionLayer.some((shape) =>
+                testPolygonPolygon(shape, polygon, response)
             )
             return hasCollision && response
         }

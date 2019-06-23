@@ -3,7 +3,7 @@ import { UPDATE_CONFIG } from '../actions'
 
 const initialState = {
     [CONFIG.SCENE]: SCENES.GAME,
-    [CONFIG.DEBUG_MODE]: true,
+    [CONFIG.DEBUG_MODE]: false,
     [CONFIG.DISABLE_SOUNDS]: false
 }
 

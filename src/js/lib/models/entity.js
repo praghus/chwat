@@ -1,4 +1,4 @@
-import { Box, Vector } from 'sat'
+import { Box, Response, Vector, testPolygonPolygon } from 'sat'
 import { TILE_TYPE } from '../constants'
 import { getPerformance, isValidArray, overlap, normalize } from '../utils/helpers'
 
@@ -24,7 +24,7 @@ export default class Entity {
         })
         this.frameStart = getPerformance()
         this.then = getPerformance()
-
+        // default bounds
         this.setBoundingBox(0, 0, this.width, this.height)
     }
 
@@ -32,14 +32,13 @@ export default class Entity {
         this.bounds = new Box(new Vector(x, y), w, h)
     }
 
+    getTranslatedBounds (x = this.x, y = this.y) {
+        return this.bounds.toPolygon().translate(x, y)
+    }
+
     getBoundingRect () {
-        const {pos: {x, y}, w: width, h: height} = this.bounds
-        return {
-            x: this.x + x,
-            y: this.y + y,
-            width,
-            height
-        }
+        const { pos: { x, y }, w: width, h: height } = this.bounds
+        return { x: this.x + x, y: this.y + y, width, height }
     }
 
     onScreen () {
@@ -89,56 +88,59 @@ export default class Entity {
     }
 
     draw () {
-        const { ctx, camera, world, props: { assets } } = this.game
-        if (this.onScreen()) {
-            const {
-                animation,
-                animFrame,
-                gid,
-                width,
-                height,
-                visible
-            } = this
+        if (this.onScreen() && this.visible) {
+            const { ctx, camera, world, props: { assets } } = this.game
+            const { animation, animFrame, gid, width, height } = this
             const sprite = assets[this.asset]
             const [ posX, posY ] = [
                 Math.floor(this.x + camera.x),
                 Math.floor(this.y + camera.y)
             ]
-            if (visible) {
-                if (animation) {
-                    const { frames, strip } = animation
-                    const x = strip
-                        ? strip.x + animFrame * animation.width
-                        : isValidArray(frames) && frames[animFrame][0]
-                    const y = strip
-                        ? strip.y
-                        : isValidArray(frames) && frames[animFrame][1]
-                    animation && ctx.drawImage(sprite,
-                        x, y,
-                        animation.width, animation.height,
-                        posX, posY,
-                        animation.width, animation.height
-                    )
-                }
-                else if (gid) {
-                    const tile = world.createTile(gid)
-                    tile.draw(ctx, posX, posY)
-                }
-                else {
-                    ctx.drawImage(sprite, 0, 0, width, height, posX, posY, width, height)
-                }
+            if (animation) {
+                const { frames, strip } = animation
+                const x = strip
+                    ? strip.x + animFrame * animation.width
+                    : isValidArray(frames) && frames[animFrame][0]
+                const y = strip
+                    ? strip.y
+                    : isValidArray(frames) && frames[animFrame][1]
+                animation && ctx.drawImage(sprite,
+                    x, y,
+                    animation.width, animation.height,
+                    posX, posY,
+                    animation.width, animation.height
+                )
+            }
+            else if (gid) {
+                const tile = world.createTile(gid)
+                tile.draw(ctx, posX, posY)
+            }
+            else {
+                ctx.drawImage(sprite, 0, 0, width, height, posX, posY, width, height)
             }
         }
     }
 
     overlapTest (obj) {
-        if (!this.dead && (this.onScreen() || this.activated) &&
+        try {
+            if (!this.dead && (this.onScreen() || this.activated) &&
             overlap(this.getBoundingRect(), obj.getBoundingRect())
-        ) {
-            this.collide && this.collide(obj)
-            obj.collide && obj.collide(this)
+            ) {
+            // console.info(this.type, this.col(this.getTranslatedBounds(), obj.getTranslatedBounds()))
+                this.collide && this.collide(obj)
+                obj.collide && obj.collide(this)
+            }
+        }
+        catch (e) {
+            console.error(e)
         }
     }
+
+    // col (obj1, obj2) {
+    //     const response = new Response()
+    //     testPolygonPolygon(obj1, obj2, response)
+    //     return response
+    // }
 
     move () {
         const { world } = this.game
@@ -166,19 +168,20 @@ export default class Entity {
             for (let x = PX; x <= PW; x++) {
                 world.getTilledCollisionLayers().map((layer) => {
                     const t = layer.data[x][y]
-
                     if (world.isSolidTile(t)) {
                         const td = world.tiles[t]
+                        const tileX = x * td.width
+                        const tileY = y * td.height
                         const isOneWay = td.type === TILE_TYPE.ONE_WAY
                         // const diff = Math.round(this.y + boundsY + h - (y * td.height))
-                        const ccY = td.collide({w, h,
-                            x: this.x + boundsX - (x * td.width),
-                            y: this.expectedY + boundsY - (y * td.height)
-                        })
-                        const ccX = td.collide({w, h,
-                            x: this.expectedX + boundsX - (x * td.width),
-                            y: this.y + boundsY - (y * td.height)
-                        })
+                        const ccY = td.collide(this.getTranslatedBounds(
+                            this.x - tileX,
+                            this.expectedY - tileY
+                        ))
+                        const ccX = td.collide(this.getTranslatedBounds(
+                            this.expectedX - tileX,
+                            this.y - tileY
+                        ))
 
                         if (ccX) {
                             const ovy = parseFloat(ccX.overlapV.y.toFixed(2))

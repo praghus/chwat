@@ -5,7 +5,7 @@ export default class Cook extends Character {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
-        this.animation = {x: 0, y: 0, w: 16, h: 48, frames: 10, fps: 8, loop: true}
+        this.animation = this.animations.STANDING
     }
 
     collide (element) {
