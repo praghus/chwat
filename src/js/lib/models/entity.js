@@ -146,8 +146,8 @@ export default class Entity {
 
         if (this.force.x > this.maxSpeed) this.force.x = this.maxSpeed
         if (this.force.x < -this.maxSpeed) this.force.x = -this.maxSpeed
-        if (this.force.y > spriteSize) this.force.y = spriteSize
-        if (this.force.y < -spriteSize) this.force.y = -spriteSize
+        if (this.force.y > spriteSize / 2) this.force.y = spriteSize / 2
+        // if (this.force.y < -spriteSize) this.force.y = -spriteSize
         if (this.x + this.force.x < 0) this.force.x = 0
         if (this.y + this.force.y < 0) this.force.y = 0
 
@@ -156,20 +156,21 @@ export default class Entity {
         this.onCeiling = false
         this.onFloor = false
 
-        const { pos: {x: boundsX, y: boundsY}, w, h } = this.bounds
+        const { pos: { x: boundsX, y: boundsY }, w, h } = this.bounds
         const PX = Math.floor((this.expectedX + boundsX) / spriteSize)
         const PY = Math.floor((this.expectedY + boundsY) / spriteSize)
         const PW = Math.floor((this.expectedX + boundsX + w) / spriteSize)
         const PH = Math.floor((this.expectedY + boundsY + h) / spriteSize)
-        // const diff = Math.round(this.y + boundsY + boundsHeight - (y * td.height))
 
         for (let y = PY; y <= PH; y++) {
             for (let x = PX; x <= PW; x++) {
                 world.getTilledCollisionLayers().map((layer) => {
                     const t = layer.data[x][y]
+
                     if (world.isSolidTile(t)) {
                         const td = world.tiles[t]
                         const isOneWay = td.type === TILE_TYPE.ONE_WAY
+                        // const diff = Math.round(this.y + boundsY + h - (y * td.height))
                         const ccY = td.collide({w, h,
                             x: this.x + boundsX - (x * td.width),
                             y: this.expectedY + boundsY - (y * td.height)
@@ -179,34 +180,34 @@ export default class Entity {
                             y: this.y + boundsY - (y * td.height)
                         })
 
-                        if (ccY && !(isOneWay && this.force.y < 0)) {
-                            this.onCeiling = this.force.y < 0
-                            this.onFloor = this.force.y >= 0
-                            this.force.y += parseFloat(ccY.overlapV.y.toFixed(2))
-                        }
                         if (ccX) {
                             const ovy = parseFloat(ccX.overlapV.y.toFixed(2))
                             if (Math.abs(ovy) && !(isOneWay && this.force.y < 0)) {
-                                this.onFloor = true
                                 this.force.y += ovy
                             }
                             else if (this.force.x !== 0 && !isOneWay) {
                                 this.force.x += parseFloat(ccX.overlapV.x.toFixed(2))
                             }
                         }
+                        if (ccY && this.force.y !== 0 && !(isOneWay && this.force.y < 0)) {
+                            const ovy1 = parseFloat(ccY.overlapV.y.toFixed(2))
+                            this.force.y += ovy1
+                        }
                     }
                 })
             }
         }
+        this.onFloor = this.y + this.force.y < this.expectedY
+        this.onLeftEdge = !world.isSolidArea(PX, PH)
+        this.onRightEdge = !world.isSolidArea(PW, PH)
+
         this.x = Math.round(this.x + this.force.x)
         this.y = Math.round(this.y + this.force.y)
+
         if (this.onFloor) {
             this.force.y = 0
             this.jump = false
         }
-
-        this.onLeftEdge = !world.isSolidArea(PX, PH)
-        this.onRightEdge = !world.isSolidArea(PW, PH)
     }
 
     kill () {

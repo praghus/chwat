@@ -139,9 +139,9 @@ export default class Player extends Character {
             }
             if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
                 this.jump = true
-                this.game.startTimeout(TIMEOUTS.PLAYER_JUMP, () => {
-                    this.force.y = -6
-                })
+                // this.game.startTimeout(TIMEOUTS.PLAYER_JUMP, () => {
+                this.force.y = -6
+                // })
             }
             if (input.keyPressed[INPUTS.INPUT_MAP]) {
                 this.showMap()
