@@ -1,4 +1,4 @@
-import { Entity } from 'tiled-platformer-lib'
+import Entity from './entity'
 import { randomInt } from '../../lib/utils/helpers'
 import { ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../../lib/constants'
 
@@ -19,35 +19,7 @@ export default class ActiveElement extends Entity {
 
     draw () {
         if (this.onScreen()) {
-            const {
-                addLightElement,
-                addLightmaskElement,
-                camera,
-                debug,
-                dynamicLights,
-                overlay
-            } = this.game
-
-            if (dynamicLights && this.visible && this.onScreen()) {
-                const [ posX, posY ] = [
-                    Math.floor(this.x + camera.x),
-                    Math.floor(this.y + camera.y)
-                ]
-
-                this.lightmask && addLightmaskElement(this.lightmask, {
-                    x: posX,
-                    y: posY,
-                    width: this.width,
-                    height: this.height
-                })
-
-                this.light && addLightElement(
-                    posX + (this.width / 2),
-                    posY + (this.height / 2),
-                    this.light.distance,
-                    this.light.color
-                )
-            }
+            const { camera, debug, overlay } = this.game
 
             super.draw()
 

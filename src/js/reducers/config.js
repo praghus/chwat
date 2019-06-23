@@ -2,8 +2,8 @@ import { CONFIG, SCENES } from '../lib/constants'
 import { UPDATE_CONFIG } from '../actions'
 
 const initialState = {
-    [CONFIG.SCENE]: SCENES.INTRO,
-    [CONFIG.DEBUG_MODE]: false,
+    [CONFIG.SCENE]: SCENES.GAME,
+    [CONFIG.DEBUG_MODE]: true,
     [CONFIG.DISABLE_SOUNDS]: false
 }
 

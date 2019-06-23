@@ -125,7 +125,7 @@ export default class Overlay {
         if (!gid) return
         const { ctx, world } = this.game
         const item = world.createTile(gid)
-        item.draw(ctx, x, y, scale)
+        item.draw(ctx, x, y, {scale})
     }
 
     displayMap () {

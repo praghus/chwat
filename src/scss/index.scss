@@ -12,8 +12,6 @@ body {
     overflow: hidden;
     background: #000;
     color: #fff;
-    image-rendering: crisp-edges;
-    -ms-interpolation-mode: nearest-neighbor; 
 }
 
 #root {
@@ -82,4 +80,27 @@ canvas {
         overflow: hidden;
         text-align: right; 
     }
+}
+
+.splash {
+    width: 300px;
+    height: 300px;
+    overflow: hidden; 
+    display: flex;
+    transform: scale(3);
+}
+
+.logo{
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center; 
+    transition: all 0.5s ease;
+    background-image: url('../assets/images/chwat.png');
+}
+
+.logo:hover{
+    transform: scale(1.5);
 }

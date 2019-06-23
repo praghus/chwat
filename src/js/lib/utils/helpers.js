@@ -1,12 +1,10 @@
 import { ENTITIES, INPUT_KEYS } from '../constants'
 
 export const noop = () => {}
-
 export const isValidArray = (arr) => arr && arr.length
-
-export function requireAll (requireContext) {
-    return requireContext.keys().map(requireContext)
-}
+export const getPerformance = () => typeof performance !== 'undefined' && performance.now()
+export const requireAll = (requireContext) => requireContext.keys().map(requireContext)
+export const getFilename = (path) => path.replace(/^.*[\\/]/, '').split('.').slice(0, -1).join('.')
 
 export function calculateViewportSize (width, height) {
     const pixelScale = height / 160

@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Game } from '../components'
+import { GameScene, IntroScene } from '../components/scenes'
 import { requireAll } from '../lib/utils/helpers'
+import { CONFIG, SCENES } from '../lib/constants'
 import {
+    configPropType,
     inputPropType,
     tickerPropType,
     viewportPropType
@@ -16,7 +18,6 @@ import {
     updateMousePos,
     playSound
 } from '../actions'
-import { CONFIG } from '../lib/constants'
 
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(
@@ -24,6 +25,7 @@ const images = requireAll(allImages).reduce(
 )
 
 const propTypes = {
+    config: configPropType.isRequired,
     input: inputPropType.isRequired,
     onKey: PropTypes.func.isRequired,
     onMouse: PropTypes.func.isRequired,
@@ -57,13 +59,19 @@ class AppContainer extends Component {
     }
 
     render () {
+        const { config: { scene } } = this.props
         const { loadedCount, assetsLoaded } = this.state
-        const percent = Math.round((loadedCount / Object.values(this.assets).length) * 100)
-        return (
-            assetsLoaded
-                ? <Game {...this.props} assets={this.assets} startTicker={this.startTicker} />
-                : <div className='preloader'>Loading assets {percent}%</div>
-        )
+        if (!assetsLoaded) {
+            const percent = Math.round((loadedCount / Object.values(this.assets).length) * 100)
+            return (<div className='preloader'>Loading assets {percent}%</div>)
+        }
+
+        switch (scene) {
+        case SCENES.INTRO:
+            return <IntroScene {...this.props} />
+        case SCENES.GAME:
+            return <GameScene {...this.props} assets={this.assets} startTicker={this.startTicker} />
+        }
     }
 
     onAssetLoad () {

@@ -9,7 +9,9 @@ export {
     CONFIG,
     DIRECTIONS,
     LAYERS,
-    SCENES
+    NODE_TYPE,
+    SCENES,
+    TILE_TYPE
 } from './config'
 export {
     ENTITIES,
