@@ -15,7 +15,6 @@ export {
 } from './config'
 export {
     ENTITIES,
-    ENTITIES_FAMILY,
     ENTITIES_TYPE
 } from './entities'
 export {

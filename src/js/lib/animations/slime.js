@@ -1,4 +1,4 @@
-export const SLIME = {
+export default {
     BOUNCE: {
         strip: { x: 0, y: 0, frames: 9, duration: 100 },
         width: 48,

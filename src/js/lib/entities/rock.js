@@ -34,9 +34,7 @@ export default class Rock extends ActiveElement {
 
     update () {
         if (this.activated && !this.dead) {
-            const { camera, world } = this.game
-
-            this.force.y += world.gravity
+            const { camera } = this.game
 
             if (this.onFloor && this.acceleration < this.maxSpeed) {
                 this.acceleration += 0.01
@@ -55,9 +53,9 @@ export default class Rock extends ActiveElement {
                 camera.shake()
                 this.doShake = false
             }
-            if (this.expectedX > this.x) {
-                this.kill()
-            }
+            // if (this.expectedX > this.x) {
+            //     this.kill()
+            // }
         }
     }
 }

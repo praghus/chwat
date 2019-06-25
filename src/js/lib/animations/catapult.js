@@ -1,4 +1,4 @@
-export const CATAPULT = {
+export default {
     UP: {
         frames: [[0, 0, 0]],
         width: 64,

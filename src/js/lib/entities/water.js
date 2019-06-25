@@ -1,6 +1,5 @@
 import ActiveElement from '../models/active-element'
-import { ANIMATIONS } from '../../lib/animations'
-import { DIRECTIONS, ENTITIES_FAMILY } from '../../lib/constants'
+import { DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Water extends ActiveElement {
     constructor (obj, game) {
@@ -8,7 +7,7 @@ export default class Water extends ActiveElement {
         this.damage = 100
         this.wave = 0
         this.direction = DIRECTIONS.DOWN
-        this.animation = ANIMATIONS.WATER.WAVES
+        this.animation = this.animations.WAVES
     }
 
     draw () {
@@ -26,7 +25,7 @@ export default class Water extends ActiveElement {
                 for (let x = 0; x < pW; x++) {
                     const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
                     const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-                    if (!world.isSolidArea(PX, PY)) {
+                    if (!world.isSolidArea(PX, PY, this.collisionLayers)) {
                         ctx.drawImage(assets[this.asset],
                             y === 0 ? this.animation.frames[this.animFrame][0] : 0,
                             y === 0 ? this.animation.frames[this.animFrame][1] : 32,
@@ -35,7 +34,7 @@ export default class Water extends ActiveElement {
                             spriteSize, spriteSize
                         )
                     }
-                    if (!world.isSolidArea(PX, PY + 1) && canFall && y + 1 === pH) {
+                    if (!world.isSolidArea(PX, PY + 1, this.collisionLayers) && canFall && y + 1 === pH) {
                         this.fall = true
                     }
                 }
@@ -45,7 +44,7 @@ export default class Water extends ActiveElement {
 
     collide (element) {
         // restore the initial position of the item when it falls into the water
-        if (element.family === ENTITIES_FAMILY.ITEMS) {
+        if (element.family === ENTITIES_TYPE.ITEM) {
             element.restore()
         }
     }

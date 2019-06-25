@@ -1,7 +1,3 @@
 export { default as ActiveElement } from './active-element'
-export { default as Camera } from './camera'
-export { default as Character } from './camera'
-export { default as Entity } from './entity'
+export { default as Character } from './character'
 export { default as Overlay } from './overlay'
-export { default as Tile } from './tile'
-export { default as World } from './world'

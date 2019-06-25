@@ -1,4 +1,4 @@
-import Entity from './entity'
+import { Entity } from 'tiled-platformer-lib'
 import { DIRECTIONS, ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../../lib/constants'
 
 export default class Character extends Entity {

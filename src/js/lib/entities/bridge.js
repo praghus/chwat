@@ -5,10 +5,6 @@ export default class Bridge extends ActiveElement {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
-        this.animations = {
-            UP: {x: 0, y: 0, w: 160, h: 80, frames: 1, fps: 0, loop: false},
-            DOWN: {x: 0, y: 80, w: 160, h: 80, frames: 1, fps: 0, loop: false}
-        }
         this.animation = this.animations.UP
     }
 

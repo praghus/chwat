@@ -18,9 +18,6 @@ export default class Slime extends Character {
             this.activated = true
         }
         if (this.activated) {
-            const { world } = this.game
-            const { gravity } = world
-
             if (this.running) {
                 switch (this.animFrame) {
                 case 2:
@@ -42,7 +39,6 @@ export default class Slime extends Character {
                 })
             }
 
-            this.force.y += gravity
             this.force.x += this.direction === DIRECTIONS.RIGHT
                 ? this.acceleration
                 : -this.acceleration

@@ -1,19 +1,10 @@
-import { CATAPULT } from './catapult'
-import { COOK } from './cook'
-import { DUST } from './dust'
-import { DRAGON } from './dragon'
-import { PLAYER } from './player'
-import { SLIME } from './slime'
-import { SWITCH } from './switch'
-import { WATER } from './water'
-
-export const ANIMATIONS = {
-    CATAPULT,
-    COOK,
-    DUST,
-    DRAGON,
-    PLAYER,
-    SLIME,
-    SWITCH,
-    WATER
-}
+export { default as BRIDGE } from './bridge'
+export { default as CATAPULT } from './catapult'
+export { default as COOK } from './cook'
+export { default as DUST } from './dust'
+export { default as DRAGON } from './dragon'
+export { default as PLAYER } from './player'
+export { default as SLIME } from './slime'
+export { default as SPIDER_TRAP } from './spider-trap'
+export { default as SWITCH } from './switch'
+export { default as WATER } from './water'

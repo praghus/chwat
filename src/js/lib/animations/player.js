@@ -1,4 +1,4 @@
-export const PLAYER = {
+export default {
     WALK_LEFT: {
         frames: [
             [704, 16, 60], [736, 16, 60], [768, 16, 60], [800, 16, 60],

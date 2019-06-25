@@ -1,13 +1,11 @@
 export const ASSETS = {
     BALLOON: 'air_balloon',
-    BUTTONS: 'buttons',
     COOK: 'cook',
     SLIME: 'slime',
     BUBBLE: 'sbubble',
     BRIDGE: 'bridge',
     CATAPULT: 'catapult',
     MAP_PIECE: 'map_piece',
-    CRUSHER: 'crusher',
     DUST: 'dust',
     DRAGON: 'dragon',
     ENERGY: 'energy',

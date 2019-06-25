@@ -10,4 +10,14 @@ export default class Torch extends ActiveElement {
             color: COLORS.TRANS_WHITE
         }
     }
+
+    // draw () {
+    //     if (this.onScreen()) {
+    //         const { ctx } = this.game
+    //         ctx.save()
+    //         ctx.globalCompositeOperation = 'lighter'
+    //         super.draw()
+    //         ctx.restore()
+    //     }
+    // }
 }

@@ -1,4 +1,4 @@
-export const SWITCH = {
+export default {
     ON: {
         frames: [[16, 0, 0]],
         width: 16,

@@ -14,30 +14,25 @@ export default class SpiderTrap extends ActiveElement {
         this.fallTimeout = setTimeout(() => {
             this.fall = true
         }, this.fallDelay)
-        this.animation = {x: 0, y: 0, w: 16, h: 23, frames: 2, fps: 4, loop: true}
+        this.animation = this.animations.DEFAULT
     }
 
     draw () {
         if (this.onScreen()) {
-            const { camera, ctx, props: { assets } } = this.game
+            const { camera, ctx } = this.game
             ctx.beginPath()
             ctx.strokeStyle = COLORS.SPIDER_WEB
             ctx.moveTo(this.startX + camera.x, this.startY + camera.y)
             ctx.lineTo(this.startX + camera.x, this.y + camera.y)
             ctx.stroke()
-            ctx.drawImage(assets[this.type],
-                this.animation.x + this.animFrame * this.animation.w, this.animation.y,
-                this.animation.w, this.animation.h,
-                this.x + camera.x, this.y + camera.y,
-                this.animation.w, this.animation.h
-            )
+            super.draw()
         }
     }
 
     update () {
         if (this.onScreen()) {
             if (this.rise) {
-                this.force.y -= 0.005
+                this.force.y = -1
             }
             else if (this.fall) {
                 this.force.y += this.game.world.gravity
@@ -50,7 +45,6 @@ export default class SpiderTrap extends ActiveElement {
             this.animate()
 
             if (this.onFloor) {
-                this.force.y = 0
                 this.fall = false
                 this.rise = true
             }

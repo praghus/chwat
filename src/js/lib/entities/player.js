@@ -1,7 +1,6 @@
 import Character from '../models/character'
 import {
     DIRECTIONS,
-    ENTITIES_FAMILY,
     ENTITIES_TYPE,
     INPUTS,
     TIMEOUTS
@@ -33,7 +32,8 @@ export default class Player extends Character {
         ctx.restore()
     }
 
-    collide (element) {
+    collide (element, force) {
+        super.collide(element, force)
         if (this.action) {
             switch (element.type) {
             case ENTITIES_TYPE.SWITCH:
@@ -55,10 +55,7 @@ export default class Player extends Character {
                 break
             }
         }
-        if (this.canHurt() && element.damage > 0 && (
-            element.family === ENTITIES_FAMILY.ENEMIES ||
-            element.family === ENTITIES_FAMILY.TRAPS
-        )) {
+        if (this.canHurt() && element.damage > 0) {
             // this.hit(element.damage)
             this.force.y = -2
             this.game.startTimeout(TIMEOUTS.PLAYER_HURT)
@@ -69,6 +66,9 @@ export default class Player extends Character {
         if (this.action) {
             this.moveItems()
             this.actionPerformed()
+        }
+        if (this.onFloor) {
+            this.jump = false
         }
 
         this.input()
@@ -108,8 +108,8 @@ export default class Player extends Character {
     input () {
         const {
             camera,
-            props: { input, viewport },
-            world: { gravity }
+            world: { gravity },
+            props: { input, viewport }
         } = this.game
 
         if (this.canMove()) {
@@ -164,16 +164,20 @@ export default class Player extends Character {
                 this.force.x = 0
             }
         }
-        // gravity
         this.force.y += this.force.y > 0
-            ? gravity * 1.5
+            ? gravity
             : gravity / 2
     }
 
     moveItems (item) {
         if (this.canTake()) {
             if (this.items[1]) {
-                this.items[1].placeAt(this.x + 16, this.y)
+                this.items[1].placeAt(
+                    this.direction === DIRECTIONS.RIGHT
+                        ? this.x + 24
+                        : this.x - 10,
+                    this.y
+                )
             }
             [this.items[0], this.items[1]] = [item, this.items[0]]
             if (item) item.visible = false

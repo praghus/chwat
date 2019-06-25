@@ -7,8 +7,9 @@ import Inputs from '../inputs'
 import map from '../../../assets/levels/map.tmx'
 import fx from 'glfx'
 import { findDOMNode } from 'react-dom'
+import { Camera, World } from 'tiled-platformer-lib'
 import { tmxParser } from 'tmx-tiledmap'
-import { Camera, World, Overlay } from '../../lib/models'
+import { Overlay } from '../../lib/models'
 import { noop, getPerformance } from '../../lib/utils/helpers'
 import {
     ASSETS,
@@ -54,12 +55,10 @@ export default class GameScene extends Component {
         this.timer = null
         this.frameTime = null
         this.fps = 0
-
+        this.timeoutsPool = {}
         this.frameStart = getPerformance()
         this.then = getPerformance()
         this.debug = props.config[CONFIG.DEBUG_MODE]
-
-        this.timeoutsPool = {}
 
         this.countFPS = this.countFPS.bind(this)
         this.countTime = this.countTime.bind(this)
