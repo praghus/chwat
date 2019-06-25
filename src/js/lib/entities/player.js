@@ -14,8 +14,8 @@ export default class Player extends Character {
         this.maxLives = 3
         this.energy = 100
         this.maxEnergy = 100
-        this.maxSpeed = 2
-        this.acceleration = 0.2
+        this.maxSpeed = 1.5
+        this.acceleration = 0.1
         this.inDark = 0
         this.items = [null, null]
         this.mapPieces = []
@@ -173,9 +173,7 @@ export default class Player extends Character {
         if (this.canTake()) {
             if (this.items[1]) {
                 this.items[1].placeAt(
-                    this.direction === DIRECTIONS.RIGHT
-                        ? this.x + 24
-                        : this.x - 10,
+                    this.x + 4,
                     this.y
                 )
             }

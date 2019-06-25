@@ -10,7 +10,15 @@ export default class TileObject extends ActiveElement {
 
     update () {
         if (this.onScreen()) {
-            if (this.onFloor) this.force.y *= -0.5
+            const { world: { gravity } } = this.game
+            if (this.onFloor) {
+                this.force.y *= -0.5
+            }
+            else {
+                this.force.y += this.force.y > 0
+                    ? gravity
+                    : gravity / 2
+            }
             this.move()
             // this.force.x *= -0.5
         }
