@@ -1,5 +1,7 @@
 import Character from '../models/character'
+import { createLamp } from 'tiled-platformer-lib'
 import {
+    COLORS,
     DIRECTIONS,
     ENTITIES_TYPE,
     INPUTS,
@@ -14,11 +16,12 @@ export default class Player extends Character {
         this.maxLives = 3
         this.energy = 100
         this.maxEnergy = 100
-        this.maxSpeed = 1.5
-        this.acceleration = 0.1
+        this.maxSpeed = 2
+        this.acceleration = 0.2
         this.inDark = 0
         this.items = [null, null]
         this.mapPieces = []
+        this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
         this.setBoundingBox(10, 8, this.width - 20, this.height - 8)
     }
 
@@ -63,14 +66,6 @@ export default class Player extends Character {
     }
 
     update () {
-        if (this.action) {
-            this.moveItems()
-            this.actionPerformed()
-        }
-        if (this.onFloor) {
-            this.jump = false
-        }
-
         this.input()
         this.move()
 
@@ -111,6 +106,20 @@ export default class Player extends Character {
             world: { gravity },
             props: { input, viewport }
         } = this.game
+
+        if (this.action) {
+            this.moveItems()
+            this.actionPerformed()
+        }
+
+        if (this.onFloor) {
+            this.jump = false
+            this.force.y = 0
+        }
+
+        this.force.y += this.force.y > 0
+            ? gravity
+            : gravity / 2
 
         if (this.canMove()) {
             if (input.keyPressed[INPUTS.INPUT_LEFT]) {
@@ -164,9 +173,6 @@ export default class Player extends Character {
                 this.force.x = 0
             }
         }
-        this.force.y += this.force.y > 0
-            ? gravity
-            : gravity / 2
     }
 
     moveItems (item) {

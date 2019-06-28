@@ -11,7 +11,7 @@ export default class Catapult extends ActiveElement {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
             this.trigger.activated = false
             this.trigger.dead = false
-
+            element.onFloor = false
             element.force.y = -25
 
             if (!this.game.checkTimeout(TIMEOUTS.CATAPULT)) {

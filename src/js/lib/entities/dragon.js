@@ -5,7 +5,6 @@ export default class Dragon extends Character {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
-        this.animation = this.animations.HOVERING
         this.setBoundingBox(60, 108, this.width - 158, this.height - 140)
     }
 
@@ -24,6 +23,7 @@ export default class Dragon extends Character {
                 }
                 else this.kill()
             }
+            this.animate(this.animations.HOVERING)
         }
     }
 }

@@ -16,7 +16,7 @@ export default class Switch extends ActiveElement {
 
     update () {
         const { camera, player, overlay, world } = this.game
-        const { message, produce } = this.properties
+        const { produce } = this.properties
 
         if (this.activated && !this.used) {
             switch (produce) {
@@ -26,9 +26,7 @@ export default class Switch extends ActiveElement {
                     y: 384,
                     width: 32,
                     height: 16,
-                    force: {
-                        x: 0, y: 0
-                    }
+                    force: { x: 0, y: 0 }
                 })
                 this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
                     world.putTile(225, 23, 196, LAYERS.BACKGROUND2)
@@ -46,7 +44,6 @@ export default class Switch extends ActiveElement {
                     }, () => {
                         overlay.fadeIn()
                         camera.setFollow(player)
-                        message && this.showMessage(message)
                     })
                 })
                 break
@@ -56,9 +53,7 @@ export default class Switch extends ActiveElement {
                     y: 1210,
                     width: 64,
                     height: 64,
-                    force: {
-                        x: 0, y: 0
-                    }
+                    force: { x: 0, y: 0 }
                 })
                 this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
                     world.putTile(495, 75, 0, LAYERS.BACKGROUND2)
@@ -96,7 +91,6 @@ export default class Switch extends ActiveElement {
                     this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
                         overlay.fadeIn()
                         camera.setFollow(player)
-                        message && this.showMessage(message)
                     })
                 })
             }
@@ -105,21 +99,14 @@ export default class Switch extends ActiveElement {
     }
 
     interact () {
-        const { player, world } = this.game
-        const { activator, hint, offsetX, offsetY } = this.properties
+        const { player } = this.game
+        const { activator } = this.properties
         if (player.canUse(activator)) {
             player.useItem(activator)
             this.animation = this.animations.ON
             this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
                 this.activated = true
             })
-        }
-        else if (hint && !this.game.checkTimeout(TIMEOUTS.HINT)) {
-            const [x, y] = [
-                offsetX ? this.x + parseFloat(offsetX) * world.spriteSize : this.x,
-                offsetY ? this.y + parseFloat(offsetY) * world.spriteSize : this.y
-            ]
-            this.showMessage(hint, x, y)
         }
     }
 }

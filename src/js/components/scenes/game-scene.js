@@ -65,8 +65,6 @@ export default class GameScene extends Component {
         this.checkTimeout = this.checkTimeout.bind(this)
         this.startTimeout = this.startTimeout.bind(this)
         this.stopTimeout = this.stopTimeout.bind(this)
-
-        this.camera = new Camera(this)
     }
 
     componentDidMount () {
@@ -75,11 +73,16 @@ export default class GameScene extends Component {
         this.map = tmxParser(map).then((data) => {
             this.loaded = true
             this.world = new World(data, ENTITIES, this)
-            this.overlay = new Overlay(this)
+            this.world.setShadowCastingLayer(LAYERS.MAIN, 7)
+
             this.player = this.world.getObjectByType(ENTITIES_TYPE.PLAYER, LAYERS.OBJECTS)
+
+            this.camera = new Camera(this)
             this.camera.setSurfaceLevel(this.world.getProperty('surfaceLevel'))
             this.camera.setFollow(this.player)
             this.camera.center()
+
+            this.overlay = new Overlay(this)
             this.overlay.fadeIn()
         })
         // this.setOpenGlEffects()
@@ -156,10 +159,11 @@ export default class GameScene extends Component {
             ctx.clearRect(0, 0, resolutionX, resolutionY)
 
             this.renderBackground()
+            world.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
             world.draw()
-            if (camera.underground || player.underground || player.inDark > 0) {
-                this.renderLightingEffect()
-            }
+            // if (camera.underground || player.underground || player.inDark > 0) {
+            //     this.renderLightingEffect()
+            // }
             overlay.displayHUD()
             this.checkTimeout(TIMEOUTS.PLAYER_MAP) && overlay.displayMap()
             overlay.update()

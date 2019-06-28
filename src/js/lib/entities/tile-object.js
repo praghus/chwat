@@ -5,7 +5,7 @@ export default class TileObject extends ActiveElement {
         super(obj, game)
         this.solid = true
         this.visible = true
-        this.y -= this.height
+        this.y -= obj.height
     }
 
     update () {
@@ -20,13 +20,14 @@ export default class TileObject extends ActiveElement {
                     : gravity / 2
             }
             this.move()
-            // this.force.x *= -0.5
         }
     }
 
     placeAt (x, y) {
         this.x = x
         this.y = y
+        this.force.y = 1
+        this.onFloor = false
         this.visible = true
     }
 

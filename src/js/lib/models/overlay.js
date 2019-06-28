@@ -195,13 +195,7 @@ export default class Overlay {
                 entity.points[0][0] + posX,
                 entity.points[0][1] + posY
             )
-            entity.points.map(([x, y]) => {
-                ctx.lineTo(
-                    posX + x,
-                    posY + y
-                )
-                // this.displayText(`${entity.x + x},${entity.x + y}`, posX + x, posY + y)
-            })
+            entity.points.map(([x, y]) => ctx.lineTo(posX + x, posY + y))
             ctx.lineTo(
                 entity.points[0][0] + posX,
                 entity.points[0][1] + posY
@@ -214,15 +208,28 @@ export default class Overlay {
                 posX, posY, width, height,
                 visible ? COLORS.GREEN : COLORS.PURPLE
             )
-            if (bounds) {
-                this.outline(
-                    posX + bounds.pos.x,
-                    posY + bounds.pos.y,
-                    bounds.w,
-                    bounds.h,
-                    COLORS.LIGHT_RED
+        }
+        if (bounds) {
+            const points = bounds.points
+            ctx.save()
+            ctx.strokeStyle = COLORS.LIGHT_RED
+            ctx.beginPath()
+            ctx.moveTo(
+                points[0].x + posX + bounds.pos.x,
+                points[0].y + posY + bounds.pos.y
+            )
+            points.map(({x, y}) => {
+                ctx.lineTo(
+                    posX + bounds.pos.x + x,
+                    posY + bounds.pos.y + y
                 )
-            }
+            })
+            ctx.lineTo(
+                points[0].x + posX + bounds.pos.x,
+                points[0].y + posY + bounds.pos.y
+            )
+            ctx.stroke()
+            ctx.restore()
         }
         if (visible) {
             this.displayText(`${name || type}\nx:${Math.floor(entity.x)}\ny:${Math.floor(entity.y)}`,
@@ -230,13 +237,6 @@ export default class Overlay {
                 posY - 8,
             )
         }
-        // else {
-        //     this.displayText(`${String.fromCharCode(26)}`,
-        //         posX,
-        //         posY,
-        //     )
-        // }
-        // ${String.fromCharCode(26)}
         if (force.x !== 0) {
             const forceX = `${force.x.toFixed(2)}`
             this.displayText(forceX,

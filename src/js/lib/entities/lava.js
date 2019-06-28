@@ -1,6 +1,7 @@
 import ActiveElement from '../models/active-element'
+import { createLamp } from 'tiled-platformer-lib'
 import { randomChoice, randomInt } from '../../lib/utils/helpers'
-import { DIRECTIONS, ENTITIES_TYPE, LAYERS } from '../../lib/constants'
+import { COLORS, DIRECTIONS, ENTITIES_TYPE, LAYERS } from '../../lib/constants'
 
 export default class Lava extends ActiveElement {
     constructor (obj, game) {
@@ -9,6 +10,7 @@ export default class Lava extends ActiveElement {
         this.canShoot = true
         this.shootDelay = 1000
         this.shootTimeout = null
+        this.light = createLamp(0, 0, this.width, COLORS.LAVA)
         this.animation = {x: 0, y: 0, w: 32, h: 48, frames: 4, fps: 4, loop: true}
     }
 

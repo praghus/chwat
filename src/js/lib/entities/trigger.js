@@ -1,6 +1,6 @@
 import ActiveElement from '../models/active-element'
-import { isValidArray } from '../../lib/utils/helpers'
-import { ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../../lib/constants'
+import { isValidArray } from '../utils/helpers'
+import { ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../constants'
 
 export default class Trigger extends ActiveElement {
     constructor (obj, game) {
@@ -11,19 +11,9 @@ export default class Trigger extends ActiveElement {
     }
 
     collide (element) {
-        const { activator, hint, offsetX, offsetY } = this.properties
-        if (element.type === ENTITIES_TYPE.PLAYER) {
-            if (activator === ENTITIES_TYPE.PLAYER) {
-                this.interact()
-            }
-            else if (hint && !this.game.checkTimeout(TIMEOUTS.HINT)) {
-                const { world } = this.game
-                const [x, y] = [
-                    offsetX ? this.x + parseFloat(offsetX) * world.spriteSize : this.x,
-                    offsetY ? this.y + parseFloat(offsetY) * world.spriteSize : this.y
-                ]
-                this.showMessage(hint, x, y)
-            }
+        const { activator } = this.properties
+        if (element.type === ENTITIES_TYPE.PLAYER && activator === element.type) {
+            this.interact()
         }
     }
 
@@ -77,7 +67,6 @@ export default class Trigger extends ActiveElement {
 
         if (player.canUse(activator)) {
             player.hideHint()
-            this.hideMessage()
             this.activated = true
         }
         else {
@@ -87,11 +76,10 @@ export default class Trigger extends ActiveElement {
                     ? this.showHint(item)
                     : player.showHint(item)
             }
-            this.hideMessage()
         }
     }
 
-    clearTiles (layer) {
+    clearTiles (layerId) {
         const { world } = this.game
         const { spriteSize } = world
         for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
@@ -99,7 +87,7 @@ export default class Trigger extends ActiveElement {
                 world.clearTile(
                     Math.round((this.x + (x * spriteSize)) / spriteSize),
                     Math.round((this.y + (y * spriteSize)) / spriteSize),
-                    layer
+                    layerId
                 )
             }
         }

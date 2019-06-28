@@ -7,29 +7,13 @@ export default class ActiveElement extends Entity {
         super(obj, game)
         this.activated = false
         this.visible = true
-
-        this.hideMessage = () => {
-            this.message = null
-        }
-
-        this.hideHint = () => {
-            this.hint = null
-        }
     }
 
     draw () {
         if (this.onScreen()) {
-            const { camera, debug, overlay } = this.game
+            const { debug, overlay } = this.game
 
             super.draw()
-
-            if (this.message) {
-                const { text, x, y } = this.message
-                overlay.displayText(text,
-                    Math.floor(x + camera.x),
-                    Math.floor(y + camera.y)
-                )
-            }
             this.hint && overlay.addHint(this)
             debug && overlay.displayDebug(this)
         }
@@ -40,6 +24,10 @@ export default class ActiveElement extends Entity {
             this.hint = item.gid
             this.game.startTimeout(TIMEOUTS.HINT, this.hideHint)
         }
+    }
+
+    hideHint () {
+        this.hint = null
     }
 
     showMessage (text) {
@@ -62,15 +50,20 @@ export default class ActiveElement extends Entity {
         this.game.startTimeout(TIMEOUTS.MESSAGE, this.hideMessage)
     }
 
+    hideMessage () {
+        this.message = null
+    }
+
     addItem (properties, x, y) {
         const { produce, produce_name, produce_gid } = properties
         this.game.world.addObject({
-            type: ENTITIES_TYPE.ITEM,
+            x, y,
+            width: 16,
+            height: 16,
             visible: true,
+            type: ENTITIES_TYPE.ITEM,
             gid: produce_gid || null,
             name: produce_name || '',
-            x: x || this.x,
-            y: y || this.y,
             properties: { id: produce }
         }, LAYERS.OBJECTS)
     }

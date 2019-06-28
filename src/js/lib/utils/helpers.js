@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { ENTITIES, INPUT_KEYS } from '../constants'
 
 export const noop = () => {}
@@ -95,6 +96,14 @@ export function getElementProperties (element) {
         filteredElement[prop] = element[prop]
     })
     return filteredElement
+}
+
+export function countTime (timer) {
+    const ms = moment().diff(moment(timer))
+    const d = moment.duration(ms)
+    return d.asHours() >= 1
+        ? Math.floor(d.asHours()) + moment.utc(ms).format(':mm:ss')
+        : moment.utc(ms).format('mm:ss')
 }
 
 export function between (value, a, b) {
