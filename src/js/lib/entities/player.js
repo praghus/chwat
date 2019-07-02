@@ -42,7 +42,6 @@ export default class Player extends Character {
             case ENTITIES_TYPE.SWITCH:
             case ENTITIES_TYPE.TRIGGER:
                 element.interact()
-                this.actionPerformed()
                 break
             case ENTITIES_TYPE.ITEM:
                 if (element.visible) {
@@ -179,8 +178,8 @@ export default class Player extends Character {
         if (this.canTake()) {
             if (this.items[1]) {
                 this.items[1].placeAt(
-                    this.x + 4,
-                    this.y
+                    this.x + 8,
+                    this.y + 8
                 )
             }
             [this.items[0], this.items[1]] = [item, this.items[0]]

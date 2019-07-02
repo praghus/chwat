@@ -210,26 +210,13 @@ export default class Overlay {
             )
         }
         if (bounds) {
-            const points = bounds.points
-            ctx.save()
-            ctx.strokeStyle = COLORS.LIGHT_RED
-            ctx.beginPath()
-            ctx.moveTo(
-                points[0].x + posX + bounds.pos.x,
-                points[0].y + posY + bounds.pos.y
+            this.outline(
+                bounds.pos.x + posX,
+                bounds.pos.y + posY,
+                bounds.w,
+                bounds.h,
+                COLORS.LIGHT_RED
             )
-            points.map(({x, y}) => {
-                ctx.lineTo(
-                    posX + bounds.pos.x + x,
-                    posY + bounds.pos.y + y
-                )
-            })
-            ctx.lineTo(
-                points[0].x + posX + bounds.pos.x,
-                points[0].y + posY + bounds.pos.y
-            )
-            ctx.stroke()
-            ctx.restore()
         }
         if (visible) {
             this.displayText(`${name || type}\nx:${Math.floor(entity.x)}\ny:${Math.floor(entity.y)}`,

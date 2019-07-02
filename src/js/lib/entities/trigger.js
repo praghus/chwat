@@ -20,7 +20,9 @@ export default class Trigger extends ActiveElement {
     update () {
         if (this.activated) {
             const { camera, overlay, player, world } = this.game
-            const { activator, clear, fade, follow, kill, modify, produce, related, shake } = this.properties
+            const {
+                activator, clear, fade, follow, kill, modify, produce, related, reusable, shake
+            } = this.properties
 
             if (related) {
                 const rel = world.getObjectById(related, LAYERS.OBJECTS)
@@ -56,21 +58,21 @@ export default class Trigger extends ActiveElement {
             kill && world.getObjectById(kill, LAYERS.OBJECTS).kill()
             shake && camera.shake()
             fade && overlay.fadeIn()
-
-            this.kill()
+            !reusable && this.kill()
         }
     }
 
     interact () {
         const { player, world } = this.game
         const { activator, anchor_hint } = this.properties
-
         if (player.canUse(activator)) {
             player.hideHint()
+            player.useItem(activator)
             this.activated = true
         }
-        else {
+        else if (!this.activated) {
             const item = world.getObjectByProperty('id', activator, LAYERS.OBJECTS)
+            player.moveItems()
             if (item) {
                 anchor_hint
                     ? this.showHint(item)

@@ -10,6 +10,7 @@ export default class Switch extends ActiveElement {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
+        this.switched = false
         this.activated = false
         this.animation = this.animations.OFF
     }
@@ -99,14 +100,26 @@ export default class Switch extends ActiveElement {
     }
 
     interact () {
-        const { player } = this.game
-        const { activator } = this.properties
+        const { player, world } = this.game
+        const { activator, anchor_hint } = this.properties
+
         if (player.canUse(activator)) {
+            player.hideHint()
             player.useItem(activator)
+            this.switched = true
             this.animation = this.animations.ON
             this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
                 this.activated = true
             })
+        }
+        else if (!this.switched) {
+            const item = world.getObjectByProperty('id', activator, LAYERS.OBJECTS)
+            player.moveItems()
+            if (item) {
+                anchor_hint
+                    ? this.showHint(item)
+                    : player.showHint(item)
+            }
         }
     }
 }

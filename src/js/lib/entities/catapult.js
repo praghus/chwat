@@ -9,15 +9,23 @@ export default class Catapult extends ActiveElement {
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            this.trigger.activated = false
-            this.trigger.dead = false
-            element.onFloor = false
-            element.force.y = -25
+            element.y -= 8
+            this.game.startTimeout({ name: 'catapult_wait', duration: 100}, () => {
+                element.force.y = -25
+                element.onFloor = false
+                element.jump = true
+            })
 
             if (!this.game.checkTimeout(TIMEOUTS.CATAPULT)) {
                 this.game.startTimeout(TIMEOUTS.CATAPULT, () => {
                     this.activated = false
-                    this.activator.placeAt(this.x - 48, this.y)
+                    this.trigger.activated = false
+                    this.trigger.switched = false
+                    this.addItem(
+                        {produce: 'weight', produce_gid: 1128, produce_name: 'Weight'},
+                        this.x - 16, this.y + 16
+                    )
+                    // this.activator.placeAt(this.x - 48, this.y)
                 })
             }
         }

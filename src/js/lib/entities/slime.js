@@ -18,6 +18,9 @@ export default class Slime extends Character {
             this.activated = true
         }
         if (this.activated) {
+            const { world } = this.game
+
+            // @todo: rebuild whole solution and timeouts
             if (this.running) {
                 switch (this.animFrame) {
                 case 2:
@@ -43,12 +46,24 @@ export default class Slime extends Character {
                 ? this.acceleration
                 : -this.acceleration
 
-            this.move()
+            if (this.onFloor) {
+                this.force.y = 0
+            }
+            else {
+                this.force.y += this.force.y > 0
+                    ? world.gravity
+                    : world.gravity / 2
+            }
 
-            if (
-                this.onRightEdge ||
-                this.onLeftEdge
-            ) {
+            this.move()
+            const PX = Math.floor(this.x + 18 / world.spriteSize)
+            const PW = Math.floor((this.x + this.width - 18) / world.spriteSize)
+            const PH = Math.floor((this.y + this.height) / world.spriteSize)
+            if (!world.isSolidArea(PX, PH, this.collisionLayers) ||
+                !world.isSolidArea(PW, PH, this.collisionLayers)) {
+                this.bounce()
+            }
+            if (this.x !== this.expectedX) {
                 this.bounce()
             }
 
