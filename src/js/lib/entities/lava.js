@@ -1,68 +1,79 @@
 import ActiveElement from '../models/active-element'
 import { createLamp } from 'tiled-platformer-lib'
-import { randomChoice, randomInt } from '../../lib/utils/helpers'
-import { COLORS, DIRECTIONS, ENTITIES_TYPE, LAYERS } from '../../lib/constants'
+import { COLORS } from '../../lib/constants'
 
 export default class Lava extends ActiveElement {
     constructor (obj, game) {
         super(obj, game)
         this.damage = 1000
-        this.canShoot = true
-        this.shootDelay = 1000
-        this.shootTimeout = null
-        this.light = createLamp(0, 0, this.width, COLORS.LAVA)
-        this.animation = {x: 0, y: 0, w: 32, h: 48, frames: 4, fps: 4, loop: true}
+        this.radius = this.width
+        this.light = createLamp(0, 0, this.radius, COLORS.LAVA)
+        this.animation = this.animations.BOILING
+    }
+
+    onScreen () {
+        const { x, y, width, height, radius } = this
+        const {
+            camera,
+            props: { viewport: { resolutionX, resolutionY } }
+        } = this.game
+
+        const r = radius
+        const cx = x + width / 2
+        const cy = y + height / 2
+
+        return (
+            cx + r > -camera.x &&
+            cy + r > -camera.y &&
+            cx - r < -camera.x + resolutionX &&
+            cy - r < -camera.y + resolutionY
+        )
     }
 
     draw () {
         if (this.onScreen()) {
-            const { ctx, camera, world, props: { assets } } = this.game
-            const { spriteSize } = world
-            const y = 0
-            for (let x = 0; x < Math.round((this.width / 2) / spriteSize); x++) {
-                const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
-                const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-                if (!world.isSolidArea(PX, PY, this.collisionLayers)) {
-                    ctx.drawImage(assets[this.asset],
-                        this.animation.x + this.animFrame * this.animation.w, this.animation.y,
-                        this.animation.w, this.animation.h,
-                        Math.floor(this.x + camera.x) + (x * this.animation.w),
-                        Math.floor(this.y + camera.y) + (y * this.animation.h),
-                        this.animation.w, this.animation.h
-                    )
-                }
+            const { ctx, camera, props: { assets } } = this.game
+            const { animation, animFrame } = this
+
+            for (let x = 0; x < this.width / animation.width; x++) {
+                ctx.drawImage(assets[this.asset],
+                    animation.strip.x + animFrame * animation.width, animation.strip.y,
+                    animation.width, animation.height,
+                    this.x + camera.x + x * this.animation.width, this.y + camera.y,
+                    animation.width, animation.height
+                )
             }
         }
     }
 
     update () {
         if (this.onScreen()) {
-            this.canShoot && this.shoot()
+            // this.canShoot && this.shoot()
             this.animate()
         }
     }
 
-    shoot () {
-        const { world } = this.game
+    // shoot () {
+    //     const { world } = this.game
 
-        world.addObject({
-            type: ENTITIES_TYPE.LAVA_STONE,
-            visible: true,
-            direction: randomChoice([
-                DIRECTIONS.LEFT,
-                DIRECTIONS.RIGHT
-            ]),
-            force: {
-                x: 0,
-                y: -randomInt(4, 6)
-            },
-            x: this.x + randomInt(1, 8) * 16,
-            y: this.y - 16
-        }, LAYERS.OBJECTS)
+    //     world.addObject({
+    //         type: ENTITIES_TYPE.LAVA_STONE,
+    //         visible: true,
+    //         direction: randomChoice([
+    //             DIRECTIONS.LEFT,
+    //             DIRECTIONS.RIGHT
+    //         ]),
+    //         force: {
+    //             x: 0,
+    //             y: -randomInt(4, 6)
+    //         },
+    //         x: this.x + randomInt(1, 8) * 16,
+    //         y: this.y - 16
+    //     }, LAYERS.OBJECTS)
 
-        this.shootTimeout = setTimeout(() => {
-            this.canShoot = true
-        }, this.shootDelay)
-        this.canShoot = false
-    }
+    //     this.shootTimeout = setTimeout(() => {
+    //         this.canShoot = true
+    //     }, this.shootDelay)
+    //     this.canShoot = false
+    // }
 }

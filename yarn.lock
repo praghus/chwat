@@ -2776,6 +2776,13 @@ eslint-module-utils@^2.4.0:
     debug "^2.6.8"
     pkg-dir "^2.0.0"
 
+eslint-plugin-flowtype@^3.11.1:
+  version "3.11.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-flowtype/-/eslint-plugin-flowtype-3.11.1.tgz#1aae15a10dbcd5aecc89897f810f2e9fcc18a5e3"
+  integrity sha512-4NiaaGZuz9iEGRTK8j4lkA/scibOXSYaYoHbsTtgLOxxqQCkbWV3xt8ETqILKg7DAYDqB69z1H5U71UmtdF9hw==
+  dependencies:
+    lodash "^4.17.11"
+
 eslint-plugin-import@^2.7.0:
   version "2.17.3"
   resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.17.3.tgz#00548b4434c18faebaba04b24ae6198f280de189"
@@ -7300,6 +7307,11 @@ sass-loader@^7.1.0:
     pify "^3.0.0"
     semver "^5.5.0"
 
+sat@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/sat/-/sat-0.7.1.tgz#fe1806b2c677fc2eec9943649ad187871f18f9ea"
+  integrity sha512-YFkI+KMARdAxqIVSS79TaTdPLOWFWeWe/J+A7Rc4xBNn7lxuqWGJs9YmZURaipMjWAM9FLK3s4W1+yEdFu3/5w==
+
 sax@>=0.6.0, sax@^1.2.4, sax@~1.2.4:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
@@ -8070,9 +8082,12 @@ thunky@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.0.3.tgz#f5df732453407b09191dae73e2a8cc73f381a826"
 
-tiled-platformer-lib@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/tiled-platformer-lib/-/tiled-platformer-lib-1.3.1.tgz#1f85bd1d71ba6a4a379768ec687aef39c55f2c00"
+tiled-platformer-lib@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/tiled-platformer-lib/-/tiled-platformer-lib-1.4.2.tgz#741d5ff8a175d969ab6b6940b36c0f0893fe8e42"
+  integrity sha512-u3f5TEulFOI+H27vUQK6JT77Jaza1yux2EjsiWZJ1N/DhcAII6lZ4Yq5MFVSzrgqXlFUHTlNopWXq4M6LKEtOA==
+  dependencies:
+    sat "^0.7.1"
 
 timed-out@^4.0.0, timed-out@^4.0.1:
   version "4.0.1"

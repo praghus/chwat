@@ -9,8 +9,8 @@ export default class Overlay {
             in: false,
             out: false
         }
-        this.addHint = ({x, y, width, hint}) => {
-            this.hints.push({x, y, width, hint})
+        this.addHint = ({ x, y, width, hint }) => {
+            this.hints.push({ x, y, width, hint })
         }
         this.fadeIn = () => {
             if (!this.fade.in) {
@@ -76,7 +76,7 @@ export default class Overlay {
             }
         } = this.game
 
-        const { assets, viewport: {resolutionX, resolutionY } } = props
+        const { assets, viewport: { resolutionX, resolutionY } } = props
         const { energy, items, lives } = player
         const objects = `OBJ: ${activeObjects.length}`
         const time = countTime()
@@ -106,7 +106,7 @@ export default class Overlay {
         })
     }
 
-    displayHint ({x, y, width, hint}) {
+    displayHint ({ x, y, width, hint }) {
         const {
             ctx,
             camera,
@@ -114,8 +114,8 @@ export default class Overlay {
         } = this.game
 
         ctx.drawImage(assets[ASSETS.BUBBLE],
-            Math.floor(x + camera.x + width / 2),
-            Math.floor(y + camera.y) - 20
+            x + camera.x + width / 2,
+            y + camera.y - 20
         )
 
         this.drawTile(hint, x + 8 + camera.x + width / 2, y + camera.y - 18)
@@ -125,7 +125,7 @@ export default class Overlay {
         if (!gid) return
         const { ctx, world } = this.game
         const item = world.createTile(gid)
-        item.draw(ctx, x, y, {scale})
+        item.draw(ctx, x, y, { scale })
     }
 
     displayMap () {

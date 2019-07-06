@@ -109,7 +109,7 @@ export default class GameScene extends Component {
             this.draw()
             /** Experimental: create CRT scanlines effect */
             if (this.glcanvas) {
-                const { assets, viewport: { width, height }} = this.props
+                const { assets, viewport: { width, height } } = this.props
                 this.ctx.drawImage(assets[ASSETS.SCANLINES], 0, 0, width, height)
                 this.texture.loadContentsOf(this.source)
                 this.glcanvas
@@ -159,11 +159,10 @@ export default class GameScene extends Component {
             ctx.clearRect(0, 0, resolutionX, resolutionY)
 
             this.renderBackground()
+
             world.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
             world.draw()
-            // if (camera.underground || player.underground || player.inDark > 0) {
-            //     this.renderLightingEffect()
-            // }
+
             overlay.displayHUD()
             this.checkTimeout(TIMEOUTS.PLAYER_MAP) && overlay.displayMap()
             overlay.update()
@@ -205,14 +204,16 @@ export default class GameScene extends Component {
     renderLightingEffect () {
         const {
             ctx,
+            player,
             props: { assets },
-            camera: { follow, x, y }
+            camera: { follow, x, y, underground }
         } = this
-
-        ctx.drawImage(assets[ASSETS.LIGHTING],
-            -400 + (follow.x + x + follow.width / 2),
-            -400 + (follow.y + y + follow.height / 2)
-        )
+        if (underground || player.underground || player.inDark > 0) {
+            ctx.drawImage(assets[ASSETS.LIGHTING],
+                -400 + (follow.x + x + follow.width / 2),
+                -400 + (follow.y + y + follow.height / 2)
+            )
+        }
     }
 
     countFPS () {
@@ -233,11 +234,11 @@ export default class GameScene extends Component {
     }
 
     // @todo: better timeouts handling
-    checkTimeout ({name}) {
+    checkTimeout ({ name }) {
         return this.timeoutsPool[name] || null
     }
 
-    startTimeout ({name, duration}, callback = noop) {
+    startTimeout ({ name, duration }, callback = noop) {
         if (!this.timeoutsPool[name]) {
             this.timeoutsPool[name] = setTimeout(() => {
                 this.stopTimeout(name)
