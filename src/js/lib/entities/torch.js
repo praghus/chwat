@@ -1,26 +1,31 @@
 import ActiveElement from '../models/active-element'
-import { COLORS } from '../../lib/constants'
+import { COLORS } from '../constants'
+import { createLamp } from 'tiled-platformer-lib'
 
 export default class Torch extends ActiveElement {
     constructor (obj, game) {
         super(obj, game)
-        this.width = 32
-        this.height = 32
-        this.y = this.y - 32
-        this.animations = {
-            SMALL: {x: 0, y: 0, w: 32, h: 32, frames: 8, fps: 24, loop: true},
-            BIG: {x: 0, y: 32, w: 32, h: 32, frames: 8, fps: 24, loop: true}
-        }
-        this.animation = this.gid < 1235
-            ? this.animations.SMALL
-            : this.animations.BIG
-        this.animFrame = Math.round(Math.random() * 8)
-        this.light = { distance: 24, color: COLORS.TRANS_WHITE }
+        this.y -= this.height
+        this.radius = 64
+        this.light = createLamp(0, 0, this.radius, COLORS.TORCH)
     }
 
-    update () {
-        if (this.onScreen()) {
-            this.animate()
-        }
+    onScreen () {
+        const { x, y, width, height, radius } = this
+        const {
+            camera,
+            props: { viewport: { resolutionX, resolutionY } }
+        } = this.game
+
+        const r = radius
+        const cx = x + width / 2
+        const cy = y + height / 2
+
+        return (
+            cx + r > -camera.x &&
+            cy + r > -camera.y &&
+            cx - r < -camera.x + resolutionX &&
+            cy - r < -camera.y + resolutionY
+        )
     }
 }

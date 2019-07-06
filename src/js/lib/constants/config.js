@@ -13,6 +13,19 @@ export const LAYERS = {
     OBJECTS: 4
 }
 
+export const NODE_TYPE = {
+    IMAGE_LAYER: 'imagelayer',
+    LAYER: 'layer',
+    OBJECT_GROUP: 'objectgroup',
+    PROPERTIES: 'properties',
+    TILESET: 'tileset'
+}
+
+export const TILE_TYPE = {
+    NON_COLLIDING: 'no_collide',
+    ONE_WAY: 'one_way'
+}
+
 export const SCENES = {
     INTRO: 'intro',
     GAME: 'game'

@@ -12,10 +12,12 @@ export default class Character extends Entity {
     }
 
     draw () {
-        super.draw()
-        const { debug, overlay } = this.game
-        this.hint && overlay.addHint(this)
-        this.onScreen() && debug && overlay.displayDebug(this)
+        if (this.onScreen()) {
+            super.draw()
+            const { debug, overlay } = this.game
+            this.hint && overlay.addHint(this)
+            debug && overlay.displayDebug(this)
+        }
     }
 
     showHint (item) {

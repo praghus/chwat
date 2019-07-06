@@ -1,14 +1,14 @@
-import './illuminated'
-import { ENTITIES, JUMP_THROUGH_TILES, INPUT_KEYS, MINI_TILES } from '../constants'
+import moment from 'moment'
+import { ENTITIES, INPUT_KEYS } from '../constants'
 
 export const noop = () => {}
-
-export function requireAll (requireContext) {
-    return requireContext.keys().map(requireContext)
-}
+export const isValidArray = (arr) => arr && arr.length
+export const getPerformance = () => typeof performance !== 'undefined' && performance.now()
+export const requireAll = (requireContext) => requireContext.keys().map(requireContext)
+export const getFilename = (path) => path.replace(/^.*[\\/]/, '').split('.').slice(0, -1).join('.')
 
 export function calculateViewportSize (width, height) {
-    const pixelScale = height / 150
+    const pixelScale = height / 128
     const x = Math.round(width / pixelScale)
     const y = Math.round(height / pixelScale)
 
@@ -75,10 +75,6 @@ export function getKeyPressed (key) {
     return Object.keys(INPUT_KEYS).find((input) => INPUT_KEYS[input].indexOf(key) !== -1)
 }
 
-export function canJumpThrough (id) {
-    return JUMP_THROUGH_TILES.indexOf(id) !== -1
-}
-
 export function getProperties (data) {
     if (data && data.length) {
         const properties = {}
@@ -102,52 +98,16 @@ export function getElementProperties (element) {
     return filteredElement
 }
 
-export function getMiniTile (id, x, y) {
-    const tile = MINI_TILES[`${id}`] || null
-    if (tile) {
-        tile.x = tile.offsetX + x
-        tile.y = tile.offsetY + y
-    }
-    return tile
-}
-
-export function isMiniTile (id) {
-    return Object.keys(MINI_TILES).indexOf(`${id}`) !== -1
+export function countTime (timer) {
+    const ms = moment().diff(moment(timer))
+    const d = moment.duration(ms)
+    return d.asHours() >= 1
+        ? Math.floor(d.asHours()) + moment.utc(ms).format(':mm:ss')
+        : moment.utc(ms).format('mm:ss')
 }
 
 export function between (value, a, b) {
     const min = Math.min(a, b)
     const max = Math.max(a, b)
     return value >= min && value <= max
-};
-
-/**
- * illuminated.js
- */
-const { Lamp, Vec2, RectangleObject } = window.illuminated
-
-export function createRectangleObject (x, y, width, height) {
-    return new RectangleObject({
-        topleft: new Vec2(x, y),
-        bottomright: new Vec2(x + width, y + height)
-    })
-}
-
-export function createLamp (x, y, distance, color) {
-    return new Lamp({
-        color,
-        distance,
-        samples: 1,
-        radius: 8,
-        position: new Vec2(x, y)
-    })
-}
-
-export function setLightmaskElement (element, {x, y, width, height}) {
-    if (element) {
-        element.topleft = Object.assign(element.topleft, {x, y})
-        element.bottomright = Object.assign(element.bottomright, {x: x + width, y: y + height})
-        element.syncFromTopleftBottomright()
-        return element
-    }
 }

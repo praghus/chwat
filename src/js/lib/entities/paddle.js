@@ -1,5 +1,6 @@
 import ActiveElement from '../models/active-element'
-import { ENTITIES_TYPE } from '../../lib/constants'
+import { createLamp } from 'tiled-platformer-lib'
+import { COLORS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Paddle extends ActiveElement {
     constructor (obj, game) {
@@ -9,16 +10,19 @@ export default class Paddle extends ActiveElement {
         this.maxSpeed = 1
         this.activated = false
     }
+    
     draw () {
-        const { ctx, camera, world, props: { assets } } = this.game
-        const { spriteSize } = world
-        for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
-            ctx.drawImage(
-                assets[this.asset],
-                0, 0, spriteSize, spriteSize,
-                Math.floor(this.x + camera.x) + (x * spriteSize), Math.floor(this.y + camera.y),
-                spriteSize, spriteSize
-            )
+        if (this.onScreen()) {
+            const { ctx, camera, world, props: { assets } } = this.game
+            const { spriteSize } = world
+            for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
+                ctx.drawImage(
+                    assets[this.asset],
+                    0, 0, spriteSize, spriteSize,
+                    Math.floor(this.x + camera.x) + (x * spriteSize), Math.floor(this.y + camera.y),
+                    spriteSize, spriteSize
+                )
+            }
         }
     }
 
@@ -42,8 +46,11 @@ export default class Paddle extends ActiveElement {
             const { spriteSize } = this.game.world
             const { destY } = this.properties
             if (this.y > destY * spriteSize) {
+                this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
                 this.force.y -= this.acceleration
                 this.move()
+            } else {
+                this.light = null
             }
         }
     }

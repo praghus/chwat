@@ -15,6 +15,19 @@ export default class Particle extends ActiveElement {
         this.dead = false
     }
 
+    draw () {
+        if (this.onScreen()) {
+            const { ctx, camera } = this.game
+            ctx.save()
+            ctx.fillStyle = this.color
+            ctx.beginPath()
+            ctx.rect(this.x + camera.x, this.y + camera.y, this.width, this.height)
+            ctx.fill()
+            ctx.closePath()
+            ctx.restore()
+        }
+    }
+
     overlapTest (obj) {
         if (!this.dead && overlap(this, obj)) {
             obj.collide && obj.collide(this)
@@ -34,16 +47,5 @@ export default class Particle extends ActiveElement {
         if (this.life < 0) {
             this.dead = true
         }
-    }
-
-    draw () {
-        const { ctx, camera } = this.game
-        ctx.save()
-        ctx.fillStyle = this.color
-        ctx.beginPath()
-        ctx.rect(this.x + camera.x, this.y + camera.y, this.width, this.height)
-        ctx.fill()
-        ctx.closePath()
-        ctx.restore()
     }
 }

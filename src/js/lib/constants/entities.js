@@ -1,23 +1,14 @@
+import * as ANIMATIONS from '../animations'
 import { ASSETS } from './assets'
+import { LAYERS } from './config'
 import {
-    Balloon, Bat, Bridge, Catapult, Checkpoint, Cook, Crusher, DarkMask,
-    Dragon, Dust, Flag, Grass, Item, Lava, LavaStone, MapPiece, Paddle,
-    Particle, Player, Rock, Slime, Slope, SpiderTrap, Spikes, Switch,
-    Torch, Trigger, Water, Witch, WoodenBridge
+    Balloon, Bridge, Catapult, Cook, DarkMask, Dragon, Dust, Grass, Lava,
+    LavaStone, Paddle, Particle, Player, Rock, Slime, SpiderTrap, Spikes,
+    Switch, TileObject, Torch, Trigger, Water, Witch, WoodenBridge
 } from '../entities'
-
-export const ENTITIES_FAMILY = {
-    BULLETS: 'bullets',
-    ENEMIES: 'enemies',
-    ITEMS: 'items',
-    MODIFIERS: 'modifiers',
-    PARTICLES: 'particles',
-    TRAPS: 'traps'
-}
 
 export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
-    BAT: 'bat',
     COOK: 'cook',
     SLIME: 'slime',
     BRIDGE: 'bridge',
@@ -25,7 +16,6 @@ export const ENTITIES_TYPE = {
     CHECKPOINT: 'checkpoint',
     DRAGON: 'dragon',
     MAP_PIECE: 'map_piece',
-    CRUSHER: 'crusher',
     DARK_MASK: 'dark_mask',
     DUST: 'dust',
     FLAG: 'flag',
@@ -38,7 +28,6 @@ export const ENTITIES_TYPE = {
     PARTICLE: 'particle',
     PLAYER: 'player',
     ROCK: 'rock',
-    SLOPE: 'slope',
     SPIDER_TRAP: 'spider_trap',
     SPIKES: 'spikes',
     SWITCH: 'switch',
@@ -48,35 +37,34 @@ export const ENTITIES_TYPE = {
     WITCH: 'witch',
     WOODEN_BRIDGE: 'wooden_bridge'
 }
+
+const collisionLayers = [LAYERS.MAIN]
+/* eslint-disable max-len */
 export const ENTITIES = [
-    { type: ENTITIES_TYPE.PLAYER, model: Player, asset: ASSETS.PLAYER},
-    { type: ENTITIES_TYPE.BALLOON, family: ENTITIES_FAMILY.MODIFIERS, model: Balloon, asset: ASSETS.BALLOON },
-    { type: ENTITIES_TYPE.BAT, family: ENTITIES_FAMILY.ENEMIES, model: Bat, asset: ASSETS.BAT },
-    { type: ENTITIES_TYPE.BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: Bridge, asset: ASSETS.BRIDGE },
-    { type: ENTITIES_TYPE.CATAPULT, family: ENTITIES_FAMILY.MODIFIERS, model: Catapult, asset: ASSETS.CATAPULT },
-    { type: ENTITIES_TYPE.COOK, family: ENTITIES_FAMILY.MODIFIERS, model: Cook, asset: ASSETS.COOK },
-    { type: ENTITIES_TYPE.CHECKPOINT, family: ENTITIES_FAMILY.MODIFIERS, model: Checkpoint },
-    { type: ENTITIES_TYPE.MAP_PIECE, family: ENTITIES_FAMILY.ITEMS, model: MapPiece, asset: ASSETS.MAP_PIECE},
-    { type: ENTITIES_TYPE.CRUSHER, family: ENTITIES_FAMILY.TRAPS, model: Crusher, asset: ASSETS.CRUSHER },
-    { type: ENTITIES_TYPE.DARK_MASK, family: ENTITIES_FAMILY.MODIFIERS, model: DarkMask },
-    { type: ENTITIES_TYPE.DRAGON, family: ENTITIES_FAMILY.MODIFIERS, model: Dragon, asset: ASSETS.DRAGON },
-    { type: ENTITIES_TYPE.DUST, family: ENTITIES_FAMILY.PARTICLES, model: Dust, asset: ASSETS.DUST },
-    { type: ENTITIES_TYPE.FLAG, family: ENTITIES_FAMILY.MODIFIERS, model: Flag, asset: ASSETS.FLAG },
-    { type: ENTITIES_TYPE.GRASS, family: ENTITIES_FAMILY.MODIFIERS, model: Grass, asset: ASSETS.GRASS },
-    { type: ENTITIES_TYPE.ITEM, family: ENTITIES_FAMILY.ITEMS, model: Item, asset: ASSETS.ITEMS },
-    { type: ENTITIES_TYPE.LAVA, family: ENTITIES_FAMILY.TRAPS, model: Lava, asset: ASSETS.LAVA },
-    { type: ENTITIES_TYPE.LAVA_STONE, family: ENTITIES_FAMILY.TRAPS, model: LavaStone },
-    { type: ENTITIES_TYPE.PADDLE, family: ENTITIES_FAMILY.MODIFIERS, model: Paddle, asset: ASSETS.PADDLE },
-    { type: ENTITIES_TYPE.PARTICLE, family: ENTITIES_FAMILY.PARTICLES, model: Particle },
-    { type: ENTITIES_TYPE.ROCK, family: ENTITIES_FAMILY.TRAPS, model: Rock, asset: ASSETS.ROCK},
-    { type: ENTITIES_TYPE.SLIME, family: ENTITIES_FAMILY.ENEMIES, model: Slime, asset: ASSETS.SLIME },
-    { type: ENTITIES_TYPE.SPIDER_TRAP, family: ENTITIES_FAMILY.TRAPS, model: SpiderTrap, asset: ASSETS.SPIDER_TRAP },
-    { type: ENTITIES_TYPE.SPIKES, family: ENTITIES_FAMILY.TRAPS, model: Spikes },
-    { type: ENTITIES_TYPE.SLOPE, family: ENTITIES_FAMILY.MODIFIERS, model: Slope },
-    { type: ENTITIES_TYPE.SWITCH, family: ENTITIES_FAMILY.MODIFIERS, model: Switch, asset: ASSETS.SWITCH },
-    { type: ENTITIES_TYPE.TORCH, family: ENTITIES_FAMILY.MODIFIERS, model: Torch, asset: ASSETS.TORCH },
-    { type: ENTITIES_TYPE.TRIGGER, family: ENTITIES_FAMILY.MODIFIERS, model: Trigger },
-    { type: ENTITIES_TYPE.WATER, family: ENTITIES_FAMILY.TRAPS, model: Water, asset: ASSETS.WATER },
-    { type: ENTITIES_TYPE.WITCH, family: ENTITIES_FAMILY.MODIFIERS, model: Witch },
-    { type: ENTITIES_TYPE.WOODEN_BRIDGE, family: ENTITIES_FAMILY.MODIFIERS, model: WoodenBridge }
+    { type: ENTITIES_TYPE.PLAYER, model: Player, asset: ASSETS.PLAYER, animations: ANIMATIONS.PLAYER, collisionLayers },
+    { type: ENTITIES_TYPE.BALLOON, model: Balloon, asset: ASSETS.BALLOON },
+    { type: ENTITIES_TYPE.BRIDGE, model: Bridge, asset: ASSETS.BRIDGE, animations: ANIMATIONS.BRIDGE, collisionLayers },
+    { type: ENTITIES_TYPE.CATAPULT, model: Catapult, asset: ASSETS.CATAPULT, animations: ANIMATIONS.CATAPULT, collisionLayers },
+    { type: ENTITIES_TYPE.COOK, model: Cook, asset: ASSETS.COOK, animations: ANIMATIONS.COOK, collisionLayers },
+    { type: ENTITIES_TYPE.MAP_PIECE, model: TileObject, collisionLayers },
+    { type: ENTITIES_TYPE.DARK_MASK, model: DarkMask },
+    { type: ENTITIES_TYPE.DRAGON, model: Dragon, asset: ASSETS.DRAGON, animations: ANIMATIONS.DRAGON },
+    { type: ENTITIES_TYPE.DUST, model: Dust, asset: ASSETS.DUST, animations: ANIMATIONS.DUST, collisionLayers },
+    { type: ENTITIES_TYPE.FLAG, model: TileObject, collisionLayers },
+    { type: ENTITIES_TYPE.GRASS, model: Grass, asset: ASSETS.GRASS },
+    { type: ENTITIES_TYPE.ITEM, model: TileObject, collisionLayers },
+    { type: ENTITIES_TYPE.LAVA, model: Lava, asset: ASSETS.LAVA, animations: ANIMATIONS.LAVA, collisionLayers },
+    { type: ENTITIES_TYPE.LAVA_STONE, model: LavaStone, collisionLayers },
+    { type: ENTITIES_TYPE.PADDLE, model: Paddle, asset: ASSETS.PADDLE },
+    { type: ENTITIES_TYPE.PARTICLE, model: Particle, collisionLayers },
+    { type: ENTITIES_TYPE.ROCK, model: Rock, asset: ASSETS.ROCK, collisionLayers },
+    { type: ENTITIES_TYPE.SLIME, model: Slime, asset: ASSETS.SLIME, animations: ANIMATIONS.SLIME, collisionLayers },
+    { type: ENTITIES_TYPE.SPIDER_TRAP, model: SpiderTrap, asset: ASSETS.SPIDER_TRAP, animations: ANIMATIONS.SPIDER_TRAP, collisionLayers },
+    { type: ENTITIES_TYPE.SPIKES, model: Spikes },
+    { type: ENTITIES_TYPE.SWITCH, model: Switch, asset: ASSETS.SWITCH, animations: ANIMATIONS.SWITCH },
+    { type: ENTITIES_TYPE.TORCH, model: Torch, asset: ASSETS.TORCH },
+    { type: ENTITIES_TYPE.TRIGGER, model: Trigger },
+    { type: ENTITIES_TYPE.WATER, model: Water, asset: ASSETS.WATER, animations: ANIMATIONS.WATER, collisionLayers },
+    { type: ENTITIES_TYPE.WITCH, model: Witch, collisionLayers },
+    { type: ENTITIES_TYPE.WOODEN_BRIDGE, model: WoodenBridge, collisionLayers }
 ]

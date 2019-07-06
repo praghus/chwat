@@ -8,26 +8,19 @@ export default class Slime extends Character {
         this.damage = 25
         this.acceleration = 0.2
         this.running = false
-        this.bounds = {
-            x: 18,
-            y: 40,
-            width: this.width - 36,
-            height: this.height - 40
-        }
-        this.animations = {
-            BOUNCE: {x: 0, y: 0, w: 48, h: 48, frames: 9, fps: 12, loop: true},
-            RUN_LEFT: {x: 0, y: 48, w: 48, h: 48, frames: 14, fps: 12, loop: true},
-            RUN_RIGHT: {x: 0, y: 96, w: 48, h: 48, frames: 14, fps: 12, loop: true}
-        }
+        this.activated = false
         this.direction = this.properties && this.properties.direction || DIRECTIONS.LEFT
-        this.wait()
+        this.setBoundingBox(18, 40, this.width - 36, this.height - 40)
     }
 
     update () {
         if (this.onScreen()) {
+            this.activated = true
+        }
+        if (this.activated) {
             const { world } = this.game
-            const { gravity } = world
 
+            // @todo: rebuild whole solution and timeouts
             if (this.running) {
                 switch (this.animFrame) {
                 case 2:
@@ -37,23 +30,40 @@ export default class Slime extends Character {
                     this.maxSpeed = 0
                     break
                 case 13:
-                    this.wait()
+                    this.running = false
                     break
                 }
             }
+            else if (!this.game.checkTimeout(`wait_${this.id}`)) {
+                this.game.startTimeout({name: `wait_${this.id}`, duration: 2300}, () => {
+                    this.onScreen()
+                        ? this.running = true
+                        : this.activated = false
+                })
+            }
 
-            this.force.y += gravity
             this.force.x += this.direction === DIRECTIONS.RIGHT
                 ? this.acceleration
                 : -this.acceleration
 
-            this.move()
+            if (this.onFloor) {
+                this.force.y = 0
+            }
+            else {
+                this.force.y += this.force.y > 0
+                    ? world.gravity
+                    : world.gravity / 2
+            }
 
-            if (
-                this.expectedX !== this.x ||
-                this.onRightEdge ||
-                this.onLeftEdge
-            ) {
+            this.move()
+            const PX = Math.floor(this.x + 18 / world.spriteSize)
+            const PW = Math.floor((this.x + this.width - 18) / world.spriteSize)
+            const PH = Math.floor((this.y + this.height) / world.spriteSize)
+            if (!world.isSolidArea(PX, PH, this.collisionLayers) ||
+                !world.isSolidArea(PW, PH, this.collisionLayers)) {
+                this.bounce()
+            }
+            if (this.x !== this.expectedX) {
                 this.bounce()
             }
 
@@ -70,13 +80,5 @@ export default class Slime extends Character {
                 )
             }
         }
-    }
-
-    wait () {
-        this.maxSpeed = 0
-        this.running = false
-        this.game.startTimeout({name: `wait_${this.id}`, duration: 2300}, () => {
-            this.running = true
-        })
     }
 }

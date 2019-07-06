@@ -7,7 +7,6 @@ export default class Item extends ActiveElement {
         this.width = 16
         this.height = 16
         this.solid = true
-        this.y -= this.height
         this.initialPosition = {
             x: this.x,
             y: this.y
@@ -26,8 +25,8 @@ export default class Item extends ActiveElement {
     }
 
     update () {
-        const { gravity } = this.game.world
         if (this.onScreen()) {
+            const { gravity } = this.game.world
             if (this.onFloor) this.force.y *= -0.5
             this.force.y += gravity
             this.move()

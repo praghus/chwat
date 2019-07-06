@@ -5,15 +5,15 @@ export default class Balloon extends ActiveElement {
     constructor (obj, game) {
         super(obj, game)
         this.positions = {
-            CASTLE: { x: 5056, y: 90, player: { x: 5152, y: 48}},
-            ISLE: { x: 128, y: 720, player: { x: 230, y: 720}}
+            CASTLE: { x: 5056, y: 90, player: { x: 5152, y: 48 } },
+            ISLE: { x: 128, y: 720, player: { x: 230, y: 720 } }
         }
         this.position = this.positions.CASTLE
         this.solid = true
     }
 
     draw () {
-        if (this.visible) {
+        if (this.visible && this.onScreen()) {
             const { ctx, camera, props: { assets } } = this.game
             ctx.drawImage(
                 assets[ASSETS.BALLOON],

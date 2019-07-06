@@ -1,8 +1,8 @@
 import Character from '../models/character'
-// import { playerJump, playerGet } from '../../actions/sounds'
+import { createLamp } from 'tiled-platformer-lib'
 import {
+    COLORS,
     DIRECTIONS,
-    ENTITIES_FAMILY,
     ENTITIES_TYPE,
     INPUTS,
     TIMEOUTS
@@ -21,26 +21,8 @@ export default class Player extends Character {
         this.inDark = 0
         this.items = [null, null]
         this.mapPieces = []
-        this.bounds = {
-            x: 10,
-            y: 8,
-            width: this.width - 20,
-            height: this.height - 8
-        }
-        this.animations = {
-            LEFT: {x: 704, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
-            RIGHT: {x: 0, y: 16, w: 32, h: 48, frames: 8, fps: 15, loop: true},
-            JUMP_LEFT: {x: 512, y: 16, w: 32, h: 48, frames: 4, fps: 24, loop: false},
-            JUMP_RIGHT: {x: 256, y: 16, w: 32, h: 48, frames: 4, fps: 24, loop: false},
-            STAND_LEFT: {x: 480, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
-            STAND_RIGHT: {x: 448, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
-            FALL_LEFT: {x: 672, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
-            FALL_RIGHT: {x: 416, y: 16, w: 32, h: 48, frames: 1, fps: 1, loop: false},
-            DEAD: {x: 0, y: 144, w: 32, h: 48, frames: 7, fps: 24, loop: false},
-            DEAD_LEFT: {x: 480, y: 144, w: 32, h: 48, frames: 1, fps: 0, loop: false},
-            DEAD_RIGHT: {x: 448, y: 144, w: 32, h: 48, frames: 1, fps: 0, loop: false}
-        }
-        this.animation = this.animations.STAND_RIGHT
+        this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
+        this.setBoundingBox(10, 8, this.width - 20, this.height - 8)
     }
 
     draw () {
@@ -53,16 +35,98 @@ export default class Player extends Character {
         ctx.restore()
     }
 
+    collide (element, force) {
+        super.collide(element, force)
+        if (this.action) {
+            switch (element.type) {
+            case ENTITIES_TYPE.SWITCH:
+            case ENTITIES_TYPE.TRIGGER:
+                element.interact()
+                break
+            case ENTITIES_TYPE.ITEM:
+                if (element.visible) {
+                    this.moveItems(element)
+                    this.actionPerformed()
+                }
+                break
+            case ENTITIES_TYPE.MAP_PIECE:
+                this.mapPieces.push(element.gid)
+                this.showMap()
+                element.kill()
+                this.actionPerformed()
+                break
+            }
+        }
+        if (this.canHurt() && element.damage > 0) {
+            // this.hit(element.damage)
+            this.force.y = -2
+            this.game.startTimeout(TIMEOUTS.PLAYER_HURT)
+        }
+    }
+
     update () {
-        const { props: { input, viewport }, camera, world } = this.game
-        // @todo: consider player states
+        this.input()
+        this.move()
+
+        if (this.jump) {
+            if (this.force.y <= 0) {
+                this.animate(this.direction === DIRECTIONS.RIGHT
+                    ? this.animations.JUMP_RIGHT
+                    : this.animations.JUMP_LEFT)
+            }
+            else {
+                this.animate(this.direction === DIRECTIONS.RIGHT
+                    ? this.animations.FALL_RIGHT
+                    : this.animations.FALL_LEFT)
+                this.falling = true
+            }
+        }
+        else if (this.force.x !== 0) {
+            this.animate(this.direction === DIRECTIONS.RIGHT
+                ? this.animations.WALK_RIGHT
+                : this.animations.WALK_LEFT)
+        }
+        else {
+            this.animate(this.direction === DIRECTIONS.RIGHT
+                ? this.animations.STAND_RIGHT
+                : this.animations.STAND_LEFT)
+        }
+        // add dust when fell
+        if (this.falling && !this.jump && this.onFloor) {
+            this.addDust(DIRECTIONS.LEFT)
+            this.addDust(DIRECTIONS.RIGHT)
+            this.falling = false
+        }
+    }
+
+    input () {
+        const {
+            camera,
+            world: { gravity },
+            props: { input, viewport }
+        } = this.game
+
+        if (this.action) {
+            this.moveItems()
+            this.actionPerformed()
+        }
+
+        if (this.onFloor) {
+            this.jump = false
+            this.force.y = 0
+        }
+
+        this.force.y += this.force.y > 0
+            ? gravity
+            : gravity / 2
+
         if (this.canMove()) {
             if (input.keyPressed[INPUTS.INPUT_LEFT]) {
                 if (this.direction === DIRECTIONS.RIGHT) {
                     this.addDust(DIRECTIONS.LEFT)
                     camera.setMiddlePoint(
                         viewport.resolutionX - viewport.resolutionX / 3,
-                        this.height
+                        viewport.resolutionY / 2
                     )
                 }
                 this.force.x -= this.acceleration
@@ -73,115 +137,65 @@ export default class Player extends Character {
                     this.addDust(DIRECTIONS.RIGHT)
                     camera.setMiddlePoint(
                         viewport.resolutionX / 3,
-                        this.height
+                        viewport.resolutionY / 2
                     )
                 }
                 this.force.x += this.acceleration
                 this.direction = DIRECTIONS.RIGHT
             }
-            if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
-                // this.playSound(playerJump)
-                this.force.y = -6
-            }
             if (input.keyPressed[INPUTS.INPUT_ACTION]) {
-                this.getItem(null)
+                this.action = true
             }
-            if (input.keyPressed[INPUTS.INPUT_MAP] && this.mapPieces.length) {
+            if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
+                this.jump = true
+                // this.game.startTimeout(TIMEOUTS.PLAYER_JUMP, () => {
+                this.force.y = -6
+                // })
+            }
+            if (input.keyPressed[INPUTS.INPUT_MAP]) {
                 this.showMap()
-            }
-            if (input.keyPressed[INPUTS.INPUT_RESTORE]) {
-                this.restore()
             }
         }
         // slow down
-        if (!input.keyPressed[INPUTS.INPUT_LEFT] && !input.keyPressed[INPUTS.INPUT_RIGHT] && this.force.x !== 0) {
+        if (
+            !input.keyPressed[INPUTS.INPUT_LEFT] &&
+            !input.keyPressed[INPUTS.INPUT_RIGHT] &&
+            this.force.x !== 0
+        ) {
             this.force.x += this.direction === DIRECTIONS.RIGHT
                 ? -this.acceleration
                 : this.acceleration
-            if (this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
-                this.direction === DIRECTIONS.RIGHT && this.force.x < 0) {
+            if (
+                this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
+                this.direction === DIRECTIONS.RIGHT && this.force.x < 0
+            ) {
                 this.force.x = 0
             }
         }
-        this.force.y += this.force.y > 0
-            ? world.gravity * 1.5
-            : world.gravity / 2
+    }
 
-        this.move()
-
-        if (this.onFloor) {
-            if (this.fall) {
-                this.addDust(DIRECTIONS.LEFT)
-                this.addDust(DIRECTIONS.RIGHT)
-            }
-            this.fall = false
-            this.jump = false
-        }
-        else if (this.force.y > 0 && this.jump) {
-            this.jump = false
-            this.fall = true
-        }
-        else if (this.force.y < 0) {
-            this.jump = true
-            this.fall = false
-        }
-
-        if (this.energy > this.maxEnergy && this.energy > 0) this.energy -= 1
-
-        if (this.maxEnergy <= 0) {
-            if (this.onFloor) {
-                this.animate(this.animations.DEAD)
-            }
-            else {
-                this.animate(this.direction === DIRECTIONS.RIGHT
-                    ? this.animations.DEAD_RIGHT
-                    : this.animations.DEAD_LEFT
+    moveItems (item) {
+        if (this.canTake()) {
+            if (this.items[1]) {
+                this.items[1].placeAt(
+                    this.x + 8,
+                    this.y + 8
                 )
             }
-            this.lifeLoss()
-        }
-        else if (this.jump) {
-            this.animate(this.direction === DIRECTIONS.RIGHT
-                ? this.animations.JUMP_RIGHT
-                : this.animations.JUMP_LEFT
-            )
-        }
-        else if (this.fall) {
-            this.animate(this.direction === DIRECTIONS.RIGHT
-                ? this.animations.FALL_RIGHT
-                : this.animations.FALL_LEFT)
-        }
-        else if (this.force.x !== 0) {
-            this.animate(this.direction === DIRECTIONS.RIGHT
-                ? this.animations.RIGHT
-                : this.animations.LEFT)
-        }
-        else {
-            this.animate(this.direction === DIRECTIONS.RIGHT
-                ? this.animations.STAND_RIGHT
-                : this.animations.STAND_LEFT)
-        }
-        // this.underground = this.y >= world.surface * world.spriteSize
-    }
-
-    collide (element) {
-        if (this.canHurt() && element.damage > 0 && (
-            element.family === ENTITIES_FAMILY.ENEMIES ||
-            element.family === ENTITIES_FAMILY.TRAPS
-        )) {
-            this.hit(element.damage)
+            [this.items[0], this.items[1]] = [item, this.items[0]]
+            if (item) item.visible = false
         }
     }
 
-    hit (s) {
-        // im immortal in debug mode
-        if (!!this.game.debug) return
-
-        this.maxEnergy -= s
-        this.maxEnergy <= 0
-            ? this.maxEnergy = 0
-            : this.force.y -= 3
-        this.game.startTimeout(TIMEOUTS.PLAYER_HURT)
+    useItem (itemId) {
+        const item = this.items.find((item) => item && item.properties.id === itemId)
+        if (item) {
+            [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
+                ? [this.items[1], null]
+                : [this.items[0], null]
+            this.actionPerformed()
+            return item
+        }
     }
 
     canMove () {
@@ -196,8 +210,17 @@ export default class Player extends Character {
         return !this.game.checkTimeout(TIMEOUTS.PLAYER_HURT)
     }
 
+    canDoSomething () {
+        return !this.game.checkTimeout(TIMEOUTS.PLAYER_ACTION)
+    }
+
     canTake () {
         return !this.game.checkTimeout(TIMEOUTS.PLAYER_TAKE)
+    }
+
+    actionPerformed () {
+        this.action = false
+        this.game.startTimeout(TIMEOUTS.PLAYER_TAKE)
     }
 
     canUse (itemId) {
@@ -206,39 +229,8 @@ export default class Player extends Character {
         return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
-    useItem (itemId) {
-        const item = this.items.find((item) => item && item.properties.id === itemId)
-        if (item) {
-            [this.items[0], this.items[1]] = this.items.indexOf(item) === 0
-                ? [this.items[1], null]
-                : [this.items[0], null]
-            this.game.startTimeout(TIMEOUTS.PLAYER_TAKE)
-            return item
-        }
-    }
-
-    getItem (item) {
-        if (this.canTake()) {
-            if (this.items[1]) {
-                this.items[1].placeAt(this.x + 16, this.y)
-            }
-            [this.items[0], this.items[1]] = [item, this.items[0]]
-
-            if (item) {
-                item.visible = false
-                // this.playSound(playerGet)
-            }
-            this.game.startTimeout(TIMEOUTS.PLAYER_TAKE)
-        }
-    }
-
     showMap () {
         this.game.startTimeout(TIMEOUTS.PLAYER_MAP)
-    }
-
-    collectMapPiece (piece) {
-        this.mapPieces.push(piece.animation)
-        this.showMap()
     }
 
     lifeLoss () {
@@ -246,15 +238,7 @@ export default class Player extends Character {
             this.lives -= 1
             this.force = { x: 0, y: 0 }
             // this.lives === 0 ? gameOver() :
-            this.restore()
+            // this.restore()
         }
-    }
-
-    restore () {
-        const { overlay, loadGame } = this.game
-        this.game.startTimeout(TIMEOUTS.PLAYER_RESPAWN, () => {
-            overlay.fadeIn()
-            loadGame()
-        })
     }
 }

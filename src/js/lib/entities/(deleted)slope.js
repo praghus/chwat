@@ -1,5 +1,5 @@
 import ActiveElement from '../models/active-element'
-import { ENTITIES_FAMILY } from '../../lib/constants'
+import { ENTITIES_FAMILY } from '../constants'
 
 export default class Slope extends ActiveElement {
     constructor (obj, game) {
@@ -25,8 +25,9 @@ export default class Slope extends ActiveElement {
             if (element.family === ENTITIES_FAMILY.ENEMIES) {
                 return element.bounce()
             }
+
             const posX = Math.ceil(element.x + (element.width / 2))
-            // @todo: array.reduce instead of regular iteration
+
             for (let p = 0; p < this.points.length - 1; p++) {
                 if (
                     (this.points[p][0] + this.x < posX && this.points[p + 1][0] + this.x >= posX) ||
@@ -49,39 +50,20 @@ export default class Slope extends ActiveElement {
                         (edge[0][0] > edge[1][0] && edge[0][1] > edge[1][1])
                             ? calculatedY + (calculatedX - tx) * delta
                             : calculatedY + th - (calculatedX - tx) * delta
-                    if (expectedY + element.height > element.y - element.height) {
-                        if (element.y >= expectedY && !element.jump) {
-                            element.y = expectedY
-                            element.force.y = 0
-                            element.fall = false
-                            element.onFloor = true
-                        }
+
+                    if (
+                        expectedY + element.height > element.y - element.height &&
+                        element.y >= expectedY &&
+                        !element.jump
+                    ) {
+                        element.y = expectedY
+                        element.force.y = 0
+                        element.fall = false
+                        element.onFloor = true
                     }
                     break
                 }
             }
         }
-        // if (!this.dead && element.solid) {
-        //     if (element.family === ENTITIES_FAMILY.ENEMIES) {
-        //         return element.bounce()
-        //     }
-        //     const { x, width } = element.getBounds()
-        //     const [ calculatedX, calculatedY ] = [element.x + x, this.y - element.height]
-        //     const delta = this.height / this.width
-        //     const expectedY = this.type === ENTITIES_TYPE.SLOPE_RIGHT
-        //         ? calculatedY + this.height - (calculatedX + width - this.x) * delta
-        //         : calculatedY + (calculatedX - this.x) * delta
-        //     if (expectedY + element.height > element.y - element.height) {
-        //         if (element.y >= expectedY && !element.jump) {
-        //             element.y = expectedY
-        //             element.force.y = 0
-        //             element.fall = false
-        //             element.onFloor = true
-        //         }
-        //     }
-        //     else if (element.force.y === 0) {
-        //         element.force.y += 1
-        //     }
-        // }
     }
 }

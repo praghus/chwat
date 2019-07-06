@@ -9,8 +9,8 @@ export default class Overlay {
             in: false,
             out: false
         }
-        this.addHint = ({x, y, width, hint}) => {
-            this.hints.push({x, y, width, hint})
+        this.addHint = ({ x, y, width, hint }) => {
+            this.hints.push({ x, y, width, hint })
         }
         this.fadeIn = () => {
             if (!this.fade.in) {
@@ -39,10 +39,7 @@ export default class Overlay {
             const {
                 ctx,
                 props: {
-                    viewport: {
-                        resolutionX,
-                        resolutionY
-                    }
+                    viewport: { resolutionX, resolutionY }
                 }
             } = this.game
 
@@ -72,19 +69,21 @@ export default class Overlay {
             camera,
             countTime,
             debug,
-            fps,
             player,
-            props
+            props,
+            world: {
+                activeObjects
+            }
         } = this.game
 
-        const { assets, viewport: {resolutionX, resolutionY } } = props
+        const { assets, viewport: { resolutionX, resolutionY } } = props
         const { energy, items, lives } = player
-        const fpsIndicator = `FPS:${Math.round(fps)}`
+        const objects = `OBJ: ${activeObjects.length}`
         const time = countTime()
         this.displayText(time, resolutionX - (3 + time.length * 5), 3)
 
-        // FPS meter
-        debug && this.displayText(fpsIndicator, resolutionX - (3 + fpsIndicator.length * 5), 9)
+        // Active objects
+        debug && this.displayText(objects, resolutionX - (3 + objects.length * 5), 9)
 
         // Camera position in debug mode
         debug && this.displayText(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 28)
@@ -96,24 +95,18 @@ export default class Overlay {
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, -25 + resolutionX / 2, 3, indicatorWidth, 5)
         this.displayText(`${lives}`, 12, 3)
 
-        // buttons
-        // ctx.drawImage(assets[ASSETS.BUTTONS], 0, 0, 18, 18, 6, resolutionY - 20, 18, 18)
-        // ctx.drawImage(assets[ASSETS.BUTTONS], 19, 0, 18, 18, 30, resolutionY - 20, 18, 18)
-        // ctx.drawImage(assets[ASSETS.BUTTONS], 57, 0, 18, 18, resolutionX - 22, resolutionY - 20, 18, 18)
-        // ctx.drawImage(assets[ASSETS.BUTTONS], 38, 0, 18, 18, resolutionX - 44, resolutionY - 20, 18, 18)
-
         // items
         const align = 3 // -19 + resolutionX / 2
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
             if (item) {
                 this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
-                this.drawItem(item.gid, align + 1 + (index * 20), resolutionY - 19)
+                this.drawTile(item.gid, align + 1 + (index * 20), resolutionY - 19)
             }
         })
     }
 
-    displayHint ({x, y, width, hint}) {
+    displayHint ({ x, y, width, hint }) {
         const {
             ctx,
             camera,
@@ -121,18 +114,18 @@ export default class Overlay {
         } = this.game
 
         ctx.drawImage(assets[ASSETS.BUBBLE],
-            Math.floor(x + camera.x + width / 2),
-            Math.floor(y + camera.y) - 20
+            x + camera.x + width / 2,
+            y + camera.y - 20
         )
 
-        this.drawItem(hint, x + 8 + camera.x + width / 2, y + camera.y - 18)
+        this.drawTile(hint, x + 8 + camera.x + width / 2, y + camera.y - 18)
     }
 
-    drawItem (gid, x, y) {
+    drawTile (gid, x, y, scale = 1) {
         if (!gid) return
         const { ctx, world } = this.game
         const item = world.createTile(gid)
-        item.draw(x, y, ctx)
+        item.draw(ctx, x, y, { scale })
     }
 
     displayMap () {
@@ -140,7 +133,6 @@ export default class Overlay {
             ctx,
             player,
             props: {
-                assets,
                 viewport: { resolutionX, resolutionY }
             }
         } = this.game
@@ -151,13 +143,15 @@ export default class Overlay {
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.restore()
 
-        player.mapPieces.map((piece) => {
-            ctx.drawImage(assets[ASSETS.MAP_PIECE],
-                piece.x, piece.y,
-                piece.w, piece.h,
-                Math.floor((resolutionX / 2) + (piece.x * 2) - 48),
-                Math.floor((resolutionY / 2) + (piece.y * 2) - 32),
-                piece.w * 2, piece.h * 2
+        player.mapPieces.map((gid) => {
+            const i = (gid - 1221)
+            const j = i < 3 ? 0 : 1
+            const k = !j ? 48 : 144
+            this.drawTile(
+                gid,
+                Math.floor((resolutionX / 2) + (i * 32) - k),
+                Math.floor((resolutionY / 2) + (j * 32) - 32),
+                2
             )
         })
 
@@ -201,66 +195,28 @@ export default class Overlay {
                 entity.points[0][0] + posX,
                 entity.points[0][1] + posY
             )
-            entity.points.map(([x, y]) => {
-                ctx.lineTo(
-                    posX + x,
-                    posY + y
-                )
-                // this.displayText(`${entity.x + x},${entity.x + y}`, posX + x, posY + y)
-            })
+            entity.points.map(([x, y]) => ctx.lineTo(posX + x, posY + y))
             ctx.lineTo(
                 entity.points[0][0] + posX,
                 entity.points[0][1] + posY
             )
             ctx.stroke()
             ctx.restore()
-
-            // if (entity.triangle.length > 0) {
-            //     ctx.save()
-            //     ctx.strokeStyle = COLORS.GREEN
-            //     ctx.beginPath()
-            //     ctx.moveTo(
-            //         entity.triangle[0][0] + camera.x,
-            //         entity.triangle[0][1] + camera.Y
-            //     )
-            //     entity.triangle.map(([x, y]) => {
-            //         ctx.lineTo(
-            //             x + camera.x,
-            //             y + camera.y
-            //         )
-            //     })
-            //     ctx.lineTo(
-            //         entity.triangle[0][0] + camera.x,
-            //         entity.triangle[0][1] + camera.y
-            //     )
-            //     ctx.stroke()
-            //     ctx.restore()
-            // }
-
-            // if (bounds) {
-            //     this.outline(
-            //         posX + bounds.x,
-            //         posY + bounds.y,
-            //         bounds.width,
-            //         bounds.height,
-            //         COLORS.SPIDER_WEB
-            //     )
-            // }
         }
         else {
             this.outline(
                 posX, posY, width, height,
                 visible ? COLORS.GREEN : COLORS.PURPLE
             )
-            if (bounds) {
-                this.outline(
-                    posX + bounds.x,
-                    posY + bounds.y,
-                    bounds.width,
-                    bounds.height,
-                    COLORS.LIGHT_RED
-                )
-            }
+        }
+        if (bounds) {
+            this.outline(
+                bounds.pos.x + posX,
+                bounds.pos.y + posY,
+                bounds.w,
+                bounds.h,
+                COLORS.LIGHT_RED
+            )
         }
         if (visible) {
             this.displayText(`${name || type}\nx:${Math.floor(entity.x)}\ny:${Math.floor(entity.y)}`,
@@ -268,13 +224,6 @@ export default class Overlay {
                 posY - 8,
             )
         }
-        // else {
-        //     this.displayText(`${String.fromCharCode(26)}`,
-        //         posX,
-        //         posY,
-        //     )
-        // }
-        // ${String.fromCharCode(26)}
         if (force.x !== 0) {
             const forceX = `${force.x.toFixed(2)}`
             this.displayText(forceX,

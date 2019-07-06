@@ -1,51 +1,50 @@
 import ActiveElement from '../models/active-element'
-import { DIRECTIONS, ENTITIES_FAMILY } from '../../lib/constants'
+import { DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Water extends ActiveElement {
     constructor (obj, game) {
         super(obj, game)
         this.damage = 100
         this.wave = 0
-        this.animation = {x: 0, y: 0, w: 16, h: 16, frames: 7, fps: 20, loop: true}
         this.direction = DIRECTIONS.DOWN
+        this.animation = this.animations.WAVES
     }
 
     draw () {
-        const { ctx, camera, world, props: { assets } } = this.game
-        const { canFall, selective } = this.properties
-        const { spriteSize } = world
-        const [posX, posY] = [
-            Math.floor(this.x + camera.x),
-            Math.floor(this.y + camera.y)
-        ]
-        for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
-            for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
-                const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
-                const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-
-                if (selective || !world.isSolidArea(PX, PY)) {
-                    ctx.drawImage(assets[this.asset],
-                        this.animFrame * spriteSize, y === 0 ? y + this.wave : spriteSize,
-                        spriteSize, spriteSize,
-                        posX + (x * spriteSize),
-                        posY + (y * spriteSize),
-                        spriteSize, spriteSize
-                    )
-                }
-                if (
-                    canFall && !world.isSolidArea(PX, PY + 1) &&
-                    y + 1 === Math.round(this.height / spriteSize)
-                ) {
-                    this.fall = true
+        if (this.onScreen()) {
+            const { ctx, camera, world, props: { assets } } = this.game
+            const { canFall } = this.properties
+            const { spriteSize } = world
+            const [posX, posY, pW, pH] = [
+                Math.floor(this.x + camera.x),
+                Math.floor(this.y + camera.y),
+                Math.round(this.width / spriteSize),
+                Math.round(this.height / spriteSize)
+            ]
+            for (let y = 0; y < pH; y++) {
+                for (let x = 0; x < pW; x++) {
+                    const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
+                    const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
+                    if (!world.isSolidArea(PX, PY, this.collisionLayers)) {
+                        ctx.drawImage(assets[this.asset],
+                            y === 0 ? this.animation.frames[this.animFrame][0] : 0,
+                            y === 0 ? this.animation.frames[this.animFrame][1] : 32,
+                            spriteSize, spriteSize,
+                            posX + (x * spriteSize), posY + (y * spriteSize),
+                            spriteSize, spriteSize
+                        )
+                    }
+                    if (!world.isSolidArea(PX, PY + 1, this.collisionLayers) && canFall && y + 1 === pH) {
+                        this.fall = true
+                    }
                 }
             }
         }
     }
 
     collide (element) {
-        // restore the initial position of the item
-        // when it falls into the water
-        if (element.family === ENTITIES_FAMILY.ITEMS) {
+        // restore the initial position of the item when it falls into the water
+        if (element.family === ENTITIES_TYPE.ITEM) {
             element.restore()
         }
     }
@@ -53,15 +52,6 @@ export default class Water extends ActiveElement {
     update () {
         if (this.onScreen()) {
             this.animate()
-            if (this.animFrame === 5) {
-                this.wave += this.direction === DIRECTIONS.DOWN ? 0.5 : -0.5
-            }
-            if (this.wave > 2) {
-                this.direction = DIRECTIONS.UP
-            }
-            if (this.wave < -2) {
-                this.direction = DIRECTIONS.DOWN
-            }
             if (this.fall) {
                 this.fall = false
                 this.y += 16
