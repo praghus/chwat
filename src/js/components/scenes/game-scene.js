@@ -17,8 +17,7 @@ import {
     CONFIG,
     ENTITIES,
     ENTITIES_TYPE,
-    LAYERS,
-    TIMEOUTS
+    LAYERS
 } from '../../lib/constants'
 import {
     assetPropType,
@@ -45,6 +44,7 @@ export default class GameScene extends Component {
     constructor (props) {
         super(props)
         this.loaded = false
+        this.gameStarted = false
         this.wrapper = null
         this.scene = null
         this.scenes = null
@@ -65,48 +65,48 @@ export default class GameScene extends Component {
         this.checkTimeout = this.checkTimeout.bind(this)
         this.startTimeout = this.startTimeout.bind(this)
         this.stopTimeout = this.stopTimeout.bind(this)
+        this.startGame = this.startGame.bind(this)
     }
 
     componentDidMount () {
-        const { startTicker } = this.props
+        const { startTicker, viewport: { resolutionX } } = this.props
         this.ctx = this.canvas.context
         this.map = tmxParser(map).then((data) => {
             this.loaded = true
             this.world = new World(data, ENTITIES, this)
-            this.world.setShadowCastingLayer(LAYERS.MAIN, 7)
+            this.world.setShadowCastingLayer(LAYERS.MAIN, 10)
 
             this.player = this.world.getObjectByType(ENTITIES_TYPE.PLAYER, LAYERS.OBJECTS)
 
             this.camera = new Camera(this)
             this.camera.setSurfaceLevel(this.world.getProperty('surfaceLevel'))
-            this.camera.setFollow(this.player)
-            this.camera.center()
+            this.camera.x = -(this.player.x + (this.player.width / 2) - (resolutionX / 2))
 
             this.overlay = new Overlay(this)
             this.overlay.fadeIn()
+            this.startTimeout('intro', 3000, this.startGame)
         })
         // this.setOpenGlEffects()
         startTicker()
     }
 
-    componentWillReceiveProps (nextProps) {
-        if (this.loaded) {
-            this.frameStart = getPerformance()
-            this.delta = this.frameStart - this.then
-            this.debug = nextProps.config[CONFIG.DEBUG_MODE]
-
-            if (!this.timer) this.timer = moment()
-            if (this.delta > nextProps.ticker.interval) {
-                this.world.update()
-                this.camera.update()
-                this.countFPS()
-            }
-        }
-    }
-
     componentDidUpdate () {
         if (this.ctx) {
-            this.draw()
+            if (this.loaded) {
+                const { config, ticker } = this.props
+                this.frameStart = getPerformance()
+                this.delta = this.frameStart - this.then
+                this.debug = config[CONFIG.DEBUG_MODE]
+
+                if (!this.timer) this.timer = moment()
+                if (this.delta > ticker.interval) {
+                    this.gameStarted && this.world.update()
+                    this.camera.update()
+                    this.countFPS()
+                }
+                this.draw()
+            }
+
             /** Experimental: create CRT scanlines effect */
             if (this.glcanvas) {
                 const { assets, viewport: { width, height } } = this.props
@@ -143,6 +143,12 @@ export default class GameScene extends Component {
         )
     }
 
+    startGame () {
+        this.gameStarted = true
+        this.camera.setFollow(this.player)
+        this.camera.center()
+    }
+
     draw () {
         if (this.loaded) {
             const { viewport } = this.props
@@ -163,8 +169,11 @@ export default class GameScene extends Component {
             world.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
             world.draw()
 
-            overlay.displayHUD()
-            this.checkTimeout(TIMEOUTS.PLAYER_MAP) && overlay.displayMap()
+            this.gameStarted
+                ? overlay.displayHUD()
+                : overlay.displayIntro()
+
+            this.checkTimeout('player_map') && overlay.displayMap()
             overlay.update()
             ctx.restore()
         }
@@ -233,12 +242,11 @@ export default class GameScene extends Component {
             : moment.utc(ms).format('mm:ss')
     }
 
-    // @todo: better timeouts handling
-    checkTimeout ({ name }) {
+    checkTimeout (name) {
         return this.timeoutsPool[name] || null
     }
 
-    startTimeout ({ name, duration }, callback = noop) {
+    startTimeout (name, duration, callback = noop) {
         if (!this.timeoutsPool[name]) {
             this.timeoutsPool[name] = setTimeout(() => {
                 this.stopTimeout(name)

@@ -1,6 +1,6 @@
 import ActiveElement from '../models/active-element'
 import { isValidArray } from '../utils/helpers'
-import { ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../constants'
+import { ENTITIES_TYPE, LAYERS } from '../constants'
 
 export default class Trigger extends ActiveElement {
     constructor (obj, game) {
@@ -19,7 +19,7 @@ export default class Trigger extends ActiveElement {
 
     update () {
         if (this.activated) {
-            const { camera, overlay, player, world } = this.game
+            const { camera, overlay, player, world, startTimeout } = this.game
             const {
                 activator, clear, fade, follow, kill, modify, produce, related, reusable, shake
             } = this.properties
@@ -30,12 +30,12 @@ export default class Trigger extends ActiveElement {
 
                 if (follow) {
                     camera.setFollow(rel)
-                    this.game.startTimeout(TIMEOUTS.TRIGGER_WAIT, () => {
+                    startTimeout('trigger_wait', 300, () => {
                         rel.activated = true
                         rel.trigger = this
                         rel.activator = item
 
-                        this.game.startTimeout(TIMEOUTS.TRIGGER_WAIT_FOR_PLAYER, () => {
+                        startTimeout('trigger_wait_for_player', 2500, () => {
                             overlay.fadeIn()
                             camera.setFollow(player)
                         })

@@ -2,8 +2,7 @@ import ActiveElement from '../models/active-element'
 import {
     DIRECTIONS,
     ENTITIES_TYPE,
-    LAYERS,
-    TIMEOUTS
+    LAYERS
 } from '../../lib/constants'
 
 export default class Switch extends ActiveElement {
@@ -16,7 +15,7 @@ export default class Switch extends ActiveElement {
     }
 
     update () {
-        const { camera, player, overlay, world } = this.game
+        const { camera, player, overlay, world, startTimeout } = this.game
         const { produce } = this.properties
 
         if (this.activated && !this.used) {
@@ -29,7 +28,7 @@ export default class Switch extends ActiveElement {
                     height: 16,
                     force: { x: 0, y: 0 }
                 })
-                this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
+                startTimeout('switch_wait', 500, () => {
                     world.putTile(225, 23, 196, LAYERS.BACKGROUND2)
                     world.putTile(226, 23, 229, LAYERS.BACKGROUND2)
                     world.putTile(225, 24, 258, LAYERS.MAIN)
@@ -39,10 +38,7 @@ export default class Switch extends ActiveElement {
                     world.putTile(226, 25, 132, LAYERS.MAIN)
                     world.putTile(227, 25, 130, LAYERS.MAIN)
                     camera.shake()
-                    this.game.startTimeout({
-                        name: 'wait_for_player',
-                        duration: 500
-                    }, () => {
+                    startTimeout('wait_for_player', 500, () => {
                         overlay.fadeIn()
                         camera.setFollow(player)
                     })
@@ -56,7 +52,7 @@ export default class Switch extends ActiveElement {
                     height: 64,
                     force: { x: 0, y: 0 }
                 })
-                this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
+                startTimeout('switch_wait', 500, () => {
                     world.putTile(495, 75, 0, LAYERS.BACKGROUND2)
                     world.putTile(496, 75, 0, LAYERS.BACKGROUND2)
                     world.putTile(497, 75, 0, LAYERS.BACKGROUND2)
@@ -89,7 +85,7 @@ export default class Switch extends ActiveElement {
                     }, LAYERS.OBJECTS)
 
                     camera.shake()
-                    this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
+                    startTimeout('switch_wait', 500, () => {
                         overlay.fadeIn()
                         camera.setFollow(player)
                     })
@@ -100,7 +96,7 @@ export default class Switch extends ActiveElement {
     }
 
     interact () {
-        const { player, world } = this.game
+        const { player, world, startTimeout } = this.game
         const { activator, anchor_hint } = this.properties
 
         if (player.canUse(activator)) {
@@ -108,7 +104,7 @@ export default class Switch extends ActiveElement {
             player.useItem(activator)
             this.switched = true
             this.animation = this.animations.ON
-            this.game.startTimeout(TIMEOUTS.SWITCH_WAIT, () => {
+            startTimeout('switch_wait', 500, () => {
                 this.activated = true
             })
         }

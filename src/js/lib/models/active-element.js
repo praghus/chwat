@@ -1,6 +1,6 @@
 import { Entity } from 'tiled-platformer-lib'
 import { randomInt } from '../../lib/utils/helpers'
-import { ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../../lib/constants'
+import { ENTITIES_TYPE, LAYERS } from '../../lib/constants'
 
 export default class ActiveElement extends Entity {
     constructor (obj, game) {
@@ -20,9 +20,9 @@ export default class ActiveElement extends Entity {
     }
 
     showHint (item) {
-        if (!this.game.checkTimeout(TIMEOUTS.HINT)) {
+        if (!this.game.checkTimeout('hint')) {
             this.hint = item.gid
-            this.game.startTimeout(TIMEOUTS.HINT, this.hideHint)
+            this.game.startTimeout('hint', 2000, () => this.hideHint())
         }
     }
 
@@ -38,16 +38,16 @@ export default class ActiveElement extends Entity {
             offsetX ? this.x + offsetX * world.spriteSize : this.x,
             offsetY ? this.y + offsetY * world.spriteSize : this.y
         ]
-        if (!this.game.checkTimeout(TIMEOUTS.MESSAGE)) {
+        if (!this.game.checkTimeout('message')) {
             this.message = { text, x, y }
-            this.game.startTimeout(TIMEOUTS.MESSAGE, this.hideMessage)
+            this.game.startTimeout('message', 3000, this.hideMessage)
         }
     }
 
     changeMessage (text, x = this.x, y = this.y) {
-        this.game.stopTimeout(TIMEOUTS.MESSAGE)
+        this.game.stopTimeout('message')
         this.message = { text, x, y }
-        this.game.startTimeout(TIMEOUTS.MESSAGE, this.hideMessage)
+        this.game.startTimeout('message', 3000, this.hideMessage)
     }
 
     hideMessage () {
@@ -71,7 +71,7 @@ export default class ActiveElement extends Entity {
     emitParticles (count, properties) {
         const particle_count = count || 10
         for (let i = 0; i < particle_count; i++) {
-            const props = {...properties}
+            const props = { ...properties }
             props.x = properties.x + randomInt(0, 8)
             this.game.world.addObject({
                 type: ENTITIES_TYPE.PARTICLE,

@@ -5,7 +5,7 @@ import {
     DIRECTIONS,
     ENTITIES_TYPE,
     INPUTS,
-    TIMEOUTS
+    SCENES
 } from '../../lib/constants'
 
 export default class Player extends Character {
@@ -21,7 +21,9 @@ export default class Player extends Character {
         this.inDark = 0
         this.items = [null, null]
         this.mapPieces = []
+        this.initialPosition = { x: obj.x, y: obj.y }
         this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
+        this.animation = this.animations.STAND_RIGHT
         this.setBoundingBox(10, 8, this.width - 20, this.height - 8)
     }
 
@@ -58,9 +60,24 @@ export default class Player extends Character {
             }
         }
         if (this.canHurt() && element.damage > 0) {
-            // this.hit(element.damage)
+            this.energy -= element.damage
+            if (this.energy <= 0 && !this.game.checkTimeout('player_respawn')) {
+                if (this.lives > 0) {
+                    this.lives -= 1
+                    this.visible = false
+                    this.force = { x: 0, y: 0 }
+                    this.game.overlay.fadeOut()
+                    this.game.startTimeout('player_respawn', 2000, () => {
+                        this.energy = this.maxEnergy
+                        this.restore()
+                    })
+                }
+                else {
+                    this.game.props.setScene(SCENES.INTRO)
+                }
+            }
             this.force.y = -2
-            this.game.startTimeout(TIMEOUTS.PLAYER_HURT)
+            this.game.startTimeout('player_hurt', 3000)
         }
     }
 
@@ -148,9 +165,7 @@ export default class Player extends Character {
             }
             if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
                 this.jump = true
-                // this.game.startTimeout(TIMEOUTS.PLAYER_JUMP, () => {
                 this.force.y = -6
-                // })
             }
             if (input.keyPressed[INPUTS.INPUT_MAP]) {
                 this.showMap()
@@ -199,7 +214,7 @@ export default class Player extends Character {
     }
 
     canMove () {
-        return this.maxEnergy > 0
+        return this.energy > 0
     }
 
     canJump () {
@@ -207,20 +222,20 @@ export default class Player extends Character {
     }
 
     canHurt () {
-        return !this.game.checkTimeout(TIMEOUTS.PLAYER_HURT)
+        return this.canMove() && !this.game.checkTimeout('player_hurt')
     }
 
     canDoSomething () {
-        return !this.game.checkTimeout(TIMEOUTS.PLAYER_ACTION)
+        return !this.game.checkTimeout('player_action')
     }
 
     canTake () {
-        return !this.game.checkTimeout(TIMEOUTS.PLAYER_TAKE)
+        return !this.game.checkTimeout('player_take')
     }
 
     actionPerformed () {
         this.action = false
-        this.game.startTimeout(TIMEOUTS.PLAYER_TAKE)
+        this.game.startTimeout('player_take', 500)
     }
 
     canUse (itemId) {
@@ -230,15 +245,17 @@ export default class Player extends Character {
     }
 
     showMap () {
-        this.game.startTimeout(TIMEOUTS.PLAYER_MAP)
+        this.game.startTimeout('player_map', 2000)
     }
 
-    lifeLoss () {
-        if (!this.game.checkTimeout(TIMEOUTS.PLAYER_RESPAWN)) {
-            this.lives -= 1
-            this.force = { x: 0, y: 0 }
-            // this.lives === 0 ? gameOver() :
-            // this.restore()
-        }
+    restore () {
+        const { camera, overlay } = this.game
+        const { x, y } = this.initialPosition
+        overlay.fadeIn()
+        this.game.stopTimeout('player_hurt')
+        this.x = x
+        this.y = y
+        this.visible = true
+        camera.center()
     }
 }

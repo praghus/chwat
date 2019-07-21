@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-up" width="500" height="92" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#7c71da" nextlayerid="13" nextobjectid="867">
+<map version="1.2" tiledversion="1.2.4" orientation="orthogonal" renderorder="right-up" width="500" height="92" tilewidth="16" tileheight="16" infinite="0" backgroundcolor="#7c71da" nextlayerid="13" nextobjectid="872">
  <properties>
   <property name="gravity" value="0.5"/>
   <property name="surfaceLevel" value="50"/>
@@ -310,6 +310,13 @@
   <tile id="267">
    <objectgroup draworder="index">
     <object id="1" x="0" y="8" width="8" height="8"/>
+   </objectgroup>
+  </tile>
+  <tile id="333" type="one_way">
+   <objectgroup draworder="index">
+    <object id="1" x="0" y="16">
+     <polygon points="0,0 0,-5 3,-12 8,-16 11,-16 14,-12 16,-5 16,0"/>
+    </object>
    </objectgroup>
   </tile>
   <tile id="370">
@@ -909,6 +916,7 @@ I need some elevation.</property>
    <properties>
     <property name="activator" value="stone"/>
     <property name="kill" type="int" value="422"/>
+    <property name="modify" value="[[422,47,334]]"/>
    </properties>
   </object>
   <object id="425" name="Pirate" type="pirate" x="1808" y="688" width="160" height="64">
@@ -1078,7 +1086,7 @@ I need some elevation.</property>
     <property name="id" value="piece4"/>
    </properties>
   </object>
-  <object id="644" name="Map #3" type="map_piece" gid="1223" x="6032" y="768" width="16" height="16">
+  <object id="644" name="Map #3" type="map_piece" gid="1223" x="6000" y="768" width="16" height="16">
    <properties>
     <property name="id" value="piece3"/>
    </properties>
@@ -1120,7 +1128,7 @@ the elevator down below</property>
   <object id="800" name="Rock" type="rock" x="3520" y="1056" width="32" height="32">
    <ellipse/>
   </object>
-  <object id="866" name="Player" type="player" x="4960" y="720" width="32" height="48"/>
+  <object id="868" name="Player" type="player" x="4976" y="720" width="32" height="48"/>
  </objectgroup>
  <layer id="5" name="foreground1" width="500" height="92">
   <properties>
@@ -1130,7 +1138,7 @@ the elevator down below</property>
    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
   </data>
  </layer>
- <layer id="6" name="foreground2" width="500" height="92">
+ <layer id="6" name="foreground2" width="500" height="92" visible="0">
   <properties>
    <property name="collide" type="bool" value="false"/>
   </properties>

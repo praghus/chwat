@@ -1,14 +1,11 @@
 import { Entity } from 'tiled-platformer-lib'
-import { DIRECTIONS, ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../../lib/constants'
+import { DIRECTIONS, ENTITIES_TYPE, LAYERS } from '../../lib/constants'
 
 export default class Character extends Entity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
         this.visible = true
-        this.hideHint = () => {
-            this.hint = null
-        }
     }
 
     draw () {
@@ -21,10 +18,14 @@ export default class Character extends Entity {
     }
 
     showHint (item) {
-        if (!this.game.checkTimeout(TIMEOUTS.HINT)) {
+        if (!this.game.checkTimeout('hint')) {
             this.hint = item.gid
-            this.game.startTimeout(TIMEOUTS.HINT, this.hideHint)
+            this.game.startTimeout('hint', 2000, () => this.hideHint())
         }
+    }
+
+    hideHint () {
+        this.hint = null
     }
 
     bounce () {

@@ -68,7 +68,7 @@ export function randomChoice (choices) {
 }
 
 export function getEntityByType (entityType) {
-    return ENTITIES.filter(({type}) => entityType === type)[0] || null
+    return ENTITIES.filter(({ type }) => entityType === type)[0] || null
 }
 
 export function getKeyPressed (key) {
@@ -78,7 +78,7 @@ export function getKeyPressed (key) {
 export function getProperties (data) {
     if (data && data.length) {
         const properties = {}
-        data.map(({name, value}) => {
+        data.map(({ name, value }) => {
             properties[name] = value
         })
         return properties
@@ -111,3 +111,4 @@ export function between (value, a, b) {
     const max = Math.max(a, b)
     return value >= min && value <= max
 }
+

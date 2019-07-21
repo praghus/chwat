@@ -22,15 +22,13 @@ export {
     INPUT_KEYS
 } from './inputs'
 export {
+    ITEMS
+} from './items'
+export {
     PARTICLES
 } from './particles'
 export {
     SOUNDS,
     soundsData
 } from './sounds'
-export {
-    TIMEOUTS
-} from './timeouts'
-export {
-    ITEMS
-} from './items'
+

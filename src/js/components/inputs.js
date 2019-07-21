@@ -23,15 +23,15 @@ export default class Inputs extends Component {
         this.rightPad.on('press tap', this.onTouchEvent)
         this.leftPad.on('pan panend', this.onTouchEvent)
 
-        document.addEventListener('keydown', ({code}) => onKey(getKeyPressed(code), true))
-        document.addEventListener('keyup', ({code}) => onKey(getKeyPressed(code), false))
+        document.addEventListener('keydown', ({ code }) => onKey(getKeyPressed(code), true))
+        document.addEventListener('keyup', ({ code }) => onKey(getKeyPressed(code), false))
     }
 
     componentWillUnmount () {
         const { onKey } = this.props
 
-        document.removeEventListener('keydown', ({code}) => onKey(code, true))
-        document.removeEventListener('keyup', ({code}) => onKey(code, false))
+        document.removeEventListener('keydown', ({ code }) => onKey(code, true))
+        document.removeEventListener('keyup', ({ code }) => onKey(code, false))
 
         this.rightPad.off('press tap', this.onTouchEvent)
         this.leftPad.off('pan panend', this.onTouchEvent)

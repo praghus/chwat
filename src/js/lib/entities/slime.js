@@ -5,7 +5,7 @@ export default class Slime extends Character {
     constructor (obj, game) {
         super(obj, game)
         this.maxSpeed = 0
-        this.damage = 25
+        this.damage = 20
         this.acceleration = 0.2
         this.running = false
         this.activated = false
@@ -18,7 +18,7 @@ export default class Slime extends Character {
             this.activated = true
         }
         if (this.activated) {
-            const { world } = this.game
+            const { world, startTimeout } = this.game
 
             // @todo: rebuild whole solution and timeouts
             if (this.running) {
@@ -35,7 +35,7 @@ export default class Slime extends Character {
                 }
             }
             else if (!this.game.checkTimeout(`wait_${this.id}`)) {
-                this.game.startTimeout({name: `wait_${this.id}`, duration: 2300}, () => {
+                startTimeout(`wait_${this.id}`, 2300, () => {
                     this.onScreen()
                         ? this.running = true
                         : this.activated = false

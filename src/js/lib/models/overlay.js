@@ -4,6 +4,8 @@ export default class Overlay {
     constructor (game) {
         this.game = game
         this.blackOverlay = 0
+        this.alpha = 1
+        this.introShow = 1
         this.hints = []
         this.fade = {
             in: false,
@@ -63,6 +65,38 @@ export default class Overlay {
         }
     }
 
+    displayIntro () {
+        const {
+            ctx,
+            camera,
+            props
+        } = this.game
+        const { assets, viewport: { resolutionX } } = props
+
+        if (camera.y > -656) {
+            camera.y -= 8
+        }
+        else if (this.introShow > 0) {
+            this.introShow -= 0.03
+        }
+        else if (this.alpha > 0) {
+            this.alpha -= 0.05
+        }
+        else if (camera.y > -672) {
+            camera.y -= 1
+        }
+
+        if (this.alpha > 0) {
+            ctx.save()
+            ctx.globalAlpha = this.alpha
+            ctx.drawImage(assets[ASSETS.LOGO], (resolutionX / 2) - 66, 16)
+            ctx.restore()
+        }
+        else {
+            this.alpha = 0
+        }
+    }
+
     displayHUD () {
         const {
             ctx,
@@ -80,6 +114,14 @@ export default class Overlay {
         const { energy, items, lives } = player
         const objects = `OBJ: ${activeObjects.length}`
         const time = countTime()
+
+        ctx.save()
+
+        if (this.alpha < 1) {
+            ctx.globalAlpha = this.alpha
+            this.alpha += 0.02
+        }
+
         this.displayText(time, resolutionX - (3 + time.length * 5), 3)
 
         // Active objects
@@ -104,6 +146,7 @@ export default class Overlay {
                 this.drawTile(item.gid, align + 1 + (index * 20), resolutionY - 19)
             }
         })
+        ctx.restore()
     }
 
     displayHint ({ x, y, width, hint }) {
@@ -114,11 +157,14 @@ export default class Overlay {
         } = this.game
 
         ctx.drawImage(assets[ASSETS.BUBBLE],
-            x + camera.x + width / 2,
-            y + camera.y - 20
+            Math.ceil(x + camera.x + width / 2),
+            Math.ceil(y + camera.y - 20)
         )
 
-        this.drawTile(hint, x + 8 + camera.x + width / 2, y + camera.y - 18)
+        this.drawTile(hint,
+            Math.ceil(x + 8 + camera.x + width / 2),
+            Math.ceil(y + camera.y - 18)
+        )
     }
 
     drawTile (gid, x, y, scale = 1) {
