@@ -42,6 +42,11 @@ module.exports = {
                 ]
             },
             {
+                test: /favicon\.ico$/,
+                include: PATH.IMAGES,
+                use: 'file-loader?name=[name].[ext]'
+            },
+            {
                 test: /\.(png|gif|jpg|svg)$/,
                 include: PATH.IMAGES,
                 use: 'url-loader?limit=100&name=[name]-[hash].[ext]'

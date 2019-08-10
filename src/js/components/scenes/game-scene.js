@@ -44,7 +44,6 @@ export default class GameScene extends Component {
     constructor (props) {
         super(props)
         this.loaded = false
-        this.gameStarted = false
         this.wrapper = null
         this.scene = null
         this.scenes = null
@@ -65,7 +64,7 @@ export default class GameScene extends Component {
         this.checkTimeout = this.checkTimeout.bind(this)
         this.startTimeout = this.startTimeout.bind(this)
         this.stopTimeout = this.stopTimeout.bind(this)
-        this.startGame = this.startGame.bind(this)
+        this.renderBackground = this.renderBackground.bind(this)
     }
 
     componentDidMount () {
@@ -74,17 +73,19 @@ export default class GameScene extends Component {
         this.map = tmxParser(map).then((data) => {
             this.loaded = true
             this.world = new World(data, ENTITIES, this)
+            this.world.addLayer(this.renderBackground, 0)
             this.world.setShadowCastingLayer(LAYERS.MAIN, 10)
 
             this.player = this.world.getObjectByType(ENTITIES_TYPE.PLAYER, LAYERS.OBJECTS)
 
             this.camera = new Camera(this)
             this.camera.setSurfaceLevel(this.world.getProperty('surfaceLevel'))
+            this.camera.setFollow(this.player)
             this.camera.x = -(this.player.x + (this.player.width / 2) - (resolutionX / 2))
+            this.camera.center()
 
             this.overlay = new Overlay(this)
             this.overlay.fadeIn()
-            this.startTimeout('intro', 3000, this.startGame)
         })
         // this.setOpenGlEffects()
         startTicker()
@@ -100,8 +101,9 @@ export default class GameScene extends Component {
 
                 if (!this.timer) this.timer = moment()
                 if (this.delta > ticker.interval) {
-                    this.gameStarted && this.world.update()
+                    this.world.update()
                     this.camera.update()
+                    this.overlay.update()
                     this.countFPS()
                 }
                 this.draw()
@@ -143,12 +145,6 @@ export default class GameScene extends Component {
         )
     }
 
-    startGame () {
-        this.gameStarted = true
-        this.camera.setFollow(this.player)
-        this.camera.center()
-    }
-
     draw () {
         if (this.loaded) {
             const { viewport } = this.props
@@ -164,17 +160,11 @@ export default class GameScene extends Component {
             ctx.scale(scale, scale)
             ctx.clearRect(0, 0, resolutionX, resolutionY)
 
-            this.renderBackground()
-
             world.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
             world.draw()
-
-            this.gameStarted
-                ? overlay.displayHUD()
-                : overlay.displayIntro()
+            overlay.draw()
 
             this.checkTimeout('player_map') && overlay.displayMap()
-            overlay.update()
             ctx.restore()
         }
     }
@@ -182,24 +172,25 @@ export default class GameScene extends Component {
     renderBackground () {
         const {
             ctx,
+            camera,
             player,
             props: {
                 assets,
                 viewport: { resolutionX, resolutionY }
             }
         } = this
-        if (!this.camera.underground && !player.inDark) {
-            const cameraX = this.camera.x + 3300
+        if (!camera.underground && !player.inDark) {
+            const offsetX = camera.x + 3300
             const fogBorder = 600
             ctx.fillStyle = COLORS.BLUE_SKY
             ctx.fillRect(0, 0, resolutionX, resolutionY)
-            if (cameraX < 0) {
-                ctx.drawImage(assets[ASSETS.MOUNTAINS], cameraX / 15, 278 + this.camera.y / 2)
-                ctx.drawImage(assets[ASSETS.FAR_FOREST], cameraX / 10, 112 + this.camera.y / 2)
-                ctx.drawImage(assets[ASSETS.FOREST], cameraX / 5, 270 + this.camera.y / 2)
-                if (this.camera.y > -fogBorder) {
+            if (offsetX < 0) {
+                ctx.drawImage(assets[ASSETS.MOUNTAINS], offsetX / 15, 278 + camera.y / 2)
+                ctx.drawImage(assets[ASSETS.FAR_FOREST], offsetX / 10, 112 + camera.y / 2)
+                ctx.drawImage(assets[ASSETS.FOREST], offsetX / 5, 270 + camera.y / 2)
+                if (camera.y > -fogBorder) {
                     ctx.save()
-                    ctx.globalAlpha = ((fogBorder + this.camera.y) / fogBorder).toFixed(2) * 2
+                    ctx.globalAlpha = ((fogBorder + camera.y) / fogBorder).toFixed(2) * 2
                     ctx.fillRect(0, 0, resolutionX, resolutionY)
                     ctx.restore()
                 }
@@ -207,21 +198,6 @@ export default class GameScene extends Component {
             else {
                 ctx.drawImage(assets[ASSETS.SKY], 0, 0, resolutionX, resolutionY)
             }
-        }
-    }
-
-    renderLightingEffect () {
-        const {
-            ctx,
-            player,
-            props: { assets },
-            camera: { follow, x, y, underground }
-        } = this
-        if (underground || player.underground || player.inDark > 0) {
-            ctx.drawImage(assets[ASSETS.LIGHTING],
-                -400 + (follow.x + x + follow.width / 2),
-                -400 + (follow.y + y + follow.height / 2)
-            )
         }
     }
 
@@ -261,6 +237,7 @@ export default class GameScene extends Component {
             this.timeoutsPool[name] = null
         }
     }
+
     /** Experimental */
     setOpenGlEffects () {
         try {

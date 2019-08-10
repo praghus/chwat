@@ -7,7 +7,7 @@ export default class Torch extends ActiveElement {
         super(obj, game)
         this.y -= this.height
         this.radius = 64
-        this.light = createLamp(0, 0, this.radius, COLORS.TORCH)
+        this.light = createLamp(0, 0, 32, COLORS.TORCH)
     }
 
     onScreen () {

@@ -8,16 +8,14 @@ export const requireAll = (requireContext) => requireContext.keys().map(requireC
 export const getFilename = (path) => path.replace(/^.*[\\/]/, '').split('.').slice(0, -1).join('.')
 
 export function calculateViewportSize (width, height) {
-    const pixelScale = height / 128
-    const x = Math.round(width / pixelScale)
-    const y = Math.round(height / pixelScale)
+    const pixelScale = Math.round(height / 124)
 
     return {
-        width: Math.round(width / x) * x,
-        height: Math.round(height / y) * y,
-        scale: Math.round(width / x),
-        resolutionX: x,
-        resolutionY: y
+        width,
+        height,
+        resolutionX: Math.round(width / pixelScale),
+        resolutionY: Math.round(height / pixelScale),
+        scale: pixelScale
     }
 }
 

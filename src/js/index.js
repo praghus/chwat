@@ -8,8 +8,9 @@ import thunk from 'redux-thunk'
 import soundsMiddleware from 'redux-sounds'
 import rootReducer from './reducers'
 import App from './views'
-
 import '../scss/index.scss'
+
+require.context('../assets/images', true, /^\.\//)
 
 let store = null
 
@@ -33,7 +34,7 @@ const onResize = function () {
 }
 
 ReactDOM.render(
-    <Provider {...{store}}>
+    <Provider {...{ store }}>
         <App />
     </Provider>,
     document.getElementById('root')

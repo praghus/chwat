@@ -11,26 +11,28 @@ export default class Overlay {
             in: false,
             out: false
         }
-        this.addHint = ({ x, y, width, hint }) => {
-            this.hints.push({ x, y, width, hint })
-        }
-        this.fadeIn = () => {
-            if (!this.fade.in) {
-                this.blackOverlay = 1
-                this.fade.in = true
-                this.fade.out = false
-            }
-        }
-        this.fadeOut = () => {
-            if (!this.fade.out) {
+    }
+
+    update () {
+        if (this.fade.in) {
+            this.blackOverlay -= 0.01
+            if (this.blackOverlay < 0) {
                 this.blackOverlay = 0
                 this.fade.in = false
-                this.fade.out = true
+            }
+        }
+        if (this.fade.out) {
+            this.blackOverlay += 0.01
+            if (this.blackOverlay > 1) {
+                this.blackOverlay = 1
+                this.fade.out = false
             }
         }
     }
 
-    update () {
+    draw () {
+        this.displayHUD()
+
         if (this.hints.length) {
             this.hints.map((element, index) => {
                 this.displayHint(element)
@@ -49,53 +51,39 @@ export default class Overlay {
             ctx.fillStyle = COLORS.BLACK
             ctx.fillRect(0, 0, resolutionX, resolutionY)
         }
-        if (this.fade.in) {
-            this.blackOverlay -= 0.01
-            if (this.blackOverlay < 0) {
-                this.blackOverlay = 0
-                this.fade.in = false
-            }
-        }
-        if (this.fade.out) {
-            this.blackOverlay += 0.01
-            if (this.blackOverlay > 1) {
-                this.blackOverlay = 1
-                this.fade.out = false
-            }
-        }
     }
 
-    displayIntro () {
-        const {
-            ctx,
-            camera,
-            props
-        } = this.game
-        const { assets, viewport: { resolutionX } } = props
+    // displayIntro () {
+    //     const {
+    //         ctx,
+    //         camera,
+    //         props
+    //     } = this.game
+    //     const { assets, viewport: { resolutionX } } = props
 
-        if (camera.y > -656) {
-            camera.y -= 8
-        }
-        else if (this.introShow > 0) {
-            this.introShow -= 0.03
-        }
-        else if (this.alpha > 0) {
-            this.alpha -= 0.05
-        }
-        else if (camera.y > -672) {
-            camera.y -= 1
-        }
+    //     if (camera.y > -656) {
+    //         camera.y -= 8
+    //     }
+    //     else if (this.introShow > 0) {
+    //         this.introShow -= 0.03
+    //     }
+    //     else if (this.alpha > 0) {
+    //         this.alpha -= 0.05
+    //     }
+    //     else if (camera.y > -672) {
+    //         camera.y -= 1
+    //     }
 
-        if (this.alpha > 0) {
-            ctx.save()
-            ctx.globalAlpha = this.alpha
-            ctx.drawImage(assets[ASSETS.LOGO], (resolutionX / 2) - 66, 16)
-            ctx.restore()
-        }
-        else {
-            this.alpha = 0
-        }
-    }
+    //     if (this.alpha > 0) {
+    //         ctx.save()
+    //         ctx.globalAlpha = this.alpha
+    //         ctx.drawImage(assets[ASSETS.LOGO], (resolutionX / 2) - 66, 16)
+    //         ctx.restore()
+    //     }
+    //     else {
+    //         this.alpha = 0
+    //     }
+    // }
 
     displayHUD () {
         const {
@@ -169,9 +157,9 @@ export default class Overlay {
 
     drawTile (gid, x, y, scale = 1) {
         if (!gid) return
-        const { ctx, world } = this.game
+        const { world } = this.game
         const item = world.createTile(gid)
-        item.draw(ctx, x, y, { scale })
+        item.draw(x, y, { scale })
     }
 
     displayMap () {
@@ -298,5 +286,25 @@ export default class Overlay {
         ctx.lineTo(x, y)
         ctx.stroke()
         ctx.restore()
+    }
+
+    addHint ({ x, y, width, hint }) {
+        this.hints.push({ x, y, width, hint })
+    }
+
+    fadeIn () {
+        if (!this.fade.in) {
+            this.blackOverlay = 1
+            this.fade.in = true
+            this.fade.out = false
+        }
+    }
+
+    fadeOut () {
+        if (!this.fade.out) {
+            this.blackOverlay = 0
+            this.fade.in = false
+            this.fade.out = true
+        }
     }
 }
