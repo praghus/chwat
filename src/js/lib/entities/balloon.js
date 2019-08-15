@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
 
-export default class Balloon extends ActiveElement {
+export default class Balloon extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.positions = {

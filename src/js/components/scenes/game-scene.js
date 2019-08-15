@@ -1,19 +1,18 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import fx from 'glfx'
 import moment from 'moment'
 import Debug from '../debug'
 import Canvas from '../canvas'
 import Inputs from '../inputs'
-import map from '../../../assets/levels/map.tmx'
-import fx from 'glfx'
+import { isEqual } from 'lodash'
 import { findDOMNode } from 'react-dom'
-import { Camera, World } from 'tiled-platformer-lib'
 import { tmxParser } from 'tmx-tiledmap'
-import { Overlay } from '../../lib/models'
+import { Camera, Scene } from 'tiled-platformer-lib'
+import { BackgroundLayer, OverlayLayer } from '../../lib/models'
 import { noop, getPerformance } from '../../lib/utils/helpers'
 import {
     ASSETS,
-    COLORS,
     CONFIG,
     ENTITIES,
     ENTITIES_TYPE,
@@ -26,6 +25,8 @@ import {
     viewportPropType,
     configPropType
 } from '../../lib/prop-types'
+
+import map from '../../../assets/levels/map.tmx'
 
 const propTypes = {
     assets: assetPropType.isRequired,
@@ -46,7 +47,6 @@ export default class GameScene extends Component {
         this.loaded = false
         this.wrapper = null
         this.scene = null
-        this.scenes = null
         this.canvas = null
         this.ctx = null
         this.delta = null
@@ -64,48 +64,56 @@ export default class GameScene extends Component {
         this.checkTimeout = this.checkTimeout.bind(this)
         this.startTimeout = this.startTimeout.bind(this)
         this.stopTimeout = this.stopTimeout.bind(this)
-        this.renderBackground = this.renderBackground.bind(this)
     }
 
     componentDidMount () {
-        const { startTicker, viewport: { resolutionX } } = this.props
+        const { startTicker, assets, viewport } = this.props
         this.ctx = this.canvas.context
         this.map = tmxParser(map).then((data) => {
             this.loaded = true
-            this.world = new World(data, ENTITIES, this)
-            this.world.addLayer(this.renderBackground, 0)
-            this.world.setShadowCastingLayer(LAYERS.MAIN, 10)
+            this.overlay = new OverlayLayer(this)
 
-            this.player = this.world.getObjectByType(ENTITIES_TYPE.PLAYER, LAYERS.OBJECTS)
+            this.scene = new Scene(this, { viewport, assets })
+            this.scene.addLayer(new BackgroundLayer(this))
+            this.scene.addTmxMap(data, ENTITIES)
+            this.scene.setShadowCastingLayer(LAYERS.MAIN)
+            this.scene.addLayer(this.overlay)
+            this.scene.setGravity(this.scene.getMapProperty('gravity'))
+
+            this.player = this.scene.getObjectByType(ENTITIES_TYPE.PLAYER, LAYERS.OBJECTS)
 
             this.camera = new Camera(this)
-            this.camera.setSurfaceLevel(this.world.getProperty('surfaceLevel'))
+            this.camera.setSurfaceLevel(this.scene.getMapProperty('surfaceLevel'))
             this.camera.setFollow(this.player)
-            this.camera.x = -(this.player.x + (this.player.width / 2) - (resolutionX / 2))
             this.camera.center()
 
-            this.overlay = new Overlay(this)
             this.overlay.fadeIn()
         })
         // this.setOpenGlEffects()
         startTicker()
     }
 
-    componentDidUpdate () {
+    componentDidUpdate (prevProps) {
         if (this.ctx) {
             if (this.loaded) {
-                const { config, ticker } = this.props
+                const { config, ticker, viewport } = this.props
+
                 this.frameStart = getPerformance()
                 this.delta = this.frameStart - this.then
                 this.debug = config[CONFIG.DEBUG_MODE]
 
+                if (!isEqual(viewport, prevProps.viewport)) {
+                    this.scene.resize(viewport)
+                }
+
                 if (!this.timer) this.timer = moment()
+
                 if (this.delta > ticker.interval) {
-                    this.world.update()
+                    this.scene.update()
                     this.camera.update()
-                    this.overlay.update()
                     this.countFPS()
                 }
+
                 this.draw()
             }
 
@@ -148,7 +156,7 @@ export default class GameScene extends Component {
     draw () {
         if (this.loaded) {
             const { viewport } = this.props
-            const { ctx, camera, player, overlay, world } = this
+            const { ctx, camera, player, overlay, scene } = this
             const {
                 resolutionX,
                 resolutionY,
@@ -160,44 +168,11 @@ export default class GameScene extends Component {
             ctx.scale(scale, scale)
             ctx.clearRect(0, 0, resolutionX, resolutionY)
 
-            world.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
-            world.draw()
-            overlay.draw()
+            scene.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
+            scene.draw()
 
             this.checkTimeout('player_map') && overlay.displayMap()
             ctx.restore()
-        }
-    }
-
-    renderBackground () {
-        const {
-            ctx,
-            camera,
-            player,
-            props: {
-                assets,
-                viewport: { resolutionX, resolutionY }
-            }
-        } = this
-        if (!camera.underground && !player.inDark) {
-            const offsetX = camera.x + 3300
-            const fogBorder = 600
-            ctx.fillStyle = COLORS.BLUE_SKY
-            ctx.fillRect(0, 0, resolutionX, resolutionY)
-            if (offsetX < 0) {
-                ctx.drawImage(assets[ASSETS.MOUNTAINS], offsetX / 15, 278 + camera.y / 2)
-                ctx.drawImage(assets[ASSETS.FAR_FOREST], offsetX / 10, 112 + camera.y / 2)
-                ctx.drawImage(assets[ASSETS.FOREST], offsetX / 5, 270 + camera.y / 2)
-                if (camera.y > -fogBorder) {
-                    ctx.save()
-                    ctx.globalAlpha = ((fogBorder + camera.y) / fogBorder).toFixed(2) * 2
-                    ctx.fillRect(0, 0, resolutionX, resolutionY)
-                    ctx.restore()
-                }
-            }
-            else {
-                ctx.drawImage(assets[ASSETS.SKY], 0, 0, resolutionX, resolutionY)
-            }
         }
     }
 

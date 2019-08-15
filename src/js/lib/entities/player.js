@@ -1,4 +1,4 @@
-import Character from '../models/character'
+import { GameEntity } from '../models'
 import { createLamp } from 'tiled-platformer-lib'
 import {
     COLORS,
@@ -8,7 +8,7 @@ import {
     SCENES
 } from '../../lib/constants'
 
-export default class Player extends Character {
+export default class Player extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.direction = DIRECTIONS.RIGHT
@@ -23,7 +23,6 @@ export default class Player extends Character {
         this.mapPieces = []
         this.initialPosition = { x: obj.x, y: obj.y }
         this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
-        this.animation = this.animations.STAND_RIGHT
         this.setBoundingBox(10, 8, this.width - 20, this.height - 8)
     }
 
@@ -84,27 +83,27 @@ export default class Player extends Character {
     update () {
         this.input()
         this.move()
-
+        const { sprite } = this
         if (this.jump) {
             if (this.force.y <= 0) {
-                this.animate(this.direction === DIRECTIONS.RIGHT
+                sprite.animate(this.direction === DIRECTIONS.RIGHT
                     ? this.animations.JUMP_RIGHT
                     : this.animations.JUMP_LEFT)
             }
             else {
-                this.animate(this.direction === DIRECTIONS.RIGHT
+                sprite.animate(this.direction === DIRECTIONS.RIGHT
                     ? this.animations.FALL_RIGHT
                     : this.animations.FALL_LEFT)
                 this.falling = true
             }
         }
         else if (this.force.x !== 0) {
-            this.animate(this.direction === DIRECTIONS.RIGHT
+            sprite.animate(this.direction === DIRECTIONS.RIGHT
                 ? this.animations.WALK_RIGHT
                 : this.animations.WALK_LEFT)
         }
         else {
-            this.animate(this.direction === DIRECTIONS.RIGHT
+            sprite.animate(this.direction === DIRECTIONS.RIGHT
                 ? this.animations.STAND_RIGHT
                 : this.animations.STAND_LEFT)
         }
@@ -119,7 +118,7 @@ export default class Player extends Character {
     input () {
         const {
             camera,
-            world: { gravity },
+            scene: { gravity },
             props: { input, viewport }
         } = this.game
 

@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
-export default class Catapult extends ActiveElement {
+export default class Catapult extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
@@ -33,7 +33,7 @@ export default class Catapult extends ActiveElement {
 
     update () {
         if (this.onScreen()) {
-            this.animate(this.activated
+            this.sprite.animate(this.activated
                 ? this.animations.DOWN
                 : this.animations.UP
             )

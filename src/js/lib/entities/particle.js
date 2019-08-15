@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { overlap, random, randomInt } from '../../lib/utils/helpers'
 
-export default class Particle extends ActiveElement {
+export default class Particle extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         const dir = random(0, 2) * Math.PI

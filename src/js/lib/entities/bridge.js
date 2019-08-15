@@ -1,11 +1,10 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
-export default class Bridge extends ActiveElement {
+export default class Bridge extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
-        this.animation = this.animations.UP
     }
 
     collide (element) {
@@ -25,8 +24,11 @@ export default class Bridge extends ActiveElement {
     }
 
     update () {
-        if (this.activated && !this.dead) {
-            this.animation = this.animations.DOWN
+        if (this.onScreen()) {
+            this.sprite.animate(this.activated && !this.dead
+                ? this.animations.DOWN
+                : this.animations.UP
+            )
         }
     }
 }

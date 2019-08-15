@@ -1,3 +1,3 @@
-export { default as ActiveElement } from './active-element'
-export { default as Character } from './character'
-export { default as Overlay } from './overlay'
+export { default as GameEntity } from './game-entity'
+export { default as BackgroundLayer } from './custom-layers/background-layer'
+export { default as OverlayLayer } from './custom-layers/overlay-layer'

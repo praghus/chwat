@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { DIRECTIONS } from '../../lib/constants'
 
-export default class Dust extends ActiveElement {
+export default class Dust extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.width = 16
@@ -10,13 +10,13 @@ export default class Dust extends ActiveElement {
 
     update () {
         if (!this.dead) {
-            this.animation = this.direction === DIRECTIONS.RIGHT
-                ? this.animations.RIGHT
-                : this.animations.LEFT
+            this.sprite.animate(
+                this.direction === DIRECTIONS.RIGHT
+                    ? this.animations.RIGHT
+                    : this.animations.LEFT
+            )
 
-            this.animate()
-
-            if (this.animFrame === 8) {
+            if (this.sprite.animFrame === 8) {
                 this.kill()
             }
         }

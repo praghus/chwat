@@ -1,40 +1,45 @@
-import ActiveElement from '../models/active-element'
-import { DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
+import { GameEntity } from '../models'
+import { createLamp } from 'tiled-platformer-lib'
+import { COLORS, DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
 
-export default class Water extends ActiveElement {
+export default class Water extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.damage = 100
-        this.wave = 0
         this.direction = DIRECTIONS.DOWN
+        this.radius = this.height
         this.animation = this.animations.WAVES
+        this.light = createLamp(0, 0, this.radius, COLORS.WATER)
     }
 
     draw () {
         if (this.onScreen()) {
-            const { ctx, camera, world, props: { assets } } = this.game
+            const { ctx, camera, scene, props: { assets } } = this.game
+            const { map: { tilewidth, tileheight } } = scene
             const { canFall } = this.properties
-            const { spriteSize } = world
-            const [posX, posY, pW, pH] = [
+            const { animFrame } = this.sprite
+
+            const [ posX, posY, pW, pH ] = [
                 Math.floor(this.x + camera.x),
                 Math.floor(this.y + camera.y),
-                Math.round(this.width / spriteSize),
-                Math.round(this.height / spriteSize)
+                Math.round(this.width / tilewidth),
+                Math.round(this.height / tileheight)
             ]
+
             for (let y = 0; y < pH; y++) {
                 for (let x = 0; x < pW; x++) {
-                    const PX = Math.round((this.x + (x * spriteSize)) / spriteSize)
-                    const PY = Math.round((this.y + (y * spriteSize)) / spriteSize)
-                    if (!world.isSolidArea(PX, PY, this.collisionLayers)) {
+                    const PX = Math.round((this.x + (x * tilewidth)) / tilewidth)
+                    const PY = Math.round((this.y + (y * tileheight)) / tileheight)
+                    if (!scene.isSolidArea(PX, PY, this.collisionLayers)) {
                         ctx.drawImage(assets[this.asset],
-                            y === 0 ? this.animation.frames[this.animFrame][0] : 0,
-                            y === 0 ? this.animation.frames[this.animFrame][1] : 32,
-                            spriteSize, spriteSize,
-                            posX + (x * spriteSize), posY + (y * spriteSize),
-                            spriteSize, spriteSize
+                            y === 0 ? this.animation.frames[animFrame][0] : 0,
+                            y === 0 ? this.animation.frames[animFrame][1] : 32,
+                            tilewidth, tileheight,
+                            posX + (x * tilewidth), posY + (y * tileheight),
+                            tilewidth, tileheight
                         )
                     }
-                    if (!world.isSolidArea(PX, PY + 1, this.collisionLayers) && canFall && y + 1 === pH) {
+                    if (!scene.isSolidArea(PX, PY + 1, this.collisionLayers) && canFall && y + 1 === pH) {
                         this.fall = true
                     }
                 }
@@ -51,7 +56,7 @@ export default class Water extends ActiveElement {
 
     update () {
         if (this.onScreen()) {
-            this.animate()
+            this.sprite.animate(this.animation)
             if (this.fall) {
                 this.fall = false
                 this.y += 16

@@ -1,9 +1,9 @@
-import Character from '../models/character'
+import { GameEntity } from '../models'
 
-export default class Cook extends Character {
+export default class Cook extends GameEntity {
     update () {
         if (this.onScreen()) {
-            this.animate(this.animations.STANDING)
+            this.sprite.animate(this.animations.STANDING)
         }
     }
 }

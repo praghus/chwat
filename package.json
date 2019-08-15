@@ -52,7 +52,7 @@
     "css-loader": "^2.1.0",
     "eslint": "^4.3.0",
     "eslint-loader": "^1.5.0",
-    "eslint-plugin-flowtype": "^3.11.1",
+    "eslint-plugin-flowtype": "^4.2.0",
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-mocha": "^5.0.0",
     "eslint-plugin-react": "^7.1.0",

@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
-export default class Checkpoint extends ActiveElement {
+export default class Checkpoint extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = false

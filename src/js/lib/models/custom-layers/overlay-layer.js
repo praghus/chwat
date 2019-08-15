@@ -1,12 +1,17 @@
-import { ASSETS, COLORS, FONTS } from '../constants'
+import { Layer } from 'tiled-platformer-lib'
+import { isValidArray } from '../../utils/helpers'
+import { ASSETS, COLORS, FONTS, LAYERS } from '../../constants'
 
-export default class Overlay {
+export default class OverlayLayer extends Layer {
     constructor (game) {
+        super(game)
+        this.id = LAYERS.OVERLAY
         this.game = game
         this.blackOverlay = 0
         this.alpha = 1
         this.introShow = 1
         this.hints = []
+        this.messages = []
         this.fade = {
             in: false,
             out: false
@@ -33,12 +38,13 @@ export default class Overlay {
     draw () {
         this.displayHUD()
 
-        if (this.hints.length) {
-            this.hints.map((element, index) => {
-                this.displayHint(element)
-                this.hints.splice(index, 1)
-            })
-        }
+        isValidArray(this.hints) && this.hints.map(
+            (hint, i) => this.displayHint(hint, i)
+        )
+        isValidArray(this.messages) && this.messages.map(
+            (message, i) => this.displayMessage(message, i)
+        )
+
         if (this.blackOverlay > 0) {
             const {
                 ctx,
@@ -53,38 +59,6 @@ export default class Overlay {
         }
     }
 
-    // displayIntro () {
-    //     const {
-    //         ctx,
-    //         camera,
-    //         props
-    //     } = this.game
-    //     const { assets, viewport: { resolutionX } } = props
-
-    //     if (camera.y > -656) {
-    //         camera.y -= 8
-    //     }
-    //     else if (this.introShow > 0) {
-    //         this.introShow -= 0.03
-    //     }
-    //     else if (this.alpha > 0) {
-    //         this.alpha -= 0.05
-    //     }
-    //     else if (camera.y > -672) {
-    //         camera.y -= 1
-    //     }
-
-    //     if (this.alpha > 0) {
-    //         ctx.save()
-    //         ctx.globalAlpha = this.alpha
-    //         ctx.drawImage(assets[ASSETS.LOGO], (resolutionX / 2) - 66, 16)
-    //         ctx.restore()
-    //     }
-    //     else {
-    //         this.alpha = 0
-    //     }
-    // }
-
     displayHUD () {
         const {
             ctx,
@@ -93,13 +67,13 @@ export default class Overlay {
             debug,
             player,
             props,
-            world: {
-                activeObjects
-            }
+            scene
         } = this.game
 
         const { assets, viewport: { resolutionX, resolutionY } } = props
         const { energy, items, lives } = player
+
+        const activeObjects = scene.getLayer(LAYERS.OBJECTS).activeObjects
         const objects = `OBJ: ${activeObjects.length}`
         const time = countTime()
 
@@ -137,29 +111,40 @@ export default class Overlay {
         ctx.restore()
     }
 
-    displayHint ({ x, y, width, hint }) {
-        const {
-            ctx,
-            camera,
-            props: { assets }
-        } = this.game
+    displayHint ({ x, y, width, hint }, index) {
+        if (isValidArray(hint)) {
+            const {
+                ctx,
+                camera,
+                props: { assets }
+            } = this.game
 
-        ctx.drawImage(assets[ASSETS.BUBBLE],
-            Math.ceil(x + camera.x + width / 2),
-            Math.ceil(y + camera.y - 20)
-        )
+            ctx.drawImage(assets[ASSETS.BUBBLE],
+                0, (hint.length - 1) * 32, 96, 32,
+                Math.ceil(x + camera.x + width / 2) - 32,
+                Math.ceil(y + camera.y - 20),
+                96, 32
+            )
+            const offsetX = (hint.length - 1) * -10
 
-        this.drawTile(hint,
-            Math.ceil(x + 8 + camera.x + width / 2),
-            Math.ceil(y + camera.y - 18)
-        )
+            hint.map(({ gid }, i) => this.drawTile(gid,
+                offsetX + Math.ceil(x + 8 + camera.x + width / 2) + i * 20,
+                Math.ceil(y + camera.y - 18)
+            ))
+        }
+        this.hints.splice(index, 1)
     }
 
-    drawTile (gid, x, y, scale = 1) {
+    displayMessage ({ x, y, message }, index) {
+        const { camera } = this.game
+        this.displayText(message, x + camera.x, y + camera.y)
+        this.messages.splice(index, 1)
+    }
+
+    drawTile (gid, x, y, scale) {
         if (!gid) return
-        const { world } = this.game
-        const item = world.createTile(gid)
-        item.draw(x, y, { scale })
+        const item = this.game.scene.createSprite(gid, { gid, width: 16, height: 16 })
+        item.draw(x, y, scale)
     }
 
     displayMap () {
@@ -196,22 +181,21 @@ export default class Overlay {
     }
 
     displayText (text, x, y, font = FONTS.FONT_SMALL) {
-        const {
-            ctx,
-            props: { assets }
-        } = this.game
+        const { ctx, props: { assets } } = this.game
 
-        text.split('\n').reverse().map((output, index) => {
-            for (let i = 0; i < output.length; i++) {
-                const chr = output.charCodeAt(i)
-                ctx.drawImage(assets[font.name],
-                    ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
-                    font.size, font.size,
-                    Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
-                    font.size, font.size
-                )
-            }
-        })
+        if (text) {
+            text.split('\n').reverse().map((output, index) => {
+                for (let i = 0; i < output.length; i++) {
+                    const chr = output.charCodeAt(i)
+                    ctx.drawImage(assets[font.name],
+                        ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
+                        font.size, font.size,
+                        Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
+                        font.size, font.size
+                    )
+                }
+            })
+        }
     }
 
     displayDebug (entity) {
@@ -290,6 +274,10 @@ export default class Overlay {
 
     addHint ({ x, y, width, hint }) {
         this.hints.push({ x, y, width, hint })
+    }
+
+    addMessage ({ x, y, message }) {
+        this.messages.push({ x, y, message })
     }
 
     fadeIn () {

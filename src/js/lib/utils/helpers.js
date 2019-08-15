@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { ENTITIES, INPUT_KEYS } from '../constants'
+import { ENTITIES, INPUT_KEYS, ITEMS } from '../constants'
 
 export const noop = () => {}
 export const isValidArray = (arr) => arr && arr.length
@@ -67,6 +67,10 @@ export function randomChoice (choices) {
 
 export function getEntityByType (entityType) {
     return ENTITIES.filter(({ type }) => entityType === type)[0] || null
+}
+
+export function getItemById (id) {
+    return Object.keys(ITEMS).indexOf(id) !== -1 && ITEMS[id]
 }
 
 export function getKeyPressed (key) {

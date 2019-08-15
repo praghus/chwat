@@ -1,9 +1,9 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { randomInt } from '../../lib/utils/helpers'
 import { DIRECTIONS } from '../../lib/constants'
 
 // change name to color rectangle
-export default class LavaStone extends ActiveElement {
+export default class LavaStone extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.damage = 100

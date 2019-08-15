@@ -2,9 +2,9 @@ import * as ANIMATIONS from '../animations'
 import { ASSETS } from './assets'
 import { LAYERS } from './config'
 import {
-    Balloon, Bridge, Catapult, Cook, DarkMask, Dragon, Dust, Grass, Lava,
-    LavaStone, Paddle, Particle, Player, Rock, Slime, SpiderTrap, Spikes,
-    Switch, TileObject, Torch, Trigger, Water, Witch, WoodenBridge
+    Balloon, Bridge, Catapult, Cook, DarkMask, Dragon, Dust, Grass, Paddle,
+    Particle, Player, Rock, Slime, SpiderTrap, Spikes, Sparkle, Switch,
+    TileObject, Torch, Trigger, Water, Witch, WoodenBridge
 } from '../entities'
 
 export const ENTITIES_TYPE = {
@@ -21,13 +21,11 @@ export const ENTITIES_TYPE = {
     FLAG: 'flag',
     GRASS: 'grass',
     ITEM: 'item',
-    JUMP_THROUGH: 'jump_through',
-    LAVA: 'lava',
-    LAVA_STONE: 'lava_stone',
     PADDLE: 'paddle',
     PARTICLE: 'particle',
     PLAYER: 'player',
     ROCK: 'rock',
+    SPARKLE: 'sparkle',
     SPIDER_TRAP: 'spider_trap',
     SPIKES: 'spikes',
     SWITCH: 'switch',
@@ -53,13 +51,12 @@ export const ENTITIES = [
     { type: ENTITIES_TYPE.FLAG, model: TileObject, collisionLayers },
     { type: ENTITIES_TYPE.GRASS, model: Grass, asset: ASSETS.GRASS },
     { type: ENTITIES_TYPE.ITEM, model: TileObject, collisionLayers },
-    { type: ENTITIES_TYPE.LAVA, model: Lava, asset: ASSETS.LAVA, animations: ANIMATIONS.LAVA, collisionLayers },
-    { type: ENTITIES_TYPE.LAVA_STONE, model: LavaStone, collisionLayers },
     { type: ENTITIES_TYPE.PADDLE, model: Paddle, asset: ASSETS.PADDLE },
     { type: ENTITIES_TYPE.PARTICLE, model: Particle, collisionLayers },
     { type: ENTITIES_TYPE.ROCK, model: Rock, asset: ASSETS.ROCK, collisionLayers },
     { type: ENTITIES_TYPE.SLIME, model: Slime, asset: ASSETS.SLIME, animations: ANIMATIONS.SLIME, collisionLayers },
     { type: ENTITIES_TYPE.SPIDER_TRAP, model: SpiderTrap, asset: ASSETS.SPIDER_TRAP, animations: ANIMATIONS.SPIDER_TRAP, collisionLayers },
+    { type: ENTITIES_TYPE.SPARKLE, model: Sparkle, asset: ASSETS.SHINE, animations: ANIMATIONS.SPARKLE },
     { type: ENTITIES_TYPE.SPIKES, model: Spikes },
     { type: ENTITIES_TYPE.SWITCH, model: Switch, asset: ASSETS.SWITCH, animations: ANIMATIONS.SWITCH },
     { type: ENTITIES_TYPE.TORCH, model: Torch, asset: ASSETS.TORCH },

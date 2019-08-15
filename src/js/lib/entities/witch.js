@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
-export default class Witch extends ActiveElement {
+export default class Witch extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = false
@@ -31,8 +31,8 @@ export default class Witch extends ActiveElement {
             }
             else if (element.type === ENTITIES_TYPE.PLAYER) {
                 const hint = this.haveInitialElement
-                    ? 'Bring me some sulfur,\ndry hay and coconuts'
-                    : 'I will help you, but first\nbring me my crystal ball'
+                    ? 'Bring me some sulfur,\ndry hay and coconuts.'
+                    : 'I will help you,\nbut first\nbring me\nmy crystal ball.'
                 this.showMessage(hint, this.x, this.y)
             }
         }

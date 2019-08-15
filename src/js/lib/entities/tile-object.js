@@ -1,17 +1,17 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 
-export default class TileObject extends ActiveElement {
+export default class TileObject extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
         this.visible = true
         this.y -= obj.height
-        this.shadowCaster = true
+        // this.shadowCaster = true
     }
 
     update () {
         if (this.onScreen()) {
-            const { world: { gravity } } = this.game
+            const { scene: { gravity } } = this.game
             if (this.onFloor) {
                 this.force.y = 0
             }

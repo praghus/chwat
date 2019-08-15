@@ -1,14 +1,13 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { createLamp } from 'tiled-platformer-lib'
 import { COLORS } from '../../lib/constants'
 
-export default class Lava extends ActiveElement {
+export default class Lava extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.damage = 1000
         this.radius = this.width
         this.light = createLamp(0, 0, this.radius, COLORS.LAVA)
-        this.animation = this.animations.BOILING
     }
 
     onScreen () {
@@ -30,33 +29,17 @@ export default class Lava extends ActiveElement {
         )
     }
 
-    draw () {
-        if (this.onScreen()) {
-            const { ctx, camera, props: { assets } } = this.game
-            const { animation, animFrame } = this
-
-            for (let x = 0; x < this.width / animation.width; x++) {
-                ctx.drawImage(assets[this.asset],
-                    animation.strip.x + animFrame * animation.width, animation.strip.y,
-                    animation.width, animation.height,
-                    this.x + camera.x + x * this.animation.width, this.y + camera.y,
-                    animation.width, animation.height
-                )
-            }
-        }
-    }
-
     update () {
         if (this.onScreen()) {
             // this.canShoot && this.shoot()
-            this.animate()
+            // this.sprite.animate(this.animations)
         }
     }
 
     // shoot () {
-    //     const { world } = this.game
+    //     const { scene } = this.game
 
-    //     world.addObject({
+    //     scene.addObject({
     //         type: ENTITIES_TYPE.LAVA_STONE,
     //         visible: true,
     //         direction: randomChoice([

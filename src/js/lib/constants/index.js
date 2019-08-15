@@ -22,7 +22,8 @@ export {
     INPUT_KEYS
 } from './inputs'
 export {
-    ITEMS
+    ITEMS,
+    ITEMS_TYPE
 } from './items'
 export {
     PARTICLES

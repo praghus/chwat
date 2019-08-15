@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { DIRECTIONS } from '../../lib/constants'
 
-export default class Rock extends ActiveElement {
+export default class Rock extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.doShake = false
@@ -35,7 +35,7 @@ export default class Rock extends ActiveElement {
 
     update () {
         if (this.activated && !this.dead) {
-            const { camera, world: { gravity } } = this.game
+            const { camera, scene: { gravity } } = this.game
 
             if (this.onFloor && this.acceleration < this.maxSpeed) {
                 this.acceleration += 0.01

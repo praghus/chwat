@@ -5,12 +5,14 @@ export const CONFIG = {
 }
 
 export const LAYERS = {
-    MAIN: 3,
+    CUSTOM_BACKGROUND: 0,
     BACKGROUND1: 1,
     BACKGROUND2: 2,
+    MAIN: 3,
+    OBJECTS: 4,
     FOREGROUND1: 5,
     FOREGROUND2: 6,
-    OBJECTS: 4
+    OVERLAY: 100
 }
 
 export const NODE_TYPE = {

@@ -1,6 +1,6 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 // @todo: make common class for map gid objects
-export default class Grass extends ActiveElement {
+export default class Grass extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true

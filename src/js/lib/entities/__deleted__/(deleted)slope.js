@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { ENTITIES_FAMILY } from '../constants'
 
-export default class Slope extends ActiveElement {
+export default class Slope extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = false

@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { ENTITIES_TYPE, INPUTS } from '../../lib/constants'
 
-export default class Item extends ActiveElement {
+export default class Item extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.width = 16
@@ -26,7 +26,7 @@ export default class Item extends ActiveElement {
 
     update () {
         if (this.onScreen()) {
-            const { gravity } = this.game.world
+            const { gravity } = this.game.scene
             if (this.onFloor) this.force.y *= -0.5
             this.force.y += gravity
             this.move()

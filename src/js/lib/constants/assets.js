@@ -18,7 +18,6 @@ export const ASSETS = {
     HEAD: 'head',
     HEARTS: 'hearts',
     ITEMS: 'items',
-    LAVA: 'lava',
     LIGHTING: 'lighting',
     LOGO: 'chwat',
     MOUNTAINS: 'bg2',
@@ -28,6 +27,7 @@ export const ASSETS = {
     SKY: 'bg6',
     SPIDER_TRAP: 'spider_trap',
     SCANLINES: 'scanlines',
+    SHINE: 'shine',
     SWITCH: 'switch',
     TORCH: 'torches',
     TILES: 'tiles',
@@ -36,7 +36,7 @@ export const ASSETS = {
 }
 
 export const FONTS = {
-    FONT_SMALL: { name: 'font_small', size: 5},
-    FONT_NORMAL: { name: 'font_normal', size: 8},
-    FONT_BIG: { name: 'font_big', size: 16}
+    FONT_SMALL: { name: 'font_small', size: 5 },
+    FONT_NORMAL: { name: 'font_normal', size: 8 },
+    FONT_BIG: { name: 'font_big', size: 16 }
 }
