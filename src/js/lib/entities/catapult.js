@@ -1,5 +1,5 @@
 import { GameEntity } from '../models'
-import { ENTITIES_TYPE } from '../../lib/constants'
+import { ENTITIES_TYPE, ITEMS_TYPE } from '../../lib/constants'
 
 export default class Catapult extends GameEntity {
     constructor (obj, game) {
@@ -11,7 +11,7 @@ export default class Catapult extends GameEntity {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
             element.y -= 8
             this.game.startTimeout('catapult_wait', 100, () => {
-                element.force.y = -25
+                element.force.y = -20
                 element.onFloor = false
                 element.jump = true
             })
@@ -21,11 +21,7 @@ export default class Catapult extends GameEntity {
                     this.activated = false
                     this.trigger.activated = false
                     this.trigger.switched = false
-                    this.addItem(
-                        { produce: 'weight', produce_gid: 1128, produce_name: 'Weight' },
-                        this.x - 16, this.y + 16
-                    )
-                    // this.activator.placeAt(this.x - 48, this.y)
+                    this.addItem(ITEMS_TYPE.WEIGHT, this.x - 16, this.y + 16)
                 })
             }
         }

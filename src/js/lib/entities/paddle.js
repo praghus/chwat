@@ -1,6 +1,6 @@
 import { GameEntity } from '../models'
 import { createLamp } from 'tiled-platformer-lib'
-import { COLORS, ENTITIES_TYPE } from '../../lib/constants'
+import { COLORS } from '../../lib/constants'
 
 export default class Paddle extends GameEntity {
     constructor (obj, game) {
@@ -13,6 +13,7 @@ export default class Paddle extends GameEntity {
 
     draw () {
         if (this.onScreen()) {
+            super.draw()
             const { ctx, camera, scene, props: { assets } } = this.game
             const { map: { tilewidth, tileheight } } = scene
 
@@ -27,18 +28,21 @@ export default class Paddle extends GameEntity {
         }
     }
 
-    collide (element) {
-        if (!this.dead && element.solid && element.type !== ENTITIES_TYPE.BLOB) {
-            const expectedY = (this.y - element.height) + (this.height - 16)
-            if (element.y >= expectedY && !element.jump) {
-                element.y = expectedY
-                element.force.y = 0
-                element.fall = false
-                element.onFloor = true
-            }
-            else if (element.force.y === 0) {
-                element.force.y += 1
-            }
+    collide (element, response) {
+        if (element.solid) {
+            element.force.y = response.overlapV.y
+            element.onFloor = true
+
+            // const expectedY = (this.y - element.height) + (this.height - 16)
+            // if (element.y >= expectedY && !element.jump) {
+            //     element.y = expectedY
+            //     element.force.y = 0
+            //     element.fall = false
+            //     element.onFloor = true
+            // }
+            // else if (element.force.y === 0) {
+            //     element.force.y += 1
+            // }
         }
     }
 
@@ -52,6 +56,7 @@ export default class Paddle extends GameEntity {
                 this.move()
             }
             else {
+                this.force.y = 0
                 this.light = null
             }
         }

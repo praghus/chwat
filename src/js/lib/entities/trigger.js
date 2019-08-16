@@ -27,9 +27,12 @@ export default class Trigger extends GameEntity {
 
     update () {
         if (this.activated) {
-            const { camera, overlay, player, scene, startTimeout } = this.game
             const {
-                activator, clear, fade, follow, kill, modify, produce, related, reusable, shake
+                camera, overlay, player, scene, startTimeout
+            } = this.game
+            const {
+                activator, clear, fade, follow, kill,
+                modify, produce, related, reusable, shake
             } = this.properties
 
             if (related) {
@@ -58,15 +61,21 @@ export default class Trigger extends GameEntity {
             if (modify) {
                 const matrix = JSON.parse(modify)
                 isValidArray(matrix) && matrix.map(
-                    ([x, y, id]) => scene.putTile(x, y, id, LAYERS.MAIN)
+                    ([x, y, id, layer]) => scene.putTile(x, y, id, layer)
                 )
             }
-            produce && this.addItem(this.properties, this.x + 16, this.y + 16)
+            produce && this.addItem(produce, this.x + 16, this.y + 16)
             clear && this.clearTiles(clear)
             kill && scene.getObjectById(kill, LAYERS.OBJECTS).kill()
             shake && camera.shake()
             fade && overlay.fadeIn()
             !reusable && this.kill()
+
+            this.hideHint()
+            this.hideMessage()
+
+            player.hideHint()
+            player.hideMessage()
         }
     }
 

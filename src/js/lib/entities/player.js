@@ -12,6 +12,7 @@ export default class Player extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.direction = DIRECTIONS.RIGHT
+        this.solid = true
         this.lives = 3
         this.maxLives = 3
         this.energy = 100
@@ -23,7 +24,7 @@ export default class Player extends GameEntity {
         this.mapPieces = []
         this.initialPosition = { x: obj.x, y: obj.y }
         this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
-        this.setBoundingBox(10, 8, this.width - 20, this.height - 8)
+        this.setBoundingBox(10, 10, this.width - 20, this.height - 10)
     }
 
     draw () {
@@ -36,8 +37,8 @@ export default class Player extends GameEntity {
         ctx.restore()
     }
 
-    collide (element, force) {
-        super.collide(element, force)
+    collide (element, response) {
+        super.collide(element, response)
         if (this.action) {
             switch (element.type) {
             case ENTITIES_TYPE.SWITCH:
@@ -82,7 +83,7 @@ export default class Player extends GameEntity {
 
     update () {
         this.input()
-        this.move()
+
         const { sprite } = this
         if (this.jump) {
             if (this.force.y <= 0) {
@@ -113,6 +114,7 @@ export default class Player extends GameEntity {
             this.addDust(DIRECTIONS.RIGHT)
             this.falling = false
         }
+        this.move()
     }
 
     input () {
@@ -129,7 +131,7 @@ export default class Player extends GameEntity {
 
         if (this.onFloor) {
             this.jump = false
-            this.force.y = 0
+            // this.force.y = 0
         }
 
         this.force.y += this.force.y > 0
@@ -176,15 +178,9 @@ export default class Player extends GameEntity {
             !input.keyPressed[INPUTS.INPUT_RIGHT] &&
             this.force.x !== 0
         ) {
-            this.force.x += this.direction === DIRECTIONS.RIGHT
-                ? -this.acceleration
-                : this.acceleration
-            if (
-                this.direction === DIRECTIONS.LEFT && this.force.x > 0 ||
-                this.direction === DIRECTIONS.RIGHT && this.force.x < 0
-            ) {
-                this.force.x = 0
-            }
+            if (Math.abs(this.force.x > 0)) this.force.x -= this.acceleration
+            if (Math.abs(this.force.x < 0)) this.force.x += this.acceleration
+            if (Math.abs(this.force.x) < this.acceleration) this.force.x = 0
         }
     }
 

@@ -2,14 +2,15 @@ import * as ANIMATIONS from '../animations'
 import { ASSETS } from './assets'
 import { LAYERS } from './config'
 import {
-    Balloon, Bridge, Catapult, Cook, DarkMask, Dragon, Dust, Grass, Paddle,
-    Particle, Player, Rock, Slime, SpiderTrap, Spikes, Sparkle, Switch,
-    TileObject, Torch, Trigger, Water, Witch, WoodenBridge
+    Balloon, Bridge, Catapult, Character, DarkMask, Dragon, Dust, Grass,
+    Paddle, Particle, Player, Rock, Ship, Slime, SpiderTrap, Spikes,
+    Sparkle, Switch, TileObject, Torch, Trigger, Water, Collector
 } from '../entities'
 
 export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
-    COOK: 'cook',
+    CHARACTER: 'character',
+    COLLECTOR: 'collector',
     SLIME: 'slime',
     BRIDGE: 'bridge',
     CATAPULT: 'catapult',
@@ -25,35 +26,37 @@ export const ENTITIES_TYPE = {
     PARTICLE: 'particle',
     PLAYER: 'player',
     ROCK: 'rock',
+    SHIP: 'ship',
     SPARKLE: 'sparkle',
     SPIDER_TRAP: 'spider_trap',
     SPIKES: 'spikes',
     SWITCH: 'switch',
     TORCH: 'torch',
     TRIGGER: 'trigger',
-    WATER: 'water',
-    WITCH: 'witch',
-    WOODEN_BRIDGE: 'wooden_bridge'
+    WATER: 'water'
 }
 
 const collisionLayers = [LAYERS.MAIN]
+
 /* eslint-disable max-len */
 export const ENTITIES = [
-    { type: ENTITIES_TYPE.PLAYER, model: Player, asset: ASSETS.PLAYER, animations: ANIMATIONS.PLAYER, collisionLayers },
     { type: ENTITIES_TYPE.BALLOON, model: Balloon, asset: ASSETS.BALLOON },
     { type: ENTITIES_TYPE.BRIDGE, model: Bridge, asset: ASSETS.BRIDGE, animations: ANIMATIONS.BRIDGE, collisionLayers },
     { type: ENTITIES_TYPE.CATAPULT, model: Catapult, asset: ASSETS.CATAPULT, animations: ANIMATIONS.CATAPULT, collisionLayers },
-    { type: ENTITIES_TYPE.COOK, model: Cook, asset: ASSETS.COOK, animations: ANIMATIONS.COOK, collisionLayers },
-    { type: ENTITIES_TYPE.MAP_PIECE, model: TileObject, collisionLayers },
+    { type: ENTITIES_TYPE.COLLECTOR, model: Collector, collisionLayers },
+    { type: ENTITIES_TYPE.CHARACTER, model: Character, collisionLayers },
     { type: ENTITIES_TYPE.DARK_MASK, model: DarkMask },
     { type: ENTITIES_TYPE.DRAGON, model: Dragon, asset: ASSETS.DRAGON, animations: ANIMATIONS.DRAGON },
     { type: ENTITIES_TYPE.DUST, model: Dust, asset: ASSETS.DUST, animations: ANIMATIONS.DUST, collisionLayers },
     { type: ENTITIES_TYPE.FLAG, model: TileObject, collisionLayers },
     { type: ENTITIES_TYPE.GRASS, model: Grass, asset: ASSETS.GRASS },
     { type: ENTITIES_TYPE.ITEM, model: TileObject, collisionLayers },
+    { type: ENTITIES_TYPE.MAP_PIECE, model: TileObject, collisionLayers },
     { type: ENTITIES_TYPE.PADDLE, model: Paddle, asset: ASSETS.PADDLE },
     { type: ENTITIES_TYPE.PARTICLE, model: Particle, collisionLayers },
+    { type: ENTITIES_TYPE.PLAYER, model: Player, asset: ASSETS.PLAYER, animations: ANIMATIONS.PLAYER, collisionLayers: [LAYERS.MAIN, LAYERS.OBJECTS] },
     { type: ENTITIES_TYPE.ROCK, model: Rock, asset: ASSETS.ROCK, collisionLayers },
+    { type: ENTITIES_TYPE.SHIP, model: Ship },
     { type: ENTITIES_TYPE.SLIME, model: Slime, asset: ASSETS.SLIME, animations: ANIMATIONS.SLIME, collisionLayers },
     { type: ENTITIES_TYPE.SPIDER_TRAP, model: SpiderTrap, asset: ASSETS.SPIDER_TRAP, animations: ANIMATIONS.SPIDER_TRAP, collisionLayers },
     { type: ENTITIES_TYPE.SPARKLE, model: Sparkle, asset: ASSETS.SHINE, animations: ANIMATIONS.SPARKLE },
@@ -61,7 +64,5 @@ export const ENTITIES = [
     { type: ENTITIES_TYPE.SWITCH, model: Switch, asset: ASSETS.SWITCH, animations: ANIMATIONS.SWITCH },
     { type: ENTITIES_TYPE.TORCH, model: Torch, asset: ASSETS.TORCH },
     { type: ENTITIES_TYPE.TRIGGER, model: Trigger },
-    { type: ENTITIES_TYPE.WATER, model: Water, asset: ASSETS.WATER, animations: ANIMATIONS.WATER, collisionLayers },
-    { type: ENTITIES_TYPE.WITCH, model: Witch, collisionLayers },
-    { type: ENTITIES_TYPE.WOODEN_BRIDGE, model: WoodenBridge, collisionLayers }
+    { type: ENTITIES_TYPE.WATER, model: Water, asset: ASSETS.WATER, animations: ANIMATIONS.WATER, collisionLayers }
 ]

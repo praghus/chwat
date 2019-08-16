@@ -5,6 +5,7 @@ export default class Bridge extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
+        // collisionLayer
     }
 
     collide (element) {

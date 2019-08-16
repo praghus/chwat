@@ -77,27 +77,8 @@ export function getKeyPressed (key) {
     return Object.keys(INPUT_KEYS).find((input) => INPUT_KEYS[input].indexOf(key) !== -1)
 }
 
-export function getProperties (data) {
-    if (data && data.length) {
-        const properties = {}
-        data.map(({ name, value }) => {
-            properties[name] = value
-        })
-        return properties
-    }
-}
-
-export function getElementProperties (element) {
-    const { force, properties } = element
-    const filteredElement = { force, properties }
-    Object.getOwnPropertyNames(element).filter((prop) =>
-        typeof element[prop] !== 'object' &&
-        typeof element[prop] !== 'function' &&
-        prop !== 'properties'
-    ).map((prop) => {
-        filteredElement[prop] = element[prop]
-    })
-    return filteredElement
+export function getProperties (obj, property) {
+    return obj.properties && obj.properties[property]
 }
 
 export function countTime (timer) {

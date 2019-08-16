@@ -5,7 +5,6 @@ import { DIRECTIONS, ENTITIES_TYPE, LAYERS } from '../constants'
 export default class GameEntity extends Entity {
     constructor (obj, game) {
         super(obj, game)
-        this.activated = false
         this.visible = true
         this.showMessage = this.showMessage.bind(this)
         this.hideHint = this.hideHint.bind(this)
@@ -56,11 +55,11 @@ export default class GameEntity extends Entity {
         this.message = null
     }
 
-    addItem (properties, x, y) {
-        const { produce } = properties
-        const item = getItemById(produce)
+    addItem (id, x, y) {
+        const { scene } = this.game
+        const item = getItemById(id)
         if (item) {
-            this.game.scene.addObject({ x, y, ...item }, LAYERS.OBJECTS, 0)
+            scene.addObject({ x, y, ...item }, LAYERS.OBJECTS, 0)
         }
     }
 

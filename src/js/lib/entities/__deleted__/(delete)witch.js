@@ -1,5 +1,5 @@
-import { GameEntity } from '../models'
-import { ENTITIES_TYPE } from '../../lib/constants'
+import { GameEntity } from '../../models'
+import { ENTITIES_TYPE } from '../../constants'
 
 export default class Witch extends GameEntity {
     constructor (obj, game) {

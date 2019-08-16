@@ -21,7 +21,7 @@ export default class BackgroundLayer extends Layer {
         } = this.game
 
         if (!camera.underground && !player.inDark) {
-            const offsetX = camera.x + 3300
+            const offsetX = camera.x + 3000
             const fogBorder = 600
 
             ctx.fillStyle = COLORS.BLUE_SKY

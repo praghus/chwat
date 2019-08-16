@@ -1,6 +1,5 @@
 export const ASSETS = {
     BALLOON: 'air_balloon',
-    COOK: 'cook',
     SLIME: 'slime',
     BUBBLE: 'sbubble',
     BRIDGE: 'bridge',
@@ -31,8 +30,7 @@ export const ASSETS = {
     SWITCH: 'switch',
     TORCH: 'torches',
     TILES: 'tiles',
-    WATER: 'water',
-    WITCH: 'witch'
+    WATER: 'water'
 }
 
 export const FONTS = {

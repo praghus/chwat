@@ -52,14 +52,14 @@ export default class Switch extends GameEntity {
                     force: { x: 0, y: 0 }
                 })
                 startTimeout('switch_wait', 500, () => {
-                    scene.putTile(495, 75, 0, LAYERS.BACKGROUND2)
-                    scene.putTile(496, 75, 0, LAYERS.BACKGROUND2)
-                    scene.putTile(497, 75, 0, LAYERS.BACKGROUND2)
-                    scene.putTile(498, 75, 0, LAYERS.BACKGROUND2)
-                    scene.putTile(495, 76, 0, LAYERS.MAIN)
-                    scene.putTile(496, 76, 0, LAYERS.MAIN)
-                    scene.putTile(497, 76, 0, LAYERS.MAIN)
-                    scene.putTile(498, 76, 0, LAYERS.MAIN)
+                    scene.clearTile(495, 75, LAYERS.BACKGROUND2)
+                    scene.clearTile(496, 75, LAYERS.BACKGROUND2)
+                    scene.clearTile(497, 75, LAYERS.BACKGROUND2)
+                    scene.clearTile(498, 75, LAYERS.BACKGROUND2)
+                    scene.clearTile(495, 76, LAYERS.MAIN)
+                    scene.clearTile(496, 76, LAYERS.MAIN)
+                    scene.clearTile(497, 76, LAYERS.MAIN)
+                    scene.clearTile(498, 76, LAYERS.MAIN)
                     scene.putTile(495, 76, 161, LAYERS.FOREGROUND1)
                     scene.putTile(498, 76, 161, LAYERS.FOREGROUND1)
                     scene.putTile(495, 77, 161, LAYERS.FOREGROUND1)
@@ -93,9 +93,13 @@ export default class Switch extends GameEntity {
             this.used = true
         }
 
+        const defaultAnimation = produce === 'lift'
+            ? this.animations.BROKEN
+            : this.animations.OFF
+
         this.sprite.animate(this.switched
             ? this.animations.ON
-            : this.animations.OFF
+            : defaultAnimation
         )
     }
 

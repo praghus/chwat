@@ -120,10 +120,10 @@ export default class OverlayLayer extends Layer {
             } = this.game
 
             ctx.drawImage(assets[ASSETS.BUBBLE],
-                0, (hint.length - 1) * 32, 96, 32,
-                Math.ceil(x + camera.x + width / 2) - 32,
+                0, (hint.length - 1) * 32, 160, 32,
+                Math.ceil(x + camera.x + width / 2) - 64,
                 Math.ceil(y + camera.y - 20),
-                96, 32
+                160, 32
             )
             const offsetX = (hint.length - 1) * -10
 
@@ -200,7 +200,7 @@ export default class OverlayLayer extends Layer {
 
     displayDebug (entity) {
         const { ctx, camera } = this.game
-        const { bounds, width, height, name, type, visible, force } = entity
+        const { collisionMask, width, height, name, type, visible, force } = entity
         const [ posX, posY ] = [
             Math.floor(entity.x + camera.x),
             Math.floor(entity.y + camera.y)
@@ -227,14 +227,17 @@ export default class OverlayLayer extends Layer {
                 visible ? COLORS.GREEN : COLORS.PURPLE
             )
         }
-        if (bounds) {
-            this.outline(
-                bounds.pos.x + posX,
-                bounds.pos.y + posY,
-                bounds.w,
-                bounds.h,
-                COLORS.LIGHT_RED
-            )
+        if (collisionMask) {
+            ctx.save()
+            ctx.lineWidth = 1
+            ctx.strokeStyle = '#f00'
+
+            ctx.beginPath()
+            ctx.moveTo(collisionMask.points[0].x + posX, collisionMask.points[0].y + posY)
+            collisionMask.points.map((v) => ctx.lineTo(posX + v.x, posY + v.y))
+            ctx.lineTo(collisionMask.points[0].x + posX, collisionMask.points[0].y + posY)
+            ctx.stroke()
+            ctx.restore()
         }
         if (visible) {
             this.displayText(`${name || type}\nx:${Math.floor(entity.x)}\ny:${Math.floor(entity.y)}`,
