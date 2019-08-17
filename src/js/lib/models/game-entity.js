@@ -24,14 +24,14 @@ export default class GameEntity extends Entity {
     showHint (items) {
         if (!this.game.checkTimeout('hint')) {
             this.hint = items
-            this.game.startTimeout('hint', 2000, this.hideHint)
+            this.game.startTimeout('hint', 1000, this.hideHint)
         }
     }
 
     changeHint (items) {
         this.hint = items
         this.game.stopTimeout('hint')
-        this.game.startTimeout('hint', 2000, this.hideHint)
+        this.game.startTimeout('hint', 1000, this.hideHint)
     }
 
     hideHint () {
@@ -41,14 +41,14 @@ export default class GameEntity extends Entity {
     showMessage (message) {
         if (!this.game.checkTimeout('message')) {
             this.message = message
-            this.game.startTimeout('message', 3000, this.hideMessage)
+            this.game.startTimeout('message', 2000, this.hideMessage)
         }
     }
 
     changeMessage (message) {
         this.message = message
         this.game.stopTimeout('message')
-        this.game.startTimeout('message', 3000, this.hideMessage)
+        this.game.startTimeout('message', 2000, this.hideMessage)
     }
 
     hideMessage () {

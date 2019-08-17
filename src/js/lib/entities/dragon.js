@@ -5,6 +5,7 @@ export default class Dragon extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
+        this.y -= obj.height
         this.setBoundingBox(60, 108, this.width - 158, this.height - 140)
     }
 
@@ -23,7 +24,6 @@ export default class Dragon extends GameEntity {
                 }
                 else this.kill()
             }
-            this.sprite.animate(this.animations.HOVERING)
         }
     }
 }

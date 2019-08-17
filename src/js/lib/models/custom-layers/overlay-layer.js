@@ -143,7 +143,9 @@ export default class OverlayLayer extends Layer {
 
     drawTile (gid, x, y, scale) {
         if (!gid) return
+
         const item = this.game.scene.createSprite(gid, { gid, width: 16, height: 16 })
+
         item.draw(x, y, scale)
     }
 
@@ -157,7 +159,7 @@ export default class OverlayLayer extends Layer {
         } = this.game
 
         ctx.save()
-        ctx.globalAlpha = 0.5
+        ctx.globalAlpha = 0.9
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.restore()

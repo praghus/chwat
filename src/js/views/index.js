@@ -105,18 +105,23 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mergeProps (stateProps, dispatchProps, ownProps) {
+    const { config } = stateProps
+    const { dispatch } = dispatchProps
+
     return {
+        ...stateProps,
+        ...ownProps,
         onKey: (key, pressed) => dispatch(updateKeyPressed(key, pressed)),
         onMouse: (event) => dispatch(updateMousePos(event.x, event.y)),
-        playSound: (type) => dispatch(playSound(type)),
         tickerStart: () => dispatch(startTicker(performance.now())),
         tickerTick: () => dispatch(tickTime(performance.now())),
         onConfig: (key, value) => dispatch(updateConfig(key, value)),
-        setScene: (scene) => dispatch(updateConfig(CONFIG.SCENE, scene))
+        setScene: (scene) => dispatch(updateConfig(CONFIG.SCENE, scene)),
+        playSound: (type) => !config[CONFIG.DISABLE_SOUNDS] && dispatch(playSound(type))
     }
 }
 
 AppContainer.propTypes = propTypes
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer)
+export default connect(mapStateToProps, null, mergeProps)(AppContainer)

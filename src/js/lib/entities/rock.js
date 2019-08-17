@@ -5,6 +5,7 @@ export default class Rock extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.doShake = false
+        this.activated = false
         this.acceleration = 0.2
         this.maxSpeed = 2
         this.damage = 50
@@ -33,19 +34,23 @@ export default class Rock extends GameEntity {
         }
     }
 
+    onScreen () {
+        return this.activated
+    }
+
     update () {
-        if (this.activated && !this.dead) {
+        if (this.activated) {
             const { camera, scene: { gravity } } = this.game
 
             if (this.onFloor && this.acceleration < this.maxSpeed) {
                 this.acceleration += 0.01
             }
+
             this.force.y += gravity
-            this.force.x = this.direction === DIRECTIONS.RIGHT
-                ? this.acceleration
-                : -this.acceleration
+            this.force.x = this.acceleration
 
             this.move()
+
             if (this.expectedX === this.x) {
                 if (!this.onFloor) {
                     this.doShake = true
@@ -58,9 +63,6 @@ export default class Rock extends GameEntity {
             else {
                 this.kill()
             }
-            // if (this.expectedX > this.x) {
-            //     this.kill()
-            // }
         }
     }
 }

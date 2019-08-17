@@ -7,4 +7,10 @@ export default class Character extends GameEntity {
         this.visible = true
         this.y -= obj.height
     }
+
+    update () {
+        if (this.activated) {
+            this.kill()
+        }
+    }
 }

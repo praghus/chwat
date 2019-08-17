@@ -1,5 +1,5 @@
 import { GameEntity } from '../models'
-import { DIRECTIONS } from '../../lib/constants'
+import { DIRECTIONS, SOUNDS } from '../../lib/constants'
 
 export default class Slime extends GameEntity {
     constructor (obj, game) {
@@ -23,7 +23,7 @@ export default class Slime extends GameEntity {
             this.activated = true
         }
         if (this.activated) {
-            const { scene, startTimeout } = this.game
+            const { props: { playSound }, scene, startTimeout } = this.game
 
             if (this.running) {
                 switch (this.sprite.animFrame) {
@@ -40,9 +40,13 @@ export default class Slime extends GameEntity {
             }
             else if (!this.game.checkTimeout(`wait_${this.id}`)) {
                 startTimeout(`wait_${this.id}`, 2300, () => {
-                    this.onScreen()
-                        ? this.running = true
-                        : this.activated = false
+                    if (this.onScreen()) {
+                        this.running = true
+                        playSound(SOUNDS.SLIME)
+                    }
+                    else {
+                        this.activated = false
+                    }
                 })
             }
 
@@ -62,7 +66,6 @@ export default class Slime extends GameEntity {
             this.move()
 
             if (
-                this.x !== this.expectedX ||
                 this.x + 32 > this.initialPosition.x + this.distance ||
                 this.x + 16 < this.initialPosition.x
             ) {

@@ -5,7 +5,9 @@ import {
     DIRECTIONS,
     ENTITIES_TYPE,
     INPUTS,
-    SCENES
+    ITEMS_TYPE,
+    SCENES,
+    SOUNDS
 } from '../../lib/constants'
 
 export default class Player extends GameEntity {
@@ -18,11 +20,10 @@ export default class Player extends GameEntity {
         this.energy = 100
         this.maxEnergy = 100
         this.maxSpeed = 2
-        this.acceleration = 0.2
+        this.acceleration = 0.25
         this.inDark = 0
         this.items = [null, null]
         this.mapPieces = []
-        this.initialPosition = { x: obj.x, y: obj.y }
         this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
         this.setBoundingBox(10, 10, this.width - 20, this.height - 10)
     }
@@ -56,6 +57,9 @@ export default class Player extends GameEntity {
                 this.showMap()
                 element.kill()
                 this.actionPerformed()
+                if (this.mapPieces.length === 6) {
+                    this.addItem(ITEMS_TYPE.MAP, this.x + 16, this.y + 16)
+                }
                 break
             }
         }
@@ -121,7 +125,7 @@ export default class Player extends GameEntity {
         const {
             camera,
             scene: { gravity },
-            props: { input, viewport }
+            props: { input, viewport, playSound }
         } = this.game
 
         if (this.action) {
@@ -167,6 +171,7 @@ export default class Player extends GameEntity {
             if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
                 this.jump = true
                 this.force.y = -6
+                playSound(SOUNDS.PLAYER_JUMP)
             }
             if (input.keyPressed[INPUTS.INPUT_MAP]) {
                 this.showMap()
@@ -193,7 +198,10 @@ export default class Player extends GameEntity {
                 )
             }
             [this.items[0], this.items[1]] = [item, this.items[0]]
-            if (item) item.visible = false
+            if (item) {
+                item.visible = false
+                this.game.props.playSound(SOUNDS.PLAYER_GET)
+            }
         }
     }
 

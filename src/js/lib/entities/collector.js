@@ -51,7 +51,7 @@ export default class Collector extends GameEntity {
                 element.kill()
                 this.initialized = true
             }
-            else {
+            else if (element.type === ENTITIES_TYPE.PLAYER) {
                 const item = getItemById(activator)
                 if (item) {
                     anchor_hint
