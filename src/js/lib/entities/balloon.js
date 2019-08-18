@@ -1,5 +1,5 @@
 import { GameEntity } from '../models'
-import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
+import { ASSETS, ENTITIES_TYPE, DIRECTIONS } from '../../lib/constants'
 
 export default class Balloon extends GameEntity {
     constructor (obj, game) {
@@ -34,6 +34,7 @@ export default class Balloon extends GameEntity {
             this.y = this.position.y
             player.x = this.position.player.x
             player.y = this.position.player.y
+            player.direction = DIRECTIONS.RIGHT
             overlay.fadeIn()
             camera.center()
         }

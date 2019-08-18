@@ -28,24 +28,6 @@ export default class Paddle extends GameEntity {
         }
     }
 
-    collide (element, response) {
-        if (element.solid) {
-            element.force.y = response.overlapV.y
-            element.onFloor = true
-
-            // const expectedY = (this.y - element.height) + (this.height - 16)
-            // if (element.y >= expectedY && !element.jump) {
-            //     element.y = expectedY
-            //     element.force.y = 0
-            //     element.fall = false
-            //     element.onFloor = true
-            // }
-            // else if (element.force.y === 0) {
-            //     element.force.y += 1
-            // }
-        }
-    }
-
     update () {
         if (this.activated && !this.dead) {
             const { map: { tileheight } } = this.game.scene
@@ -56,8 +38,7 @@ export default class Paddle extends GameEntity {
                 this.move()
             }
             else {
-                this.force.y = 0
-                this.light = null
+                this.kill()
             }
         }
     }

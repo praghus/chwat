@@ -6,7 +6,6 @@ export default class TileObject extends GameEntity {
         this.solid = true
         this.visible = true
         this.y -= obj.height
-        // this.shadowCaster = true
     }
 
     update () {
@@ -32,6 +31,6 @@ export default class TileObject extends GameEntity {
 
     restore () {
         const { x, y } = this.initialPosition
-        this.placeAt(x, y)
+        this.placeAt(x, y - this.height)
     }
 }

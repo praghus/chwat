@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server --config webpack.dev.js",
-    "build": "webpack --config webpack.prod.js"
+    "start": "cross-env NODE_ENV=development webpack-dev-server --config webpack.dev.js",
+    "build": "cross-env NODE_ENV=production webpack --config webpack.prod.js"
   },
   "keywords": [],
   "author": "Piotr Praga",
@@ -29,7 +29,7 @@
     "redux": "^4.0.4",
     "redux-sounds": "^3.0.1",
     "redux-thunk": "^2.3.0",
-    "tiled-platformer-lib": "^1.6.0",
+    "tiled-platformer-lib": "^1.6.1",
     "tmx-tiledmap": "^1.0.3"
   },
   "devDependencies": {

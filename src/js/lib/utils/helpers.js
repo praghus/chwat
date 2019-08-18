@@ -1,6 +1,7 @@
 import moment from 'moment'
 import { ENTITIES, INPUT_KEYS, ITEMS } from '../constants'
 
+export const isProduction = process.env.NODE_ENV === 'production'
 export const noop = () => {}
 export const isValidArray = (arr) => arr && arr.length
 export const getPerformance = () => typeof performance !== 'undefined' && performance.now()

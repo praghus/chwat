@@ -5,6 +5,8 @@ export const CONFIG = {
 }
 
 export const LAYERS = {
+    GAME_OVER: 101,
+    THE_END: 101,
     CUSTOM_BACKGROUND: 0,
     BACKGROUND1: 1,
     BACKGROUND2: 2,

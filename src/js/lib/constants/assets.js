@@ -13,6 +13,7 @@ export const ASSETS = {
     FOG: 'bg5',
     FOREST: 'bg4',
     FRAMES: 'frames',
+    GAME_OVER: 'game_over',
     GRASS: 'grass',
     HEAD: 'head',
     HEARTS: 'hearts',
@@ -30,6 +31,7 @@ export const ASSETS = {
     SWITCH: 'switch',
     TORCH: 'torches',
     TILES: 'tiles',
+    THE_END: 'end',
     WATER: 'water'
 }
 

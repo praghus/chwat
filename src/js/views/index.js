@@ -66,11 +66,15 @@ class AppContainer extends Component {
             return (<div className='preloader'>Loading assets {percent}%</div>)
         }
 
+        const { assets, startTicker } = this
+        const sceneProps = {
+            ...this.props, assets, startTicker
+        }
         switch (scene) {
         case SCENES.INTRO:
-            return <IntroScene {...this.props} />
+            return <IntroScene {...sceneProps} />
         case SCENES.GAME:
-            return <GameScene {...this.props} assets={this.assets} startTicker={this.startTicker} />
+            return <GameScene {...sceneProps} />
         }
     }
 

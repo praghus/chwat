@@ -8,7 +8,7 @@ export default class Rock extends GameEntity {
         this.activated = false
         this.acceleration = 0.2
         this.maxSpeed = 2
-        this.damage = 50
+        this.damage = 1000
         this.solid = true
         this.rotation = 0
         this.direction = DIRECTIONS.RIGHT

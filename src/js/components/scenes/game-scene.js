@@ -9,8 +9,17 @@ import { isEqual } from 'lodash'
 import { findDOMNode } from 'react-dom'
 import { tmxParser } from 'tmx-tiledmap'
 import { Camera, Scene } from 'tiled-platformer-lib'
-import { BackgroundLayer, OverlayLayer } from '../../lib/models'
-import { noop, getPerformance } from '../../lib/utils/helpers'
+import {
+    noop,
+    isProduction,
+    getPerformance
+} from '../../lib/utils/helpers'
+import {
+    BackgroundLayer,
+    EndLayer,
+    GameOverLayer,
+    OverlayLayer
+} from '../../lib/models'
 import {
     ASSETS,
     CONFIG,
@@ -36,6 +45,7 @@ const propTypes = {
     onKey: PropTypes.func.isRequired,
     onMouse: PropTypes.func.isRequired,
     playSound: PropTypes.func.isRequired,
+    setScene: PropTypes.func.isRequired,
     startTicker: PropTypes.func.isRequired,
     ticker: tickerPropType.isRequired,
     viewport: viewportPropType.isRequired
@@ -45,6 +55,9 @@ export default class GameScene extends Component {
     constructor (props) {
         super(props)
         this.loaded = false
+        this.finished = false
+        this.gameOver = false
+        this.freeze = false
         this.wrapper = null
         this.scene = null
         this.canvas = null
@@ -59,6 +72,9 @@ export default class GameScene extends Component {
         this.then = getPerformance()
         this.debug = props.config[CONFIG.DEBUG_MODE]
 
+        this.onKey = this.onKey.bind(this)
+        this.over = this.over.bind(this)
+        this.completed = this.completed.bind(this)
         this.countFPS = this.countFPS.bind(this)
         this.countTime = this.countTime.bind(this)
         this.checkTimeout = this.checkTimeout.bind(this)
@@ -97,6 +113,7 @@ export default class GameScene extends Component {
         if (this.ctx) {
             if (this.loaded) {
                 const { config, ticker, viewport } = this.props
+                const { camera, player, scene } = this
 
                 this.frameStart = getPerformance()
                 this.delta = this.frameStart - this.then
@@ -112,11 +129,13 @@ export default class GameScene extends Component {
                     this.scene.update()
                     this.camera.update()
                     this.countFPS()
+                    scene.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
                 }
 
-                this.draw()
+                scene.draw()
             }
 
+            // @todo: move to Canvas component
             /** Experimental: create CRT scanlines effect */
             if (this.glcanvas) {
                 const { assets, viewport: { width, height } } = this.props
@@ -140,39 +159,35 @@ export default class GameScene extends Component {
         const {
             config,
             onConfig,
-            onKey,
             viewport: { width, height }
         } = this.props
 
         return (
             <div ref={(ref) => { this.wrapper = ref }}>
                 <Canvas ref={(ref) => { this.canvas = ref }} {...{ width, height }} />
-                <Inputs {...{ onKey }} />
-                <Debug {...{ config, onConfig, fps: this.fps }} />
+                <Inputs onKey={this.onKey} />
+                {!isProduction && <Debug {...{ config, onConfig, fps: this.fps }} />}
             </div>
         )
     }
 
-    draw () {
-        if (this.loaded) {
-            const { viewport } = this.props
-            const { ctx, camera, player, overlay, scene } = this
-            const {
-                resolutionX,
-                resolutionY,
-                scale
-            } = viewport
+    onKey (key, pressed) {
+        if (!this.gameOver || !this.freeze || !this.finished) {
+            this.props.onKey(key, pressed)
+        }
+    }
 
-            ctx.imageSmoothingEnabled = false
-            ctx.save()
-            ctx.scale(scale, scale)
-            ctx.clearRect(0, 0, resolutionX, resolutionY)
+    over () {
+        if (!this.gameOver) {
+            this.gameOver = true
+            this.scene.addLayer(new GameOverLayer(this), 1000)
+        }
+    }
 
-            scene.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
-            scene.draw()
-
-            this.checkTimeout('player_map') && overlay.displayMap()
-            ctx.restore()
+    completed () {
+        if (!this.finished) {
+            this.finished = true
+            this.scene.addLayer(new EndLayer(this), 1000)
         }
     }
 

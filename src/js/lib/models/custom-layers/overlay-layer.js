@@ -45,6 +45,8 @@ export default class OverlayLayer extends Layer {
             (message, i) => this.displayMessage(message, i)
         )
 
+        this.game.checkTimeout('player_map') && this.displayMap()
+
         if (this.blackOverlay > 0) {
             const {
                 ctx,

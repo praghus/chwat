@@ -6,6 +6,7 @@ import {
     ENTITIES_TYPE,
     INPUTS,
     ITEMS_TYPE,
+    LAYERS,
     SCENES,
     SOUNDS
 } from '../../lib/constants'
@@ -16,7 +17,6 @@ export default class Player extends GameEntity {
         this.direction = DIRECTIONS.RIGHT
         this.solid = true
         this.lives = 3
-        this.maxLives = 3
         this.energy = 100
         this.maxEnergy = 100
         this.maxSpeed = 2
@@ -66,7 +66,7 @@ export default class Player extends GameEntity {
         if (this.canHurt() && element.damage > 0) {
             this.energy -= element.damage
             if (this.energy <= 0 && !this.game.checkTimeout('player_respawn')) {
-                if (this.lives > 0) {
+                if (this.lives > 1) {
                     this.lives -= 1
                     this.visible = false
                     this.force = { x: 0, y: 0 }
@@ -77,7 +77,11 @@ export default class Player extends GameEntity {
                     })
                 }
                 else {
-                    this.game.props.setScene(SCENES.INTRO)
+                    this.game.overlay.fadeOut()
+                    this.game.startTimeout('game_over', 2000, this.game.over)
+                    this.game.startTimeout('restart', 10000, () => {
+                        this.game.props.setScene(SCENES.INTRO)
+                    })
                 }
             }
             this.force.y = -2
@@ -87,7 +91,7 @@ export default class Player extends GameEntity {
 
     update () {
         this.input()
-
+        this.move()
         const { sprite } = this
         if (this.jump) {
             if (this.force.y <= 0) {
@@ -118,7 +122,6 @@ export default class Player extends GameEntity {
             this.addDust(DIRECTIONS.RIGHT)
             this.falling = false
         }
-        this.move()
     }
 
     input () {
@@ -252,13 +255,15 @@ export default class Player extends GameEntity {
     }
 
     restore () {
-        const { camera, overlay } = this.game
+        const { camera, scene, overlay } = this.game
         const { x, y } = this.initialPosition
         overlay.fadeIn()
         this.game.stopTimeout('player_hurt')
         this.x = x
         this.y = y
         this.visible = true
+        this.inDark = 0
+        scene.showLayer(LAYERS.FOREGROUND2)
         camera.center()
     }
 }

@@ -1,6 +1,6 @@
 import { GameEntity } from '../models'
 import { getItemById, isValidArray } from '../utils/helpers'
-import { ENTITIES_TYPE, LAYERS } from '../constants'
+import { ENTITIES_TYPE, LAYERS, SCENES } from '../constants'
 
 export default class Trigger extends GameEntity {
     constructor (obj, game) {
@@ -31,7 +31,7 @@ export default class Trigger extends GameEntity {
                 camera, overlay, player, scene, startTimeout
             } = this.game
             const {
-                activator, clear, fade, follow, kill,
+                activator, clear, fade, follow, kill, goal,
                 modify, produce, related, reusable, shake
             } = this.properties
 
@@ -45,7 +45,7 @@ export default class Trigger extends GameEntity {
                         rel.activated = true
                         rel.trigger = this
                         rel.activator = item
-
+                        modify && this.modifyLayer(modify)
                         startTimeout('trigger_wait_for_player', 2500, () => {
                             overlay.fadeIn()
                             camera.setFollow(player)
@@ -56,14 +56,11 @@ export default class Trigger extends GameEntity {
                     rel.activated = true
                     rel.trigger = this
                     rel.activator = item
+                    modify && this.modifyLayer(modify)
                 }
             }
-            if (modify) {
-                const matrix = JSON.parse(modify)
-                isValidArray(matrix) && matrix.map(
-                    ([x, y, id, layer]) => scene.putTile(x, y, id, layer)
-                )
-            }
+            else if (modify) this.modifyLayer(modify)
+
             produce && this.addItem(produce, this.x + 16, this.y + 16)
             clear && this.clearTiles(clear)
             kill && scene.getObjectById(kill, LAYERS.OBJECTS).kill()
@@ -71,12 +68,30 @@ export default class Trigger extends GameEntity {
             fade && overlay.fadeIn()
             !reusable && this.kill()
 
+            if (goal) {
+                this.game.overlay.fadeOut()
+                this.game.startTimeout('game_over', 2000, this.game.completed)
+                this.game.startTimeout('restart', 10000, () => {
+                    this.game.props.setScene(SCENES.INTRO)
+                })
+            }
+
             this.hideHint()
             this.hideMessage()
 
             player.hideHint()
             player.hideMessage()
         }
+    }
+
+    modifyLayer (modify) {
+        const { scene } = this.game
+        const matrix = JSON.parse(modify)
+        isValidArray(matrix) && matrix.map(
+            ([x, y, id, layer]) => id
+                ? scene.putTile(x, y, id, layer)
+                : scene.clearTile(x, y, layer)
+        )
     }
 
     interact () {
