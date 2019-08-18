@@ -9,7 +9,7 @@ export const requireAll = (requireContext) => requireContext.keys().map(requireC
 export const getFilename = (path) => path.replace(/^.*[\\/]/, '').split('.').slice(0, -1).join('.')
 
 export function calculateViewportSize (width, height) {
-    const pixelScale = Math.round(height / 124)
+    const pixelScale = Math.round(height / 140)
 
     return {
         width,

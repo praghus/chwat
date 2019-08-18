@@ -14,7 +14,7 @@ import {
 export default class Player extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
-        this.direction = DIRECTIONS.RIGHT
+        this.direction = DIRECTIONS.LEFT
         this.solid = true
         this.lives = 3
         this.energy = 100
@@ -78,6 +78,7 @@ export default class Player extends GameEntity {
                 }
                 else {
                     this.game.overlay.fadeOut()
+                    this.visible = false
                     this.game.startTimeout('game_over', 2000, this.game.over)
                     this.game.startTimeout('restart', 10000, () => {
                         this.game.props.setScene(SCENES.INTRO)
@@ -90,9 +91,11 @@ export default class Player extends GameEntity {
     }
 
     update () {
+        const { sprite } = this
+
         this.input()
         this.move()
-        const { sprite } = this
+
         if (this.jump) {
             if (this.force.y <= 0) {
                 sprite.animate(this.direction === DIRECTIONS.RIGHT
@@ -104,6 +107,9 @@ export default class Player extends GameEntity {
                     ? this.animations.FALL_RIGHT
                     : this.animations.FALL_LEFT)
                 this.falling = true
+            }
+            if (this.onFloor) {
+                this.jump = false
             }
         }
         else if (this.force.x !== 0) {
@@ -134,11 +140,6 @@ export default class Player extends GameEntity {
         if (this.action) {
             this.moveItems()
             this.actionPerformed()
-        }
-
-        if (this.onFloor) {
-            this.jump = false
-            // this.force.y = 0
         }
 
         this.force.y += this.force.y > 0
@@ -173,7 +174,7 @@ export default class Player extends GameEntity {
             }
             if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
                 this.jump = true
-                this.force.y = -6
+                this.force.y = -5.6
                 playSound(SOUNDS.PLAYER_JUMP)
             }
             if (input.keyPressed[INPUTS.INPUT_MAP]) {

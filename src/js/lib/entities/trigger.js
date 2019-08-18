@@ -104,7 +104,7 @@ export default class Trigger extends GameEntity {
         }
         else if (!this.activated) {
             const item = getItemById(activator)
-            player.moveItems()
+            // player.moveItems()
             if (item) {
                 anchor_hint
                     ? this.showHint([item])

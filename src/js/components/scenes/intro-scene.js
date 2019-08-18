@@ -81,11 +81,9 @@ export default class IntroScene extends Component {
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.drawImage(assets[ASSETS.SKY], 0, 0)
         ctx.drawImage(assets[ASSETS.MOUNTAINS], -495, -30)
-        ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 45)
+        ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 34)
 
-        overlay.displayText(
-            'PRESS ANY KEY TO START',
-            Math.ceil(resolutionX / 2) - 50, resolutionY - 10)
+        overlay.displayText('PRESS ANY KEY TO START', Math.ceil(resolutionX / 2) - 54, resolutionY - 16)
 
         ctx.restore()
     }

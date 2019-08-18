@@ -106,7 +106,7 @@ export default class OverlayLayer extends Layer {
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
             if (item) {
-                this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
+                // this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
                 this.drawTile(item.gid, align + 1 + (index * 20), resolutionY - 19)
             }
         })
