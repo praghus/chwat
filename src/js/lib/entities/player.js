@@ -132,9 +132,8 @@ export default class Player extends GameEntity {
 
     input () {
         const {
-            camera,
             scene: { gravity },
-            props: { input, viewport, playSound }
+            props: { input, playSound }
         } = this.game
 
         if (this.action) {
@@ -150,24 +149,18 @@ export default class Player extends GameEntity {
             if (input.keyPressed[INPUTS.INPUT_LEFT]) {
                 if (this.direction === DIRECTIONS.RIGHT) {
                     this.addDust(DIRECTIONS.LEFT)
-                    camera.setMiddlePoint(
-                        viewport.resolutionX - viewport.resolutionX / 3,
-                        viewport.resolutionY / 2
-                    )
                 }
                 this.force.x -= this.acceleration
                 this.direction = DIRECTIONS.LEFT
+                this.cameraFollow()
             }
             else if (input.keyPressed[INPUTS.INPUT_RIGHT]) {
                 if (this.direction === DIRECTIONS.LEFT) {
                     this.addDust(DIRECTIONS.RIGHT)
-                    camera.setMiddlePoint(
-                        viewport.resolutionX / 3,
-                        viewport.resolutionY / 2
-                    )
                 }
                 this.force.x += this.acceleration
                 this.direction = DIRECTIONS.RIGHT
+                this.cameraFollow()
             }
             if (input.keyPressed[INPUTS.INPUT_ACTION]) {
                 this.action = true
@@ -190,6 +183,26 @@ export default class Player extends GameEntity {
             if (Math.abs(this.force.x > 0)) this.force.x -= this.acceleration
             if (Math.abs(this.force.x < 0)) this.force.x += this.acceleration
             if (Math.abs(this.force.x) < this.acceleration) this.force.x = 0
+        }
+    }
+
+    cameraFollow () {
+        const {
+            camera,
+            props: { viewport }
+        } = this.game
+
+        if (this.direction === DIRECTIONS.LEFT) {
+            camera.setMiddlePoint(
+                viewport.resolutionX - viewport.resolutionX / 3,
+                viewport.resolutionY / 2
+            )
+        }
+        else {
+            camera.setMiddlePoint(
+                viewport.resolutionX / 3,
+                viewport.resolutionY / 2
+            )
         }
     }
 
@@ -252,7 +265,10 @@ export default class Player extends GameEntity {
     }
 
     showMap () {
-        this.game.startTimeout('player_map', 2000)
+        this.game.pause()
+        this.game.startTimeout('player_map', 2000, () => {
+            this.game.pause(false)
+        })
     }
 
     restore () {

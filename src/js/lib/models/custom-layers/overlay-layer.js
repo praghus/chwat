@@ -36,6 +36,13 @@ export default class OverlayLayer extends Layer {
     }
 
     draw () {
+        const {
+            ctx,
+            props: {
+                viewport: { resolutionX, resolutionY }
+            }
+        } = this.game
+
         this.displayHUD()
 
         isValidArray(this.hints) && this.hints.map(
@@ -48,13 +55,6 @@ export default class OverlayLayer extends Layer {
         this.game.checkTimeout('player_map') && this.displayMap()
 
         if (this.blackOverlay > 0) {
-            const {
-                ctx,
-                props: {
-                    viewport: { resolutionX, resolutionY }
-                }
-            } = this.game
-
             ctx.globalAlpha = this.blackOverlay
             ctx.fillStyle = COLORS.BLACK
             ctx.fillRect(0, 0, resolutionX, resolutionY)
@@ -81,12 +81,15 @@ export default class OverlayLayer extends Layer {
 
         ctx.save()
 
+        ctx.fillStyle = COLORS.BLACK
+        ctx.fillRect(0, 0, resolutionX, 8)
+
         if (this.alpha < 1) {
             ctx.globalAlpha = this.alpha
             this.alpha += 0.02
         }
 
-        this.displayText(time, resolutionX - (3 + time.length * 5), 3)
+        this.displayText(time, resolutionX - (3 + time.length * 5), 2)
 
         // Active objects
         debug && this.displayText(objects, resolutionX - (3 + objects.length * 5), 9)
@@ -96,13 +99,13 @@ export default class OverlayLayer extends Layer {
 
         // lives and energy
         const indicatorWidth = energy && Math.round(energy / 2) || 1
-        ctx.drawImage(assets[ASSETS.HEAD], 2, 1)
-        ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, -25 + resolutionX / 2, 3, 50, 5)
-        ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, -25 + resolutionX / 2, 3, indicatorWidth, 5)
-        this.displayText(`${lives}`, 12, 3)
+        // ctx.drawImage(assets[ASSETS.HEAD], 2, 1)
+        ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, -25 + resolutionX / 2, 2, 50, 5)
+        ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, -25 + resolutionX / 2, 2, indicatorWidth, 5)
+        this.displayText(`LIVES ${lives}`, 4, 2)
 
         // items
-        const align = 3 // -19 + resolutionX / 2
+        const align = -19 + resolutionX / 2
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
             if (item) {

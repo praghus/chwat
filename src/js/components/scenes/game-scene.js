@@ -57,7 +57,7 @@ export default class GameScene extends Component {
         this.loaded = false
         this.finished = false
         this.gameOver = false
-        this.freeze = false
+        this.paused = false
         this.wrapper = null
         this.scene = null
         this.canvas = null
@@ -74,6 +74,7 @@ export default class GameScene extends Component {
 
         this.onKey = this.onKey.bind(this)
         this.over = this.over.bind(this)
+        this.pause = this.pause.bind(this)
         this.completed = this.completed.bind(this)
         this.countFPS = this.countFPS.bind(this)
         this.countTime = this.countTime.bind(this)
@@ -121,17 +122,17 @@ export default class GameScene extends Component {
 
                 if (!isEqual(viewport, prevProps.viewport)) {
                     this.scene.resize(viewport)
+                    player.cameraFollow()
                 }
 
                 if (!this.timer) this.timer = moment()
 
-                if (this.delta > ticker.interval) {
+                if (this.delta > ticker.interval && !this.paused) {
                     this.scene.update()
                     this.camera.update()
                     this.countFPS()
                     scene.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
                 }
-
                 scene.draw()
             }
 
@@ -172,7 +173,7 @@ export default class GameScene extends Component {
     }
 
     onKey (key, pressed) {
-        if (!this.gameOver || !this.freeze || !this.finished) {
+        if (!this.gameOver || !this.finished) {
             this.props.onKey(key, pressed)
         }
     }
@@ -226,6 +227,10 @@ export default class GameScene extends Component {
             clearTimeout(this.timeoutsPool[name])
             this.timeoutsPool[name] = null
         }
+    }
+
+    pause (paused = true) {
+        this.paused = paused
     }
 
     /** Experimental */

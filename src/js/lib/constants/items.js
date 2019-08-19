@@ -71,7 +71,7 @@ export const ITEMS = {
     [ITEMS_TYPE.SCYTHE]: { ...item, name: 'Scythe', gid: 1142, properties: { id: ITEMS_TYPE.SCYTHE } },
     [ITEMS_TYPE.SHEEP]: { ...item, name: 'Sheep', gid: 1150, properties: { id: ITEMS_TYPE.SHEEP } },
     [ITEMS_TYPE.SPADE]: { ...item, name: 'Spade', gid: 1124, properties: { id: ITEMS_TYPE.SPADE } },
-    [ITEMS_TYPE.STICK]: { ...item, name: 'Stick', gid: 1131, properties: { id: ITEMS_TYPE.STICK } },
+    [ITEMS_TYPE.STICK]: { ...item, name: 'Fishing rod', gid: 1131, properties: { id: ITEMS_TYPE.STICK } },
     [ITEMS_TYPE.STONE]: { ...item, name: 'Heavy stone', gid: 1136, properties: { id: ITEMS_TYPE.STONE, solid: true } },
     [ITEMS_TYPE.SULFUR]: { ...item, name: 'Sulfur', gid: 1141, properties: { id: ITEMS_TYPE.SULFUR } },
     [ITEMS_TYPE.TAR]: { ...item, name: 'Tar', gid: 1140, properties: { id: ITEMS_TYPE.TAR } },
