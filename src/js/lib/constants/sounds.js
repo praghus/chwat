@@ -8,12 +8,16 @@ const loadedSounds = requireAll(allSounds).reduce(
 export const SOUNDS = {
     PLAYER_JUMP: 'jump',
     PLAYER_GET: 'get',
-    SLIME: 'slime'
+    ROCK: 'rock',
+    SLIME: 'slime',
+    SWITCH: 'switch'
 }
 
 export const soundsData = {
     [SOUNDS.PLAYER_JUMP]: { src: [loadedSounds[SOUNDS.PLAYER_JUMP]] },
     [SOUNDS.PLAYER_GET]: { src: [loadedSounds[SOUNDS.PLAYER_GET]] },
-    [SOUNDS.SLIME]: { src: [loadedSounds[SOUNDS.SLIME]] }
+    [SOUNDS.ROCK]: { src: [loadedSounds[SOUNDS.ROCK]] },
+    [SOUNDS.SLIME]: { src: [loadedSounds[SOUNDS.SLIME]] },
+    [SOUNDS.SWITCH]: { src: [loadedSounds[SOUNDS.SWITCH]] }
 }
 

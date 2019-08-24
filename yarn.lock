@@ -8120,9 +8120,9 @@ thunky@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/thunky/-/thunky-1.0.3.tgz#f5df732453407b09191dae73e2a8cc73f381a826"
 
-tiled-platformer-lib@^1.6.1:
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/tiled-platformer-lib/-/tiled-platformer-lib-1.6.1.tgz#2a167f35de8b5ffb0a6294da96e0ed5cc2f5c2f5"
+tiled-platformer-lib@^1.6.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/tiled-platformer-lib/-/tiled-platformer-lib-1.6.2.tgz#bdff7d276d704e133043c99520ecab6f6fc428c6"
   dependencies:
     sat "^0.7.1"
 

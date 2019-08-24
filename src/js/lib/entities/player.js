@@ -63,7 +63,7 @@ export default class Player extends GameEntity {
                 break
             }
         }
-        if (this.canHurt() && element.damage > 0) {
+        if (this.canHurt() && element.damage > 0 && !this.game.debug) {
             this.energy -= element.damage
             if (this.energy <= 0 && !this.game.checkTimeout('player_respawn')) {
                 if (this.lives > 1) {
@@ -92,7 +92,6 @@ export default class Player extends GameEntity {
 
     update () {
         const { sprite } = this
-
         this.input()
         this.move()
 
@@ -112,7 +111,7 @@ export default class Player extends GameEntity {
                 this.jump = false
             }
         }
-        else if (this.force.x !== 0) {
+        else if (Math.abs(this.force.x) > this.acceleration) {
             sprite.animate(this.direction === DIRECTIONS.RIGHT
                 ? this.animations.WALK_RIGHT
                 : this.animations.WALK_LEFT)
@@ -162,7 +161,10 @@ export default class Player extends GameEntity {
                 this.direction = DIRECTIONS.RIGHT
                 this.cameraFollow()
             }
-            if (input.keyPressed[INPUTS.INPUT_ACTION]) {
+            if (
+                input.keyPressed[INPUTS.INPUT_ACTION] ||
+                input.keyPressed[INPUTS.INPUT_DOWN]
+            ) {
                 this.action = true
             }
             if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
@@ -266,7 +268,7 @@ export default class Player extends GameEntity {
 
     showMap () {
         this.game.pause()
-        this.game.startTimeout('player_map', 2000, () => {
+        this.game.startTimeout('player_map', 1500, () => {
             this.game.pause(false)
         })
     }

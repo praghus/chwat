@@ -31,11 +31,11 @@ export const PARTICLES = {
             y: Math.cos(random(0, 2) * Math.PI) * 0.5 + random(0, 1)
         })
     },
-    SPIT: {
-        width: 1,
-        height: 1,
+    STONE: {
+        width: 4,
+        height: 4,
         mass: 0.5,
-        color: '#fff',
+        color: '#333',
         forceVector: () => ({
             x: Math.cos(random(0, 2) * Math.PI) * 0.5 + random(0, 1),
             y: Math.cos(random(0, 2) * Math.PI) * 0.5 + random(0, 1)

@@ -5,17 +5,40 @@ export default class Slime extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.distance = obj.width
-        this.x = obj.x + obj.width / 2
-        this.y = obj.y - 32
+        this.x = obj.x - 16
         this.width = 48
-        this.height = 48
+        this.height = 16
         this.maxSpeed = 0
         this.damage = 20
         this.acceleration = 0.2
         this.running = false
         this.activated = false
-        this.direction = this.properties && this.properties.direction || DIRECTIONS.LEFT
-        this.setBoundingBox(18, 40, this.width - 36, this.height - 40)
+        this.sprite.animation = this.animations.BOUNCE
+        this.direction = DIRECTIONS.RIGHT
+        this.setBoundingBox(17, 4, 14, 12)
+    }
+
+    onScreen () {
+        const {
+            camera,
+            scene: {
+                resolutionX,
+                resolutionY,
+                map: {
+                    tilewidth,
+                    tileheight
+                }
+            }
+        } = this.game
+
+        const { x, y } = this.initialPosition
+
+        return (
+            x + this.distance + tilewidth > -camera.x &&
+            y + this.height + tileheight > -camera.y &&
+            x - tilewidth < -camera.x + resolutionX &&
+            y - tileheight < -camera.y + resolutionY
+        )
     }
 
     update () {
@@ -54,14 +77,9 @@ export default class Slime extends GameEntity {
                 ? this.acceleration
                 : -this.acceleration
 
-            if (this.onFloor) {
-                this.force.y = 0
-            }
-            else {
-                this.force.y += this.force.y > 0
-                    ? scene.gravity
-                    : scene.gravity / 2
-            }
+            this.force.y += this.force.y > 0
+                ? scene.gravity
+                : scene.gravity / 2
 
             this.move()
 

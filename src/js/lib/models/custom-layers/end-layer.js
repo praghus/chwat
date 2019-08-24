@@ -18,7 +18,6 @@ export default class EndLayer extends Layer {
     draw () {
         const {
             ctx,
-            overlay,
             scene: {
                 assets,
                 resolutionX,
@@ -28,9 +27,7 @@ export default class EndLayer extends Layer {
 
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)
-        ctx.drawImage(assets[ASSETS.THE_END], Math.ceil(resolutionX / 2) - 80, Math.ceil(resolutionY / 2) - 64)
-
-        overlay.displayText('PRESS ANY KEY TO RETURN', Math.ceil(resolutionX / 2) - 60, resolutionY - 10)
+        ctx.drawImage(assets[ASSETS.THE_END], Math.ceil(resolutionX / 2) - 80, Math.ceil(resolutionY / 2) - 60)
 
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay

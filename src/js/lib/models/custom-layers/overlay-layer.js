@@ -89,23 +89,27 @@ export default class OverlayLayer extends Layer {
             this.alpha += 0.02
         }
 
+        this.displayText(`${String.fromCharCode(8)}`, resolutionX - (10 + time.length * 5), 2)
         this.displayText(time, resolutionX - (3 + time.length * 5), 2)
 
         // Active objects
-        debug && this.displayText(objects, resolutionX - (3 + objects.length * 5), 9)
+        debug && this.displayText(objects, resolutionX - (3 + objects.length * 5), 10)
 
         // Camera position in debug mode
-        debug && this.displayText(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 4, 28)
+        debug && this.displayText(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 3, 22)
 
         // lives and energy
         const indicatorWidth = energy && Math.round(energy / 2) || 1
         // ctx.drawImage(assets[ASSETS.HEAD], 2, 1)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, -25 + resolutionX / 2, 2, 50, 5)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, -25 + resolutionX / 2, 2, indicatorWidth, 5)
-        this.displayText(`LIVES ${lives}`, 4, 2)
+        this.displayText('LIVES', 3, 2)
+        for (let l = 0; l < lives; l++) {
+            this.displayText(`${String.fromCharCode(3)}`, 30 + (l * 6), 2)
+        }
 
         // items
-        const align = -19 + resolutionX / 2
+        const align = 4 // -19 + resolutionX / 2
         ctx.drawImage(assets[ASSETS.FRAMES], align, resolutionY - 20)
         items.map((item, index) => {
             if (item) {
@@ -237,7 +241,7 @@ export default class OverlayLayer extends Layer {
         if (collisionMask) {
             ctx.save()
             ctx.lineWidth = 1
-            ctx.strokeStyle = '#f00'
+            ctx.strokeStyle = visible ? COLORS.LIGHT_RED : COLORS.PURPLE
 
             ctx.beginPath()
             ctx.moveTo(collisionMask.points[0].x + posX, collisionMask.points[0].y + posY)

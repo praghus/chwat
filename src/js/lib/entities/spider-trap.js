@@ -4,7 +4,7 @@ import { COLORS } from '../constants'
 export default class SpiderTrap extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
-        this.damage = 1000
+        this.damage = 50
         this.fall = false
         this.rise = false
         this.solid = true

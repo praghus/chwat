@@ -63,7 +63,7 @@ export default class Collector extends GameEntity {
     }
 
     update () {
-        if (this.activated) {
+        if (this.activated || this.game.debug) {
             const { camera, overlay, player, scene } = this.game
             const { fade, modify, produce, related, shake } = this.properties
 

@@ -34,6 +34,8 @@ export default class Balloon extends GameEntity {
             this.y = this.position.y
             player.x = this.position.player.x
             player.y = this.position.player.y
+            player.initialPosition = this.position.player
+
             player.direction = DIRECTIONS.RIGHT
             overlay.fadeIn()
             camera.center()

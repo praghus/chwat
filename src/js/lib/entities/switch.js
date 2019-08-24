@@ -2,7 +2,8 @@ import { GameEntity } from '../models'
 import {
     DIRECTIONS,
     ENTITIES_TYPE,
-    LAYERS
+    LAYERS,
+    SOUNDS
 } from '../../lib/constants'
 
 export default class Switch extends GameEntity {
@@ -14,10 +15,14 @@ export default class Switch extends GameEntity {
     }
 
     update () {
-        const { camera, player, overlay, scene, startTimeout } = this.game
+        const { camera, scene, startTimeout } = this.game
         const { produce } = this.properties
 
         if (this.activated && !this.used) {
+            camera.setMiddlePoint(
+                scene.resolutionX / 2,
+                scene.resolutionY / 2
+            )
             switch (produce) {
             case 'platform':
                 camera.setFollow({
@@ -36,11 +41,7 @@ export default class Switch extends GameEntity {
                     scene.putTile(225, 25, 129, LAYERS.MAIN)
                     scene.putTile(226, 25, 132, LAYERS.MAIN)
                     scene.putTile(227, 25, 130, LAYERS.MAIN)
-                    camera.shake()
-                    startTimeout('wait_for_player', 500, () => {
-                        overlay.fadeIn()
-                        camera.setFollow(player)
-                    })
+                    this.focusOnPlayer()
                 })
                 break
             case 'lift':
@@ -72,29 +73,26 @@ export default class Switch extends GameEntity {
                     scene.putTile(498, 78, 161, LAYERS.FOREGROUND1)
                     scene.putTile(495, 79, 161, LAYERS.FOREGROUND1)
                     scene.putTile(498, 79, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(495, 79, 82, LAYERS.BACKGROUND2)
-                    scene.putTile(496, 79, 82, LAYERS.BACKGROUND2)
-                    scene.putTile(497, 79, 82, LAYERS.BACKGROUND2)
-                    scene.putTile(498, 79, 82, LAYERS.BACKGROUND2)
                     scene.putTile(495, 80, 292, LAYERS.MAIN)
                     scene.putTile(496, 80, 293, LAYERS.MAIN)
                     scene.putTile(497, 80, 293, LAYERS.MAIN)
                     scene.putTile(498, 80, 294, LAYERS.MAIN)
+                    scene.putTile(495, 80, 292, LAYERS.FOREGROUND1)
+                    scene.putTile(496, 80, 293, LAYERS.FOREGROUND1)
+                    scene.putTile(497, 80, 293, LAYERS.FOREGROUND1)
+                    scene.putTile(498, 80, 294, LAYERS.FOREGROUND1)
                     scene.addObject({
                         type: ENTITIES_TYPE.DUST,
                         x: 7904,
                         y: 1276,
                         direction: DIRECTIONS.RIGHT
                     }, LAYERS.OBJECTS)
-
-                    camera.shake()
-                    startTimeout('switch_wait', 500, () => {
-                        overlay.fadeIn()
-                        camera.setFollow(player)
-                    })
+                    this.focusOnPlayer()
                 })
             }
+
             this.used = true
+            camera.shake()
         }
 
         const defaultAnimation = produce === 'lift'
@@ -107,13 +105,24 @@ export default class Switch extends GameEntity {
         )
     }
 
+    focusOnPlayer () {
+        const { camera, player, overlay, startTimeout } = this.game
+
+        startTimeout('switch_focus_on_player', 500, () => {
+            overlay.fadeIn()
+            camera.setFollow(player)
+            player.cameraFollow()
+        })
+    }
+
     interact () {
-        const { player, scene, startTimeout } = this.game
+        const { player, props, scene, startTimeout } = this.game
         const { activator, anchor_hint } = this.properties
 
         if (player.canUse(activator)) {
             player.hideHint()
             player.useItem(activator)
+            !this.switched && props.playSound(SOUNDS.SWITCH)
             this.switched = true
             startTimeout('switch_wait', 500, () => {
                 this.activated = true

@@ -20,6 +20,7 @@ const middleware = applyMiddleware(...[thunk, loadedSoundsMiddleware])
 
 if (isProduction) {
     store = createStore(rootReducer, middleware)
+    window.onbeforeunload = () => false
 }
 else {
     const enhancer = window.__REDUX_DEVTOOLS_EXTENSION__

@@ -9,6 +9,8 @@ import {
 
 export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
+    BONUS: 'bonus',
+    BOX: 'box',
     CHARACTER: 'character',
     COLLECTOR: 'collector',
     SLIME: 'slime',
@@ -42,6 +44,8 @@ const collisionLayers = [LAYERS.MAIN]
 /* eslint-disable max-len */
 export const ENTITIES = [
     { type: ENTITIES_TYPE.BALLOON, model: Balloon, asset: ASSETS.BALLOON },
+    { type: ENTITIES_TYPE.BONUS, model: TileObject, collisionLayers },
+    { type: ENTITIES_TYPE.BOX, model: TileObject, collisionLayers },
     { type: ENTITIES_TYPE.BRIDGE, model: Bridge, asset: ASSETS.BRIDGE, animations: ANIMATIONS.BRIDGE, collisionLayers },
     { type: ENTITIES_TYPE.CATAPULT, model: Catapult, asset: ASSETS.CATAPULT, animations: ANIMATIONS.CATAPULT, collisionLayers },
     { type: ENTITIES_TYPE.COLLECTOR, model: Collector, collisionLayers },

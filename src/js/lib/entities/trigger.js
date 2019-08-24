@@ -1,6 +1,6 @@
 import { GameEntity } from '../models'
 import { getItemById, isValidArray } from '../utils/helpers'
-import { ENTITIES_TYPE, LAYERS, SCENES } from '../constants'
+import { ENTITIES_TYPE, LAYERS, SCENES, PARTICLES } from '../constants'
 
 export default class Trigger extends GameEntity {
     constructor (obj, game) {
@@ -31,8 +31,8 @@ export default class Trigger extends GameEntity {
                 camera, overlay, player, scene, startTimeout
             } = this.game
             const {
-                activator, clear, fade, follow, kill, goal,
-                modify, produce, related, reusable, shake
+                activator, clear, fade, follow, kill, goal, modify,
+                particles, produce, related, reusable, shake
             } = this.properties
 
             if (related) {
@@ -41,14 +41,19 @@ export default class Trigger extends GameEntity {
 
                 if (follow) {
                     camera.setFollow(rel)
+                    camera.setMiddlePoint(
+                        scene.resolutionX - scene.resolutionX / 2,
+                        scene.resolutionY / 2
+                    )
                     startTimeout('trigger_wait', 300, () => {
                         rel.activated = true
                         rel.trigger = this
                         rel.activator = item
                         modify && this.modifyLayer(modify)
-                        startTimeout('trigger_wait_for_player', 2500, () => {
+                        startTimeout('trigger_wait_for_player', 1500, () => {
                             overlay.fadeIn()
                             camera.setFollow(player)
+                            player.cameraFollow()
                         })
                     })
                 }
@@ -67,6 +72,19 @@ export default class Trigger extends GameEntity {
             shake && camera.shake()
             fade && overlay.fadeIn()
             !reusable && this.kill()
+
+            if (particles) {
+                const { map: { tilewidth } } = scene
+                for (let px = 0; px < this.width / tilewidth; px++) {
+                    this.emitParticles(
+                        PARTICLES.STONE,
+                        this.x + px * tilewidth,
+                        this.y + (this.height / 2),
+                        2,
+                        16
+                    )
+                }
+            }
 
             if (goal) {
                 this.game.overlay.fadeOut()

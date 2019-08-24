@@ -63,13 +63,18 @@ export default class GameEntity extends Entity {
         }
     }
 
-    emitParticles (count, properties) {
-        const particle_count = count || 10
-        for (let i = 0; i < particle_count; i++) {
-            const props = { ...properties }
-            props.x = properties.x + randomInt(0, 8)
+    emitParticles (particle, x, y, count = 10, radius = 8) {
+        for (let i = 0; i < count; i++) {
+            const props = {
+                x: x - (radius / 2) + randomInt(0, radius),
+                y: y - (radius / 2) + randomInt(0, radius),
+                force: particle.forceVector(),
+                ...particle
+            }
             this.game.scene.addObject({
                 type: ENTITIES_TYPE.PARTICLE,
+                life: randomInt(60, 120),
+                dead: false,
                 ...props
             }, LAYERS.OBJECTS)
         }
