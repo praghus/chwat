@@ -1,8 +1,8 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { createLamp } from 'tiled-platformer-lib'
-import { COLORS, ENTITIES_TYPE } from '../../lib/constants'
+import { COLORS } from '../../lib/constants'
 
-export default class Paddle extends ActiveElement {
+export default class Paddle extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
@@ -10,47 +10,35 @@ export default class Paddle extends ActiveElement {
         this.maxSpeed = 1
         this.activated = false
     }
-    
+
     draw () {
         if (this.onScreen()) {
-            const { ctx, camera, world, props: { assets } } = this.game
-            const { spriteSize } = world
-            for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
+            super.draw()
+            const { ctx, camera, scene, props: { assets } } = this.game
+            const { map: { tilewidth, tileheight } } = scene
+
+            for (let x = 0; x < Math.round(this.width / tilewidth); x++) {
                 ctx.drawImage(
                     assets[this.asset],
-                    0, 0, spriteSize, spriteSize,
-                    Math.floor(this.x + camera.x) + (x * spriteSize), Math.floor(this.y + camera.y),
-                    spriteSize, spriteSize
+                    0, 0, tilewidth, tileheight,
+                    Math.floor(this.x + camera.x) + (x * tilewidth), Math.floor(this.y + camera.y),
+                    tilewidth, tileheight
                 )
-            }
-        }
-    }
-
-    collide (element) {
-        if (!this.dead && element.solid && element.type !== ENTITIES_TYPE.BLOB) {
-            const expectedY = (this.y - element.height) + (this.height - 16)
-            if (element.y >= expectedY && !element.jump) {
-                element.y = expectedY
-                element.force.y = 0
-                element.fall = false
-                element.onFloor = true
-            }
-            else if (element.force.y === 0) {
-                element.force.y += 1
             }
         }
     }
 
     update () {
         if (this.activated && !this.dead) {
-            const { spriteSize } = this.game.world
+            const { map: { tileheight } } = this.game.scene
             const { destY } = this.properties
-            if (this.y > destY * spriteSize) {
+            if (this.y > destY * tileheight) {
                 this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
                 this.force.y -= this.acceleration
                 this.move()
-            } else {
-                this.light = null
+            }
+            else {
+                this.kill()
             }
         }
     }

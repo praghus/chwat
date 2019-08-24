@@ -8,8 +8,9 @@ import thunk from 'redux-thunk'
 import soundsMiddleware from 'redux-sounds'
 import rootReducer from './reducers'
 import App from './views'
-
 import '../scss/index.scss'
+
+require.context('../assets/images', true, /^\.\//)
 
 let store = null
 
@@ -19,6 +20,7 @@ const middleware = applyMiddleware(...[thunk, loadedSoundsMiddleware])
 
 if (isProduction) {
     store = createStore(rootReducer, middleware)
+    window.onbeforeunload = () => false
 }
 else {
     const enhancer = window.__REDUX_DEVTOOLS_EXTENSION__
@@ -33,7 +35,7 @@ const onResize = function () {
 }
 
 ReactDOM.render(
-    <Provider {...{store}}>
+    <Provider {...{ store }}>
         <App />
     </Provider>,
     document.getElementById('root')

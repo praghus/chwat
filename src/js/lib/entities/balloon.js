@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
-import { ASSETS, ENTITIES_TYPE } from '../../lib/constants'
+import { GameEntity } from '../models'
+import { ASSETS, ENTITIES_TYPE, DIRECTIONS } from '../../lib/constants'
 
-export default class Balloon extends ActiveElement {
+export default class Balloon extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.positions = {
@@ -34,6 +34,9 @@ export default class Balloon extends ActiveElement {
             this.y = this.position.y
             player.x = this.position.player.x
             player.y = this.position.player.y
+            player.initialPosition = this.position.player
+
+            player.direction = DIRECTIONS.RIGHT
             overlay.fadeIn()
             camera.center()
         }

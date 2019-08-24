@@ -21,7 +21,7 @@ import {
 
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(
-    (state, image) => ({...state, [image.split('-')[0]]: image}), {}
+    (state, image) => ({ ...state, [image.split('-')[0]]: image }), {}
 )
 
 const propTypes = {
@@ -66,11 +66,15 @@ class AppContainer extends Component {
             return (<div className='preloader'>Loading assets {percent}%</div>)
         }
 
+        const { assets, startTicker } = this
+        const sceneProps = {
+            ...this.props, assets, startTicker
+        }
         switch (scene) {
         case SCENES.INTRO:
-            return <IntroScene {...this.props} />
+            return <IntroScene {...sceneProps} />
         case SCENES.GAME:
-            return <GameScene {...this.props} assets={this.assets} startTicker={this.startTicker} />
+            return <GameScene {...sceneProps} />
         }
     }
 
@@ -105,18 +109,23 @@ const mapStateToProps = (state) => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+function mergeProps (stateProps, dispatchProps, ownProps) {
+    const { config } = stateProps
+    const { dispatch } = dispatchProps
+
     return {
+        ...stateProps,
+        ...ownProps,
         onKey: (key, pressed) => dispatch(updateKeyPressed(key, pressed)),
         onMouse: (event) => dispatch(updateMousePos(event.x, event.y)),
-        playSound: (type) => dispatch(playSound(type)),
         tickerStart: () => dispatch(startTicker(performance.now())),
         tickerTick: () => dispatch(tickTime(performance.now())),
         onConfig: (key, value) => dispatch(updateConfig(key, value)),
-        setScene: (scene) => dispatch(updateConfig(CONFIG.SCENE, scene))
+        setScene: (scene) => dispatch(updateConfig(CONFIG.SCENE, scene)),
+        playSound: (type) => !config[CONFIG.DISABLE_SOUNDS] && dispatch(playSound(type))
     }
 }
 
 AppContainer.propTypes = propTypes
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer)
+export default connect(mapStateToProps, null, mergeProps)(AppContainer)

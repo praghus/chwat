@@ -1,13 +1,16 @@
-import ActiveElement from '../models/active-element'
-import { DIRECTIONS } from '../../lib/constants'
+import { GameEntity } from '../models'
+import { randomInt } from '../../lib/utils/helpers'
+import { DIRECTIONS, PARTICLES, SOUNDS } from '../../lib/constants'
 
-export default class Rock extends ActiveElement {
+export default class Rock extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.doShake = false
+        this.activated = false
+        this.soundPlayed = false
         this.acceleration = 0.2
         this.maxSpeed = 2
-        this.damage = 50
+        this.damage = 100
         this.solid = true
         this.rotation = 0
         this.direction = DIRECTIONS.RIGHT
@@ -33,34 +36,46 @@ export default class Rock extends ActiveElement {
         }
     }
 
+    onScreen () {
+        return this.activated
+    }
+
     update () {
-        if (this.activated && !this.dead) {
-            const { camera, world: { gravity } } = this.game
+        if (this.activated) {
+            if (!this.soundPlayed) {
+                this.soundPlayed = true
+                this.game.props.playSound(SOUNDS.ROCK)
+            }
+            const { camera, scene: { gravity } } = this.game
 
             if (this.onFloor && this.acceleration < this.maxSpeed) {
                 this.acceleration += 0.01
             }
+
             this.force.y += gravity
-            this.force.x = this.direction === DIRECTIONS.RIGHT
-                ? this.acceleration
-                : -this.acceleration
+            this.force.x = this.acceleration
 
             this.move()
-            if (this.expectedX === this.x) {
+
+            if (this.x < 7260) {
                 if (!this.onFloor) {
                     this.doShake = true
                 }
                 else if (this.doShake) {
                     camera.shake()
                     this.doShake = false
+                    this.emitParticles(
+                        PARTICLES.DIRT,
+                        this.x + 8,
+                        this.y + this.height,
+                        randomInt(5, 10),
+                        16
+                    )
                 }
             }
             else {
                 this.kill()
             }
-            // if (this.expectedX > this.x) {
-            //     this.kill()
-            // }
         }
     }
 }

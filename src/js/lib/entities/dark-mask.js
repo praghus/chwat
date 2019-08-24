@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
+import { GameEntity } from '../models'
 import { overlap } from '../../lib/utils/helpers'
 
-export default class DarkMask extends ActiveElement {
+export default class DarkMask extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = false
@@ -11,7 +11,7 @@ export default class DarkMask extends ActiveElement {
     }
 
     update () {
-        const { player, world } = this.game
+        const { player, scene } = this.game
         if (this.onScreen()) {
             if (overlap(player, this)) {
                 this.active = true
@@ -20,10 +20,10 @@ export default class DarkMask extends ActiveElement {
                     this.activated = true
                     if (this.properties) {
                         if (this.properties.showLayer) {
-                            world.showLayer(this.properties.showLayer)
+                            scene.showLayer(this.properties.showLayer)
                         }
                         else if (this.properties.hideLayer) {
-                            world.hideLayer(this.properties.hideLayer)
+                            scene.hideLayer(this.properties.hideLayer)
                         }
                     }
                 }

@@ -1,8 +1,8 @@
-import ActiveElement from '../models/active-element'
-import { isValidArray } from '../utils/helpers'
-import { ENTITIES_TYPE, LAYERS, TIMEOUTS } from '../constants'
+import { GameEntity } from '../models'
+import { getItemById, isValidArray } from '../utils/helpers'
+import { ENTITIES_TYPE, LAYERS, SCENES, PARTICLES } from '../constants'
 
-export default class Trigger extends ActiveElement {
+export default class Trigger extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = false
@@ -11,33 +11,49 @@ export default class Trigger extends ActiveElement {
     }
 
     collide (element) {
-        const { activator } = this.properties
-        if (element.type === ENTITIES_TYPE.PLAYER && activator === element.type) {
-            this.interact()
+        const { anchor_hint, activator, message } = this.properties
+        const { player } = this.game
+        if (element.type === ENTITIES_TYPE.PLAYER) {
+            if (activator === element.type) {
+                this.interact()
+            }
+            else if (message) {
+                anchor_hint
+                    ? this.showMessage(message, this.x, this.y)
+                    : player.showMessage(message, this.x, this.y)
+            }
         }
     }
 
     update () {
         if (this.activated) {
-            const { camera, overlay, player, world } = this.game
             const {
-                activator, clear, fade, follow, kill, modify, produce, related, reusable, shake
+                camera, overlay, player, scene, startTimeout
+            } = this.game
+            const {
+                activator, clear, fade, follow, kill, goal, modify,
+                particles, produce, related, reusable, shake
             } = this.properties
 
             if (related) {
-                const rel = world.getObjectById(related, LAYERS.OBJECTS)
+                const rel = scene.getObjectById(related, LAYERS.OBJECTS)
                 const item = player.useItem(activator)
 
                 if (follow) {
                     camera.setFollow(rel)
-                    this.game.startTimeout(TIMEOUTS.TRIGGER_WAIT, () => {
+                    camera.setMiddlePoint(
+                        scene.resolutionX - scene.resolutionX / 2,
+                        scene.resolutionY / 2
+                    )
+                    startTimeout('trigger_wait', 300, () => {
                         rel.activated = true
                         rel.trigger = this
                         rel.activator = item
-
-                        this.game.startTimeout(TIMEOUTS.TRIGGER_WAIT_FOR_PLAYER, () => {
+                        modify && this.modifyLayer(modify)
+                        startTimeout('trigger_wait_for_player', 1500, () => {
                             overlay.fadeIn()
                             camera.setFollow(player)
+                            player.cameraFollow()
                         })
                     })
                 }
@@ -45,25 +61,59 @@ export default class Trigger extends ActiveElement {
                     rel.activated = true
                     rel.trigger = this
                     rel.activator = item
+                    modify && this.modifyLayer(modify)
                 }
             }
-            if (modify) {
-                const matrix = JSON.parse(modify)
-                isValidArray(matrix) && matrix.map(
-                    ([x, y, id]) => world.putTile(x, y, id, LAYERS.MAIN)
-                )
-            }
-            produce && this.addItem(this.properties, this.x + 16, this.y + 16)
+            else if (modify) this.modifyLayer(modify)
+
+            produce && this.addItem(produce, this.x + 16, this.y + 16)
             clear && this.clearTiles(clear)
-            kill && world.getObjectById(kill, LAYERS.OBJECTS).kill()
+            kill && scene.getObjectById(kill, LAYERS.OBJECTS).kill()
             shake && camera.shake()
             fade && overlay.fadeIn()
             !reusable && this.kill()
+
+            if (particles) {
+                const { map: { tilewidth } } = scene
+                for (let px = 0; px < this.width / tilewidth; px++) {
+                    this.emitParticles(
+                        PARTICLES.STONE,
+                        this.x + px * tilewidth,
+                        this.y + (this.height / 2),
+                        2,
+                        16
+                    )
+                }
+            }
+
+            if (goal) {
+                this.game.overlay.fadeOut()
+                this.game.startTimeout('game_over', 2000, this.game.completed)
+                this.game.startTimeout('restart', 10000, () => {
+                    this.game.props.setScene(SCENES.INTRO)
+                })
+            }
+
+            this.hideHint()
+            this.hideMessage()
+
+            player.hideHint()
+            player.hideMessage()
         }
     }
 
+    modifyLayer (modify) {
+        const { scene } = this.game
+        const matrix = JSON.parse(modify)
+        isValidArray(matrix) && matrix.map(
+            ([x, y, id, layer]) => id
+                ? scene.putTile(x, y, id, layer)
+                : scene.clearTile(x, y, layer)
+        )
+    }
+
     interact () {
-        const { player, world } = this.game
+        const { player } = this.game
         const { activator, anchor_hint } = this.properties
         if (player.canUse(activator)) {
             player.hideHint()
@@ -71,24 +121,30 @@ export default class Trigger extends ActiveElement {
             this.activated = true
         }
         else if (!this.activated) {
-            const item = world.getObjectByProperty('id', activator, LAYERS.OBJECTS)
-            player.moveItems()
+            const item = getItemById(activator)
+            // player.moveItems()
             if (item) {
                 anchor_hint
-                    ? this.showHint(item)
-                    : player.showHint(item)
+                    ? this.showHint([item])
+                    : player.showHint([item])
             }
         }
     }
 
     clearTiles (layerId) {
-        const { world } = this.game
-        const { spriteSize } = world
-        for (let x = 0; x < Math.round(this.width / spriteSize); x++) {
-            for (let y = 0; y < Math.round(this.height / spriteSize); y++) {
-                world.clearTile(
-                    Math.round((this.x + (x * spriteSize)) / spriteSize),
-                    Math.round((this.y + (y * spriteSize)) / spriteSize),
+        const { scene } = this.game
+        const {
+            map: {
+                tilewidth,
+                tileheight
+            }
+        } = scene
+
+        for (let x = 0; x < Math.round(this.width / tilewidth); x++) {
+            for (let y = 0; y < Math.round(this.height / tileheight); y++) {
+                scene.clearTile(
+                    Math.round((this.x + (x * tilewidth)) / tilewidth),
+                    Math.round((this.y + (y * tileheight)) / tileheight),
                     layerId
                 )
             }

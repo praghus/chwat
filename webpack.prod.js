@@ -23,12 +23,15 @@ module.exports = merge(common, {
                 useShortDoctype: true,
                 removeEmptyAttributes: true,
                 removeStyleLinkTypeAttributes: true,
-                keepClosingSlash: true,
                 minifyJS: true,
-                minifyCSS: true,
-                minifyURLs: true
+                minifyCSS: true
             },
             inject: true
+        }),
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+            }
         })
     ],
     output: {

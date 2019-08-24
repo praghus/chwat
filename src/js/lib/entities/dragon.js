@@ -1,10 +1,11 @@
-import Character from '../models/character'
+import { GameEntity } from '../models'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
-export default class Dragon extends Character {
+export default class Dragon extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
+        this.y -= obj.height
         this.setBoundingBox(60, 108, this.width - 158, this.height - 140)
     }
 
@@ -23,7 +24,6 @@ export default class Dragon extends Character {
                 }
                 else this.kill()
             }
-            this.animate(this.animations.HOVERING)
         }
     }
 }

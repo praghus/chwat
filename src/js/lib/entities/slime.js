@@ -1,16 +1,44 @@
-import Character from '../models/character'
-import { DIRECTIONS } from '../../lib/constants'
+import { GameEntity } from '../models'
+import { DIRECTIONS, SOUNDS } from '../../lib/constants'
 
-export default class Slime extends Character {
+export default class Slime extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
+        this.distance = obj.width
+        this.x = obj.x - 16
+        this.width = 48
+        this.height = 16
         this.maxSpeed = 0
-        this.damage = 25
+        this.damage = 20
         this.acceleration = 0.2
         this.running = false
         this.activated = false
-        this.direction = this.properties && this.properties.direction || DIRECTIONS.LEFT
-        this.setBoundingBox(18, 40, this.width - 36, this.height - 40)
+        this.sprite.animation = this.animations.BOUNCE
+        this.direction = DIRECTIONS.RIGHT
+        this.setBoundingBox(17, 4, 14, 12)
+    }
+
+    onScreen () {
+        const {
+            camera,
+            scene: {
+                resolutionX,
+                resolutionY,
+                map: {
+                    tilewidth,
+                    tileheight
+                }
+            }
+        } = this.game
+
+        const { x, y } = this.initialPosition
+
+        return (
+            x + this.distance + tilewidth > -camera.x &&
+            y + this.height + tileheight > -camera.y &&
+            x - tilewidth < -camera.x + resolutionX &&
+            y - tileheight < -camera.y + resolutionY
+        )
     }
 
     update () {
@@ -18,11 +46,10 @@ export default class Slime extends Character {
             this.activated = true
         }
         if (this.activated) {
-            const { world } = this.game
+            const { props: { playSound }, scene, startTimeout } = this.game
 
-            // @todo: rebuild whole solution and timeouts
             if (this.running) {
-                switch (this.animFrame) {
+                switch (this.sprite.animFrame) {
                 case 2:
                     this.maxSpeed = 1.4
                     break
@@ -35,10 +62,14 @@ export default class Slime extends Character {
                 }
             }
             else if (!this.game.checkTimeout(`wait_${this.id}`)) {
-                this.game.startTimeout({name: `wait_${this.id}`, duration: 2300}, () => {
-                    this.onScreen()
-                        ? this.running = true
-                        : this.activated = false
+                startTimeout(`wait_${this.id}`, 2300, () => {
+                    if (this.onScreen()) {
+                        this.running = true
+                        playSound(SOUNDS.SLIME)
+                    }
+                    else {
+                        this.activated = false
+                    }
                 })
             }
 
@@ -46,35 +77,27 @@ export default class Slime extends Character {
                 ? this.acceleration
                 : -this.acceleration
 
-            if (this.onFloor) {
-                this.force.y = 0
-            }
-            else {
-                this.force.y += this.force.y > 0
-                    ? world.gravity
-                    : world.gravity / 2
-            }
+            this.force.y += this.force.y > 0
+                ? scene.gravity
+                : scene.gravity / 2
 
             this.move()
-            const PX = Math.floor(this.x + 18 / world.spriteSize)
-            const PW = Math.floor((this.x + this.width - 18) / world.spriteSize)
-            const PH = Math.floor((this.y + this.height) / world.spriteSize)
-            if (!world.isSolidArea(PX, PH, this.collisionLayers) ||
-                !world.isSolidArea(PW, PH, this.collisionLayers)) {
-                this.bounce()
-            }
-            if (this.x !== this.expectedX) {
+
+            if (
+                this.x + 32 > this.initialPosition.x + this.distance ||
+                this.x + 16 < this.initialPosition.x
+            ) {
                 this.bounce()
             }
 
             if (this.direction === DIRECTIONS.RIGHT) {
-                this.animate(this.running
+                this.sprite.animate(this.running
                     ? this.animations.RUN_RIGHT
                     : this.animations.BOUNCE
                 )
             }
             else {
-                this.animate(this.running
+                this.sprite.animate(this.running
                     ? this.animations.RUN_LEFT
                     : this.animations.BOUNCE
                 )

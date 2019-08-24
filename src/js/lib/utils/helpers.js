@@ -1,6 +1,7 @@
 import moment from 'moment'
-import { ENTITIES, INPUT_KEYS } from '../constants'
+import { ENTITIES, INPUT_KEYS, ITEMS } from '../constants'
 
+export const isProduction = process.env.NODE_ENV === 'production'
 export const noop = () => {}
 export const isValidArray = (arr) => arr && arr.length
 export const getPerformance = () => typeof performance !== 'undefined' && performance.now()
@@ -8,16 +9,19 @@ export const requireAll = (requireContext) => requireContext.keys().map(requireC
 export const getFilename = (path) => path.replace(/^.*[\\/]/, '').split('.').slice(0, -1).join('.')
 
 export function calculateViewportSize (width, height) {
-    const pixelScale = height / 128
-    const x = Math.round(width / pixelScale)
-    const y = Math.round(height / pixelScale)
+    const pixelScale = width > height
+        ? Math.round(height / 128)
+        : Math.round(width / 192)
+
+    const calculatedWidth = width < 192 * pixelScale ? width : 192 * pixelScale
+    const calculatedHeight = height < 128 * pixelScale ? height : 128 * pixelScale
 
     return {
-        width: Math.round(width / x) * x,
-        height: Math.round(height / y) * y,
-        scale: Math.round(width / x),
-        resolutionX: x,
-        resolutionY: y
+        width: calculatedWidth,
+        height: calculatedHeight,
+        resolutionX: Math.round(calculatedWidth / pixelScale),
+        resolutionY: Math.round(calculatedHeight / pixelScale),
+        scale: pixelScale
     }
 }
 
@@ -68,34 +72,19 @@ export function randomChoice (choices) {
 }
 
 export function getEntityByType (entityType) {
-    return ENTITIES.filter(({type}) => entityType === type)[0] || null
+    return ENTITIES.filter(({ type }) => entityType === type)[0] || null
+}
+
+export function getItemById (id) {
+    return Object.keys(ITEMS).indexOf(id) !== -1 && ITEMS[id]
 }
 
 export function getKeyPressed (key) {
     return Object.keys(INPUT_KEYS).find((input) => INPUT_KEYS[input].indexOf(key) !== -1)
 }
 
-export function getProperties (data) {
-    if (data && data.length) {
-        const properties = {}
-        data.map(({name, value}) => {
-            properties[name] = value
-        })
-        return properties
-    }
-}
-
-export function getElementProperties (element) {
-    const { force, properties } = element
-    const filteredElement = { force, properties }
-    Object.getOwnPropertyNames(element).filter((prop) =>
-        typeof element[prop] !== 'object' &&
-        typeof element[prop] !== 'function' &&
-        prop !== 'properties'
-    ).map((prop) => {
-        filteredElement[prop] = element[prop]
-    })
-    return filteredElement
+export function getProperties (obj, property) {
+    return obj.properties && obj.properties[property]
 }
 
 export function countTime (timer) {
@@ -111,3 +100,4 @@ export function between (value, a, b) {
     const max = Math.max(a, b)
     return value >= min && value <= max
 }
+

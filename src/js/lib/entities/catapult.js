@@ -1,7 +1,7 @@
-import ActiveElement from '../models/active-element'
-import { ENTITIES_TYPE, TIMEOUTS } from '../../lib/constants'
+import { GameEntity } from '../models'
+import { ENTITIES_TYPE, ITEMS_TYPE } from '../../lib/constants'
 
-export default class Catapult extends ActiveElement {
+export default class Catapult extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
         this.solid = true
@@ -10,22 +10,18 @@ export default class Catapult extends ActiveElement {
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
             element.y -= 8
-            this.game.startTimeout({ name: 'catapult_wait', duration: 100}, () => {
-                element.force.y = -25
+            this.game.startTimeout('catapult_wait', 100, () => {
+                element.force.y = -20
                 element.onFloor = false
                 element.jump = true
             })
 
-            if (!this.game.checkTimeout(TIMEOUTS.CATAPULT)) {
-                this.game.startTimeout(TIMEOUTS.CATAPULT, () => {
+            if (!this.game.checkTimeout('catapult')) {
+                this.game.startTimeout('catapult', 1000, () => {
                     this.activated = false
                     this.trigger.activated = false
                     this.trigger.switched = false
-                    this.addItem(
-                        {produce: 'weight', produce_gid: 1128, produce_name: 'Weight'},
-                        this.x - 16, this.y + 16
-                    )
-                    // this.activator.placeAt(this.x - 48, this.y)
+                    this.addItem(ITEMS_TYPE.WEIGHT, this.x - 16, this.y + 16)
                 })
             }
         }
@@ -33,7 +29,7 @@ export default class Catapult extends ActiveElement {
 
     update () {
         if (this.onScreen()) {
-            this.animate(this.activated
+            this.sprite.animate(this.activated
                 ? this.animations.DOWN
                 : this.animations.UP
             )
