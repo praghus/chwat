@@ -75,8 +75,8 @@ export default class OverlayLayer extends Layer {
         const { assets, viewport: { resolutionX, resolutionY } } = props
         const { energy, items, lives } = player
 
-        const activeObjects = scene.getLayer(LAYERS.OBJECTS).activeObjects
-        const objects = `OBJ: ${activeObjects.length}`
+        const activeObjectsCount = scene.getLayer(LAYERS.OBJECTS).activeObjectsCount
+        const objects = `OBJ: ${activeObjectsCount}`
         const time = countTime()
 
         ctx.save()
@@ -163,15 +163,21 @@ export default class OverlayLayer extends Layer {
             ctx,
             player,
             props: {
+                assets,
                 viewport: { resolutionX, resolutionY }
             }
         } = this.game
 
         ctx.save()
-        ctx.globalAlpha = 0.9
+        ctx.globalAlpha = 0.8
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.restore()
+
+        ctx.drawImage(assets[ASSETS.MAP_BG], 0, 0, 50, 34,
+            Math.floor((resolutionX / 2) - 50),
+            Math.floor((resolutionY / 2) - 39), 50 * 2, 34 * 2
+        )
 
         player.mapPieces.map((gid) => {
             const i = (gid - 1221)
@@ -180,14 +186,18 @@ export default class OverlayLayer extends Layer {
             this.drawTile(
                 gid,
                 Math.floor((resolutionX / 2) + (i * 32) - k),
-                Math.floor((resolutionY / 2) + (j * 32) - 32),
+                Math.floor((resolutionY / 2) + (j * 32) - 37),
                 2
             )
         })
 
         this.displayText('COLLECTED MAP PIECES',
-            (resolutionX / 2) - 49,
-            (resolutionY / 2) - 42,
+            (resolutionX / 2) - 49, 12
+        )
+
+        this.displayText('[M] - Display map',
+            (resolutionX / 2) - 44,
+            (resolutionY) - 24,
         )
     }
 

@@ -21,7 +21,7 @@ export default class Player extends GameEntity {
         this.maxEnergy = 100
         this.maxSpeed = 2
         this.acceleration = 0.25
-        this.inDark = 0
+        this.inDark = false
         this.items = [null, null]
         this.mapPieces = []
         this.light = createLamp(0, 0, 96, COLORS.TRANS_WHITE)
@@ -36,6 +36,10 @@ export default class Player extends GameEntity {
         }
         super.draw()
         ctx.restore()
+    }
+
+    onScreen () {
+        return true
     }
 
     collide (element, response) {
@@ -281,7 +285,7 @@ export default class Player extends GameEntity {
         this.x = x
         this.y = y
         this.visible = true
-        this.inDark = 0
+        this.inDark = false
         scene.showLayer(LAYERS.FOREGROUND2)
         camera.center()
     }

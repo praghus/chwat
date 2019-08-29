@@ -1,5 +1,4 @@
 import { GameEntity } from '../models'
-import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Dragon extends GameEntity {
     constructor (obj, game) {
@@ -7,12 +6,6 @@ export default class Dragon extends GameEntity {
         this.solid = true
         this.y -= obj.height
         this.setBoundingBox(60, 108, this.width - 158, this.height - 140)
-    }
-
-    collide (element) {
-        if (element.type === ENTITIES_TYPE.PLAYER) {
-            element.force.x = -element.force.x * 2
-        }
     }
 
     update () {

@@ -20,6 +20,7 @@ export const ASSETS = {
     ITEMS: 'items',
     LIGHTING: 'lighting',
     LOGO: 'chwat',
+    MAP_BG: 'map_bg',
     MOUNTAINS: 'bg2',
     PADDLE: 'paddle',
     PLAYER: 'player',

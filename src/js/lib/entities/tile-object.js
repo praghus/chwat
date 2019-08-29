@@ -19,15 +19,17 @@ export default class TileObject extends GameEntity {
             switch (this.type) {
             case ENTITIES_TYPE.BOX:
                 if (overlap.y !== 0) {
-                    element.force.y -= element.force.y + overlap.y
-                    this.force.y += overlap.y
+                    element.force.y = 0
+                    element.y -= overlap.y
                     element.onFloor = true
+                    element.jump = false
                 }
-                else if (overlap.x) {
+                else if (overlap.x !== 0) {
                     // element.force.x -= overlap.x / 2
-                    // this.x += overlap.x
-                    this.force.x += overlap.x
+                    this.x += overlap.x
+                    // this.force.x += overlap.x
                 }
+
                 break
             case ENTITIES_TYPE.BONUS:
                 element.energy = element.maxEnergy

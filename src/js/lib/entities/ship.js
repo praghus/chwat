@@ -7,7 +7,7 @@ export default class Ship extends GameEntity {
         this.visible = false
         this.activated = false
         this.y -= obj.height
-        this.collisionMask = this.sprite.getCollisionMask(this.x, this.y)[0]
+        // this.collisionMask = this.sprite.getCollisionMask(this.x, this.y)[0]
         this.counter = 0
         this.direction = 1
         this.increase = this.increase.bind(this)
