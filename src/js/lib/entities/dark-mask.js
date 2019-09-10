@@ -1,44 +1,22 @@
 import { GameEntity } from '../models'
-import { overlap } from '../../lib/utils/helpers'
+import { Vector, pointInPolygon } from 'sat'
+import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class DarkMask extends GameEntity {
     constructor (obj, game) {
         super(obj, game)
-        this.solid = false
-        this.active = false
-        this.activated = false
         this.visible = false
     }
 
-    update () {
-        const { player, scene } = this.game
-        if (this.onScreen()) {
-            if (overlap(player, this)) {
-                this.active = true
-                if (!this.activated) {
-                    player.inDark += 1
-                    this.activated = true
-                    if (this.properties) {
-                        if (this.properties.showLayer) {
-                            scene.showLayer(this.properties.showLayer)
-                        }
-                        else if (this.properties.hideLayer) {
-                            scene.hideLayer(this.properties.hideLayer)
-                        }
-                    }
-                }
+    overlapTest (obj) {
+        if (this.onScreen() && obj.type === ENTITIES_TYPE.PLAYER) {
+            const point = new Vector(
+                obj.x + obj.width / 2,
+                obj.y + obj.height / 2
+            )
+            if (pointInPolygon(point, this.getTranslatedBounds())) {
+                this.game.player.inDark = true
             }
-            else this.deactivate()
-        }
-        else this.deactivate()
-    }
-
-    deactivate () {
-        const { player } = this.game
-        if (this.active) {
-            player.inDark -= 1
-            this.activated = false
-            this.active = false
         }
     }
 }

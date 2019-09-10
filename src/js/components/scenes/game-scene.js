@@ -66,6 +66,7 @@ export default class GameScene extends Component {
         this.lastLoop = null
         this.timer = null
         this.frameTime = null
+        this.currentCameraId = null
         this.fps = 0
         this.timeoutsPool = {}
         this.frameStart = getPerformance()
@@ -79,6 +80,7 @@ export default class GameScene extends Component {
         this.countFPS = this.countFPS.bind(this)
         this.countTime = this.countTime.bind(this)
         this.checkTimeout = this.checkTimeout.bind(this)
+        this.setCameraViewport = this.setCameraViewport.bind(this)
         this.startTimeout = this.startTimeout.bind(this)
         this.stopTimeout = this.stopTimeout.bind(this)
     }
@@ -100,7 +102,7 @@ export default class GameScene extends Component {
             this.player = this.scene.getObjectByType(ENTITIES_TYPE.PLAYER, LAYERS.OBJECTS)
 
             this.camera = new Camera(this)
-            this.camera.setSurfaceLevel(this.scene.getMapProperty('surfaceLevel'))
+            // this.camera.setSurfaceLevel(this.scene.getMapProperty('surfaceLevel'))
             this.camera.setFollow(this.player)
             this.camera.center()
 
@@ -128,10 +130,11 @@ export default class GameScene extends Component {
                 if (!this.timer) this.timer = moment()
 
                 if (this.delta > ticker.interval && !this.paused) {
+                    player.inDark = false
                     this.scene.update()
                     this.camera.update()
                     this.countFPS()
-                    scene.toggleDynamicLights(camera.underground || player.underground || player.inDark > 0)
+                    scene.toggleDynamicLights(camera.y < -740 || player.inDark)
                 }
                 scene.draw()
             }
@@ -231,6 +234,14 @@ export default class GameScene extends Component {
 
     pause (paused = true) {
         this.paused = paused
+    }
+
+    setCameraViewport (viewport) {
+        const { id, x, y, width, height } = viewport
+        if (this.currentCameraId !== id) {
+            this.camera.setBounds(x, y, width, height)
+            this.currentCameraId = id
+        }
     }
 
     /** Experimental */

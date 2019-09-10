@@ -89,10 +89,12 @@ export default class GameEntity extends Entity {
 
     addDust (direction) {
         if (!this.onFloor) return
-        const { scene } = this.game
-        scene.addObject({
+        this.game.scene.addObject({
             type: ENTITIES_TYPE.DUST,
             visible: true,
+            dead: false,
+            width: 16,
+            height: 16,
             x: direction === DIRECTIONS.RIGHT
                 ? this.x - 4
                 : this.x + this.width - 8,

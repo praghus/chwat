@@ -2,8 +2,8 @@ import * as ANIMATIONS from '../animations'
 import { ASSETS } from './assets'
 import { LAYERS } from './config'
 import {
-    Balloon, Bridge, Catapult, Character, DarkMask, Dragon, Dust, Grass,
-    KillZone, Paddle, Particle, Player, Rock, Ship, Slime, SpiderTrap,
+    Balloon, Bridge, Camera, Catapult, Character, DarkMask, Dragon, Dust,
+    Grass, KillZone, Paddle, Particle, Player, Rock, Ship, Slime, SpiderTrap,
     Spikes, Sparkle, Switch, TileObject, Torch, Trigger, Water, Collector
 } from '../entities'
 
@@ -11,6 +11,7 @@ export const ENTITIES_TYPE = {
     BALLOON: 'balloon',
     BONUS: 'bonus',
     BOX: 'box',
+    CAMERA: 'camera',
     CHARACTER: 'character',
     COLLECTOR: 'collector',
     SLIME: 'slime',
@@ -47,6 +48,7 @@ export const ENTITIES = [
     { type: ENTITIES_TYPE.BONUS, model: TileObject, collisionLayers },
     { type: ENTITIES_TYPE.BOX, model: TileObject, collisionLayers },
     { type: ENTITIES_TYPE.BRIDGE, model: Bridge, asset: ASSETS.BRIDGE, animations: ANIMATIONS.BRIDGE, collisionLayers },
+    { type: ENTITIES_TYPE.CAMERA, model: Camera },
     { type: ENTITIES_TYPE.CATAPULT, model: Catapult, asset: ASSETS.CATAPULT, animations: ANIMATIONS.CATAPULT, collisionLayers },
     { type: ENTITIES_TYPE.COLLECTOR, model: Collector, collisionLayers },
     { type: ENTITIES_TYPE.CHARACTER, model: Character, collisionLayers },

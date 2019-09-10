@@ -1,5 +1,6 @@
 export { default as Balloon } from './balloon'
 export { default as Bridge } from './bridge'
+export { default as Camera } from './camera'
 export { default as Catapult } from './catapult'
 export { default as Character } from './character'
 export { default as Collector } from './collector'
