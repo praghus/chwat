@@ -29,7 +29,7 @@ const propTypes = {
     input: inputPropType.isRequired,
     onKey: PropTypes.func.isRequired,
     onMouse: PropTypes.func.isRequired,
-    playSound: PropTypes.func.isRequired,
+    sfx: PropTypes.func.isRequired,
     ticker: tickerPropType.isRequired,
     tickerStart: PropTypes.func.isRequired,
     tickerTick: PropTypes.func.isRequired,
@@ -122,7 +122,7 @@ function mergeProps (stateProps, dispatchProps, ownProps) {
         tickerTick: () => dispatch(tickTime(performance.now())),
         onConfig: (key, value) => dispatch(updateConfig(key, value)),
         setScene: (scene) => dispatch(updateConfig(CONFIG.SCENE, scene)),
-        playSound: (type) => !config[CONFIG.DISABLE_SOUNDS] && dispatch(playSound(type))
+        sfx: (type) => !config[CONFIG.DISABLE_SOUNDS] && dispatch(playSound(type))
     }
 }
 

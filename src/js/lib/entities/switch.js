@@ -7,22 +7,19 @@ import {
 } from '../../lib/constants'
 
 export default class Switch extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
         this.switched = false
         this.activated = false
     }
 
     update () {
-        const { camera, scene, startTimeout } = this.game
+        const { camera, resolutionX, resolutionY } = this.scene
         const { produce } = this.properties
 
         if (this.activated && !this.used) {
-            camera.setMiddlePoint(
-                scene.resolutionX / 2,
-                scene.resolutionY / 2
-            )
+            camera.setMiddlePoint(resolutionX / 2, resolutionY / 2)
             switch (produce) {
             case 'platform':
                 camera.setFollow({
@@ -32,15 +29,15 @@ export default class Switch extends GameEntity {
                     height: 16,
                     force: { x: 0, y: 0 }
                 })
-                startTimeout('switch_wait', 500, () => {
-                    scene.putTile(225, 23, 196, LAYERS.BACKGROUND2)
-                    scene.putTile(226, 23, 229, LAYERS.BACKGROUND2)
-                    scene.putTile(225, 24, 258, LAYERS.MAIN)
-                    scene.putTile(226, 24, 259, LAYERS.MAIN)
-                    scene.putTile(227, 24, 101, LAYERS.MAIN)
-                    scene.putTile(225, 25, 129, LAYERS.MAIN)
-                    scene.putTile(226, 25, 132, LAYERS.MAIN)
-                    scene.putTile(227, 25, 130, LAYERS.MAIN)
+                this.scene.startTimeout('switch_wait', 500, () => {
+                    this.scene.putTile(225, 23, 196, LAYERS.BACKGROUND2)
+                    this.scene.putTile(226, 23, 229, LAYERS.BACKGROUND2)
+                    this.scene.putTile(225, 24, 258, LAYERS.MAIN)
+                    this.scene.putTile(226, 24, 259, LAYERS.MAIN)
+                    this.scene.putTile(227, 24, 101, LAYERS.MAIN)
+                    this.scene.putTile(225, 25, 129, LAYERS.MAIN)
+                    this.scene.putTile(226, 25, 132, LAYERS.MAIN)
+                    this.scene.putTile(227, 25, 130, LAYERS.MAIN)
                     this.focusOnPlayer()
                 })
                 break
@@ -52,36 +49,36 @@ export default class Switch extends GameEntity {
                     height: 64,
                     force: { x: 0, y: 0 }
                 })
-                startTimeout('switch_wait', 500, () => {
-                    scene.clearTile(495, 75, LAYERS.BACKGROUND2)
-                    scene.clearTile(496, 75, LAYERS.BACKGROUND2)
-                    scene.clearTile(497, 75, LAYERS.BACKGROUND2)
-                    scene.clearTile(498, 75, LAYERS.BACKGROUND2)
-                    scene.clearTile(495, 75, LAYERS.MAIN)
-                    scene.clearTile(496, 75, LAYERS.MAIN)
-                    scene.clearTile(497, 75, LAYERS.MAIN)
-                    scene.clearTile(498, 75, LAYERS.MAIN)
-                    scene.clearTile(495, 76, LAYERS.MAIN)
-                    scene.clearTile(496, 76, LAYERS.MAIN)
-                    scene.clearTile(497, 76, LAYERS.MAIN)
-                    scene.clearTile(498, 76, LAYERS.MAIN)
-                    scene.putTile(495, 76, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(498, 76, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(495, 77, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(498, 77, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(495, 78, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(498, 78, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(495, 79, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(498, 79, 161, LAYERS.FOREGROUND1)
-                    scene.putTile(495, 80, 292, LAYERS.MAIN)
-                    scene.putTile(496, 80, 293, LAYERS.MAIN)
-                    scene.putTile(497, 80, 293, LAYERS.MAIN)
-                    scene.putTile(498, 80, 294, LAYERS.MAIN)
-                    scene.putTile(495, 80, 292, LAYERS.FOREGROUND1)
-                    scene.putTile(496, 80, 293, LAYERS.FOREGROUND1)
-                    scene.putTile(497, 80, 293, LAYERS.FOREGROUND1)
-                    scene.putTile(498, 80, 294, LAYERS.FOREGROUND1)
-                    scene.addObject({
+                this.scene.startTimeout('switch_wait', 500, () => {
+                    this.scene.clearTile(495, 75, LAYERS.BACKGROUND2)
+                    this.scene.clearTile(496, 75, LAYERS.BACKGROUND2)
+                    this.scene.clearTile(497, 75, LAYERS.BACKGROUND2)
+                    this.scene.clearTile(498, 75, LAYERS.BACKGROUND2)
+                    this.scene.clearTile(495, 75, LAYERS.MAIN)
+                    this.scene.clearTile(496, 75, LAYERS.MAIN)
+                    this.scene.clearTile(497, 75, LAYERS.MAIN)
+                    this.scene.clearTile(498, 75, LAYERS.MAIN)
+                    this.scene.clearTile(495, 76, LAYERS.MAIN)
+                    this.scene.clearTile(496, 76, LAYERS.MAIN)
+                    this.scene.clearTile(497, 76, LAYERS.MAIN)
+                    this.scene.clearTile(498, 76, LAYERS.MAIN)
+                    this.scene.putTile(495, 76, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(498, 76, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(495, 77, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(498, 77, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(495, 78, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(498, 78, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(495, 79, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(498, 79, 161, LAYERS.FOREGROUND1)
+                    this.scene.putTile(495, 80, 292, LAYERS.MAIN)
+                    this.scene.putTile(496, 80, 293, LAYERS.MAIN)
+                    this.scene.putTile(497, 80, 293, LAYERS.MAIN)
+                    this.scene.putTile(498, 80, 294, LAYERS.MAIN)
+                    this.scene.putTile(495, 80, 292, LAYERS.FOREGROUND1)
+                    this.scene.putTile(496, 80, 293, LAYERS.FOREGROUND1)
+                    this.scene.putTile(497, 80, 293, LAYERS.FOREGROUND1)
+                    this.scene.putTile(498, 80, 294, LAYERS.FOREGROUND1)
+                    this.scene.addObject({
                         type: ENTITIES_TYPE.DUST,
                         x: 7904,
                         y: 1276,
@@ -106,9 +103,10 @@ export default class Switch extends GameEntity {
     }
 
     focusOnPlayer () {
-        const { camera, player, overlay, startTimeout } = this.game
+        const { camera, player } = this.scene
+        const overlay = this.scene.getLayer(LAYERS.OVERLAY)
 
-        startTimeout('switch_focus_on_player', 500, () => {
+        this.scene.startTimeout('switch_focus_on_player', 500, () => {
             overlay.fadeIn()
             camera.setFollow(player)
             player.cameraFollow()
@@ -116,20 +114,20 @@ export default class Switch extends GameEntity {
     }
 
     interact () {
-        const { player, props, scene, startTimeout } = this.game
+        const { player, sfx } = this.scene
         const { activator, anchor_hint } = this.properties
 
         if (player.canUse(activator)) {
             player.hideHint()
             player.useItem(activator)
-            !this.switched && props.playSound(SOUNDS.SWITCH)
+            !this.switched && sfx(SOUNDS.SWITCH)
             this.switched = true
-            startTimeout('switch_wait', 500, () => {
+            this.scene.startTimeout('switch_wait', 500, () => {
                 this.activated = true
             })
         }
         else if (!this.switched) {
-            const item = scene.getObjectByProperty('id', activator, LAYERS.OBJECTS)
+            const item = this.scene.getObjectByProperty('id', activator, LAYERS.OBJECTS)
             player.moveItems()
             if (item) {
                 anchor_hint

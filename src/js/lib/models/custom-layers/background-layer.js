@@ -2,23 +2,19 @@ import { Layer } from 'tiled-platformer-lib'
 import { ASSETS, COLORS, LAYERS } from '../../constants'
 
 export default class BackgroundLayer extends Layer {
-    constructor (game) {
-        super(game)
-        this.game = game
+    constructor (scene) {
+        super(scene)
         this.id = LAYERS.CUSTOM_BACKGROUND
     }
 
-    draw () {
+    draw (ctx) {
         const {
-            ctx,
-            camera,
             player,
-            scene: {
-                assets,
-                resolutionX,
-                resolutionY
-            }
-        } = this.game
+            camera,
+            assets,
+            resolutionX,
+            resolutionY
+        } = this.scene
 
         if (camera.y > -740 && !player.inDark) {
             const offsetX = camera.x + 3000

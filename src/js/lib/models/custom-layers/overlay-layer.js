@@ -1,12 +1,11 @@
 import { Layer } from 'tiled-platformer-lib'
-import { isValidArray } from '../../utils/helpers'
+import { countTime, isValidArray } from '../../utils/helpers'
 import { ASSETS, COLORS, FONTS, LAYERS } from '../../constants'
 
 export default class OverlayLayer extends Layer {
-    constructor (game) {
-        super(game)
+    constructor (scene) {
+        super(scene)
         this.id = LAYERS.OVERLAY
-        this.game = game
         this.blackOverlay = 0
         this.alpha = 1
         this.introShow = 1
@@ -35,24 +34,19 @@ export default class OverlayLayer extends Layer {
         }
     }
 
-    draw () {
-        const {
-            ctx,
-            props: {
-                viewport: { resolutionX, resolutionY }
-            }
-        } = this.game
+    draw (ctx) {
+        const { resolutionX, resolutionY } = this.scene
 
-        this.displayHUD()
+        this.displayHUD(ctx)
 
         isValidArray(this.hints) && this.hints.map(
-            (hint, i) => this.displayHint(hint, i)
+            (hint, i) => this.displayHint(ctx, hint, i)
         )
         isValidArray(this.messages) && this.messages.map(
-            (message, i) => this.displayMessage(message, i)
+            (message, i) => this.displayMessage(ctx, message, i)
         )
 
-        this.game.checkTimeout('player_map') && this.displayMap()
+        this.scene.checkTimeout('player_map') && this.displayMap(ctx)
 
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay
@@ -61,23 +55,13 @@ export default class OverlayLayer extends Layer {
         }
     }
 
-    displayHUD () {
-        const {
-            ctx,
-            camera,
-            countTime,
-            debug,
-            player,
-            props,
-            scene
-        } = this.game
-
-        const { assets, viewport: { resolutionX, resolutionY } } = props
+    displayHUD (ctx) {
+        const { assets, camera, player, resolutionX, resolutionY, timer } = this.scene
         const { energy, items, lives } = player
-
-        const activeObjectsCount = scene.getLayer(LAYERS.OBJECTS).activeObjectsCount
+        const debug = this.scene.getProperty('debug')
+        const activeObjectsCount = this.scene.getLayer(LAYERS.OBJECTS).activeObjectsCount
         const objects = `OBJ: ${activeObjectsCount}`
-        const time = countTime()
+        const time = countTime(timer)
 
         ctx.save()
 
@@ -89,23 +73,23 @@ export default class OverlayLayer extends Layer {
             this.alpha += 0.02
         }
 
-        this.displayText(`${String.fromCharCode(8)}`, resolutionX - (10 + time.length * 5), 2)
-        this.displayText(time, resolutionX - (3 + time.length * 5), 2)
+        this.displayText(`${String.fromCharCode(8)}`, resolutionX - (10 + time.length * 5), 2)(ctx)
+        this.displayText(time, resolutionX - (3 + time.length * 5), 2)(ctx)
 
         // Active objects
-        debug && this.displayText(objects, resolutionX - (3 + objects.length * 5), 10)
+        debug && this.displayText(objects, resolutionX - (3 + objects.length * 5), 10)(ctx)
 
         // Camera position in debug mode
-        debug && this.displayText(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 3, 22)
+        debug && this.displayText(`CAMERA\nx:${Math.floor(camera.x)}\ny:${Math.floor(camera.y)}`, 3, 22)(ctx)
 
         // lives and energy
         const indicatorWidth = energy && Math.round(energy / 2) || 1
         // ctx.drawImage(assets[ASSETS.HEAD], 2, 1)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 5, 50, 5, -25 + resolutionX / 2, 2, 50, 5)
         ctx.drawImage(assets[ASSETS.ENERGY], 0, 0, indicatorWidth, 5, -25 + resolutionX / 2, 2, indicatorWidth, 5)
-        this.displayText('LIVES', 3, 2)
+        this.displayText('LIVES', 3, 2)(ctx)
         for (let l = 0; l < lives; l++) {
-            this.displayText(`${String.fromCharCode(3)}`, 30 + (l * 6), 2)
+            this.displayText(`${String.fromCharCode(3)}`, 30 + (l * 6), 2)(ctx)
         }
 
         // items
@@ -114,19 +98,15 @@ export default class OverlayLayer extends Layer {
         items.map((item, index) => {
             if (item) {
                 // this.displayText(item.name, 44, (resolutionY - 18) + index * 9)
-                this.drawTile(item.gid, align + 1 + (index * 20), resolutionY - 19)
+                this.drawTile(item.gid, align + 1 + (index * 20), resolutionY - 19)(ctx)
             }
         })
         ctx.restore()
     }
 
-    displayHint ({ x, y, width, hint }, index) {
+    displayHint (ctx, { x, y, width, hint }, index) {
         if (isValidArray(hint)) {
-            const {
-                ctx,
-                camera,
-                props: { assets }
-            } = this.game
+            const { camera, assets } = this.scene
 
             ctx.drawImage(assets[ASSETS.BUBBLE],
                 0, (hint.length - 1) * 32, 160, 32,
@@ -139,34 +119,32 @@ export default class OverlayLayer extends Layer {
             hint.map(({ gid }, i) => this.drawTile(gid,
                 offsetX + Math.ceil(x + 8 + camera.x + width / 2) + i * 20,
                 Math.ceil(y + camera.y - 18)
-            ))
+            )(ctx))
         }
         this.hints.splice(index, 1)
     }
 
-    displayMessage ({ x, y, message }, index) {
-        const { camera } = this.game
-        this.displayText(message, x + camera.x, y + camera.y)
+    displayMessage (ctx, { x, y, message }, index) {
+        const { camera } = this.scene
+        this.displayText(message, x + camera.x, y + camera.y)(ctx)
         this.messages.splice(index, 1)
     }
 
     drawTile (gid, x, y, scale) {
-        if (!gid) return
-
-        const item = this.game.scene.createSprite(gid, { gid, width: 16, height: 16 })
-
-        item.draw(x, y, scale)
+        return (ctx) => {
+            if (!gid) return
+            const item = this.scene.createSprite(gid, { gid, width: 16, height: 16 })
+            item.draw(ctx, x, y, scale)
+        }
     }
 
-    displayMap () {
+    displayMap (ctx) {
         const {
-            ctx,
             player,
-            props: {
-                assets,
-                viewport: { resolutionX, resolutionY }
-            }
-        } = this.game
+            assets,
+            resolutionX,
+            resolutionY
+        } = this.scene
 
         ctx.save()
         ctx.globalAlpha = 0.8
@@ -183,44 +161,38 @@ export default class OverlayLayer extends Layer {
             const i = (gid - 1221)
             const j = i < 3 ? 0 : 1
             const k = !j ? 48 : 144
-            this.drawTile(
-                gid,
+            this.drawTile(gid,
                 Math.floor((resolutionX / 2) + (i * 32) - k),
                 Math.floor((resolutionY / 2) + (j * 32) - 37),
                 2
-            )
+            )(ctx)
         })
 
-        this.displayText('COLLECTED MAP PIECES',
-            (resolutionX / 2) - 49, 12
-        )
-
-        this.displayText('[M] - Display map',
-            (resolutionX / 2) - 44,
-            (resolutionY) - 24,
-        )
+        this.displayText('COLLECTED MAP PIECES', (resolutionX / 2) - 49, 12)(ctx)
+        this.displayText('[M] - Display map', (resolutionX / 2) - 44, resolutionY - 24)(ctx)
     }
 
     displayText (text, x, y, font = FONTS.FONT_SMALL) {
-        const { ctx, props: { assets } } = this.game
-
-        if (text) {
-            text.split('\n').reverse().map((output, index) => {
-                for (let i = 0; i < output.length; i++) {
-                    const chr = output.charCodeAt(i)
-                    ctx.drawImage(assets[font.name],
-                        ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
-                        font.size, font.size,
-                        Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
-                        font.size, font.size
-                    )
-                }
-            })
+        const { assets } = this.scene
+        return (ctx) => {
+            if (text) {
+                text.split('\n').reverse().map((output, index) => {
+                    for (let i = 0; i < output.length; i++) {
+                        const chr = output.charCodeAt(i)
+                        ctx.drawImage(assets[font.name],
+                            ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
+                            font.size, font.size,
+                            Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
+                            font.size, font.size
+                        )
+                    }
+                })
+            }
         }
     }
 
-    displayDebug (entity) {
-        const { ctx, camera } = this.game
+    displayDebug (ctx, entity) {
+        const { camera } = this.scene
         const { collisionMask, width, height, name, type, visible, force } = entity
         const [ posX, posY ] = [
             Math.floor(entity.x + camera.x),
@@ -246,7 +218,7 @@ export default class OverlayLayer extends Layer {
             this.outline(
                 posX, posY, width, height,
                 visible ? COLORS.GREEN : COLORS.PURPLE
-            )
+            )(ctx)
         }
         if (collisionMask) {
             ctx.save()
@@ -264,36 +236,38 @@ export default class OverlayLayer extends Layer {
             this.displayText(`${name || type}\nx:${Math.floor(entity.x)}\ny:${Math.floor(entity.y)}`,
                 posX,
                 posY - 8,
-            )
+            )(ctx)
         }
         if (force.x !== 0) {
             const forceX = `${force.x.toFixed(2)}`
             this.displayText(forceX,
                 force.x > 0 ? posX + width + 1 : posX - (forceX.length * 5) - 1,
                 posY + height / 2,
-            )
+            )(ctx)
         }
         if (force.y !== 0) {
             const forceY = `${force.y.toFixed(2)}`
             this.displayText(forceY,
                 posX + (width - (forceY.length * 5)) / 2,
                 posY + height / 2
-            )
+            )(ctx)
         }
     }
 
+    // @todo: move to helpers
     outline (x, y, width, height, color) {
-        const { ctx } = this.game
-        ctx.save()
-        ctx.strokeStyle = color
-        ctx.beginPath()
-        ctx.moveTo(x, y)
-        ctx.lineTo(x + width, y)
-        ctx.lineTo(x + width, y + height)
-        ctx.lineTo(x, y + height)
-        ctx.lineTo(x, y)
-        ctx.stroke()
-        ctx.restore()
+        return (ctx) => {
+            ctx.save()
+            ctx.strokeStyle = color
+            ctx.beginPath()
+            ctx.moveTo(x, y)
+            ctx.lineTo(x + width, y)
+            ctx.lineTo(x + width, y + height)
+            ctx.lineTo(x, y + height)
+            ctx.lineTo(x, y)
+            ctx.stroke()
+            ctx.restore()
+        }
     }
 
     addHint ({ x, y, width, hint }) {

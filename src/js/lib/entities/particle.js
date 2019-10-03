@@ -2,8 +2,8 @@ import { GameEntity } from '../models'
 import { random, randomInt } from '../../lib/utils/helpers'
 
 export default class Particle extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         const dir = random(0, 2) * Math.PI
         this.maxSpeed = random(0.5, 1)
         this.force = obj.force || {
@@ -20,9 +20,9 @@ export default class Particle extends GameEntity {
         return true
     }
 
-    draw () {
+    draw (ctx) {
         if (this.onScreen()) {
-            const { ctx, camera } = this.game
+            const { camera } = this.scene
             ctx.save()
             ctx.fillStyle = this.color
             ctx.beginPath()

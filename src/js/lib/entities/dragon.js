@@ -1,8 +1,8 @@
 import { GameEntity } from '../models'
 
 export default class Dragon extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
         this.y -= obj.height
         this.setBoundingBox(60, 108, this.width - 158, this.height - 140)

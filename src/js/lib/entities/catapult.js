@@ -2,22 +2,22 @@ import { GameEntity } from '../models'
 import { ENTITIES_TYPE, ITEMS_TYPE } from '../../lib/constants'
 
 export default class Catapult extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
     }
 
     collide (element) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
             element.y -= 8
-            this.game.startTimeout('catapult_wait', 100, () => {
+            this.scene.startTimeout('catapult_wait', 100, () => {
                 element.force.y = -20
-                element.onFloor = false
+                element.onGround = false
                 element.jump = true
             })
 
-            if (!this.game.checkTimeout('catapult')) {
-                this.game.startTimeout('catapult', 1000, () => {
+            if (!this.scene.checkTimeout('catapult')) {
+                this.scene.startTimeout('catapult', 1000, () => {
                     this.activated = false
                     this.trigger.activated = false
                     this.trigger.switched = false

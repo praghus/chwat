@@ -1,13 +1,13 @@
 import { GameEntity } from '../models'
 
 export default class Camera extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = false
     }
 
     update () {
-        const { follow } = this.game.camera
+        const { follow } = this.scene.camera
         const followMidX = follow.x + follow.width / 2
         const followMidY = follow.y + follow.height / 2
         if (
@@ -16,7 +16,7 @@ export default class Camera extends GameEntity {
             followMidY > this.y &&
             followMidY < this.y + this.height
         ) {
-            this.game.setCameraViewport(this)
+            this.scene.setCameraViewport(this)
         }
     }
 }

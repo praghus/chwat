@@ -1,21 +1,20 @@
 import { GameEntity } from '../models'
-import { createLamp } from 'tiled-platformer-lib'
+import { createLightSource } from 'tiled-platformer-lib'
 import { COLORS, DIRECTIONS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class Water extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.damage = 100
         this.direction = DIRECTIONS.DOWN
         this.radius = this.height
         this.animation = this.animations.WAVES
-        this.light = createLamp(0, 0, this.radius, COLORS.WATER)
+        this.light = createLightSource(0, 0, this.radius, COLORS.WATER)
     }
 
-    draw () {
+    draw (ctx) {
         if (this.onScreen()) {
-            const { ctx, camera, scene, props: { assets } } = this.game
-            const { map: { tilewidth, tileheight } } = scene
+            const { camera, assets, map: { tilewidth, tileheight } } = this.scene
             const { canFall } = this.properties
             const { animFrame } = this.sprite
 
@@ -30,8 +29,8 @@ export default class Water extends GameEntity {
                 for (let x = 0; x < pW; x++) {
                     const PX = Math.round((this.x + (x * tilewidth)) / tilewidth)
                     const PY = Math.round((this.y + (y * tileheight)) / tileheight)
-                    if (!scene.isSolidArea(PX, PY, this.collisionLayers)) {
-                        ctx.drawImage(assets[this.asset],
+                    if (!this.scene.isSolidArea(PX, PY, this.collisionLayers)) {
+                        ctx.drawImage(assets[this.aid],
                             y === 0 ? this.animation.frames[animFrame][0] : 0,
                             y === 0 ? this.animation.frames[animFrame][1] : 32,
                             tilewidth, tileheight,
@@ -39,7 +38,7 @@ export default class Water extends GameEntity {
                             tilewidth, tileheight
                         )
                     }
-                    if (!scene.isSolidArea(PX, PY + 1, this.collisionLayers) && canFall && y + 1 === pH) {
+                    if (!this.scene.isSolidArea(PX, PY + 1, this.collisionLayers) && canFall && y + 1 === pH) {
                         this.fall = true
                     }
                 }

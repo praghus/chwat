@@ -19,8 +19,6 @@ export function calculateViewportSize (width, height) {
     return {
         width: calculatedWidth,
         height: calculatedHeight,
-        resolutionX: Math.round(calculatedWidth / pixelScale),
-        resolutionY: Math.round(calculatedHeight / pixelScale),
         scale: pixelScale
     }
 }
@@ -101,3 +99,8 @@ export function between (value, a, b) {
     return value >= min && value <= max
 }
 
+export function approach (start, end, shift) {
+    return start < end
+        ? Math.min(start + shift, end)
+        : Math.max(start - shift, end)
+}

@@ -2,8 +2,8 @@ import { GameEntity } from '../models'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class KillZone extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.damage = 1000
     }
 

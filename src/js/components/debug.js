@@ -42,6 +42,20 @@ export default class Debug extends Component {
                         }} />
                     Mute
                 </label>
+                <label>
+                    <input
+                        type='checkbox'
+                        ref={(ref) => { this.checkboxCrt = ref }}
+                        defaultChecked={config[CONFIG.CRT_EFFECT]}
+                        onChange={() => {
+                            this.checkboxCrt.blur()
+                            onConfig(
+                                CONFIG.CRT_EFFECT,
+                                !config[CONFIG.CRT_EFFECT]
+                            )
+                        }} />
+                    CRT
+                </label>
                 <div className='fpsmeter'>
                     {fps.toFixed(1)} FPS
                 </div>

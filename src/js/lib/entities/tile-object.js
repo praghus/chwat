@@ -1,18 +1,19 @@
 import { GameEntity } from '../models'
-import { createLamp } from 'tiled-platformer-lib'
+import { createLightSource } from 'tiled-platformer-lib'
 import { COLORS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class TileObject extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
         this.visible = true
         this.y -= obj.height
         this.shadowCaster = this.type === ENTITIES_TYPE.BOX
         if (this.type === ENTITIES_TYPE.BONUS) {
-            this.light = createLamp(0, 0, 32, COLORS.BONUS)
+            this.light = createLightSource(0, 0, 32, COLORS.BONUS)
         }
     }
+
     collide (element, response) {
         const overlap = response.overlapV
         if (element.type === ENTITIES_TYPE.PLAYER) {
@@ -21,13 +22,11 @@ export default class TileObject extends GameEntity {
                 if (overlap.y !== 0) {
                     element.force.y = 0
                     element.y -= overlap.y
-                    element.onFloor = true
+                    element.onGround = true
                     element.jump = false
                 }
                 else if (overlap.x !== 0) {
-                    // element.force.x -= overlap.x / 2
                     this.x += overlap.x
-                    // this.force.x += overlap.x
                 }
 
                 break
@@ -42,7 +41,7 @@ export default class TileObject extends GameEntity {
 
     update () {
         if (this.onScreen()) {
-            const { scene: { gravity } } = this.game
+            const { gravity } = this.scene
 
             if (this.type === ENTITIES_TYPE.BONUS) {
                 this.force = { x: 0, y: 0 }
@@ -62,12 +61,12 @@ export default class TileObject extends GameEntity {
         this.x = x
         this.y = y
         this.force.y = 1
-        this.onFloor = false
+        this.onGround = false
         this.visible = true
     }
 
     restore () {
-        const { x, y } = this.initialPosition
+        const { x, y } = this.initialPos
         this.placeAt(x, y - this.height)
     }
 }

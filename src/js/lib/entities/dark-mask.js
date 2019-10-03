@@ -3,8 +3,8 @@ import { Vector, pointInPolygon } from 'sat'
 import { ENTITIES_TYPE } from '../../lib/constants'
 
 export default class DarkMask extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.visible = false
     }
 
@@ -15,7 +15,7 @@ export default class DarkMask extends GameEntity {
                 obj.y + obj.height / 2
             )
             if (pointInPolygon(point, this.getTranslatedBounds())) {
-                this.game.player.inDark = true
+                this.scene.player.inDark = true
             }
         }
     }

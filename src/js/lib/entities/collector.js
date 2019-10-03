@@ -3,8 +3,8 @@ import { getProperties, getItemById, isValidArray } from '../utils/helpers'
 import { ENTITIES_TYPE, ITEMS, LAYERS } from '../constants'
 
 export default class Collector extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = false
         this.visible = false
         this.activated = false
@@ -17,7 +17,7 @@ export default class Collector extends GameEntity {
     }
 
     collide (element) {
-        const { player } = this.game
+        const { player } = this.scene
         const { activator, anchor_hint } = this.properties
 
         if (this.initialized) {
@@ -63,21 +63,22 @@ export default class Collector extends GameEntity {
     }
 
     update () {
-        if (this.activated || this.game.debug) {
-            const { camera, overlay, player, scene } = this.game
+        if (this.activated || this.scene.getProperty('debug')) {
+            const { camera, player } = this.scene
             const { fade, modify, produce, related, shake } = this.properties
+            const overlay = this.scene.getLayer(LAYERS.OVERLAY)
 
             this.activators.map((item) => item.kill())
 
             if (modify) {
                 const matrix = JSON.parse(modify)
                 isValidArray(matrix) && matrix.map(
-                    ([x, y, id, layer]) => scene.putTile(x, y, id, layer)
+                    ([x, y, id, layer]) => this.scene.putTile(x, y, id, layer)
                 )
             }
 
             if (related) {
-                const rel = scene.getObjectById(related, LAYERS.OBJECTS)
+                const rel = this.scene.getObjectById(related, LAYERS.OBJECTS)
                 rel.activated = true
                 rel.visible = true
                 rel.trigger = this

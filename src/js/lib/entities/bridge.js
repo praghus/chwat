@@ -1,8 +1,8 @@
 import { GameEntity } from '../models'
 
 export default class Bridge extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
     }
 

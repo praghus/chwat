@@ -2,9 +2,8 @@ import { Layer } from 'tiled-platformer-lib'
 import { COLORS, FONTS, LAYERS, ASSETS } from '../../constants'
 
 export default class GameOverLayer extends Layer {
-    constructor (game) {
-        super(game)
-        this.game = game
+    constructor (scene) {
+        super(scene)
         this.id = LAYERS.GAME_OVER
         this.blackOverlay = 1
     }
@@ -15,16 +14,9 @@ export default class GameOverLayer extends Layer {
         }
     }
 
-    draw () {
-        const {
-            ctx,
-            overlay,
-            scene: {
-                assets,
-                resolutionX,
-                resolutionY
-            }
-        } = this.game
+    draw (ctx) {
+        const { assets, resolutionX, resolutionY } = this.scene
+        const overlay = this.scene.getLayer(LAYERS.OVERLAY)
 
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)

@@ -1,8 +1,8 @@
 import { GameEntity } from '../models'
 
 export default class Ship extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, scene) {
+        super(obj, scene)
         this.solid = true
         this.visible = false
         this.activated = false
@@ -15,8 +15,8 @@ export default class Ship extends GameEntity {
 
     update () {
         // this.onScreen()
-        //     ? this.game.startTimeout('ship', 200, this.increase)
-        //     : this.game.stopTimeout('ship')
+        //     ? this.scene.startTimeout('ship', 200, this.increase)
+        //     : this.scene.stopTimeout('ship')
     }
 
     increase () {

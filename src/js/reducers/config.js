@@ -2,9 +2,10 @@ import { CONFIG, SCENES } from '../lib/constants'
 import { UPDATE_CONFIG } from '../actions'
 
 const initialState = {
-    [CONFIG.SCENE]: SCENES.INTRO,
+    [CONFIG.SCENE]: SCENES.GAME,
     [CONFIG.DEBUG_MODE]: false,
-    [CONFIG.DISABLE_SOUNDS]: false
+    [CONFIG.DISABLE_SOUNDS]: true,
+    [CONFIG.CRT_EFFECT]: false
 }
 
 const actionsMap = {

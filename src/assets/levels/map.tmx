@@ -74,28 +74,28 @@
   <tile id="100" type="no_collide"/>
   <tile id="103" type="no_collide"/>
   <tile id="104" type="no_collide"/>
-  <tile id="110">
+  <tile id="110" type="slope">
    <objectgroup draworder="index">
     <object id="4" x="0" y="16">
      <polygon points="0,0 6,-9 16,-16 16,0"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="111">
+  <tile id="111" type="slope">
    <objectgroup draworder="index">
     <object id="10" x="0" y="0">
      <polygon points="0,0 9,7 14,11 16,16 0,16"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="114">
+  <tile id="114" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="4" y="16">
      <polygon points="0,0 12,-9 12,0"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="115">
+  <tile id="115" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="0" y="6">
      <polygon points="0,0 16,-6 16,10 0,10"/>
@@ -127,28 +127,28 @@
   <tile id="135" type="no_collide"/>
   <tile id="136" type="no_collide"/>
   <tile id="139" type="no_collide"/>
-  <tile id="140">
+  <tile id="140" type="slope">
    <objectgroup draworder="index">
     <object id="3" x="0" y="16">
      <polygon points="0,0 16,-11 16,0"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="141">
+  <tile id="141" type="slope">
    <objectgroup draworder="index">
     <object id="2" x="0" y="7">
      <polygon points="0,-1 6,-4 14,-7 16,-7 16,9 0,9"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="144">
+  <tile id="144" type="slope">
    <objectgroup draworder="index">
     <object id="7" x="0" y="0">
      <polygon points="0,0 7,1 12,3 16,8 16,16 0,16"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="145">
+  <tile id="145" type="slope">
    <objectgroup draworder="index">
     <object id="2" x="0" y="8">
      <polygon points="0,-1 16,8 0,8"/>
@@ -185,27 +185,27 @@
   <tile id="186" type="no_collide"/>
   <tile id="187" type="one_way"/>
   <tile id="188" type="one_way"/>
-  <tile id="197">
+  <tile id="197" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="0" y="8" width="8" height="8"/>
    </objectgroup>
   </tile>
-  <tile id="198">
+  <tile id="198" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="8" y="8" width="8" height="8"/>
    </objectgroup>
   </tile>
-  <tile id="199">
+  <tile id="199" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="7" y="8" width="9" height="8"/>
    </objectgroup>
   </tile>
-  <tile id="200">
+  <tile id="200" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="0" y="8" width="16" height="8"/>
    </objectgroup>
   </tile>
-  <tile id="201">
+  <tile id="201" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="0" y="8" width="9" height="8"/>
    </objectgroup>
@@ -222,28 +222,28 @@
   <tile id="218" type="no_collide"/>
   <tile id="219" type="no_collide"/>
   <tile id="220" type="no_collide"/>
-  <tile id="229">
+  <tile id="229" type="slope">
    <objectgroup draworder="index">
     <object id="8" x="16" y="16">
      <polygon points="0,0 -16,0 0,-16"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="232">
+  <tile id="232" type="slope">
    <objectgroup draworder="index">
     <object id="2" x="0" y="0">
      <polygon points="0,0 16,16 0,16"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="233">
+  <tile id="233" type="slope">
    <objectgroup draworder="index">
     <object id="3" x="0" y="16">
      <polygon points="0,0 16,-16 16,0"/>
     </object>
    </objectgroup>
   </tile>
-  <tile id="234">
+  <tile id="234" type="slope">
    <objectgroup draworder="index">
     <object id="2" x="0" y="0">
      <polygon points="0,0 16,16 0,16"/>
@@ -258,22 +258,22 @@
   <tile id="250" type="no_collide"/>
   <tile id="251" type="no_collide"/>
   <tile id="252" type="no_collide"/>
-  <tile id="263">
+  <tile id="263" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="8" y="8" width="8" height="8"/>
    </objectgroup>
   </tile>
-  <tile id="264">
+  <tile id="264" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="0" y="8" width="8" height="8"/>
    </objectgroup>
   </tile>
-  <tile id="266">
+  <tile id="266" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="8" y="8" width="8" height="8"/>
    </objectgroup>
   </tile>
-  <tile id="267">
+  <tile id="267" type="slope">
    <objectgroup draworder="index">
     <object id="1" x="0" y="8" width="8" height="8"/>
    </objectgroup>
@@ -1172,7 +1172,7 @@ against each other</property>
     <property name="goal" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1018" name="Player" type="player" x="4880" y="720" width="32" height="48"/>
+  <object id="1018" name="Player" type="player" x="4960" y="720" width="32" height="48"/>
   <object id="1045" name="bonus" type="bonus" gid="281" x="6112" y="1184" width="16" height="16"/>
   <object id="800" name="Rock" type="rock" x="3460" y="1056" width="32" height="32">
    <ellipse/>

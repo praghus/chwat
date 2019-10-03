@@ -19,7 +19,6 @@ const propTypes = {
     onConfig: PropTypes.func.isRequired,
     onKey: PropTypes.func.isRequired,
     onMouse: PropTypes.func.isRequired,
-    playSound: PropTypes.func.isRequired,
     setScene: PropTypes.func.isRequired,
     startTicker: PropTypes.func.isRequired,
     ticker: tickerPropType.isRequired,

@@ -1,7 +1,8 @@
 export const CONFIG = {
     SCENE: 'scene',
     DEBUG_MODE: 'debugMode',
-    DISABLE_SOUNDS: 'disableSounds'
+    DISABLE_SOUNDS: 'disableSounds',
+    CRT_EFFECT: 'crtEffect'
 }
 
 export const LAYERS = {
