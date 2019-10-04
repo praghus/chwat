@@ -11,7 +11,7 @@ export default class Catapult extends GameEntity {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
             element.y -= 8
             this.scene.startTimeout('catapult_wait', 100, () => {
-                element.force.y = -20
+                element.force.y = -19
                 element.onGround = false
                 element.jump = true
             })

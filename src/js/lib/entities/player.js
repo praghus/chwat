@@ -182,7 +182,7 @@ export default class Player extends GameEntity {
             }
             if (input.keyPressed[INPUTS.INPUT_UP] && this.canJump()) {
                 this.jump = true
-                this.force.y = -6
+                this.force.y = -5.8
                 sfx(SOUNDS.PLAYER_JUMP)
             }
             else if (this.jump && this.onGround) {
@@ -194,7 +194,6 @@ export default class Player extends GameEntity {
                 this.showMap()
             }
         }
-
         this.force.y += this.force.y > 0
             ? this.scene.gravity
             : this.scene.gravity / 2

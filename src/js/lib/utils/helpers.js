@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { ENTITIES, INPUT_KEYS, ITEMS } from '../constants'
+import { ENTITIES, FONTS, INPUT_KEYS, ITEMS } from '../constants'
 
 export const isProduction = process.env.NODE_ENV === 'production'
 export const noop = () => {}
@@ -103,4 +103,18 @@ export function approach (start, end, shift) {
     return start < end
         ? Math.min(start + shift, end)
         : Math.max(start - shift, end)
+}
+
+export function displayText (text = '', x, y, font = FONTS.FONT_SMALL) {
+    return (ctx, assets) => text.split('\n').reverse().map((output, index) => {
+        for (let i = 0; i < output.length; i++) {
+            const chr = output.charCodeAt(i)
+            ctx.drawImage(assets[font.name],
+                ((chr) % 16) * font.size, Math.ceil(((chr + 1) / 16) - 1) * font.size,
+                font.size, font.size,
+                Math.floor(x + (i * font.size)), Math.floor(y - (index * (font.size + 1))),
+                font.size, font.size
+            )
+        }
+    })
 }

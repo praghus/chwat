@@ -2,8 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Canvas from '../canvas'
 import Inputs from '../inputs'
-import { OverlayLayer } from '../../lib/models'
-import { ASSETS, COLORS, SCENES } from '../../lib/constants'
+import { displayText } from '../../lib/utils/helpers'
+import {
+    ASSETS,
+    COLORS,
+    SCENES
+} from '../../lib/constants'
 import {
     assetPropType,
     inputPropType,
@@ -35,19 +39,37 @@ export default class IntroScene extends Component {
 
     componentDidMount () {
         const { startTicker } = this.props
-        this.ctx = this.canvas.context
-        this.overlay = new OverlayLayer(this)
         startTicker()
     }
 
     componentDidUpdate () {
-        if (this.ctx) {
-            this.draw()
+        const { ctx, ctxBuffer } = this.canvas
+        if (ctx && ctxBuffer) {
+            const { assets, viewport: { scale, width, height } } = this.props
+            const resolutionX = Math.round(width / scale)
+            const resolutionY = Math.round(height / scale)
+            ctxBuffer.imageSmoothingEnabled = false
+            ctxBuffer.save()
+            ctxBuffer.scale(scale, scale)
+            ctxBuffer.fillStyle = COLORS.BLUE_SKY
+            ctxBuffer.fillRect(0, 0, resolutionX, resolutionY)
+            ctxBuffer.drawImage(assets[ASSETS.SKY], 0, 0)
+            ctxBuffer.drawImage(assets[ASSETS.MOUNTAINS], -495, -30)
+            ctxBuffer.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 34)
+
+            displayText(
+                'PRESS ANY KEY TO START',
+                Math.ceil(resolutionX / 2) - 54, resolutionY - 16
+            )(ctxBuffer, assets)
+            ctxBuffer.restore()
+
+            ctx.drawImage(ctxBuffer.canvas, 0, 0)
         }
     }
 
     render () {
         const {
+            config,
             setScene,
             viewport: { width, height }
         } = this.props
@@ -56,35 +78,10 @@ export default class IntroScene extends Component {
 
         return (
             <div ref={(ref) => { this.wrapper = ref }}>
-                <Canvas ref={(ref) => { this.canvas = ref }} {...{ width, height }} />
+                <Canvas ref={(ref) => { this.canvas = ref }} {...{ config, width, height }} />
                 <Inputs {...{ onKey }} />
             </div>
         )
-    }
-
-    draw () {
-        const { ctx, overlay } = this
-        const {
-            assets, viewport: {
-                scale,
-                resolutionX,
-                resolutionY
-            }
-        } = this.props
-
-        ctx.imageSmoothingEnabled = false
-        ctx.save()
-        ctx.scale(scale, scale)
-
-        ctx.fillStyle = COLORS.BLUE_SKY
-        ctx.fillRect(0, 0, resolutionX, resolutionY)
-        ctx.drawImage(assets[ASSETS.SKY], 0, 0)
-        ctx.drawImage(assets[ASSETS.MOUNTAINS], -495, -30)
-        ctx.drawImage(assets[ASSETS.LOGO], Math.ceil(resolutionX / 2) - 66, Math.ceil(resolutionY / 2) - 34)
-
-        overlay.displayText('PRESS ANY KEY TO START', Math.ceil(resolutionX / 2) - 54, resolutionY - 16)
-
-        ctx.restore()
     }
 }
 

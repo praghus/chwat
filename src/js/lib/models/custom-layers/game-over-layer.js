@@ -1,4 +1,5 @@
 import { Layer } from 'tiled-platformer-lib'
+import { displayText } from '../../utils/helpers'
 import { COLORS, FONTS, LAYERS, ASSETS } from '../../constants'
 
 export default class GameOverLayer extends Layer {
@@ -16,13 +17,12 @@ export default class GameOverLayer extends Layer {
 
     draw (ctx) {
         const { assets, resolutionX, resolutionY } = this.scene
-        const overlay = this.scene.getLayer(LAYERS.OVERLAY)
 
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)
         ctx.drawImage(assets[ASSETS.GAME_OVER], Math.ceil(resolutionX / 2) - 36, Math.ceil(resolutionY / 2) - 54)
 
-        overlay.displayText('GAME OVER', Math.ceil(resolutionX / 2) - 36, resolutionY - 16, FONTS.FONT_NORMAL)
+        displayText('GAME OVER', Math.ceil(resolutionX / 2) - 36, resolutionY - 16, FONTS.FONT_NORMAL)(ctx, assets)
 
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay
