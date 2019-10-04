@@ -86,7 +86,7 @@ export default class Trigger extends GameEntity {
                 this.scene.getLayer(LAYERS.OVERLAY).fadeOut()
                 this.scene.startTimeout('game_over', 2000, player.gameCompleted())
                 this.scene.startTimeout('restart', 10000, () => {
-                    this.scene.setScene(SCENES.INTRO)
+                    this.scene.properties.setScene(SCENES.INTRO)
                 })
             }
 

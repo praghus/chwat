@@ -16,7 +16,15 @@ export default class Camera extends GameEntity {
             followMidY > this.y &&
             followMidY < this.y + this.height
         ) {
-            this.scene.setCameraViewport(this)
+            this.setCameraViewport()
+        }
+    }
+
+    setCameraViewport () {
+        const { id, x, y, width, height } = this
+        if (this.scene.getProperty('currentCameraId') !== id) {
+            this.scene.camera.setBounds(x, y, width, height)
+            this.scene.setProperty('currentCameraId', id)
         }
     }
 }

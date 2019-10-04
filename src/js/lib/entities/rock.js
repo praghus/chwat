@@ -44,7 +44,7 @@ export default class Rock extends GameEntity {
         if (this.activated) {
             if (!this.soundPlayed) {
                 this.soundPlayed = true
-                this.scene.sfx(SOUNDS.ROCK)
+                this.scene.properties.sfx(SOUNDS.ROCK)
             }
             const { camera, gravity } = this.scene
 

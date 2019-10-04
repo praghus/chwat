@@ -1172,7 +1172,7 @@ against each other</property>
     <property name="goal" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="1018" name="Player" type="player" x="4976" y="720" width="32" height="48"/>
+  <object id="1018" name="Player" type="player" x="1312" y="720" width="32" height="48"/>
   <object id="1045" name="bonus" type="bonus" gid="281" x="6112" y="1184" width="16" height="16"/>
   <object id="800" name="Rock" type="rock" x="3460" y="1056" width="32" height="32">
    <ellipse/>

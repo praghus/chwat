@@ -61,7 +61,7 @@ export default class Slime extends GameEntity {
                 this.scene.startTimeout(`wait_${this.id}`, 2300, () => {
                     if (this.onScreen()) {
                         this.running = true
-                        this.scene.sfx(SOUNDS.SLIME)
+                        this.scene.properties.sfx(SOUNDS.SLIME)
                     }
                     else {
                         this.activated = false

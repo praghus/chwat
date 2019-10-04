@@ -16,6 +16,7 @@ export default class TileObject extends GameEntity {
 
     collide (element, response) {
         const overlap = response.overlapV
+        const { map: { tilewidth, tileheight } } = this.scene
         if (element.type === ENTITIES_TYPE.PLAYER) {
             switch (this.type) {
             case ENTITIES_TYPE.BOX:
@@ -26,7 +27,13 @@ export default class TileObject extends GameEntity {
                     element.jump = false
                 }
                 else if (overlap.x !== 0) {
-                    this.x += overlap.x
+                    if (!this.scene.isSolidArea(
+                        Math.floor((this.x + overlap.x) / tilewidth),
+                        Math.floor(this.y / tileheight),
+                        this.collisionLayers
+                    )) {
+                        this.x += overlap.x
+                    }
                 }
 
                 break

@@ -107,7 +107,7 @@ export default class Player extends GameEntity {
                     overlay.fadeOut()
                     this.visible = false
                     this.scene.startTimeout('game_over', 2000, () => this.killed())
-                    this.scene.startTimeout('restart', 10000, () => this.scene.setScene(SCENES.INTRO))
+                    this.scene.startTimeout('restart', 10000, () => this.scene.properties.setScene(SCENES.INTRO))
                 }
             }
             this.force.y = -2
@@ -147,7 +147,7 @@ export default class Player extends GameEntity {
 
     getInput () {
         const { input } = this
-        const { sfx } = this.scene
+        const { sfx } = this.scene.properties
 
         if (this.action) {
             this.moveItems()
@@ -156,20 +156,14 @@ export default class Player extends GameEntity {
 
         if (this.canMove()) {
             if (input.keyPressed[INPUTS.INPUT_LEFT]) {
-                if (this.direction === DIRECTIONS.RIGHT) {
-                    this.addDust(DIRECTIONS.LEFT)
-                }
+                if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
                 this.force.x = approach(this.force.x, -this.mSpeed, this.aSpeed)
                 this.direction = DIRECTIONS.LEFT
-                this.cameraFollow()
             }
             else if (input.keyPressed[INPUTS.INPUT_RIGHT]) {
-                if (this.direction === DIRECTIONS.LEFT) {
-                    this.addDust(DIRECTIONS.RIGHT)
-                }
+                if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
                 this.force.x = approach(this.force.x, this.mSpeed, this.aSpeed)
                 this.direction = DIRECTIONS.RIGHT
-                this.cameraFollow()
             }
             else {
                 this.force.x = approach(this.force.x, 0, this.dSpeed)
@@ -193,6 +187,7 @@ export default class Player extends GameEntity {
             if (input.keyPressed[INPUTS.INPUT_MAP]) {
                 this.showMap()
             }
+            this.cameraFollow()
         }
         this.force.y += this.force.y > 0
             ? this.scene.gravity
@@ -217,7 +212,7 @@ export default class Player extends GameEntity {
             [this.items[0], this.items[1]] = [item, this.items[0]]
             if (item) {
                 item.visible = false
-                this.scene.sfx(SOUNDS.PLAYER_GET)
+                this.scene.properties.sfx(SOUNDS.PLAYER_GET)
             }
         }
     }

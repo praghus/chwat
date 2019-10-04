@@ -114,7 +114,7 @@ export default class Switch extends GameEntity {
     }
 
     interact () {
-        const { player, sfx } = this.scene
+        const { player, properties: { sfx } } = this.scene
         const { activator, anchor_hint } = this.properties
 
         if (player.canUse(activator)) {

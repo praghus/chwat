@@ -45,7 +45,7 @@ export default class GameScene extends Component {
     componentDidMount () {
         const { assets, startTicker, setScene, viewport } = this.props
         this.map = tmxParser(map).then((data) => {
-            this.scene = new Scene(viewport, { assets, setScene, sfx: (snd) => this.props.sfx(snd) })
+            this.scene = new Scene(assets, viewport, { setScene, sfx: (snd) => this.props.sfx(snd) })
             this.scene.createCustomLayer(BackgroundLayer)
             this.scene.addTmxMap(data, ENTITIES)
             this.scene.createShadowCastingLayer(LAYERS.MAIN)
