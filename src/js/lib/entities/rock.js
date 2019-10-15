@@ -3,11 +3,12 @@ import { randomInt } from '../../lib/utils/helpers'
 import { DIRECTIONS, PARTICLES, SOUNDS } from '../../lib/constants'
 
 export default class Rock extends GameEntity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.doShake = false
         this.activated = false
         this.soundPlayed = false
+        this.attached = true
         this.acceleration = 0.2
         this.maxSpeed = 2
         this.damage = 100
@@ -17,9 +18,9 @@ export default class Rock extends GameEntity {
         this.shadowCaster = true
     }
 
-    draw (ctx) {
-        if (this.onScreen()) {
-            const { camera, assets } = this.scene
+    draw (ctx, scene) {
+        if (this.activated) {
+            const { camera, assets } = scene
             const r = Math.PI / 16
             ctx.save()
             ctx.translate(
@@ -36,17 +37,15 @@ export default class Rock extends GameEntity {
         }
     }
 
-    onScreen () {
-        return this.activated
-    }
-
-    update () {
+    update (scene) {
         if (this.activated) {
+            super.update(scene)
             if (!this.soundPlayed) {
                 this.soundPlayed = true
-                this.scene.properties.sfx(SOUNDS.ROCK)
+                scene.properties.sfx(SOUNDS.ROCK)
             }
-            const { camera, gravity } = this.scene
+            const { camera } = scene
+            const gravity = scene.getProperty('gravity')
 
             if (this.onGround && this.acceleration < this.maxSpeed) {
                 this.acceleration += 0.01
@@ -54,8 +53,6 @@ export default class Rock extends GameEntity {
 
             this.force.y += gravity
             this.force.x = this.acceleration
-
-            this.move()
 
             if (this.x < 7260) {
                 if (!this.onGround) {

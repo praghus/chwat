@@ -7,14 +7,14 @@ export default class BackgroundLayer extends Layer {
         this.id = LAYERS.CUSTOM_BACKGROUND
     }
 
-    draw (ctx) {
+    draw (ctx, scene) {
         const {
             player,
             camera,
             assets,
             resolutionX,
             resolutionY
-        } = this.scene
+        } = scene
 
         if (camera.y > -740 && !player.inDark) {
             const offsetX = camera.x + 3000
@@ -28,7 +28,6 @@ export default class BackgroundLayer extends Layer {
                 ctx.drawImage(assets[ASSETS.MOUNTAINS], offsetX / 15, 278 + offsetY)
                 ctx.drawImage(assets[ASSETS.FAR_FOREST], offsetX / 10, 122 + offsetY)
                 ctx.drawImage(assets[ASSETS.FOREST], offsetX / 5, 270 + offsetY)
-
                 if (camera.y > -fogBorder) {
                     ctx.save()
                     ctx.globalAlpha = ((fogBorder + camera.y) / fogBorder).toFixed(2) * 2

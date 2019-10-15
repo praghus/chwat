@@ -2,8 +2,8 @@ import { GameEntity } from '../models'
 import { COLORS } from '../constants'
 
 export default class SpiderTrap extends GameEntity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.damage = 50
         this.fall = false
         this.rise = false
@@ -16,31 +16,33 @@ export default class SpiderTrap extends GameEntity {
         }, this.fallDelay)
     }
 
-    draw (ctx) {
-        if (this.onScreen()) {
-            const { camera } = this.scene
+    draw (ctx, scene) {
+        if (scene.onScreen(this)) {
+            const { camera } = scene
             ctx.beginPath()
             ctx.strokeStyle = COLORS.SPIDER_WEB
             ctx.moveTo(this.startX + camera.x, this.startY + camera.y)
             ctx.lineTo(this.startX + camera.x, this.y + camera.y)
             ctx.stroke()
-            super.draw(ctx)
+            super.draw(ctx, scene)
         }
     }
 
-    update () {
-        if (this.onScreen()) {
+    update (scene) {
+        if (scene.onScreen(this)) {
+            const gravity = scene.getProperty('gravity')
+
             if (this.rise) {
                 this.force.y = -1
             }
             else if (this.fall) {
-                this.force.y += this.scene.gravity
+                this.force.y += gravity
             }
             else {
                 this.force.y = 0
             }
 
-            this.move()
+            super.update(scene)
             this.sprite.animate(this.animations.DEFAULT)
 
             if (this.onGround) {

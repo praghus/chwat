@@ -1,5 +1,4 @@
 import { GameEntity, EndLayer, GameOverLayer } from '../models'
-import { createLightSource } from 'tiled-platformer-lib'
 import { approach } from '../../lib/utils/helpers'
 import {
     COLORS,
@@ -13,9 +12,10 @@ import {
 } from '../../lib/constants'
 
 export default class Player extends GameEntity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.direction = DIRECTIONS.LEFT
+        this.attached = true
         this.gameFinished = false
         this.gameOver = false
         this.solid = true
@@ -28,62 +28,46 @@ export default class Player extends GameEntity {
         this.dSpeed = 0.3 // deceleration speed
         this.mSpeed = 2 // maximum speed
 
+        this.paused = false
+        this.debug = false
+
         this.inDark = false
         this.items = [null, null]
         this.mapPieces = []
-        this.light = createLightSource(0, 0, 96, COLORS.TRANS_WHITE)
+        this.addLightSource(90, COLORS.TRANS_WHITE)
         this.setBoundingBox(10, 10, this.width - 20, this.height - 10)
-
-        /*
-        states:
-        - idle
-        - walk left
-        - walk right
-        - jump
-        - fall
-        - landed
-        - pick upo
-        - use
-        */
-
-        // this.states = null
-        // this.currentState = null
     }
 
-    draw (ctx) {
+    draw (ctx, scene) {
         ctx.save()
         if (!this.canHurt() && this.canMove()) {
             ctx.globalAlpha = 0.2
         }
-        super.draw(ctx)
+        super.draw(ctx, scene)
         ctx.restore()
     }
 
-    onScreen () {
-        return true
-    }
-
-    collide (element) {
-        const debug = this.scene.getProperty('debug')
-        const overlay = this.scene.getLayer(LAYERS.OVERLAY)
+    collide (element, scene) {
+        const debug = scene.getProperty('debug')
+        const overlay = scene.getLayer(LAYERS.OVERLAY)
 
         if (this.action) {
             switch (element.type) {
             case ENTITIES_TYPE.SWITCH:
             case ENTITIES_TYPE.TRIGGER:
-                element.interact()
+                element.interact(scene)
                 break
             case ENTITIES_TYPE.ITEM:
                 if (element.visible) {
-                    this.moveItems(element)
-                    this.actionPerformed()
+                    this.moveItems(element, scene)
+                    this.actionPerformed(scene)
                 }
                 break
             case ENTITIES_TYPE.MAP_PIECE:
                 this.mapPieces.push(element.gid)
                 this.showMap()
                 element.kill()
-                this.actionPerformed()
+                this.actionPerformed(scene)
                 if (this.mapPieces.length === 6) {
                     this.addItem(ITEMS_TYPE.MAP, this.x + 16, this.y + 16)
                 }
@@ -92,32 +76,33 @@ export default class Player extends GameEntity {
         }
         if (this.canHurt() && element.damage > 0 && !debug) {
             this.energy -= element.damage
-            if (this.energy <= 0 && !this.scene.checkTimeout('player_respawn')) {
+            if (this.energy <= 0 && !this.checkTimeout('player_respawn')) {
                 if (this.lives > 1) {
                     this.lives -= 1
                     this.visible = false
                     this.force = { x: 0, y: 0 }
                     overlay.fadeOut()
-                    this.scene.startTimeout('player_respawn', 2000, () => {
+                    this.startTimeout('player_respawn', 2000, () => {
                         this.energy = this.maxEnergy
-                        this.restore()
+                        this.restore(scene)
                     })
                 }
                 else {
                     overlay.fadeOut()
                     this.visible = false
-                    this.scene.startTimeout('game_over', 2000, () => this.killed())
-                    this.scene.startTimeout('restart', 10000, () => this.scene.properties.setScene(SCENES.INTRO))
+                    this.startTimeout('game_over', 2000, () => this.killed(scene))
+                    this.startTimeout('restart', 10000, () => scene.properties.setScene(SCENES.INTRO))
                 }
             }
             this.force.y = -2
-            this.scene.startTimeout('player_hurt', 3000)
+            this.startTimeout('player_hurt', 3000)
         }
     }
 
-    update () {
-        this.input && this.getInput()
-        this.move()
+    update (scene, input) {
+        super.update(scene)
+        this.onInput(scene, input)
+        this.debug = scene.getProperty('debug')
 
         const facingRight = this.direction === DIRECTIONS.RIGHT
         const {
@@ -141,29 +126,33 @@ export default class Player extends GameEntity {
         this.sprite.animate(sprite)
     }
 
-    onInput (input) {
+    onInput (scene, input) {
         this.input = input
-    }
-
-    getInput () {
-        const { input } = this
-        const { sfx } = this.scene.properties
+        const { properties: { sfx } } = scene
+        const gravity = scene.getProperty('gravity')
 
         if (this.action) {
-            this.moveItems()
-            this.actionPerformed()
+            this.moveItems(null, scene)
+            this.actionPerformed(scene)
         }
-
+        if (!this.onGround) {
+            this.force.y += this.force.y > 0 ? gravity : gravity / 2
+        }
+        else if (Math.abs(this.force.y) <= 0.2) {
+            this.force.y = 0
+        }
         if (this.canMove()) {
             if (input.keyPressed[INPUTS.INPUT_LEFT]) {
-                if (this.direction === DIRECTIONS.RIGHT) this.addDust(DIRECTIONS.LEFT)
+                if (this.direction === DIRECTIONS.RIGHT && this.onGround) this.addDust(DIRECTIONS.LEFT)
                 this.force.x = approach(this.force.x, -this.mSpeed, this.aSpeed)
                 this.direction = DIRECTIONS.LEFT
+                this.cameraFollow(scene)
             }
             else if (input.keyPressed[INPUTS.INPUT_RIGHT]) {
-                if (this.direction === DIRECTIONS.LEFT) this.addDust(DIRECTIONS.RIGHT)
+                if (this.direction === DIRECTIONS.LEFT && this.onGround) this.addDust(DIRECTIONS.RIGHT)
                 this.force.x = approach(this.force.x, this.mSpeed, this.aSpeed)
                 this.direction = DIRECTIONS.RIGHT
+                this.cameraFollow(scene)
             }
             else {
                 this.force.x = approach(this.force.x, 0, this.dSpeed)
@@ -187,32 +176,28 @@ export default class Player extends GameEntity {
             if (input.keyPressed[INPUTS.INPUT_MAP]) {
                 this.showMap()
             }
-            this.cameraFollow()
         }
-        this.force.y += this.force.y > 0
-            ? this.scene.gravity
-            : this.scene.gravity / 2
     }
 
-    cameraFollow () {
-        const { camera, resolutionX, resolutionY } = this.scene
+    cameraFollow (scene) {
+        const { camera, resolutionX, resolutionY } = scene
         this.direction === DIRECTIONS.LEFT
             ? camera.setMiddlePoint(resolutionX - resolutionX / 3, resolutionY / 2)
             : camera.setMiddlePoint(resolutionX / 3, resolutionY / 2)
     }
 
-    moveItems (item) {
+    moveItems (item, scene) {
         if (this.canTake()) {
             if (this.items[1]) {
                 this.items[1].placeAt(
-                    this.x + 8,
+                    this.x + 6,
                     this.y + 8
                 )
             }
             [this.items[0], this.items[1]] = [item, this.items[0]]
             if (item) {
                 item.visible = false
-                this.scene.properties.sfx(SOUNDS.PLAYER_GET)
+                scene.properties.sfx(SOUNDS.PLAYER_GET)
             }
         }
     }
@@ -237,57 +222,54 @@ export default class Player extends GameEntity {
     }
 
     canHurt () {
-        return this.canMove() && !this.scene.checkTimeout('player_hurt')
-    }
-
-    canDoSomething () {
-        return !this.scene.checkTimeout('player_action')
+        return this.canMove() && !this.checkTimeout('player_hurt')
     }
 
     canTake () {
-        return !this.scene.checkTimeout('player_take')
+        return !this.checkTimeout('player_take')
     }
 
-    actionPerformed () {
+    actionPerformed (scene) {
         this.action = false
-        this.scene.startTimeout('player_take', 500)
+        this.startTimeout('player_take', 500)
     }
 
     canUse (itemId) {
-        if (!!this.scene.getProperty('debug')) return true
+        if (this.debug) return true
         const haveItem = this.items.find((item) => item && item.properties.id === itemId)
         return this.canTake() && (itemId === ENTITIES_TYPE.PLAYER || haveItem)
     }
 
     showMap () {
-        this.scene.setProperty('pause', true)
-        this.scene.startTimeout('player_map', 1500, () => this.scene.setProperty('pause', false))
+        this.paused = true
+        this.startTimeout('player_map', 1500, () => {
+            this.paused = false
+        })
     }
 
-    killed () {
+    killed (scene) {
         if (!this.gameOver) {
             this.gameOver = true
-            this.scene.createCustomLayer(GameOverLayer, 1000)
+            scene.createCustomLayer(GameOverLayer, 1000)
         }
     }
 
-    gameCompleted () {
+    gameCompleted (scene) {
         if (!this.gameFinished) {
             this.gameFinished = true
-            this.scene.createCustomLayer(EndLayer, 1000)
+            scene.createCustomLayer(EndLayer, 1000)
         }
     }
 
-    restore () {
-        const { camera } = this.scene
+    restore (scene) {
         const { x, y } = this.initialPos
-        this.scene.getLayer(LAYERS.OVERLAY).fadeIn()
-        this.scene.stopTimeout('player_hurt')
-        this.scene.showLayer(LAYERS.FOREGROUND2)
         this.x = x
         this.y = y
         this.visible = true
         this.inDark = false
-        camera.center()
+        this.stopTimeout('player_hurt')
+        scene.getLayer(LAYERS.OVERLAY).fadeIn()
+        scene.showLayer(LAYERS.FOREGROUND2)
+        scene.camera.center()
     }
 }

@@ -1,22 +1,21 @@
 import { GameEntity } from '../models'
-import { createLightSource } from 'tiled-platformer-lib'
 import { COLORS, ENTITIES_TYPE } from '../../lib/constants'
 
 export default class TileObject extends GameEntity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.solid = true
         this.visible = true
         this.y -= obj.height
         this.shadowCaster = this.type === ENTITIES_TYPE.BOX
         if (this.type === ENTITIES_TYPE.BONUS) {
-            this.light = createLightSource(0, 0, 32, COLORS.BONUS)
+            this.addLightSource(32, COLORS.BONUS)
         }
     }
 
-    collide (element, response) {
+    collide (element, scene, response) {
         const overlap = response.overlapV
-        const { map: { tilewidth, tileheight } } = this.scene
+        const { map: { tilewidth, tileheight } } = scene
         if (element.type === ENTITIES_TYPE.PLAYER) {
             switch (this.type) {
             case ENTITIES_TYPE.BOX:
@@ -27,12 +26,13 @@ export default class TileObject extends GameEntity {
                     element.jump = false
                 }
                 else if (overlap.x !== 0) {
-                    if (!this.scene.isSolidArea(
+                    if (!scene.isSolidArea(
                         Math.floor((this.x + overlap.x) / tilewidth),
                         Math.floor(this.y / tileheight),
                         this.collisionLayers
                     )) {
                         this.x += overlap.x
+                        this.onGround = false
                     }
                 }
 
@@ -46,21 +46,15 @@ export default class TileObject extends GameEntity {
         }
     }
 
-    update () {
-        if (this.onScreen()) {
-            const { gravity } = this.scene
-
-            if (this.type === ENTITIES_TYPE.BONUS) {
-                this.force = { x: 0, y: 0 }
-            }
-            else {
+    update (scene) {
+        if (scene.onScreen(this)) {
+            super.update(scene)
+            const gravity = scene.getProperty('gravity')
+            if (this.type !== ENTITIES_TYPE.BONUS && !this.onGround) {
                 this.force.y += this.force.y > 0
                     ? gravity
                     : gravity / 2
             }
-
-            this.move()
-            this.force.x = 0
         }
     }
 

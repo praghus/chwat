@@ -1,20 +1,18 @@
 import { GameEntity } from '../models'
-import { createLightSource } from 'tiled-platformer-lib'
+import { approach } from '../../lib/utils/helpers'
 import { COLORS } from '../../lib/constants'
 
 export default class Paddle extends GameEntity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.solid = true
-        this.acceleration = 0.1
-        this.maxSpeed = 1
         this.activated = false
     }
 
-    draw (ctx) {
-        if (this.onScreen()) {
-            super.draw(ctx)
-            const { camera, assets, map: { tilewidth, tileheight } } = this.scene
+    draw (ctx, scene) {
+        if (scene.onScreen(this)) {
+            super.draw(ctx, scene)
+            const { camera, assets, map: { tilewidth, tileheight } } = scene
 
             for (let x = 0; x < Math.round(this.width / tilewidth); x++) {
                 ctx.drawImage(
@@ -27,14 +25,16 @@ export default class Paddle extends GameEntity {
         }
     }
 
-    update () {
+    update (scene) {
         if (this.activated && !this.dead) {
-            const { map: { tileheight } } = this.scene
+            const { map: { tileheight } } = scene
             const { destY } = this.properties
             if (this.y > destY * tileheight) {
-                this.light = createLightSource(0, 0, 96, COLORS.TRANS_WHITE)
-                this.force.y -= this.acceleration
-                this.move()
+                if (!this.light) {
+                    this.addLightSource(96, COLORS.TRANS_WHITE)
+                }
+                this.force.y = approach(this.force.y, -3, 1)
+                super.update(scene)
             }
             else {
                 this.kill()

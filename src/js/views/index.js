@@ -43,7 +43,6 @@ class AppContainer extends Component {
             loadedCount: 0,
             assetsLoaded: false
         }
-        this.then = performance.now()
         this.assets = {}
         this.wrapper = null
         this.onAssetLoad = this.onAssetLoad.bind(this)
@@ -89,8 +88,8 @@ class AppContainer extends Component {
         const { ticker, tickerStart, tickerTick } = this.props
         const { requestAnimationFrame } = window
 
-        const tick = () => {
-            tickerTick()
+        const tick = (time) => {
+            tickerTick(time)
             requestAnimationFrame(tick)
         }
         if (!ticker.tickerStarted) {
@@ -119,7 +118,7 @@ function mergeProps (stateProps, dispatchProps, ownProps) {
         onKey: (key, pressed) => dispatch(updateKeyPressed(key, pressed)),
         onMouse: (event) => dispatch(updateMousePos(event.x, event.y)),
         tickerStart: () => dispatch(startTicker(performance.now())),
-        tickerTick: () => dispatch(tickTime(performance.now())),
+        tickerTick: (time) => dispatch(tickTime(time)),
         onConfig: (key, value) => dispatch(updateConfig(key, value)),
         setScene: (scene) => dispatch(updateConfig(CONFIG.SCENE, scene)),
         sfx: (type) => !config[CONFIG.DISABLE_SOUNDS] && dispatch(playSound(type))

@@ -2,8 +2,8 @@ import { GameEntity } from '../models'
 import { DIRECTIONS, SOUNDS } from '../../lib/constants'
 
 export default class Slime extends GameEntity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.distance = obj.width
         this.x = obj.x - 16
         this.width = 48
@@ -18,7 +18,7 @@ export default class Slime extends GameEntity {
         this.setBoundingBox(17, 4, 14, 12)
     }
 
-    onScreen () {
+    onScreen (scene) {
         const {
             camera,
             resolutionX,
@@ -27,7 +27,7 @@ export default class Slime extends GameEntity {
                 tilewidth,
                 tileheight
             }
-        } = this.scene
+        } = scene
 
         const { x, y } = this.initialPos
 
@@ -39,8 +39,8 @@ export default class Slime extends GameEntity {
         )
     }
 
-    update () {
-        if (this.onScreen()) {
+    update (scene) {
+        if (scene.onScreen(this)) {
             this.activated = true
         }
         if (this.activated) {
@@ -57,11 +57,11 @@ export default class Slime extends GameEntity {
                     break
                 }
             }
-            else if (!this.scene.checkTimeout(`wait_${this.id}`)) {
-                this.scene.startTimeout(`wait_${this.id}`, 2300, () => {
-                    if (this.onScreen()) {
+            else if (!this.checkTimeout(`wait_${this.id}`)) {
+                this.startTimeout(`wait_${this.id}`, 2300, () => {
+                    if (scene.onScreen(this)) {
                         this.running = true
-                        this.scene.properties.sfx(SOUNDS.SLIME)
+                        scene.properties.sfx(SOUNDS.SLIME)
                     }
                     else {
                         this.activated = false
@@ -73,14 +73,10 @@ export default class Slime extends GameEntity {
                 ? this.acceleration
                 : -this.acceleration
 
-            this.force.y += this.force.y > 0
-                ? this.scene.gravity
-                : this.scene.gravity / 2
-
             if (this.force.x > this.maxSpeed) this.force.x = this.maxSpeed
             if (this.force.x < -this.maxSpeed) this.force.x = -this.maxSpeed
 
-            this.move()
+            super.update(scene)
 
             if (
                 this.x + 32 > this.initialPos.x + this.distance ||

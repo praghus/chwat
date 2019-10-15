@@ -2,8 +2,8 @@ import { GameEntity } from '../models'
 import { DIRECTIONS } from '../../lib/constants'
 
 export default class Dust extends GameEntity {
-    constructor (obj, scene) {
-        super(obj, scene)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.width = 16
         this.height = 16
     }

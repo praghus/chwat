@@ -1,4 +1,5 @@
 import moment from 'moment'
+import { Circle, Polygon, Point } from 'lucendi'
 import { ENTITIES, FONTS, INPUT_KEYS, ITEMS } from '../constants'
 
 export const isProduction = process.env.NODE_ENV === 'production'
@@ -117,4 +118,27 @@ export function displayText (text = '', x, y, font = FONTS.FONT_SMALL) {
             )
         }
     })
+}
+
+export function outline (x, y, width, height, color) {
+    return (ctx) => {
+        ctx.save()
+        ctx.strokeStyle = color
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + width, y)
+        ctx.lineTo(x + width, y + height)
+        ctx.lineTo(x, y + height)
+        ctx.lineTo(x, y)
+        ctx.stroke()
+        ctx.restore()
+    }
+}
+
+export function lightMaskRect (x, y, points) {
+    return new Polygon(points.map((v) => new Point(v.x + x, v.y + y)))
+}
+
+export function lightMaskDisc (x, y, radius) {
+    return new Circle(new Point(x + radius, y + radius), radius)
 }

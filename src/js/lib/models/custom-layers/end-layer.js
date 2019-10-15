@@ -14,17 +14,14 @@ export default class EndLayer extends Layer {
         }
     }
 
-    draw (ctx) {
-        const {
-            assets,
-            resolutionX,
-            resolutionY
-        } = this.scene
-
+    draw (ctx, scene) {
+        const { assets, resolutionX, resolutionY } = scene
         ctx.fillStyle = COLORS.BLACK
         ctx.fillRect(0, 0, resolutionX, resolutionY)
-        ctx.drawImage(assets[ASSETS.THE_END], Math.ceil(resolutionX / 2) - 80, Math.ceil(resolutionY / 2) - 60)
-
+        ctx.drawImage(assets[ASSETS.THE_END],
+            Math.ceil(resolutionX / 2) - 80,
+            Math.ceil(resolutionY / 2) - 60
+        )
         if (this.blackOverlay > 0) {
             ctx.globalAlpha = this.blackOverlay
             ctx.fillRect(0, 0, resolutionX, resolutionY)

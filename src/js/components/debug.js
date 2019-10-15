@@ -56,9 +56,7 @@ export default class Debug extends Component {
                         }} />
                     CRT
                 </label>
-                <div className='fpsmeter'>
-                    {fps.toFixed(1)} FPS
-                </div>
+                {fps && <div className='fpsmeter'>{fps.toFixed(1)} FPS</div>}
             </div>
         )
     }
