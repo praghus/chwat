@@ -1,66 +1,123 @@
+import { Light } from 'lucendi'
 import { Entity } from 'tiled-platformer-lib'
-import { getItemById, randomInt } from '../utils/helpers'
-import { DIRECTIONS, ENTITIES_TYPE, LAYERS } from '../constants'
+import {
+    DIRECTIONS,
+    ENTITIES_TYPE,
+    LAYERS
+} from '../constants'
+import {
+    getItemById,
+    isValidArray,
+    lightMaskDisc,
+    lightMaskRect,
+    noop,
+    randomInt
+} from '../utils/helpers'
 
 export default class GameEntity extends Entity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.visible = true
-        this.showMessage = this.showMessage.bind(this)
-        this.hideHint = this.hideHint.bind(this)
-        this.hideMessage = this.hideMessage.bind(this)
+        this.timeoutsPool = {}
+        this.emmiter = []
+        this.hideHint = () => {
+            this.hint = null
+        }
+        this.hideMessage = () => {
+            this.message = null
+        }
     }
 
-    draw () {
-        if (this.onScreen()) {
-            super.draw()
-            const { debug, overlay } = this.game
+    update (scene) {
+        isValidArray(this.emmiter) && this.emmiter.map(
+            ({ obj, layerId, index }, i) => {
+                scene.addObject(obj, layerId, index)
+                this.emmiter.splice(i, 1)
+            }
+        )
+        super.update(scene)
+    }
+
+    draw (ctx, scene) {
+        if (scene.onScreen(this)) {
+            super.draw(ctx, scene)
+            const overlay = scene.getLayer(LAYERS.OVERLAY)
             this.hint && overlay.addHint(this)
             this.message && overlay.addMessage(this)
-            debug && overlay.displayDebug(this)
+            scene.getProperty('debug') && overlay.displayDebug(scene, this)(ctx)
         }
     }
 
     showHint (items) {
-        if (!this.game.checkTimeout('hint')) {
+        if (!this.checkTimeout('hint')) {
             this.hint = items
-            this.game.startTimeout('hint', 1000, this.hideHint)
+            this.startTimeout('hint', 1000, this.hideHint)
+        }
+    }
+
+    showMessage (message) {
+        if (!this.checkTimeout('message')) {
+            this.message = message
+            this.startTimeout('message', 2000, this.hideMessage)
         }
     }
 
     changeHint (items) {
-        this.hint = items
-        this.game.stopTimeout('hint')
-        this.game.startTimeout('hint', 1000, this.hideHint)
-    }
-
-    hideHint () {
-        this.hint = null
-    }
-
-    showMessage (message) {
-        if (!this.game.checkTimeout('message')) {
-            this.message = message
-            this.game.startTimeout('message', 2000, this.hideMessage)
-        }
+        this.stopTimeout('hint')
+        this.showHint(items)
     }
 
     changeMessage (message) {
-        this.message = message
-        this.game.stopTimeout('message')
-        this.game.startTimeout('message', 2000, this.hideMessage)
+        this.stopTimeout('message')
+        this.showMessage(message)
     }
 
-    hideMessage () {
-        this.message = null
+    emit (obj, layerId, index) {
+        this.emmiter.push({ obj, layerId, index })
     }
 
     addItem (id, x, y) {
-        const { scene } = this.game
         const item = getItemById(id)
         if (item) {
-            scene.addObject({ x, y, ...item }, LAYERS.OBJECTS, 0)
+            this.emit({ x, y, ...item }, LAYERS.OBJECTS, 0)
         }
+    }
+
+    addLightSource (distance, color, radius = 8) {
+        this.light = new Light({ color, distance, radius, id: this.type })
+    }
+
+    getLight (scene) {
+        if (!this.light) return
+        this.light.move(
+            this.x + (this.width / 2) + scene.camera.x,
+            this.y + (this.height / 2) + scene.camera.y
+        )
+        return this.light
+    }
+
+    getLightMask (scene) {
+        const x = Math.round(this.x + scene.camera.x)
+        const y = Math.round(this.y + scene.camera.y)
+        const { pos, points } = this.getTranslatedBounds(x, y)
+        return this.shape === 'ellipse'
+            ? lightMaskDisc(x, y, this.width / 2)
+            : lightMaskRect(pos.x, pos.y, points)
+    }
+
+    addDust (direction) {
+        this.emit({
+            type: ENTITIES_TYPE.DUST,
+            visible: true,
+            dead: false,
+            width: 16,
+            height: 16,
+            x: direction === DIRECTIONS.RIGHT
+                ? this.x - 4
+                : this.x + this.width - 8,
+            y: this.y + this.height - 16,
+            direction
+        }, LAYERS.OBJECTS)
     }
 
     emitParticles (particle, x, y, count = 10, radius = 8) {
@@ -71,7 +128,7 @@ export default class GameEntity extends Entity {
                 force: particle.forceVector(),
                 ...particle
             }
-            this.game.scene.addObject({
+            this.emit({
                 type: ENTITIES_TYPE.PARTICLE,
                 life: randomInt(60, 120),
                 dead: false,
@@ -87,19 +144,28 @@ export default class GameEntity extends Entity {
         this.force.x *= -1
     }
 
-    addDust (direction) {
-        if (!this.onFloor) return
-        this.game.scene.addObject({
-            type: ENTITIES_TYPE.DUST,
-            visible: true,
-            dead: false,
-            width: 16,
-            height: 16,
-            x: direction === DIRECTIONS.RIGHT
-                ? this.x - 4
-                : this.x + this.width - 8,
-            y: this.y + this.height - 16,
-            direction
-        }, LAYERS.OBJECTS)
+    restore () {
+        this.dead = false
+        this.animFrame = 0
+    }
+
+    checkTimeout (name) {
+        return this.timeoutsPool[name] || null
+    }
+
+    startTimeout (name, duration, callback = noop) {
+        if (!this.timeoutsPool[name]) {
+            this.timeoutsPool[name] = setTimeout(() => {
+                this.stopTimeout(name)
+                callback()
+            }, duration)
+        }
+    }
+
+    stopTimeout (name) {
+        if (this.timeoutsPool[name] !== null) {
+            clearTimeout(this.timeoutsPool[name])
+            this.timeoutsPool[name] = null
+        }
     }
 }

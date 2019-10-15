@@ -3,11 +3,12 @@ import { randomInt } from '../../lib/utils/helpers'
 import { DIRECTIONS, PARTICLES, SOUNDS } from '../../lib/constants'
 
 export default class Rock extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.doShake = false
         this.activated = false
         this.soundPlayed = false
+        this.attached = true
         this.acceleration = 0.2
         this.maxSpeed = 2
         this.damage = 100
@@ -17,9 +18,9 @@ export default class Rock extends GameEntity {
         this.shadowCaster = true
     }
 
-    draw () {
-        if (this.onScreen()) {
-            const { ctx, camera, props: { assets } } = this.game
+    draw (ctx, scene) {
+        if (this.activated) {
+            const { camera, assets } = scene
             const r = Math.PI / 16
             ctx.save()
             ctx.translate(
@@ -31,34 +32,30 @@ export default class Rock extends GameEntity {
                 this.rotation += this.acceleration / 5
             }
             ctx.rotate(this.rotation * r)
-            ctx.drawImage(assets[this.asset], -16, -16)
+            ctx.drawImage(assets[this.aid], -16, -16)
             ctx.restore()
         }
     }
 
-    onScreen () {
-        return this.activated
-    }
-
-    update () {
+    update (scene) {
         if (this.activated) {
+            super.update(scene)
             if (!this.soundPlayed) {
                 this.soundPlayed = true
-                this.game.props.playSound(SOUNDS.ROCK)
+                scene.properties.sfx(SOUNDS.ROCK)
             }
-            const { camera, scene: { gravity } } = this.game
+            const { camera } = scene
+            const gravity = scene.getProperty('gravity')
 
-            if (this.onFloor && this.acceleration < this.maxSpeed) {
+            if (this.onGround && this.acceleration < this.maxSpeed) {
                 this.acceleration += 0.01
             }
 
             this.force.y += gravity
             this.force.x = this.acceleration
 
-            this.move()
-
             if (this.x < 7260) {
-                if (!this.onFloor) {
+                if (!this.onGround) {
                     this.doShake = true
                 }
                 else if (this.doShake) {

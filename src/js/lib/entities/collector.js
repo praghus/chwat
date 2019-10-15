@@ -3,10 +3,9 @@ import { getProperties, getItemById, isValidArray } from '../utils/helpers'
 import { ENTITIES_TYPE, ITEMS, LAYERS } from '../constants'
 
 export default class Collector extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.solid = false
-        this.visible = false
         this.activated = false
         this.activators = []
         this.activator = getProperties(obj, 'activator')
@@ -16,19 +15,18 @@ export default class Collector extends GameEntity {
         this.initialized = !this.activator
     }
 
-    collide (element) {
-        const { player } = this.game
+    collide (element, scene) {
+        const { player } = scene
         const { activator, anchor_hint } = this.properties
-
         if (this.initialized) {
             if (
+                !element.dead &&
                 element.type === ENTITIES_TYPE.ITEM &&
                 this.collect.indexOf(element.properties.id) !== -1
             ) {
                 this.activators.push(element)
                 element.kill()
             }
-
             if (this.activators.length === this.collect.length) {
                 this.activated = true
             }
@@ -36,11 +34,10 @@ export default class Collector extends GameEntity {
                 const collected = this.activators.map(
                     ({ properties: { id } }) => id
                 )
-                const missing = this.collect.filter(
-                    (type) => collected.indexOf(type) === -1
-                ).map(
-                    (type) => ITEMS[type]
-                )
+                const missing = this.collect
+                    .filter((type) => collected.indexOf(type) === -1)
+                    .map((type) => ITEMS[type])
+
                 anchor_hint
                     ? this.changeHint(missing)
                     : player.changeHint(missing)
@@ -62,10 +59,11 @@ export default class Collector extends GameEntity {
         }
     }
 
-    update () {
-        if (this.activated || this.game.debug) {
-            const { camera, overlay, player, scene } = this.game
+    update (scene) {
+        if (this.activated || scene.getProperty('debug')) {
+            const { camera, player } = scene
             const { fade, modify, produce, related, shake } = this.properties
+            const overlay = scene.getLayer(LAYERS.OVERLAY)
 
             this.activators.map((item) => item.kill())
 
@@ -94,6 +92,7 @@ export default class Collector extends GameEntity {
             player.hideMessage()
 
             this.dead = true
+            super.update(scene)
         }
     }
 }

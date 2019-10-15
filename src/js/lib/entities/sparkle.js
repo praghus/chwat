@@ -1,8 +1,8 @@
 import { GameEntity } from '../models'
 
 export default class Sparkle extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.width = 8
         this.height = 8
         this.visible = true

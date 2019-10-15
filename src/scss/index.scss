@@ -18,8 +18,17 @@ body {
     justify-content: center;
 }
 
-canvas {
+.canvas {
     background: #000;
+    padding: 0;
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}  
+
+.hidden {
+    display: none;
 }
 
 .preloader {

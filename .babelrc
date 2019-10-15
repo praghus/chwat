@@ -5,14 +5,19 @@
     "transform-decorators-legacy"
   ],
   "presets": [
-    ["env", { "modules": false }],
+    ["env", { 
+      "modules": false,
+      "targets": {
+        "node": "current"
+      }
+    }],
     "react",
     "stage-0"
   ],
   "env": {
     "development": {
       "presets": [
-        "react-hmre"
+        "es2017" , "stage-0" , "react"
       ]
     }
   }

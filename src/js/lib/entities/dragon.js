@@ -1,15 +1,15 @@
 import { GameEntity } from '../models'
 
 export default class Dragon extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.solid = true
         this.y -= obj.height
         this.setBoundingBox(60, 108, this.width - 158, this.height - 140)
     }
 
-    update () {
-        if (this.onScreen()) {
+    update (scene) {
+        if (scene.onScreen(this)) {
             if (this.activated) {
                 if (this.y > -128) {
                     this.y -= 1

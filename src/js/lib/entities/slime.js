@@ -2,8 +2,8 @@ import { GameEntity } from '../models'
 import { DIRECTIONS, SOUNDS } from '../../lib/constants'
 
 export default class Slime extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.distance = obj.width
         this.x = obj.x - 16
         this.width = 48
@@ -18,20 +18,18 @@ export default class Slime extends GameEntity {
         this.setBoundingBox(17, 4, 14, 12)
     }
 
-    onScreen () {
+    onScreen (scene) {
         const {
             camera,
-            scene: {
-                resolutionX,
-                resolutionY,
-                map: {
-                    tilewidth,
-                    tileheight
-                }
+            resolutionX,
+            resolutionY,
+            map: {
+                tilewidth,
+                tileheight
             }
-        } = this.game
+        } = scene
 
-        const { x, y } = this.initialPosition
+        const { x, y } = this.initialPos
 
         return (
             x + this.distance + tilewidth > -camera.x &&
@@ -41,13 +39,11 @@ export default class Slime extends GameEntity {
         )
     }
 
-    update () {
-        if (this.onScreen()) {
+    update (scene) {
+        if (scene.onScreen(this)) {
             this.activated = true
         }
         if (this.activated) {
-            const { props: { playSound }, scene, startTimeout } = this.game
-
             if (this.running) {
                 switch (this.sprite.animFrame) {
                 case 2:
@@ -61,11 +57,11 @@ export default class Slime extends GameEntity {
                     break
                 }
             }
-            else if (!this.game.checkTimeout(`wait_${this.id}`)) {
-                startTimeout(`wait_${this.id}`, 2300, () => {
-                    if (this.onScreen()) {
+            else if (!this.checkTimeout(`wait_${this.id}`)) {
+                this.startTimeout(`wait_${this.id}`, 2300, () => {
+                    if (scene.onScreen(this)) {
                         this.running = true
-                        playSound(SOUNDS.SLIME)
+                        scene.properties.sfx(SOUNDS.SLIME)
                     }
                     else {
                         this.activated = false
@@ -77,15 +73,14 @@ export default class Slime extends GameEntity {
                 ? this.acceleration
                 : -this.acceleration
 
-            this.force.y += this.force.y > 0
-                ? scene.gravity
-                : scene.gravity / 2
+            if (this.force.x > this.maxSpeed) this.force.x = this.maxSpeed
+            if (this.force.x < -this.maxSpeed) this.force.x = -this.maxSpeed
 
-            this.move()
+            super.update(scene)
 
             if (
-                this.x + 32 > this.initialPosition.x + this.distance ||
-                this.x + 16 < this.initialPosition.x
+                this.x + 32 > this.initialPos.x + this.distance ||
+                this.x + 16 < this.initialPos.x
             ) {
                 this.bounce()
             }

@@ -1,9 +1,9 @@
 import { GameEntity } from '../models'
-import { ASSETS, ENTITIES_TYPE, DIRECTIONS } from '../../lib/constants'
+import { ASSETS, ENTITIES_TYPE, DIRECTIONS, LAYERS } from '../../lib/constants'
 
 export default class Balloon extends GameEntity {
-    constructor (obj, game) {
-        super(obj, game)
+    constructor (obj, sprite) {
+        super(obj, sprite)
         this.positions = {
             CASTLE: { x: 5056, y: 90, player: { x: 5152, y: 48 } },
             ISLE: { x: 128, y: 720, player: { x: 230, y: 720 } }
@@ -12,9 +12,9 @@ export default class Balloon extends GameEntity {
         this.solid = true
     }
 
-    draw () {
-        if (this.visible && this.onScreen()) {
-            const { ctx, camera, props: { assets } } = this.game
+    draw (ctx, scene) {
+        if (this.visible && scene.onScreen(this)) {
+            const { camera, assets } = scene
             ctx.drawImage(
                 assets[ASSETS.BALLOON],
                 Math.floor(this.x + camera.x) - 72,
@@ -23,9 +23,9 @@ export default class Balloon extends GameEntity {
         }
     }
 
-    collide (element) {
+    collide (element, scene) {
         if (this.activated && element.type === ENTITIES_TYPE.PLAYER) {
-            const { camera, player, overlay } = this.game
+            const { camera, player } = scene
             this.position = this.position === this.positions.CASTLE
                 ? this.positions.ISLE
                 : this.positions.CASTLE
@@ -34,10 +34,10 @@ export default class Balloon extends GameEntity {
             this.y = this.position.y
             player.x = this.position.player.x
             player.y = this.position.player.y
-            player.initialPosition = this.position.player
+            player.initialPos = this.position.player
 
             player.direction = DIRECTIONS.RIGHT
-            overlay.fadeIn()
+            scene.getLayer(LAYERS.OVERLAY).fadeIn()
             camera.center()
         }
     }
