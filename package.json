@@ -11,6 +11,11 @@
   "keywords": [],
   "author": "Piotr Praga",
   "license": "ISC",
+  "engines": {
+    "node": "12.x",
+    "npm": "6.x",
+    "yarn": "1.x"
+  },
   "dependencies": {
     "hammerjs": "2.0.8",
     "lodash": "4.17.15",
