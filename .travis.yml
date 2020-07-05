@@ -3,7 +3,7 @@ notifications:
   email:
   - praghus@gmail.com
 node_js:
-  - "8.9"
+  - "12.x"
 before_install:
   - npm install -g yarn --cache-min 999999999
 install:
