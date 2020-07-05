@@ -21,7 +21,7 @@ import {
 
 const allImages = require.context('../../assets/images', true, /.*\.png/)
 const images = requireAll(allImages).reduce(
-    (state, image) => ({ ...state, [image.split('-')[0]]: image }), {}
+    (state, image) => ({ ...state, [image.default.split('-')[0]]: image.default }), {}
 )
 
 const propTypes = {

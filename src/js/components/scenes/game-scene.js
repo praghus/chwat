@@ -5,7 +5,7 @@ import Canvas from '../canvas'
 import Inputs from '../inputs'
 import map from '../../../assets/levels/map.tmx'
 import { isEqual } from 'lodash'
-import { tmxParser } from 'tmx-tiledmap'
+import { tmx } from 'tmx-tiledmap'
 import { Scene } from 'tiled-platformer-lib'
 import { isProduction, getPerformance } from '../../lib/utils/helpers'
 import { BackgroundLayer, LightLayer, OverlayLayer } from '../../lib/models'
@@ -42,7 +42,7 @@ export default class GameScene extends Component {
 
     componentDidMount () {
         const { assets, startTicker, setScene, viewport } = this.props
-        this.map = tmxParser(map).then((data) => {
+        this.map = tmx(map).then((data) => {
             const scene = new Scene(assets, viewport, { setScene, sfx: (snd) => this.props.sfx(snd) })
             scene.createCustomLayer(BackgroundLayer)
             scene.addTmxMap(data, ENTITIES)

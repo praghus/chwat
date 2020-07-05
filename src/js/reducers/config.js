@@ -2,7 +2,7 @@ import { CONFIG, SCENES } from '../lib/constants'
 import { UPDATE_CONFIG } from '../actions'
 
 const initialState = {
-    [CONFIG.CRT_EFFECT]: true,
+    [CONFIG.CRT_EFFECT]: false,
     [CONFIG.DEBUG_MODE]: false,
     [CONFIG.DISABLE_SOUNDS]: false,
     [CONFIG.SCENE]: SCENES.INTRO

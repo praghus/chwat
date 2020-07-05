@@ -2,7 +2,7 @@ import { requireAll } from '../utils/helpers'
 
 const allSounds = require.context('../../../assets/sounds', true, /.*\.(mp3|wav)$/)
 const loadedSounds = requireAll(allSounds).reduce(
-    (state, sound) => ({ ...state, [sound.split('-')[0]]: sound }), {}
+    (state, sound) => ({ ...state, [sound.default.split('-')[0]]: sound.default }), {}
 )
 
 export const SOUNDS = {
