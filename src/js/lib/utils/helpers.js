@@ -10,12 +10,14 @@ export const requireAll = (requireContext) => requireContext.keys().map(requireC
 export const getFilename = (path) => path.replace(/^.*[\\/]/, '').split('.').slice(0, -1).join('.')
 
 export function calculateViewportSize (width, height) {
+    const rows = 160
+    const cols = 256
     const pixelScale = width > height
-        ? Math.round(height / 128)
-        : Math.round(width / 192)
+        ? Math.round(height / rows)
+        : Math.round(width / cols)
 
-    const calculatedWidth = width < 192 * pixelScale ? width : 192 * pixelScale
-    const calculatedHeight = height < 128 * pixelScale ? height : 128 * pixelScale
+    const calculatedWidth = width < cols * pixelScale ? width : cols * pixelScale
+    const calculatedHeight = height < rows * pixelScale ? height : rows * pixelScale
 
     return {
         width: calculatedWidth,
