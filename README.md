@@ -1,4 +1,4 @@
-# CHWAT [![Build Status](https://travis-ci.org/praghus/chwat.svg?branch=master)](https://travis-ci.org/praghus/chwat)
+# CHWAT 
 Remake of a Commodore 64 adventure platformer - [Chwat](http://www.mobygames.com/game/chwat) 
 
-[Latest build](https://chwat.surge.sh/)
+🕹 [Play on Surge](https://chwat.surge.sh/)
